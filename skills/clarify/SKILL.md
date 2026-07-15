@@ -5,11 +5,11 @@ description: Align intent before action by resolving consequential uncertainty i
 
 # Minimum sufficient alignment
 
-Reach **minimum sufficient alignment** by resolving the consequential gaps between the user's intent and the work you intend to do, with human attention proportional to risk. Calibrate the depth to the stakes and uncertainty so the user can focus on their intent.
+Reach **minimum sufficient alignment** by resolving the consequential gaps between the user's intent and the work you intend to do, with human attention proportional to risk.
 
 ## 1. Build the material decision map
 
-Do the relevant legwork first: inspect the environment, existing artifacts, and authoritative sources for facts that would otherwise become questions. Extract the user's stated outcome, governing principles, hard constraints, and non-goals.
+Do the legwork first: inspect the environment, existing artifacts, and authoritative sources for facts that would otherwise become questions. Extract the user's stated outcome, governing principles, hard constraints, and non-goals.
 
 Identify only the open points whose plausible resolutions would materially change the intended work, together with their dependencies.
 
@@ -31,18 +31,16 @@ Ask one upstream question at a time, choosing the governing uncertainty that can
 
 Use two kinds of question deliberately:
 
-- **Discovery** — when the user's governing preference is still unknown, ask neutrally. Concrete scenarios and counterexamples reveal priorities better than asking for approval of an agent-authored answer.
+- **Discovery** — when the user's governing preference is still unknown, ask neutrally; that reveals priorities better than seeking approval of an agent-authored answer.
 - **Convergence** — once the relevant preference is known, recommend the choice that follows from the user's expressed preference and name the meaningful trade-off.
 
-Treat a terse confirmation as sufficient when the decision and its consequence were visible. For a consequential ambiguity that still admits competing interpretations, test the understanding with a concrete scenario rather than accumulating approvals.
+Treat a terse confirmation as sufficient when the decision and its consequence were visible. When competing interpretations survive, make the choice concrete instead of accumulating approvals — a scenario or counterexample when the decision lives in prose, and a representation the user reacts to when its consequence is perceptual (how something looks, reads, is laid out, or behaves), because showing collapses what telling cannot. A representation obeys a question's discipline: one governing decision at a time, at the lowest fidelity that makes it falsifiable, never bundling independent decisions into one artifact approved at once — staged skeleton before detail, each resolution demoting the choices beneath it to agent decisions or surfacing the next genuine divergence.
 
 This step is complete when the user's principles select among the material interpretations and every remaining point is an Agent decision or Deferred.
 
 ## 3. Capture durable knowledge
 
 Use the `/domain-modeling` skill as canonical domain terms and durable decisions crystallise; follow its criteria for `GLOSSARY.md` and decision records.
-
-Keep the working model in the conversation and the final alignment brief.
 
 This step is complete when every resolved domain term and qualifying durable decision has been recorded.
 
@@ -64,4 +62,4 @@ Present a concise proposal:
 
 Ask the user what you have misunderstood or what they would change. Incorporate material corrections, then begin the requested work only after the user explicitly confirms the shared understanding. When clarification itself is the whole request, the confirmed brief is the completed result.
 
-The skill is complete when the user can predict the material result and explicitly confirms the shared understanding.
+The skill is complete when the user can predict the material result and explicitly confirms it.
