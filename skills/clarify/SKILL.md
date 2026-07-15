@@ -62,6 +62,6 @@ Present a concise proposal:
 
 - Deferred scope, assumptions that remain changeable, and risks the user should know before work begins.
 
-Ask the user what you have misunderstood or what they would change. Incorporate material corrections, then begin the requested work only after the user explicitly confirms the shared understanding. When clarification itself is the whole request, the confirmed brief is the completed result.
+Treat Human decisions confirmed during resolution, including through a wireframe, as settled. If a user correction or the synthesis reveals new material divergence, route it through step 2. Otherwise, the brief closes alignment and the requested work may begin. When clarification itself is the whole request, the brief is the completed result.
 
-The skill is complete when the user can predict the material result and explicitly confirms it.
+The skill is complete when the user can predict the material result, every Human decision has been explicitly confirmed at the point it was resolved, and every remaining point is an Agent decision or Deferred.

@@ -11,11 +11,13 @@ Turn perceptual uncertainty into a representation the user can react to. Work at
 
 Use the current request and conversation as input. Inspect existing UI and supplied references where they constrain the requested interface.
 
+Separate perceptual questions from consequential non-perceptual prerequisites. Carry resolved prerequisites forward as constraints. Surface any unresolved prerequisite before selecting a governing perceptual decision.
+
 Identify only the open questions whose plausible answers would materially change what the user sees or does. Choose the upstream question that collapses the most downstream choices, and make reversible defaults beneath it.
 
 Keep one governing decision in view at a time. Include only the screens, states, and interactions needed to make that decision falsifiable.
 
-This step is complete when the run has one named governing decision and every proposed element bears on it.
+This step is complete when every consequential non-perceptual prerequisite is resolved, the run has one named governing decision, and every proposed element bears on it.
 
 ## 2. Build the falsifiable representation
 
@@ -41,4 +43,6 @@ Read the actual `Local:` URL from the server output and confirm that `/prototype
 
 Apply feedback to the same prototype. Once the governing decision is resolved, return to step 1 only if another material perceptual decision remains.
 
-The skill is complete when the user explicitly confirms every material decision made visible by the wireframe.
+Carry each confirmed decision forward as a constraint on subsequent revisions and decisions. If new feedback conflicts with a confirmed decision, surface the conflict and resolve it before continuing.
+
+The skill is complete when the user explicitly confirms each named governing perceptual decision.
