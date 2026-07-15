@@ -54,7 +54,7 @@ Present a concise proposal:
 
 - The outcome, governing principles, hard constraints, and non-goals learned from the user.
 
-### Intended decisions
+### Proposed approach
 
 - The material decisions you intend to make, including consequential defaults you derived yourself; connect non-obvious choices to the user's principles and name what they trade away.
 

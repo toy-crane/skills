@@ -28,11 +28,11 @@
     {
       "id": 3,
       "prompt": "구현 전에 마지막으로 정렬만 확인해줘. 공개 HTML 페이지만 지원하고 로그인 페이지와 JavaScript 렌더링은 제외한다. 결과는 저장하지 않고 읽기 전용이다. 변환은 서버의 Defuddle로 처리한다. 복사와 md 다운로드를 제공하고, ChatGPT와 Claude 버튼은 문서를 클립보드에 복사한 뒤 새 탭을 연다. UI는 한국어 단일 열 미니멀 디자인이다. 이 범위 밖의 기능은 이번 버전에서 만들지 않는다.",
-      "expected_output": "Because the material choices are already resolved, the response skips further interviewing and presents a concise alignment brief that separates confirmed intent, intended material decisions, and boundaries before asking for correction and final confirmation.",
+      "expected_output": "Because the material choices are already resolved, the response skips further interviewing and presents a concise alignment brief that separates confirmed intent, the proposed approach, and boundaries before asking for correction and final confirmation.",
       "files": [],
       "expectations": [
         "The response presents a concise alignment brief instead of inventing more detailed questions.",
-        "The brief distinguishes confirmed user intent from material decisions the agent intends to make.",
+        "The brief distinguishes confirmed user intent from the agent's proposed approach.",
         "The brief includes excluded or deferred scope.",
         "The response asks what is misunderstood or should change and waits for explicit confirmation before implementation."
       ]
