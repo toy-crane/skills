@@ -1,0 +1,22 @@
+{
+  "name": "toycrane-skills",
+  "version": "0.1.0",
+  "description": "Agent skills for sharpening plans and domain models — clarify and domain-modeling.",
+  "author": {
+    "name": "toy-crane",
+    "url": "https://github.com/toy-crane"
+  },
+  "repository": "https://github.com/toy-crane/skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "clarify",
+    "domain-modeling",
+    "planning",
+    "productivity"
+  ],
+  "skills": [
+    "./skills/clarify",
+    "./skills/domain-modeling"
+  ]
+}
