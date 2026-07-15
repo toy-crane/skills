@@ -1,0 +1,22 @@
+{
+  "name": "toycrane",
+  "owner": {
+    "name": "toy-crane",
+    "url": "https://github.com/toy-crane"
+  },
+  "description": "toy-crane's agent skills, installable as a Claude Code plugin.",
+  "plugins": [
+    {
+      "name": "toycrane-skills",
+      "source": "./",
+      "description": "Agent skills for sharpening plans and domain models — clarify and domain-modeling.",
+      "category": "productivity",
+      "keywords": [
+        "skills",
+        "clarify",
+        "domain-modeling",
+        "planning"
+      ]
+    }
+  ]
+}
