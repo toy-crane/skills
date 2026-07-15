@@ -27,14 +27,16 @@ This step is complete when relevant facts have been investigated, every material
 
 ## 2. Resolve consequential divergence
 
-Ask one upstream question at a time, choosing the governing uncertainty that can collapse the most downstream decisions. Wait for the answer, then propagate it through the decision map before asking again.
+Work through the decision map upstream first so each resolution collapses the most downstream choices. For each non-perceptual Human decision, ask one question at a time. Wait for the answer, then propagate it through the decision map before asking again.
 
-Use two kinds of question deliberately:
+Use two kinds of question deliberately for non-perceptual decisions:
 
 - **Discovery** — when the user's governing preference is still unknown, ask neutrally; that reveals priorities better than seeking approval of an agent-authored answer.
 - **Convergence** — once the relevant preference is known, recommend the choice that follows from the user's expressed preference and name the meaningful trade-off.
 
-Treat a terse confirmation as sufficient when the decision and its consequence were visible. When competing interpretations survive, make the choice concrete instead of accumulating approvals — a scenario or counterexample when the decision lives in prose, and a representation the user reacts to when its consequence is perceptual (how something looks, reads, is laid out, or behaves), because showing collapses what telling cannot. A representation obeys a question's discipline: one governing decision at a time, at the lowest fidelity that makes it falsifiable, never bundling independent decisions into one artifact approved at once — staged skeleton before detail, each resolution demoting the choices beneath it to agent decisions or surfacing the next genuine divergence.
+Treat a terse confirmation as sufficient when the decision and its consequence were visible. When competing interpretations of a non-perceptual decision survive, make the choice concrete with a scenario or counterexample instead of accumulating approvals.
+
+When the unresolved divergence is perceptual — how something looks, reads, is laid out, or behaves — use the `/wireframe` skill. Carry forward the confirmed facts, constraints, and surviving interpretations. The wireframe owns choosing the governing perceptual decision, representing it, and obtaining the user's confirmation. Resume here with the confirmed decision and propagate it through the decision map.
 
 This step is complete when the user's principles select among the material interpretations and every remaining point is an Agent decision or Deferred.
 
