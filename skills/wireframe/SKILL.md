@@ -27,22 +27,20 @@ Start with one screen, one viewport, and one representative state. Add another s
 
 Treat the template's system font, four neutral color tokens, spacing, one-pixel borders, text labels, native controls, and simple placeholders as the visual ceiling. The result should read as deliberately unfinished while keeping hierarchy legible.
 
-Open the prototype in a browser. Verify that exactly one selected screen is visible, every material state is reachable, every required interaction works, and the console remains clear.
-
-This step is complete when the governing decision has a visible point of disagreement and the browser checks pass.
+This step is complete when `artifacts/prototype.html` is self-contained and every screen, state, and interaction bears on the governing decision.
 
 ## 3. Put it in front of the user
 
-Start the prototype server:
+Present the prototype through the lightest project-agnostic surface available, in this order:
 
-```bash
-bunx vite artifacts --port=3456
-```
+1. Render it with the host's native artifact or visualization capability.
+2. Open it as a file-backed page in the host's browser.
+3. Serve `artifacts/` with a standalone static file server.
 
-Read the actual `Local:` URL from the server output and confirm that `/prototype.html` loads. Share the URL with the governing question, then wait for the user's reaction.
+Keep the chosen surface independent of the host project's dependencies, build scripts, and configuration. Use publishing only when the user asks for a persistent or shareable URL.
 
-Apply feedback to the same prototype. Once the governing decision is resolved, return to step 1 only if another material perceptual decision remains.
+On that surface, verify that exactly one selected screen is visible, every material state is reachable, every required interaction works, and the console remains clear when the surface exposes it. Put the prototype in front of the user with the governing question.
 
-Carry each confirmed decision forward as a constraint on subsequent revisions and decisions. If new feedback conflicts with a confirmed decision, surface the conflict and resolve it before continuing.
+Apply feedback to the same prototype. Carry each confirmed decision forward as a constraint. When feedback conflicts with a confirmed decision, resolve the conflict before revising the prototype.
 
-The skill is complete when the user explicitly confirms each named governing perceptual decision.
+This step—and the skill—is complete when the checks pass and the user explicitly confirms the named governing perceptual decision.
