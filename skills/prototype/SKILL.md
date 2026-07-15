@@ -33,13 +33,20 @@ Name proposed components as assumptions. Their absence may be the experiment's f
 
 Choose fidelity independently for context, visual refinement, interaction, data, and scope. Raise a dimension only when a lower value would make the governing question hard to judge or would distort the answer. Keep a quality floor of legible hierarchy, coherent spacing, alignment, contrast, and representative content.
 
+Write a compact experiment profile before building and include it when presenting the result. The profile must state:
+
+- why the prototype is in-situ or standalone;
+- the chosen fidelity for each relevant dimension and why it is sufficient;
+- the **reuse**, **compose**, or **proposed** provenance of every material component;
+- the repository isolation choice, including whether a branch or worktree was created and why.
+
 Prefer an **in-situ prototype** when a product exists: mount the alternatives inside the real route and shell, retain the existing data flow and density, and swap only the rendered subtree under evaluation. Use implementation code when it is the cheapest valid representation.
 
 Use a **standalone prototype** only for greenfield work or when the host cannot be run. In that branch, read [`assets/standalone.html`](./assets/standalone.html) and adapt it without introducing a project dependency.
 
 Use the current task branch when it safely isolates the work. When the current branch is shared, protected, or likely to conflict with user changes, create an isolation branch or worktree before editing. A branch exists to isolate risk, not to archive every prototype.
 
-This step is complete when the selected medium and each fidelity choice are tied to the governing question, every material component has a basis, and repository work is safely isolated.
+This step is complete when the selected medium and each fidelity choice are tied to the governing question, every material component has a basis, repository work is safely isolated, and those decisions are explicit in the experiment profile.
 
 ## 3. Build controlled variants
 
@@ -55,7 +62,7 @@ This step is complete when the alternatives visibly disagree on the governing qu
 
 ## 4. Obtain the decision
 
-Present the comparison through the lightest surface that preserves its validity: the running host, a file-backed artifact, or a static server. State the governing question and give each variant a descriptive structural label. Ask the user to choose one direction or identify which parts should be combined.
+Present the comparison through the lightest surface that preserves its validity: the running host, a file-backed artifact, or a static server. State the governing question, include the compact experiment profile, and give each variant a descriptive structural label. Ask the user to choose one direction or identify which parts should be combined.
 
 Apply feedback to the same controlled set. Carry the confirmed decision forward as a constraint. When feedback opens an independent decision, finish the current question before starting another prototype brief.
 
