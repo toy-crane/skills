@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sketch Wireframe"
+  short_description: "Build low-fidelity UI wireframes for alignment"
+  default_prompt: "Use $sketch-wireframe to turn my current UI request into a low-fidelity interactive prototype for alignment."
