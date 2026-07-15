@@ -1,0 +1,53 @@
+{
+  "skill_name": "clarify",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "웹 페이지 URL을 Markdown으로 바꿔서 ChatGPT나 Claude로 넘기는 작은 서비스를 만들고 싶어. 공개 페이지를 대상으로 하고, 본문 추출에는 Defuddle을 써야 해. URL 입력, 결과 미리보기, 복사와 다운로드, LLM으로 열기, 다크 모드가 필요해. 구현 전에 나와 요구사항을 명확히 해줘.",
+      "expected_output": "The first response investigates or reasons from the supplied facts, then asks at most one question whose answer could materially change the product. It does not ask the user to approve routine implementation limits or tool choices.",
+      "files": [],
+      "expectations": [
+        "The response asks no more than one question.",
+        "The question targets a consequential product boundary, user goal, or costly trade-off.",
+        "The response does not ask about routine defaults such as timeout seconds, response size, redirect count, DOM library, or test framework.",
+        "The response does not begin implementation before shared understanding is confirmed."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "우리 결제 시스템을 다음 분기에 Stripe에서 Adyen으로 옮기려고 해. 기존 구독자와 환불 데이터가 있고 결제 실패율이 올라가면 안 돼. 아직 전환 방식은 정하지 않았어. 이 계획을 스트레스 테스트해줘.",
+      "expected_output": "The response identifies the unresolved migration strategy as consequential and asks one neutral upstream discovery question rather than leading with a preferred architecture.",
+      "files": [],
+      "expectations": [
+        "The response asks no more than one question.",
+        "The question exposes an upstream migration priority or constraint that would collapse downstream choices.",
+        "The response does not recommend a migration strategy before learning the governing preference.",
+        "The response leaves implementation untouched pending alignment."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "구현 전에 마지막으로 정렬만 확인해줘. 공개 HTML 페이지만 지원하고 로그인 페이지와 JavaScript 렌더링은 제외한다. 결과는 저장하지 않고 읽기 전용이다. 변환은 서버의 Defuddle로 처리한다. 복사와 md 다운로드를 제공하고, ChatGPT와 Claude 버튼은 문서를 클립보드에 복사한 뒤 새 탭을 연다. UI는 한국어 단일 열 미니멀 디자인이다. 이 범위 밖의 기능은 이번 버전에서 만들지 않는다.",
+      "expected_output": "Because the material choices are already resolved, the response skips further interviewing and presents a concise alignment brief that separates confirmed intent, the proposed approach, and boundaries before asking for correction and final confirmation.",
+      "files": [],
+      "expectations": [
+        "The response presents a concise alignment brief instead of inventing more detailed questions.",
+        "The brief distinguishes confirmed user intent from the agent's proposed approach.",
+        "The brief includes excluded or deferred scope.",
+        "The response asks what is misunderstood or should change and waits for explicit confirmation before implementation."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "팀 대시보드 화면을 새로 만들려고 해. 지표 카드, 최근 활동 목록, 필터가 들어가는데 화면 배치를 아직 못 정했어 — 한 화면에 몰아넣을지, 좌우로 나눌지, 탭으로 가를지 감이 안 와. 데이터 소스와 컴포넌트 라이브러리는 이미 정해져 있어. 구현 전에 레이아웃 방향부터 나랑 맞춰줘.",
+      "expected_output": "The response treats the unresolved layout as a perceptual decision and resolves it by showing a low-fidelity representation of a few divergent directions for the user to react to — the one governing skeletal choice, not a bundle of detailed decisions — rather than describing the options in prose or asking the user to approve routine, already-settled choices.",
+      "files": [],
+      "expectations": [
+        "The response surfaces a concrete representation such as an ASCII wireframe or a low-fidelity mockup for the user to react to, rather than resolving the layout in prose alone.",
+        "It presents the one governing layout decision at low fidelity, not a fully detailed or styled design, and not the downstream component choices.",
+        "It does not bundle independent decisions into a single all-or-nothing artifact approved at once.",
+        "It does not ask about settled choices such as the data source or component library, and does not begin implementation before the direction is confirmed."
+      ]
+    }
+  ]
+}

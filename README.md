@@ -2,8 +2,9 @@
 
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
-Agent skills for sharpening plans and domain models. Small, composable, and
-model-agnostic — install the ones you want and make them your own.
+Agent skills for sharpening plans, domain models, and UI decisions. Small,
+composable, and model-agnostic — install the ones you want and make them your
+own.
 
 ## Install
 
@@ -40,12 +41,14 @@ claude plugin install toycrane-skills@toycrane
 
 ## Skills
 
-- **[clarify](./skills/clarify/SKILL.md)** — Clarify a plan or design through a
-  relentless, one-question-at-a-time interview, recording the decisions and
-  domain terms as docs (decision records + glossary) along the way.
+- **[clarify](./skills/clarify/SKILL.md)** — Align intent before action by
+  resolving only the consequential uncertainty in a plan or design, then
+  confirm the intended work in a concise alignment brief.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)** — Build and sharpen a
   project's domain model: pin down the ubiquitous language and record key
   decisions.
+- **[wireframe](./skills/wireframe/SKILL.md)** — Make a perceptual UI decision
+  falsifiable at the lowest fidelity that lets the user react to it.
 
 ## Local development
 
