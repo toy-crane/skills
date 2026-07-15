@@ -1,0 +1,33 @@
+{
+  "skill_name": "prototype",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/clarify\n웹 페이지 URL을 Markdown으로 변환해 LLM으로 바로 넘기는 서비스.\n\n## 사용자 흐름\n\n1. **입력** — URL 붙여넣기, 지우기 버튼으로 리셋\n2. **변환** — 본문을 Markdown으로 추출 *(defuddle 라이브러리 필수, https://defuddle.md/docs 참조)*\n3. **결과 확인** — 페이지 제목·저자 헤더 + 렌더링된 Markdown\n4. **내보내기**\n   - 복사하기 / .md 파일 다운로드\n   - ChatGPT·Claude로 열기 (프롬프트 선택적으로 앞에 붙이기)\n\n## 프롬프트\n- 프리셋: 요약해줘 / 한국어로 번역해줘 / 쉽게 설명해줘\n- 직접 입력: 프리셋 옆 \"직접 입력\" 선택 시 텍스트 인풋 노출, 1회용(저장하지 않음)\n\n## 기타\n- 다크모드 토글",
+      "expected_output": "The response follows clarify first: it investigates facts and resolves at most one consequential non-perceptual decision at a time. Once perceptual divergence governs, it hands off to a question-shaped prototype rather than a fixed low-fidelity wireframe, using two or three controlled variants and making component assumptions explicit. It does not begin production implementation or create a branch merely to archive the experiment.",
+      "files": [],
+      "expectations": [
+        "The response follows the clarify boundary and does not bypass unresolved consequential policy, lifecycle, or data semantics to start UI production work.",
+        "It names no more than one governing human decision at a time and keeps confirmed requirements fixed.",
+        "When a perceptual decision becomes governing, the proposed experiment uses two or three materially different controlled variants at sufficient mixed fidelity rather than imposing low visual fidelity.",
+        "The response prefers real application context and components when available; otherwise it declares the greenfield or standalone assumption and identifies material components as reused, composed, or proposed.",
+        "It treats branches or worktrees as optional isolation mechanisms and does not preserve the prototype on a branch by default.",
+        "It keeps prototype machinery disposable and separates a confirmed direction from production-quality implementation."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Continue the URL-to-Markdown /clarify case after the user confirms: 공개 HTML 페이지만 지원하고 로그인·구독·JavaScript 렌더링 페이지는 제외합니다. 서버가 URL을 가져와 Defuddle로 처리하고, 입력 URL·추출 본문·프롬프트·결과를 저장하지 않습니다. 앞서 적은 사용자 흐름 밖의 기능은 이번 버전에서 제외합니다. 이제 아직 정하지 않은 화면 방향을 비교할 수 있는 prototype을 보여주세요.",
+      "expected_output": "The prototype chooses the standalone branch because no host application or component library is supplied, names one governing perceptual question, and produces two or three controlled variants with representative Korean content and explicit proposed-component assumptions. It keeps the artifact disposable and does not create a branch merely to archive it.",
+      "files": [],
+      "expectations": [
+        "The run names one governing perceptual question and holds the confirmed public-page, server-fetch, no-storage, Defuddle, export, prompt, and dark-mode constraints fixed.",
+        "Because no host application or component library is supplied, it explicitly chooses the standalone branch rather than pretending to reuse production components.",
+        "It produces two or three structurally distinct controlled variants with descriptive labels and representative Korean content.",
+        "It classifies material components as reused, composed, or proposed and does not imply that proposed components already exist.",
+        "The artifact has sufficient visual quality for layout judgment, keeps one variant visible at a time, and exposes every variant through a working switcher.",
+        "It treats the artifact as disposable, does not create a branch merely to archive it, and keeps production implementation out of scope until a direction is confirmed."
+      ]
+    }
+  ]
+}
