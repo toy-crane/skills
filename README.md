@@ -40,9 +40,9 @@ claude plugin install toycrane-skills@toycrane
 
 ## Skills
 
-- **[clarify](./skills/clarify/SKILL.md)** — Clarify a plan or design through a
-  relentless, one-question-at-a-time interview, recording the decisions and
-  domain terms as docs (decision records + glossary) along the way.
+- **[clarify](./skills/clarify/SKILL.md)** — Align intent before action by
+  resolving only the consequential uncertainty in a plan or design, then
+  confirm the intended work in a concise alignment brief.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)** — Build and sharpen a
   project's domain model: pin down the ubiquitous language and record key
   decisions.
