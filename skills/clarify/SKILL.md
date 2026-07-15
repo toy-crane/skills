@@ -7,8 +7,6 @@ description: Align intent before action by resolving consequential uncertainty i
 
 Reach **minimum sufficient alignment** by resolving the consequential gaps between the user's intent and the work you intend to do, with human attention proportional to risk.
 
-Treat one clarification run as one issue. When the run produces or delegates file-backed artifacts, give the issue one short, stable kebab-case slug, use `artifacts/<issue-slug>/` as its artifact directory, and reuse that directory for the whole run.
-
 ## 1. Build the material decision map
 
 Do the legwork first: inspect the environment, existing artifacts, and authoritative sources for facts that would otherwise become questions. Extract the user's stated outcome, governing principles, hard constraints, and non-goals.
@@ -38,7 +36,7 @@ Use two kinds of question deliberately for non-perceptual decisions:
 
 Treat a terse confirmation as sufficient when the decision and its consequence were visible. When competing interpretations of a non-perceptual decision survive, make the choice concrete with a scenario or counterexample instead of accumulating approvals.
 
-When the unresolved divergence concerns interface presentation or interaction — what content is visible, how it is arranged, which state it shows, or how the user moves through it — use the `/wireframe` skill. Resolve policy, permissions, lifecycle, data semantics, and non-interface writing before the handoff. Carry forward the issue artifact directory along with the confirmed facts, constraints, and surviving interpretations. The wireframe owns choosing the governing perceptual decision, representing it in that issue directory, and obtaining the user's confirmation. Resume here with the confirmed decision and propagate it through the decision map.
+When the unresolved divergence concerns interface presentation or interaction — what content is visible, how it is arranged, which state it shows, or how the user moves through it — use the `/prototype` skill. Resolve policy, permissions, lifecycle, data semantics, and non-interface writing before the handoff. Carry forward the confirmed facts, constraints, and surviving interpretations. The prototype owns choosing the governing perceptual decision, making it directly judgeable through a disposable comparison, and obtaining the user's confirmation. Resume here with the confirmed decision and propagate it through the decision map.
 
 This step is complete when the user's principles select among the material interpretations and every remaining point is an Agent decision or Deferred.
 
@@ -64,6 +62,6 @@ Present a concise proposal:
 
 - Deferred scope, assumptions that remain changeable, and risks the user should know before work begins.
 
-Treat Human decisions confirmed during resolution, including through a wireframe, as settled. If a user correction or the synthesis reveals new material divergence, route it through step 2. Otherwise, the brief closes alignment and the requested work may begin. When clarification itself is the whole request, the brief is the completed result.
+Treat Human decisions confirmed during resolution, including through a prototype, as settled. If a user correction or the synthesis reveals new material divergence, route it through step 2. Otherwise, the brief closes alignment and the requested work may begin. When clarification itself is the whole request, the brief is the completed result.
 
 The skill is complete when the user can predict the material result, every Human decision has been explicitly confirmed at the point it was resolved, and every remaining point is an Agent decision or Deferred.

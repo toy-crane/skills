@@ -11,6 +11,7 @@ set -euo pipefail
 # Re-run this after adding, removing, or renaming a skill.
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
+CANONICAL_REPO="$(dirname "$(git -C "$REPO" rev-parse --git-common-dir)")"
 DESTS=("$HOME/.claude/skills" "$HOME/.agents/skills")
 
 # Collect the repo's skills once (any SKILL.md under skills/), link into every
@@ -22,6 +23,19 @@ while IFS= read -r -d '' skill_md; do
   names+=("$(basename "$src")")
   srcs+=("$src")
 done < <(find "$REPO/skills" -name SKILL.md -print0)
+
+is_current_skill() {
+  local candidate="$1"
+  local name
+
+  for name in "${names[@]}"; do
+    if [ "$candidate" = "$name" ]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
 
 for DEST in "${DESTS[@]}"; do
   # If $DEST is itself a symlink into this repo, the per-skill symlinks would
@@ -38,6 +52,24 @@ for DEST in "${DESTS[@]}"; do
   fi
 
   mkdir -p "$DEST"
+
+  # Remove links created by this repository when their source skill was
+  # removed or renamed. Leave every external link and real directory alone.
+  for target in "$DEST"/*; do
+    [ -L "$target" ] || continue
+    source="$(readlink "$target")"
+
+    case "$source" in
+      "$REPO/skills/"* | "$CANONICAL_REPO/skills/"*) ;;
+      *) continue ;;
+    esac
+
+    name="$(basename "$target")"
+    if ! is_current_skill "$name"; then
+      rm "$target"
+      echo "removed stale $name link ($DEST)"
+    fi
+  done
 
   for i in "${!names[@]}"; do
     name="${names[$i]}"

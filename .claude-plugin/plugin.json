@@ -1,7 +1,7 @@
 {
   "name": "toycrane-skills",
   "version": "0.1.7",
-  "description": "Agent skills for alignment, domain modeling, and low-fidelity UI prototyping.",
+  "description": "Agent skills for alignment, domain modeling, and product-experience prototyping.",
   "author": {
     "name": "toy-crane",
     "url": "https://github.com/toy-crane"
@@ -15,11 +15,11 @@
     "planning",
     "productivity",
     "prototyping",
-    "wireframe"
+    "prototype"
   ],
   "skills": [
     "./skills/clarify",
     "./skills/domain-modeling",
-    "./skills/wireframe"
+    "./skills/prototype"
   ]
 }

@@ -47,8 +47,8 @@ claude plugin install toycrane-skills@toycrane
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)** — Build and sharpen a
   project's domain model: pin down the ubiquitous language and record key
   decisions.
-- **[wireframe](./skills/wireframe/SKILL.md)** — Make a perceptual UI decision
-  falsifiable at the lowest fidelity that lets the user react to it.
+- **[prototype](./skills/prototype/SKILL.md)** — Make one consequential product
+  experience decision directly judgeable through a disposable comparison.
 
 ## Local development
 
