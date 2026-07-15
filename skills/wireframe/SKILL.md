@@ -21,13 +21,17 @@ This step is complete when every consequential non-perceptual prerequisite is re
 
 ## 2. Build the falsifiable representation
 
-Read [`assets/template.html`](./assets/template.html). Copy it to `artifacts/prototype.html`, replace its `LANG`, `TITLE`, `NAVIGATION`, and `SCREENS` markers, and preserve its screen-switching behavior.
+Use the issue artifact directory supplied by the calling skill. When no directory was supplied, derive a short, stable kebab-case slug from the issue in the current request and use `artifacts/<issue-slug>/`. Reuse the same directory whenever the work continues the same issue.
+
+Read [`assets/template.html`](./assets/template.html). Copy it to `<issue-artifact-directory>/index.html`, replace its `LANG`, `TITLE`, `NAVIGATION`, and `SCREENS` markers, and preserve its screen-switching behavior.
+
+Keep exactly one prototype file for the issue. Put every necessary screen and state in that self-contained `index.html`, and apply feedback by revising the same file. Do not create versioned or decision-specific prototype files.
 
 Start with one screen, one viewport, and one representative state. Add another screen, state, or interaction only when the governing decision cannot be judged without it. Use the user's language and representative content from the request.
 
 Treat the template's system font, four neutral color tokens, spacing, one-pixel borders, text labels, native controls, and simple placeholders as the visual ceiling. The result should read as deliberately unfinished while keeping hierarchy legible.
 
-This step is complete when `artifacts/prototype.html` is self-contained and every screen, state, and interaction bears on the governing decision.
+This step is complete when `<issue-artifact-directory>/index.html` is self-contained and every screen, state, and interaction bears on the governing decision.
 
 ## 3. Put it in front of the user
 
@@ -35,12 +39,12 @@ Present the prototype through the lightest project-agnostic surface available, i
 
 1. Render it with the host's native artifact or visualization capability.
 2. Open it as a file-backed page in the host's browser.
-3. Serve `artifacts/` with a standalone static file server.
+3. Serve the issue artifact directory with a standalone static file server.
 
 Keep the chosen surface independent of the host project's dependencies, build scripts, and configuration. Use publishing only when the user asks for a persistent or shareable URL.
 
 On that surface, verify that exactly one selected screen is visible, every material state is reachable, every required interaction works, and the console remains clear when the surface exposes it. Put the prototype in front of the user with the governing question.
 
-Apply feedback to the same prototype. Carry each confirmed decision forward as a constraint. When feedback conflicts with a confirmed decision, resolve the conflict before revising the prototype.
+Apply feedback to the same `index.html`. Carry each confirmed decision forward as a constraint. When feedback conflicts with a confirmed decision, resolve the conflict before revising the prototype.
 
 This step—and the skill—is complete when the checks pass and the user explicitly confirms the named governing perceptual decision.
