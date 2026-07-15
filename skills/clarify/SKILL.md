@@ -36,7 +36,7 @@ Use two kinds of question deliberately for non-perceptual decisions:
 
 Treat a terse confirmation as sufficient when the decision and its consequence were visible. When competing interpretations of a non-perceptual decision survive, make the choice concrete with a scenario or counterexample instead of accumulating approvals.
 
-When the unresolved divergence is perceptual — how something looks, reads, is laid out, or behaves — use the `/wireframe` skill. Carry forward the confirmed facts, constraints, and surviving interpretations. The wireframe owns choosing the governing perceptual decision, representing it, and obtaining the user's confirmation. Resume here with the confirmed decision and propagate it through the decision map.
+When the unresolved divergence concerns interface presentation or interaction — what content is visible, how it is arranged, which state it shows, or how the user moves through it — use the `/wireframe` skill. Resolve policy, permissions, lifecycle, data semantics, and non-interface writing before the handoff. Carry forward the confirmed facts, constraints, and surviving interpretations. The wireframe owns choosing the governing perceptual decision, representing it, and obtaining the user's confirmation. Resume here with the confirmed decision and propagate it through the decision map.
 
 This step is complete when the user's principles select among the material interpretations and every remaining point is an Agent decision or Deferred.
 

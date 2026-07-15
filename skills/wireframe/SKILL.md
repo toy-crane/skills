@@ -11,7 +11,7 @@ Turn perceptual uncertainty into a representation the user can react to. Work at
 
 Use the current request and conversation as input. Inspect existing UI and supplied references where they constrain the requested interface.
 
-Separate perceptual questions from consequential non-perceptual prerequisites. Carry resolved prerequisites forward as constraints. Surface any unresolved prerequisite before selecting a governing perceptual decision.
+Separate perceptual questions from consequential non-perceptual prerequisites. Carry resolved prerequisites forward as constraints. Return any unresolved prerequisite to the user or calling skill, and pause until it comes back as a confirmed constraint.
 
 Identify only the open questions whose plausible answers would materially change what the user sees or does. Choose the upstream question that collapses the most downstream choices, and make reversible defaults beneath it.
 
