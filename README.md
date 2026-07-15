@@ -64,14 +64,6 @@ immediately. Re-run the script after adding, removing, or renaming a skill.
 > Note: the script replaces any existing real directory of the same name in
 > those locations with a symlink into this repo.
 
-## Reference
-
-[`reference/writing-great-skills`](./reference/writing-great-skills) is a local
-copy of [`writing-great-skills`](https://github.com/mattpocock/skills) by
-[Matt Pocock](https://github.com/mattpocock) (MIT), kept for reference when
-authoring skills. It is **not** part of the published set (excluded from both
-skills.sh discovery and the plugin).
-
 ## License
 
 MIT — see [LICENSE](./LICENSE).
