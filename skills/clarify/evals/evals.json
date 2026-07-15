@@ -36,6 +36,18 @@
         "The brief includes excluded or deferred scope.",
         "The response asks what is misunderstood or should change and waits for explicit confirmation before implementation."
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "팀 대시보드 화면을 새로 만들려고 해. 지표 카드, 최근 활동 목록, 필터가 들어가는데 화면 배치를 아직 못 정했어 — 한 화면에 몰아넣을지, 좌우로 나눌지, 탭으로 가를지 감이 안 와. 데이터 소스와 컴포넌트 라이브러리는 이미 정해져 있어. 구현 전에 레이아웃 방향부터 나랑 맞춰줘.",
+      "expected_output": "The response treats the unresolved layout as a perceptual decision and resolves it by showing a low-fidelity representation of a few divergent directions for the user to react to — the one governing skeletal choice, not a bundle of detailed decisions — rather than describing the options in prose or asking the user to approve routine, already-settled choices.",
+      "files": [],
+      "expectations": [
+        "The response surfaces a concrete representation such as an ASCII wireframe or a low-fidelity mockup for the user to react to, rather than resolving the layout in prose alone.",
+        "It presents the one governing layout decision at low fidelity, not a fully detailed or styled design, and not the downstream component choices.",
+        "It does not bundle independent decisions into a single all-or-nothing artifact approved at once.",
+        "It does not ask about settled choices such as the data source or component library, and does not begin implementation before the direction is confirmed."
+      ]
     }
   ]
 }
