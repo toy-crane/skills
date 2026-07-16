@@ -14,6 +14,10 @@ _Avoid_: Widget, prototype, artifact as umbrella terms
 One of a small set of alternatives that differs on the governing decision while holding confirmed constraints fixed. Losing variants are discarded once the decision lands.
 _Avoid_: Mockup, option
 
+**Structural mirroring**:
+Rendering the interviewer's current understanding of a structure — a flow, its states, concept relationships — back to the user, so agreement is judged by looking instead of re-described in prose.
+_Avoid_: Diagramming
+
 **Spec**:
 The durable handoff document a clarify session writes as it ends: confirmed decisions, assumptions, deferred points, and remaining risks, addressed to a later implementation session. Decisions are the deliverable; visuals are not.
 _Avoid_: Alignment brief, summary
