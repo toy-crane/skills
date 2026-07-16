@@ -47,9 +47,9 @@ claude plugin install toycrane-skills@toycrane
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)** — Build and sharpen a
   project's domain model: pin down the ubiquitous language and record key
   decisions.
-- **[prototype](./skills/prototype/SKILL.md)** — Create a disposable comparison
-  only when seeing or trying alternatives is necessary to answer one product
-  experience question.
+- **[prototype](./skills/prototype/SKILL.md)** — Compare variants to settle one
+  experiential product question, folding each confirmed decision into the
+  issue's accumulating artifact.
 
 ## Local development
 
