@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: amended by [0003](./0003-six-alignment-theses.md)
 ---
 
 # Clarify orchestrates memory and prototypes
