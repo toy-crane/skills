@@ -1,4 +1,4 @@
 interface:
   display_name: "Prototype"
-  short_description: "Test one product-experience decision"
-  default_prompt: "Use $prototype to make my unresolved UI decision directly judgeable through a disposable comparison."
+  short_description: "Make one question directly judgeable"
+  default_prompt: "Use $prototype only if seeing or trying disposable alternatives will answer my unresolved product-experience question better than prose."

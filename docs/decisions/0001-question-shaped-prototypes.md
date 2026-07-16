@@ -14,4 +14,6 @@ The original `wireframe` skill made a project-independent, low-fidelity HTML art
 
 ## Consequences
 
-Existing products should host two or three controlled variants inside their real shell and reuse their components and representative data. Greenfield work may use a coherent standalone fallback. Components must be identified as reused, composed, or proposed instead of being silently invented. Branches and worktrees isolate risky prototype edits when needed; they do not preserve every discarded prototype by default. The confirmed direction and rationale are durable, while losing variants and prototype switchers are disposable.
+A prototype is warranted only when seeing or trying alternatives would answer the question more reliably than project evidence, established semantics, or prose. When it is warranted, existing products should use their real context and components where available; greenfield work may use a self-contained artifact with representative fake data. The comparison holds confirmed constraints fixed, stubs irrelevant behavior, and is disposable by default. Component provenance, fidelity, and repository isolation remain situational implementation judgments rather than mandatory user-facing ceremony.
+
+`clarify` owns the larger decision loop and returns to it after the user reacts. Durable terminology and qualifying decisions are persisted through `domain-modeling`; the prototype itself does not own project memory. See [0002](./0002-clarify-orchestrates-memory-and-prototypes.md).
