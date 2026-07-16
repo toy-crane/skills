@@ -1,4 +1,4 @@
 interface:
   display_name: "Prototype"
-  short_description: "Make one question directly judgeable"
-  default_prompt: "Use $prototype when a product question must be seen or tried rather than argued: compare variants, treat my reaction as the answer, and fold the decision into the issue artifact."
+  short_description: "Make experiential uncertainty judgeable"
+  default_prompt: "Use $prototype when something must be seen or tried rather than argued: compare variants, draft a strawman, or materialize the confirmed design, and treat my reaction as the answer."
