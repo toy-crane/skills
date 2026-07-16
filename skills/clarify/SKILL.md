@@ -11,16 +11,15 @@ questions hang on one principle, resolve the principle first and treat its
 instances as your own decisions. For each question, provide your recommended
 answer.
 
-Ask exactly one question per turn, never bundle multiple questions into one
-message, and wait for the response. A question must be answerable along one
-dimension: request only one fact, value, or choice and use one question mark.
-Do not hide a checklist of inputs beneath it.
+Ask exactly one question per turn and wait for the response. A question must
+be answerable along one dimension: request only one fact, value, or choice
+and use one question mark. Do not hide a checklist of inputs beneath it.
 
 If the codebase, existing documentation, or authoritative sources can answer
 a question, investigate instead of asking the user. When no source holds the
 answer to a technical question, manufacture the evidence with a spike or a
 benchmark. Decide yourself when divergence from the user's intent is
-unlikely, or cheap to detect and fix, and state the assumption.
+unlikely or cheap to detect and fix, and state the assumption.
 
 Match the medium to the kind of question. Settle propositional questions —
 facts, constraints, trade-offs — in prose. Settle experiential questions —
