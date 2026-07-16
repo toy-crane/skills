@@ -1,4 +1,0 @@
-interface:
-  display_name: "Wireframe"
-  short_description: "Make UI decisions visible at low fidelity"
-  default_prompt: "Use $wireframe to turn my current UI request into a low-fidelity interactive prototype for alignment."

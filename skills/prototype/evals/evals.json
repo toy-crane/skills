@@ -1,0 +1,45 @@
+{
+  "skill_name": "prototype",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/prototype 요약, 번역, 쉽게 설명 중 하나만 고르는 프롬프트 컨트롤이 필요해. 세 옵션은 항상 보여야 하고 즉시 적용돼. 디자인 시스템은 Select를 좁은 공간, Checkbox를 복수 선택, RadioGroup을 소수의 상호 배타적 선택에 쓰도록 정해뒀어. 드롭다운, 그룹 버튼, 체크박스를 비교하는 프로토타입을 만들어야 할까?",
+      "expected_output": "The response returns the design-system answer instead of building an artifact: use the existing single-choice group pattern. It explains briefly why the established semantics settle the question and does not manufacture alternatives merely because prototype was invoked.",
+      "files": [],
+      "expectations": [
+        "The response declines to build a prototype because established interaction semantics already answer the question.",
+        "It recommends the existing RadioGroup or equivalent group control.",
+        "It explains why checkbox and dropdown conflict with the confirmed selection and visibility constraints.",
+        "It does not create variants, an experiment profile, or a preservation branch."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/prototype 기존 결과 화면에서 LLM 작업을 항상 펼쳐둘지, 'LLM으로 열기'를 누른 뒤 보여줄지 실제로 비교하고 싶어. Markdown 읽기가 기본 작업이고 LLM 전송이 두 번째 작업이라는 점, 기존 셸·컴포넌트·대표 데이터는 그대로 유지해. 이 한 질문만 판단할 수 있게 만들어줘.",
+      "expected_output": "The response creates the cheapest in-context comparison with two materially different alternatives, changing only the reveal behavior. It stubs irrelevant writes, asks the user to react, and states that the resulting learning returns to clarify or the caller. It does not impose provenance, fidelity, or branch-reporting ceremony.",
+      "files": [],
+      "expectations": [
+        "The artifact compares persistent LLM controls against controls revealed on demand while holding every other confirmed constraint fixed.",
+        "It uses the existing product context and components when available and representative data rather than redesigning the page.",
+        "Irrelevant backend or mutation behavior is stubbed.",
+        "The response asks for the user's reaction and is prepared to state what that reaction reveals.",
+        "It does not treat the prototype as production code or preserve it by default.",
+        "It does not require an experiment profile, component-provenance inventory, or dedicated branch report."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/prototype 공개 URL을 Defuddle로 Markdown으로 바꾸는 새 서비스라 아직 제품 코드와 디자인 시스템이 없어. 결과 화면에서 프롬프트 프리셋을 본문 위에 둘지, 'LLM으로 열기' 흐름 안에 둘지는 실제로 봐야 판단할 수 있어. 제목, 저자, Markdown 미리보기, 복사, md 다운로드, ChatGPT와 Claude 열기, 직접 입력, 다크 모드 요구사항은 고정하고 이 한 질문만 비교해줘.",
+      "expected_output": "With no host product available, the response builds a self-contained disposable comparison using representative Korean fake data. Two or three alternatives differ materially only in prompt placement, every fixed requirement remains represented, and irrelevant extraction or export behavior is stubbed. The response asks for a reaction rather than presenting the artifact as a deliverable.",
+      "files": [],
+      "expectations": [
+        "The artifact is self-contained because no real product context or component library exists.",
+        "It uses representative Korean fake content and stubs Defuddle, export, and external LLM behavior that is irrelevant to prompt placement.",
+        "It presents two or three alternatives that differ materially on prompt placement while holding the other requirements fixed.",
+        "It maintains enough coherence to judge the question without defaulting to deliberately low visual fidelity.",
+        "It asks the user to react and returns the learning to the calling workflow.",
+        "It does not create or preserve a branch merely to archive the prototype."
+      ]
+    }
+  ]
+}

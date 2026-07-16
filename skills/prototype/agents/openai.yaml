@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prototype"
+  short_description: "Make one question directly judgeable"
+  default_prompt: "Use $prototype only if seeing or trying disposable alternatives will answer my unresolved product-experience question better than prose."

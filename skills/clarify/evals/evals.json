@@ -3,50 +3,66 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "웹 페이지 URL을 Markdown으로 바꿔서 ChatGPT나 Claude로 넘기는 작은 서비스를 만들고 싶어. 공개 페이지를 대상으로 하고, 본문 추출에는 Defuddle을 써야 해. URL 입력, 결과 미리보기, 복사와 다운로드, LLM으로 열기, 다크 모드가 필요해. 구현 전에 나와 요구사항을 명확히 해줘.",
-      "expected_output": "The first response investigates or reasons from the supplied facts, then asks at most one question whose answer could materially change the product. It does not ask the user to approve routine implementation limits or tool choices.",
+      "prompt": "/clarify\n웹 페이지 URL을 Markdown으로 변환해 LLM으로 바로 넘기는 서비스.\n\n## 사용자 흐름\n1. URL 붙여넣기, 지우기 버튼으로 리셋\n2. 본문을 Markdown으로 추출 (Defuddle 필수, https://defuddle.md/docs 참조)\n3. 페이지 제목·저자 헤더 + 렌더링된 Markdown 확인\n4. 복사하기 / .md 다운로드 / ChatGPT·Claude로 열기\n\n프롬프트는 요약, 한국어 번역, 쉽게 설명 프리셋과 1회용 직접 입력을 지원하고 다크 모드가 필요해.",
+      "expected_output": "The response begins a grill-style interview grounded in the supplied requirements and Defuddle documentation. It asks exactly one consequential upstream question, includes a recommended answer and rationale, and waits instead of implementing or opening a broad prototype immediately.",
       "files": [],
       "expectations": [
-        "The response asks no more than one question.",
-        "The question targets a consequential product boundary, user goal, or costly trade-off.",
-        "The response does not ask about routine defaults such as timeout seconds, response size, redirect count, DOM library, or test framework.",
-        "The response does not begin implementation before shared understanding is confirmed."
+        "The response asks exactly one question and waits for the user's answer.",
+        "The question addresses a material unresolved branch rather than a routine implementation detail.",
+        "The response provides a recommended answer with a concise reason.",
+        "It treats the supplied requirements and authoritative Defuddle documentation as facts to investigate rather than questions for the user.",
+        "It does not begin production implementation or prototype the entire product."
       ]
     },
     {
       "id": 2,
-      "prompt": "우리 결제 시스템을 다음 분기에 Stripe에서 Adyen으로 옮기려고 해. 기존 구독자와 환불 데이터가 있고 결제 실패율이 올라가면 안 돼. 아직 전환 방식은 정하지 않았어. 이 계획을 스트레스 테스트해줘.",
-      "expected_output": "The response identifies the unresolved migration strategy as consequential and asks one neutral upstream discovery question rather than leading with a preferred architecture.",
+      "prompt": "/clarify 기존 프로젝트 메모리에서는 유료 계정을 Member라고 부르지만, 팀은 이제 Subscriber로 통일하기로 확정했어. 이 결정은 프로젝트 용어집에 바로 반영하고, 이어서 기존 Member의 권한 이전 정책을 나와 정리해줘.",
+      "expected_output": "The response uses domain-modeling during the session: it persists the already-resolved terminology change immediately, notes the conflict with prior memory, then asks one upstream permissions question with a recommendation. It does not postpone all memory work until a final summary.",
       "files": [],
       "expectations": [
-        "The response asks no more than one question.",
-        "The question exposes an upstream migration priority or constraint that would collapse downstream choices.",
-        "The response does not recommend a migration strategy before learning the governing preference.",
-        "The response leaves implementation untouched pending alignment."
+        "The response treats Subscriber as a resolved canonical term and invokes or performs the domain-memory update before continuing.",
+        "It explicitly reconciles or challenges the conflicting prior Member terminology.",
+        "After the memory update, it asks no more than one permissions question.",
+        "The question includes a recommended answer and rationale.",
+        "It does not claim that the prototype skill owns or writes durable project memory."
       ]
     },
     {
       "id": 3,
-      "prompt": "구현 전에 마지막으로 정렬만 확인해줘. 공개 HTML 페이지만 지원하고 로그인 페이지와 JavaScript 렌더링은 제외한다. 결과는 저장하지 않고 읽기 전용이다. 변환은 서버의 Defuddle로 처리한다. 복사와 md 다운로드를 제공하고, ChatGPT와 Claude 버튼은 문서를 클립보드에 복사한 뒤 새 탭을 연다. UI는 한국어 단일 열 미니멀 디자인이다. 이 범위 밖의 기능은 이번 버전에서 만들지 않는다.",
-      "expected_output": "Because the material choices are already resolved, the response skips further interviewing and presents a concise alignment brief that separates confirmed intent, the proposed approach, and boundaries before asking for correction and final confirmation.",
+      "prompt": "/clarify 프롬프트 프리셋 세 개 중 정확히 하나를 고르게 하려 해. 세 옵션은 항상 보여야 하고 선택 즉시 적용돼. 우리 디자인 시스템 문서에는 Select는 공간이 부족할 때, Checkbox는 복수 선택, RadioGroup은 소수의 상호 배타적 옵션에 쓴다고 적혀 있어. 드롭다운, 그룹 버튼, 체크박스 중 뭘 쓸지 정해줘.",
+      "expected_output": "The response resolves the control from established interaction semantics without asking the user to judge a prototype. It recommends the existing single-choice group pattern, states the assumption that the choice is reversible and implied by the design system, and continues only if another material branch remains.",
       "files": [],
       "expectations": [
-        "The response presents a concise alignment brief instead of inventing more detailed questions.",
-        "The brief distinguishes confirmed user intent from the agent's proposed approach.",
-        "The brief includes excluded or deferred scope.",
-        "The response asks what is misunderstood or should change and waits for explicit confirmation before implementation."
+        "The response uses the supplied design-system semantics instead of asking the user to choose among controls.",
+        "It rejects checkbox because the options are mutually exclusive and avoids a dropdown because all three options should remain visible.",
+        "It recommends the established RadioGroup or equivalent existing group control.",
+        "It does not invoke or propose a prototype for a question already answered by project evidence.",
+        "It states any relevant reversible assumption."
       ]
     },
     {
       "id": 4,
-      "prompt": "팀 대시보드 화면을 새로 만들려고 해. 지표 카드, 최근 활동 목록, 필터가 들어가는데 화면 배치를 아직 못 정했어 — 한 화면에 몰아넣을지, 좌우로 나눌지, 탭으로 가를지 감이 안 와. 데이터 소스와 컴포넌트 라이브러리는 이미 정해져 있어. 구현 전에 레이아웃 방향부터 나랑 맞춰줘.",
-      "expected_output": "The response treats the unresolved layout as a perceptual decision and resolves it by showing a low-fidelity representation of a few divergent directions for the user to react to — the one governing skeletal choice, not a bundle of detailed decisions — rather than describing the options in prose or asking the user to approve routine, already-settled choices.",
+      "prompt": "/clarify 결과 화면의 핵심 작업은 Markdown 읽기와 LLM으로 보내기야. 기존 컴포넌트와 데이터는 정해졌는데, LLM 작업을 기본 화면에 펼칠지 버튼을 누른 뒤 열지 실제로 보기 전에는 판단이 안 돼. 이 한 가지를 비교해서 결정하고 인터뷰를 계속해줘.",
+      "expected_output": "The response invokes prototype for the single perceptual question, keeping the confirmed components, data, and workflows fixed. It obtains the user's reaction, translates that reaction into a decision, persists durable learning through domain-modeling, and resumes clarify rather than handing ownership of the whole process to prototype.",
       "files": [],
       "expectations": [
-        "The response surfaces a concrete representation such as an ASCII wireframe or a low-fidelity mockup for the user to react to, rather than resolving the layout in prose alone.",
-        "It presents the one governing layout decision at low fidelity, not a fully detailed or styled design, and not the downstream component choices.",
-        "It does not bundle independent decisions into a single all-or-nothing artifact approved at once.",
-        "It does not ask about settled choices such as the data source or component library, and does not begin implementation before the direction is confirmed."
+        "The prototype scope is limited to whether the LLM workflow is persistent or revealed on demand.",
+        "It compares two or three materially different alternatives in the real product context when available.",
+        "It asks for a reaction rather than requesting approval of an experiment profile.",
+        "It returns the learned decision to clarify and uses domain-modeling for any durable memory update.",
+        "It does not broaden the prototype to redesign the whole result page."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/clarify 모든 결정을 마쳤어. 공개 HTML의 최초 응답만 Defuddle로 변환하고, 입력과 결과는 저장하지 않아. 복사와 md 다운로드를 지원하며, ChatGPT와 Claude는 프롬프트와 Markdown을 클립보드에 복사한 뒤 새 탭으로 연다. 동적 페이지와 로그인 페이지는 제외해. 이제 정리해줘.",
+      "expected_output": "Because all material branches are resolved, the response stops interviewing and summarizes confirmed decisions, rationale, assumptions, deferred or excluded scope, and remaining risks. It does not force a named alignment-brief template or invent further questions.",
+      "files": [],
+      "expectations": [
+        "The response asks no new question when no material branch remains.",
+        "It summarizes the confirmed decisions and their rationale.",
+        "It identifies assumptions, excluded or deferred scope, and remaining risks where applicable.",
+        "It does not require a fixed alignment-brief format or another confirmation ceremony."
       ]
     }
   ]
