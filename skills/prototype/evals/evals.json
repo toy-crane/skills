@@ -16,29 +16,42 @@
     {
       "id": 2,
       "prompt": "/prototype 기존 결과 화면에서 LLM 작업을 항상 펼쳐둘지, 'LLM으로 열기'를 누른 뒤 보여줄지 실제로 비교하고 싶어. Markdown 읽기가 기본 작업이고 LLM 전송이 두 번째 작업이라는 점, 기존 셸·컴포넌트·대표 데이터는 그대로 유지해. 이 한 질문만 판단할 수 있게 만들어줘.",
-      "expected_output": "The response creates the cheapest in-context comparison with two materially different alternatives, changing only the reveal behavior. It stubs irrelevant writes, asks the user to react, and states that the resulting learning returns to clarify or the caller. It does not impose provenance, fidelity, or branch-reporting ceremony.",
+      "expected_output": "The response creates the cheapest in-context comparison with two materially different variants, changing only the reveal behavior. It stubs irrelevant writes, asks the user to react, and states that the resulting learning returns to clarify or the caller. It does not impose provenance, fidelity, or branch-reporting ceremony.",
       "files": [],
       "expectations": [
         "The artifact compares persistent LLM controls against controls revealed on demand while holding every other confirmed constraint fixed.",
         "It uses the existing product context and components when available and representative data rather than redesigning the page.",
         "Irrelevant backend or mutation behavior is stubbed.",
         "The response asks for the user's reaction and is prepared to state what that reaction reveals.",
-        "It does not treat the prototype as production code or preserve it by default.",
+        "It folds the confirmed choice into the issue artifact and discards the losing variant, without treating either as production code.",
         "It does not require an experiment profile, component-provenance inventory, or dedicated branch report."
       ]
     },
     {
       "id": 3,
       "prompt": "/prototype 공개 URL을 Defuddle로 Markdown으로 바꾸는 새 서비스라 아직 제품 코드와 디자인 시스템이 없어. 결과 화면에서 프롬프트 프리셋을 본문 위에 둘지, 'LLM으로 열기' 흐름 안에 둘지는 실제로 봐야 판단할 수 있어. 제목, 저자, Markdown 미리보기, 복사, md 다운로드, ChatGPT와 Claude 열기, 직접 입력, 다크 모드 요구사항은 고정하고 이 한 질문만 비교해줘.",
-      "expected_output": "With no host product available, the response builds a self-contained disposable comparison using representative Korean fake data. Two or three alternatives differ materially only in prompt placement, every fixed requirement remains represented, and irrelevant extraction or export behavior is stubbed. The response asks for a reaction rather than presenting the artifact as a deliverable.",
+      "expected_output": "With no host product available, the response builds a self-contained comparison using representative Korean fake data. Two or three variants differ materially only in prompt placement, every fixed requirement remains represented, and irrelevant extraction or export behavior is stubbed. The response asks for a reaction rather than presenting the comparison as settled.",
       "files": [],
       "expectations": [
         "The artifact is self-contained because no real product context or component library exists.",
         "It uses representative Korean fake content and stubs Defuddle, export, and external LLM behavior that is irrelevant to prompt placement.",
-        "It presents two or three alternatives that differ materially on prompt placement while holding the other requirements fixed.",
+        "It presents two or three variants that differ materially on prompt placement while holding the other requirements fixed.",
         "It maintains enough coherence to judge the question without defaulting to deliberately low visual fidelity.",
         "It asks the user to react and returns the learning to the calling workflow.",
         "It does not create or preserve a branch merely to archive the prototype."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/prototype artifacts/url-to-md/ 이슈를 이어서 진행해. 헤더 밀도는 지난 비교에서 제목·저자·읽기 시간 구성으로 확정했어. 이번에는 프리셋 선택 영역을 본문 위에 고정할지, 스크롤하면 상단에 붙게 할지 이 한 가지만 비교해줘.",
+      "expected_output": "The response reuses the existing issue artifact instead of starting a new location, keeps the confirmed header fixed in every variant, and varies only the preset placement. After the user reacts it folds the chosen placement into the issue artifact and discards the losing variant.",
+      "files": [],
+      "expectations": [
+        "It reuses artifacts/url-to-md/ rather than creating a new artifact location.",
+        "Every variant keeps the confirmed header composition fixed.",
+        "The variants differ materially only on preset placement.",
+        "It asks for the user's reaction to settle the one question.",
+        "It folds the confirmed choice into the issue artifact and discards the losing variants."
       ]
     }
   ]
