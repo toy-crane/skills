@@ -25,55 +25,56 @@
         "It explicitly reconciles or challenges the conflicting prior Member terminology.",
         "After the glossary update, it asks no more than one permissions question.",
         "The question includes a recommended answer and rationale.",
-        "It does not claim that the prototype skill owns or writes the glossary or decision records."
+        "It records the glossary change itself instead of postponing it to the final summary or delegating it to another skill."
       ]
     },
     {
       "id": 3,
       "prompt": "/clarify 프롬프트 프리셋 세 개 중 정확히 하나를 고르게 하려 해. 세 옵션은 항상 보여야 하고 선택 즉시 적용돼. 우리 디자인 시스템 문서에는 Select는 공간이 부족할 때, Checkbox는 복수 선택, RadioGroup은 소수의 상호 배타적 옵션에 쓴다고 적혀 있어. 드롭다운, 그룹 버튼, 체크박스 중 뭘 쓸지 정해줘.",
-      "expected_output": "The response resolves the control from established interaction semantics without asking the user to judge a prototype. It recommends the existing single-choice group pattern, states the assumption that the choice is implied by the design system, and continues only if another material branch remains.",
+      "expected_output": "The response resolves the control from established interaction semantics without rendering anything for the user to judge. It recommends the existing single-choice group pattern, states the assumption that the choice is implied by the design system, and continues only if another material branch remains.",
       "files": [],
       "expectations": [
         "The response uses the supplied design-system semantics instead of asking the user to choose among controls.",
         "It rejects checkbox because the options are mutually exclusive and avoids a dropdown because all three options should remain visible.",
         "It recommends the established RadioGroup or equivalent existing group control.",
-        "It does not invoke or propose a prototype for a question already answered by project evidence.",
+        "It does not render variants for a question already answered by project evidence.",
         "It states any relevant assumption it decided alone."
       ]
     },
     {
       "id": 4,
       "prompt": "/clarify 결과 화면의 핵심 작업은 Markdown 읽기와 LLM으로 보내기야. 기존 컴포넌트와 데이터는 정해졌는데, LLM 작업을 기본 화면에 펼칠지 버튼을 누른 뒤 열지 실제로 보기 전에는 판단이 안 돼. 이 한 가지를 비교해서 결정하고 인터뷰를 계속해줘.",
-      "expected_output": "The response invokes prototype for the single experiential question, keeping the confirmed components, data, and workflows fixed. It obtains the user's reaction, translates that reaction into a decision, records durable learning through domain-modeling, and resumes clarify rather than handing ownership of the whole process to prototype.",
+      "expected_output": "The response classifies this as an experiential question and renders two or three variants — the LLM workflow persistent versus revealed on demand — in an available visual medium, keeping the confirmed components and data fixed. It asks for the user's reaction, translates the reaction into a recorded decision, and resumes the interview.",
       "files": [],
       "expectations": [
-        "The prototype scope is limited to whether the LLM workflow is persistent or revealed on demand.",
-        "It compares two or three materially different variants in the real product context when available.",
-        "It asks for a reaction rather than requesting approval of an experiment profile.",
-        "It returns the learned decision to clarify and uses domain-modeling to record any durable outcome.",
-        "It does not broaden the prototype to redesign the whole result page."
+        "The comparison is limited to whether the LLM workflow is persistent or revealed on demand.",
+        "It renders two or three materially different variants in an available visual medium instead of describing them in prose.",
+        "It asks for a reaction rather than approval of a plan to build something.",
+        "It translates the reaction into a decision, records durable outcomes through domain-modeling, and continues the interview.",
+        "It does not broaden the render into redesigning the whole result page."
       ]
     },
     {
       "id": 5,
       "prompt": "/clarify 모든 결정을 마쳤어. 공개 HTML의 최초 응답만 Defuddle로 변환하고, 입력과 결과는 저장하지 않아. 복사와 md 다운로드를 지원하며, ChatGPT와 Claude는 프롬프트와 Markdown을 클립보드에 복사한 뒤 새 탭으로 연다. 동적 페이지와 로그인 페이지는 제외해. 이제 정리해줘.",
-      "expected_output": "Because all material branches are resolved, the response stops interviewing and summarizes confirmed decisions, rationale, assumptions, deferred or excluded scope, and remaining risks. It does not force a named alignment-brief template or invent further questions.",
+      "expected_output": "Because all material branches are resolved, the response stops interviewing, summarizes confirmed decisions, rationale, assumptions, deferred or excluded scope, and remaining risks, and materializes that content as a spec dossier at docs/specs/<slug>/spec.md. It does not force a named alignment-brief template or invent further questions.",
       "files": [],
       "expectations": [
         "The response asks no new question when no material branch remains.",
         "It summarizes the confirmed decisions and their rationale.",
         "It identifies assumptions, excluded or deferred scope, and remaining risks where applicable.",
+        "It writes the confirmed decisions to a docs/specs/<slug>/spec.md dossier for a later implementation session.",
         "It does not require a fixed alignment-brief format or another confirmation ceremony."
       ]
     },
     {
       "id": 6,
       "prompt": "/clarify 변환 결과 화면의 컴포넌트와 대표 데이터는 확정됐어. 남은 건 결과 헤더야. 제목, 저자, 날짜, 원본 링크, 예상 읽기 시간까지 다 보여줄지, 제목과 저자만 남길지 아직 못 정했어. 계속 진행해줘.",
-      "expected_output": "The response classifies header density as an experiential question and reaches prototype without being asked to show anything: it presents two or three variants differing only in header density, keeps confirmed components and data fixed, and requests the user's reaction as the answer.",
+      "expected_output": "The response classifies header density as an experiential question and renders without being asked to show anything: two or three variants differing only in header density, with confirmed components and data fixed, requesting the user's reaction as the answer.",
       "files": [],
       "expectations": [
         "It treats header density as a question judged by looking rather than one to argue in prose.",
-        "It invokes or performs prototype although the user never asked to see alternatives.",
+        "It renders the comparison although the user never asked to see alternatives.",
         "The variants differ materially only in header density while confirmed components and data stay fixed.",
         "It requests the user's reaction as the answer to this one question.",
         "It does not ask the user to imagine or verbally compare the alternatives."
@@ -81,14 +82,26 @@
     },
     {
       "id": 7,
-      "prompt": "/clarify 헤더 밀도는 프로토타입 비교에서 제목·저자·읽기 시간 구성으로 확정했고 artifacts/url-to-md/에 반영돼 있어. 나머지 결정도 모두 끝났어. 이제 마무리해줘.",
-      "expected_output": "Because every material branch is resolved and the session settled an experiential question, the response summarizes confirmed decisions, rationale, assumptions, deferred scope, and remaining risks, and delivers the issue artifact's final state at artifacts/url-to-md/ as part of the deliverable instead of discarding it.",
+      "prompt": "/clarify 헤더 밀도는 변형 비교에서 제목·저자·읽기 시간 구성으로 확정했어. 나머지 결정도 모두 끝났어. 이제 마무리해줘.",
+      "expected_output": "Because every material branch is resolved, the response summarizes confirmed decisions, rationale, assumptions, deferred scope, and remaining risks, and writes the spec dossier at docs/specs/<slug>/spec.md as the session's deliverable. The comparison renders stay disposable scaffolding rather than deliverables.",
       "files": [],
       "expectations": [
         "The response asks no new question.",
         "It summarizes confirmed decisions, rationale, assumptions, and remaining risks.",
-        "It names artifacts/url-to-md/ and presents its final state as the session deliverable.",
-        "It does not treat the issue artifact as production code."
+        "It materializes the summary as a spec dossier at docs/specs/<slug>/spec.md.",
+        "It treats the earlier comparison renders as disposable scaffolding, not as deliverables to hand over."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "/clarify 남은 결정은 하나야. 무료 플랜의 프로젝트 개수 제한을 3개로 할지 5개로 할지 아직 못 정했어. 과금 정책 문서는 아직 없고, 요금제 페이지 컴포넌트는 확정됐어. 계속 진행해줘.",
+      "expected_output": "The response treats the plan limit as a propositional trade-off and settles it in prose: exactly one question with a recommended answer and rationale, and no rendering of any visual medium for a question prose answers in one round.",
+      "files": [],
+      "expectations": [
+        "The response asks exactly one question with a recommended answer and rationale.",
+        "It settles the question in prose without rendering any visual medium.",
+        "It does not produce a diagram, mockup, or variant comparison for this propositional choice.",
+        "It does not invent additional questions beyond the single remaining branch."
       ]
     }
   ]

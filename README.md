@@ -42,8 +42,10 @@ claude plugin install toycrane-skills@toycrane
 ## Skills
 
 - **[clarify](./skills/clarify/SKILL.md)** — Interview toward shared
-  understanding, grounding each decision in project evidence and maintaining
-  the project's glossary and decision records along the way.
+  understanding, grounding each decision in project evidence, settling visual
+  questions through whatever medium the environment renders, maintaining the
+  project's glossary and decision records along the way, and closing with a
+  spec dossier a later session can implement from.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)** — Build and sharpen a
   project's domain model: pin down the ubiquitous language and record key
   decisions.
