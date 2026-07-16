@@ -65,16 +65,16 @@ Replace and add:
 
 ## Implementation tasks
 
-- [ ] Rewrite `skills/clarify/SKILL.md` to the clauses above.
-- [ ] Update its `description:` frontmatter (visual media + spec output).
-- [ ] Rewrite evals #3, #4, #6, #7 around medium language (no `/prototype`,
+- [x] Rewrite `skills/clarify/SKILL.md` to the clauses above.
+- [x] Update its `description:` frontmatter (spec-handoff trigger branch added).
+- [x] Rewrite evals #3, #4, #6, #7 around medium language (no `/prototype`,
       no `artifacts/<issue-slug>/`); extend #5 and #7 to expect the spec
-      dossier; fix #2's "prototype owns the glossary" wording; add a negative
-      eval: a prose-sufficient question must not get a render.
-- [ ] Revisit `agents/openai.yaml` default_prompt (mention spec handoff).
-- [ ] Optionally extend README's clarify blurb with the spec-dossier close.
-- [ ] Bump `.claude-plugin/plugin.json` version (published behavior change)
-      and run `claude plugin validate . --strict`.
+      dossier; fix #2's "prototype owns the glossary" wording; add negative
+      eval #8: a prose-sufficient question must not get a render.
+- [x] Revisit `agents/openai.yaml` default_prompt (mention spec handoff).
+- [x] Extend README's clarify blurb with the spec-dossier close.
+- [x] Bump `.claude-plugin/plugin.json` to 0.3.0; `claude plugin validate
+      . --strict` passes.
 
 ## Assumptions
 
