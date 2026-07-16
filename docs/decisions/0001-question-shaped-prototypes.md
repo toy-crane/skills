@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: amended by [0004](./0004-prototype-draft-and-finish-runs.md)
 ---
 
 # Replace low-fidelity wireframes with question-shaped prototypes
