@@ -16,7 +16,7 @@
     {
       "id": 2,
       "prompt": "/prototype 기존 결과 화면에서 LLM 작업을 항상 펼쳐둘지, 'LLM으로 열기'를 누른 뒤 보여줄지 실제로 비교하고 싶어. Markdown 읽기가 기본 작업이고 LLM 전송이 두 번째 작업이라는 점, 기존 셸·컴포넌트·대표 데이터는 그대로 유지해. 이 한 질문만 판단할 수 있게 만들어줘.",
-      "expected_output": "The response creates the cheapest in-context comparison with two materially different variants, changing only the reveal behavior. It stubs irrelevant writes, asks the user to react, and states that the resulting learning returns to clarify or the caller. It does not impose provenance, fidelity, or branch-reporting ceremony.",
+      "expected_output": "The response creates the cheapest in-context comparison with two materially different variants, changing only the reveal behavior. It stubs irrelevant writes, asks the user to react, and states what the reaction reveals. It does not impose provenance, fidelity, or branch-reporting ceremony.",
       "files": [],
       "expectations": [
         "The artifact compares persistent LLM controls against controls revealed on demand while holding every other confirmed constraint fixed.",
@@ -37,7 +37,7 @@
         "It uses representative Korean fake content and stubs Defuddle, export, and external LLM behavior that is irrelevant to prompt placement.",
         "It presents two or three variants that differ materially on prompt placement while holding the other requirements fixed.",
         "It maintains enough coherence to judge the question without defaulting to deliberately low visual fidelity.",
-        "It asks the user to react and returns the learning to the calling workflow.",
+        "It asks the user to react and states what the reaction reveals.",
         "It does not create or preserve a branch merely to archive the prototype."
       ]
     },
@@ -52,6 +52,32 @@
         "The variants differ materially only on preset placement.",
         "It asks for the user's reaction to settle the one question.",
         "It folds the confirmed choice into the issue artifact and discards the losing variants."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/prototype 우리 팀 주간 회고를 정리해주는 내부 도구를 만들려고 해. 화면이 어때야 할지 아직 감이 전혀 없어. 회고 항목은 잘된 점, 아쉬운 점, 액션 아이템이야. 말로 물어보지 말고 일단 구체적인 걸 보여주면 반응하면서 정할게.",
+      "expected_output": "With no governing fork identified, the response builds a single strawman from the stated requirements instead of variants or a prose interview. The draft covers the three retro sections with representative fake data at shippable visual quality, and it invites the user's reaction, ready to record what each reaction confirms.",
+      "files": [],
+      "expectations": [
+        "The response builds one strawman rather than multiple variants, because no governing fork has been identified.",
+        "The draft covers the stated sections (잘된 점, 아쉬운 점, 액션 아이템) with representative fake data.",
+        "It invites the user's reaction instead of asking abstract preference questions first.",
+        "The build has the visual credibility of a shippable product rather than a gray-box wireframe.",
+        "It treats reactions as decisions to record rather than objections to argue against."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "/prototype artifacts/url-to-md/ 이슈의 결정이 전부 끝났어. 헤더는 제목·저자·읽기 시간 구성, 프리셋 선택은 본문 위 라디오, 다크 모드 토글은 헤더 오른쪽으로 확정했어. 이제 확정안 전체를 클릭해볼 수 있는 한 화면으로 완성해줘.",
+      "expected_output": "Because every decision is confirmed, the response materializes the issue artifact's final state: one clickable composition reflecting all confirmed decisions, with representative data and no alternative variants. It reopens nothing and presents the result as the session's deliverable — a record of confirmed decisions, not production code.",
+      "files": [],
+      "expectations": [
+        "The response builds exactly one composition reflecting every confirmed decision, with no alternative variants.",
+        "It completes artifacts/url-to-md/ rather than creating a new artifact location.",
+        "It does not reopen or offer options on any confirmed decision.",
+        "The composition is clickable with representative data and shippable-level styling.",
+        "It presents the result as the issue artifact's final state, a record of confirmed decisions rather than production code."
       ]
     }
   ]
