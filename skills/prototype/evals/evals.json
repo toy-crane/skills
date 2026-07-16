@@ -3,30 +3,42 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "/clarify\n웹 페이지 URL을 Markdown으로 변환해 LLM으로 바로 넘기는 서비스.\n\n## 사용자 흐름\n\n1. **입력** — URL 붙여넣기, 지우기 버튼으로 리셋\n2. **변환** — 본문을 Markdown으로 추출 *(defuddle 라이브러리 필수, https://defuddle.md/docs 참조)*\n3. **결과 확인** — 페이지 제목·저자 헤더 + 렌더링된 Markdown\n4. **내보내기**\n   - 복사하기 / .md 파일 다운로드\n   - ChatGPT·Claude로 열기 (프롬프트 선택적으로 앞에 붙이기)\n\n## 프롬프트\n- 프리셋: 요약해줘 / 한국어로 번역해줘 / 쉽게 설명해줘\n- 직접 입력: 프리셋 옆 \"직접 입력\" 선택 시 텍스트 인풋 노출, 1회용(저장하지 않음)\n\n## 기타\n- 다크모드 토글",
-      "expected_output": "The response follows clarify first: it investigates facts and resolves at most one consequential non-perceptual decision at a time. Once perceptual divergence governs, it hands off to a question-shaped prototype rather than a fixed low-fidelity wireframe, using two or three controlled variants and making component assumptions explicit. It does not begin production implementation or create a branch merely to archive the experiment.",
+      "prompt": "/prototype 요약, 번역, 쉽게 설명 중 하나만 고르는 프롬프트 컨트롤이 필요해. 세 옵션은 항상 보여야 하고 즉시 적용돼. 디자인 시스템은 Select를 좁은 공간, Checkbox를 복수 선택, RadioGroup을 소수의 상호 배타적 선택에 쓰도록 정해뒀어. 드롭다운, 그룹 버튼, 체크박스를 비교하는 프로토타입을 만들어야 할까?",
+      "expected_output": "The response returns the design-system answer instead of building an artifact: use the existing single-choice group pattern. It explains briefly why the established semantics settle the question and does not manufacture alternatives merely because prototype was invoked.",
       "files": [],
       "expectations": [
-        "The response follows the clarify boundary and does not bypass unresolved consequential policy, lifecycle, or data semantics to start UI production work.",
-        "It names no more than one governing human decision at a time and keeps confirmed requirements fixed.",
-        "When a perceptual decision becomes governing, the proposed experiment uses two or three materially different controlled variants at sufficient mixed fidelity rather than imposing low visual fidelity.",
-        "The response prefers real application context and components when available; otherwise it declares the greenfield or standalone assumption and identifies material components as reused, composed, or proposed.",
-        "It treats branches or worktrees as optional isolation mechanisms and does not preserve the prototype on a branch by default.",
-        "It keeps prototype machinery disposable and separates a confirmed direction from production-quality implementation."
+        "The response declines to build a prototype because established interaction semantics already answer the question.",
+        "It recommends the existing RadioGroup or equivalent group control.",
+        "It explains why checkbox and dropdown conflict with the confirmed selection and visibility constraints.",
+        "It does not create variants, an experiment profile, or a preservation branch."
       ]
     },
     {
       "id": 2,
-      "prompt": "Continue the URL-to-Markdown /clarify case after the user confirms: 공개 HTML 페이지만 지원하고 로그인·구독·JavaScript 렌더링 페이지는 제외합니다. 서버가 URL을 가져와 Defuddle로 처리하고, 입력 URL·추출 본문·프롬프트·결과를 저장하지 않습니다. 앞서 적은 사용자 흐름 밖의 기능은 이번 버전에서 제외합니다. 이제 아직 정하지 않은 화면 방향을 비교할 수 있는 prototype을 보여주세요.",
-      "expected_output": "The prototype chooses the standalone branch because no host application or component library is supplied, names one governing perceptual question, and produces two or three controlled variants with representative Korean content and explicit proposed-component assumptions. It keeps the artifact disposable and does not create a branch merely to archive it.",
+      "prompt": "/prototype 기존 결과 화면에서 LLM 작업을 항상 펼쳐둘지, 'LLM으로 열기'를 누른 뒤 보여줄지 실제로 비교하고 싶어. Markdown 읽기가 기본 작업이고 LLM 전송이 두 번째 작업이라는 점, 기존 셸·컴포넌트·대표 데이터는 그대로 유지해. 이 한 질문만 판단할 수 있게 만들어줘.",
+      "expected_output": "The response creates the cheapest in-context comparison with two materially different alternatives, changing only the reveal behavior. It stubs irrelevant writes, asks the user to react, and states that the resulting learning returns to clarify or the caller. It does not impose provenance, fidelity, or branch-reporting ceremony.",
       "files": [],
       "expectations": [
-        "The run names one governing perceptual question and holds the confirmed public-page, server-fetch, no-storage, Defuddle, export, prompt, and dark-mode constraints fixed.",
-        "Because no host application or component library is supplied, it explicitly chooses the standalone branch rather than pretending to reuse production components.",
-        "It produces two or three structurally distinct controlled variants with descriptive labels and representative Korean content.",
-        "It classifies material components as reused, composed, or proposed and does not imply that proposed components already exist.",
-        "The artifact has sufficient visual quality for layout judgment, keeps one variant visible at a time, and exposes every variant through a working switcher.",
-        "It treats the artifact as disposable, does not create a branch merely to archive it, and keeps production implementation out of scope until a direction is confirmed."
+        "The artifact compares persistent LLM controls against controls revealed on demand while holding every other confirmed constraint fixed.",
+        "It uses the existing product context and components when available and representative data rather than redesigning the page.",
+        "Irrelevant backend or mutation behavior is stubbed.",
+        "The response asks for the user's reaction and is prepared to state what that reaction reveals.",
+        "It does not treat the prototype as production code or preserve it by default.",
+        "It does not require an experiment profile, component-provenance inventory, or dedicated branch report."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/prototype 공개 URL을 Defuddle로 Markdown으로 바꾸는 새 서비스라 아직 제품 코드와 디자인 시스템이 없어. 결과 화면에서 프롬프트 프리셋을 본문 위에 둘지, 'LLM으로 열기' 흐름 안에 둘지는 실제로 봐야 판단할 수 있어. 제목, 저자, Markdown 미리보기, 복사, md 다운로드, ChatGPT와 Claude 열기, 직접 입력, 다크 모드 요구사항은 고정하고 이 한 질문만 비교해줘.",
+      "expected_output": "With no host product available, the response builds a self-contained disposable comparison using representative Korean fake data. Two or three alternatives differ materially only in prompt placement, every fixed requirement remains represented, and irrelevant extraction or export behavior is stubbed. The response asks for a reaction rather than presenting the artifact as a deliverable.",
+      "files": [],
+      "expectations": [
+        "The artifact is self-contained because no real product context or component library exists.",
+        "It uses representative Korean fake content and stubs Defuddle, export, and external LLM behavior that is irrelevant to prompt placement.",
+        "It presents two or three alternatives that differ materially on prompt placement while holding the other requirements fixed.",
+        "It maintains enough coherence to judge the question without defaulting to deliberately low visual fidelity.",
+        "It asks the user to react and returns the learning to the calling workflow.",
+        "It does not create or preserve a branch merely to archive the prototype."
       ]
     }
   ]
