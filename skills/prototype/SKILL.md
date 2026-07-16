@@ -16,7 +16,10 @@ Otherwise, keep the confirmed constraints fixed and show two or three
 materially different variants. Prefer the real product context and existing
 components when available; otherwise use a self-contained artifact with
 representative fake data. Stub everything irrelevant to the question, and
-state fidelity and stubbing choices as assumptions.
+state fidelity and stubbing choices as assumptions. Give every variant the
+visual credibility of a shippable product — brand presence, real components,
+representative content. Cheapness bounds the scope, never the craft, and the
+artifact renders in the product's own styling rather than the host surface's.
 
 Keep one artifact per issue — the issue artifact, at
 `artifacts/<issue-slug>/` — and build each comparison on the decisions it
