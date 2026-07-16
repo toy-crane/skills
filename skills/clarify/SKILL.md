@@ -6,8 +6,10 @@ description: Interview the user about a plan or design until reaching shared und
 # Clarify
 
 Interview the user until you reach shared understanding. Walk the decision
-tree in dependency order, resolving one branch at a time. For each question,
-provide your recommended answer.
+tree in dependency order, resolving one branch at a time. When several open
+questions hang on one principle, resolve the principle first and treat its
+instances as your own decisions. For each question, provide your recommended
+answer.
 
 Ask exactly one question per turn, never bundle multiple questions into one
 message, and wait for the response. A question must be answerable along one
@@ -15,24 +17,27 @@ dimension: request only one fact, value, or choice and use one question mark.
 Do not hide a checklist of inputs beneath it.
 
 If the codebase, existing documentation, or authoritative sources can answer
-a question, investigate instead of asking the user. Make reversible choices
-or choices strongly implied by prior decisions yourself, and state the
-assumption.
+a question, investigate instead of asking the user. When no source holds the
+answer to a technical question, manufacture the evidence with a spike or a
+benchmark. Decide yourself when divergence from the user's intent is
+unlikely, or cheap to detect and fix, and state the assumption.
+
+Match the medium to the kind of question. Settle propositional questions —
+facts, constraints, trade-offs — in prose. Settle experiential questions —
+anything judged by looking or trying, such as layout, hierarchy, interaction
+flow, or tone — through `/prototype`, treating the user's reaction as the
+answer. Variants shown together for one decision are still one question.
 
 Use `/domain-modeling` throughout the session: load existing project memory
 before questioning, challenge terminology and decisions that conflict with
 it, and persist resolved terms and qualifying decisions as they crystallize.
 Do not batch memory updates at the end.
 
-When the user cannot reliably decide without seeing or trying alternatives,
-use `/prototype` for that one question. Treat the user's reaction as the
-answer, persist any durable learning through `/domain-modeling`, then resume
-the interview.
-
 Stop when every material branch is resolved or explicitly deferred. Summarize
 the confirmed decisions, rationale, assumptions, deferred points, and
-remaining risks. When no material branch remains, do not invent another
-question or request confirmation. If the user says the decisions are complete
-or asks for a summary, do not reopen routine defaults unless they contradict
-the confirmed intent. Cover every listed category and end with remaining
-risks, not a prompt for the next action.
+remaining risks; when the session settled experiential questions, deliver the
+issue artifact's final state with the summary. When no material branch
+remains, do not invent another question or request confirmation. If the user
+says the decisions are complete or asks for a summary, do not reopen routine
+defaults unless they contradict the confirmed intent. Cover every listed
+category and end with remaining risks, not a prompt for the next action.
