@@ -1,4 +1,4 @@
 interface:
   display_name: "Prototype"
   short_description: "Make one question directly judgeable"
-  default_prompt: "Use $prototype only if seeing or trying disposable alternatives will answer my unresolved product-experience question better than prose."
+  default_prompt: "Use $prototype when a product question must be seen or tried rather than argued: compare variants, treat my reaction as the answer, and fold the decision into the issue artifact."
