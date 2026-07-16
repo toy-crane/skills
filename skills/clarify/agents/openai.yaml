@@ -1,4 +1,4 @@
 interface:
   display_name: "Clarify"
   short_description: "Interview toward shared understanding"
-  default_prompt: "Use $clarify to interview me one decision at a time, maintain project memory, and reach shared understanding before implementation."
+  default_prompt: "Use $clarify to interview me one decision at a time, maintain the glossary and decision records, and reach shared understanding before implementation."

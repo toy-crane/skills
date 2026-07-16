@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: Interview the user about a plan or design until reaching shared understanding, while challenging it against project evidence and maintaining durable domain memory. Use when the user wants to clarify, align, or stress-test something before implementation.
+description: Interview the user about a plan or design until reaching shared understanding, while challenging it against project evidence and maintaining the project's glossary and decision records. Use when the user wants to clarify, align, or stress-test something before implementation.
 ---
 
 # Clarify
@@ -27,10 +27,11 @@ anything judged by looking or trying, such as layout, hierarchy, interaction
 flow, or tone — through `/prototype`, treating the user's reaction as the
 answer. Variants shown together for one decision are still one question.
 
-Use `/domain-modeling` throughout the session: load existing project memory
-before questioning, challenge terminology and decisions that conflict with
-it, and persist resolved terms and qualifying decisions as they crystallize.
-Do not batch memory updates at the end.
+Invoke the `domain-modeling` skill before the first question and follow it
+throughout the session: read `GLOSSARY.md` and `docs/decisions/` before
+questioning, challenge terminology and decisions that conflict with them,
+and record resolved terms and qualifying decisions there the moment they
+crystallize.
 
 Stop when every material branch is resolved or explicitly deferred. Summarize
 the confirmed decisions, rationale, assumptions, deferred points, and

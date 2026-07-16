@@ -43,7 +43,7 @@ claude plugin install toycrane-skills@toycrane
 
 - **[clarify](./skills/clarify/SKILL.md)** — Interview toward shared
   understanding, grounding each decision in project evidence and maintaining
-  durable domain memory along the way.
+  the project's glossary and decision records along the way.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)** — Build and sharpen a
   project's domain model: pin down the ubiquitous language and record key
   decisions.

@@ -11,20 +11,21 @@
         "The question addresses a material unresolved branch rather than a routine implementation detail.",
         "The response provides a recommended answer with a concise reason.",
         "It treats the supplied requirements and authoritative Defuddle documentation as facts to investigate rather than questions for the user.",
+        "It invokes the domain-modeling skill before asking its first question.",
         "It does not begin production implementation or prototype the entire product."
       ]
     },
     {
       "id": 2,
-      "prompt": "/clarify 기존 프로젝트 메모리에서는 유료 계정을 Member라고 부르지만, 팀은 이제 Subscriber로 통일하기로 확정했어. 이 결정은 프로젝트 용어집에 바로 반영하고, 이어서 기존 Member의 권한 이전 정책을 나와 정리해줘.",
-      "expected_output": "The response uses domain-modeling during the session: it persists the already-resolved terminology change immediately, notes the conflict with prior memory, then asks one upstream permissions question with a recommendation. It does not postpone all memory work until a final summary.",
+      "prompt": "/clarify 기존 용어집에서는 유료 계정을 Member라고 부르지만, 팀은 이제 Subscriber로 통일하기로 확정했어. 이 결정은 용어집에 바로 반영하고, 이어서 기존 Member의 권한 이전 정책을 나와 정리해줘.",
+      "expected_output": "The response uses domain-modeling during the session: it records the already-resolved terminology change in the glossary immediately, notes the conflict with the prior term, then asks one upstream permissions question with a recommendation. It does not postpone glossary or decision-record updates until a final summary.",
       "files": [],
       "expectations": [
-        "The response treats Subscriber as a resolved canonical term and invokes or performs the domain-memory update before continuing.",
+        "The response treats Subscriber as a resolved canonical term and updates GLOSSARY.md before continuing.",
         "It explicitly reconciles or challenges the conflicting prior Member terminology.",
-        "After the memory update, it asks no more than one permissions question.",
+        "After the glossary update, it asks no more than one permissions question.",
         "The question includes a recommended answer and rationale.",
-        "It does not claim that the prototype skill owns or writes durable project memory."
+        "It does not claim that the prototype skill owns or writes the glossary or decision records."
       ]
     },
     {
@@ -43,13 +44,13 @@
     {
       "id": 4,
       "prompt": "/clarify 결과 화면의 핵심 작업은 Markdown 읽기와 LLM으로 보내기야. 기존 컴포넌트와 데이터는 정해졌는데, LLM 작업을 기본 화면에 펼칠지 버튼을 누른 뒤 열지 실제로 보기 전에는 판단이 안 돼. 이 한 가지를 비교해서 결정하고 인터뷰를 계속해줘.",
-      "expected_output": "The response invokes prototype for the single experiential question, keeping the confirmed components, data, and workflows fixed. It obtains the user's reaction, translates that reaction into a decision, persists durable learning through domain-modeling, and resumes clarify rather than handing ownership of the whole process to prototype.",
+      "expected_output": "The response invokes prototype for the single experiential question, keeping the confirmed components, data, and workflows fixed. It obtains the user's reaction, translates that reaction into a decision, records durable learning through domain-modeling, and resumes clarify rather than handing ownership of the whole process to prototype.",
       "files": [],
       "expectations": [
         "The prototype scope is limited to whether the LLM workflow is persistent or revealed on demand.",
         "It compares two or three materially different variants in the real product context when available.",
         "It asks for a reaction rather than requesting approval of an experiment profile.",
-        "It returns the learned decision to clarify and uses domain-modeling for any durable memory update.",
+        "It returns the learned decision to clarify and uses domain-modeling to record any durable outcome.",
         "It does not broaden the prototype to redesign the whole result page."
       ]
     },
