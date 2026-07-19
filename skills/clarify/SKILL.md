@@ -5,48 +5,51 @@ description: Interview the user about a plan or design until reaching shared und
 
 # Clarify
 
-Interview the user until you reach shared understanding. Walk the decision
-tree in dependency order, resolving one branch at a time. When several open
-questions hang on one principle, resolve the principle first and treat its
-instances as your own decisions. For each question, provide your recommended
-answer.
+Interview the user until you reach shared understanding. The interview
+exists to extract what lives only in the user's head, so close every
+branch you can without them. Investigate the codebase, documentation,
+and authoritative sources, and when no source holds the answer to a
+technical question, manufacture the evidence with a spike or a
+benchmark.
 
-Ask exactly one question per turn and wait for the response. A question must
-be answerable along one dimension: request only one fact, value, or choice
-and use one question mark.
+Every move is a draft: put forward a concrete candidate for the user to
+correct, because people mark up a draft far more reliably than they fill
+a blank page. The draft takes the shape the question demands:
 
-If the codebase, existing documentation, or authoritative sources can answer
-a question, investigate instead of asking the user. When no source holds the
-answer to a technical question, manufacture the evidence with a spike or a
-benchmark. Decide yourself when divergence from the user's intent is
-unlikely or cheap to detect and fix, and state the assumption.
+- When divergence from the user's intent is unlikely, or cheap to
+  detect and fix, the decision is yours to make. State it as an
+  assumption under standing veto.
+- A branch that is expensive to get wrong becomes a question carrying
+  your recommended answer. Ask exactly one per turn, requesting one
+  fact, value, or choice with one question mark, and wait for the
+  response.
+- An experiential question (anything judged by looking or trying:
+  layout, interaction flow, tone) becomes two or three rendered
+  variants that differ only on the governing question, with the user's
+  reaction serving as the answer.
+- A structure whose confirmation would take two or more rounds of
+  prose (a flow, its states, how concepts relate) becomes one diagram
+  mirroring your understanding back.
 
-Settle propositional questions — facts, constraints, trade-offs — in prose.
-Settle experiential questions — anything judged by looking or trying, such
-as layout, hierarchy, interaction flow, or tone — by rendering two or three
-variants that differ only on the governing question, treating the user's
-reaction as the answer. Variants shown together for one decision are still
-one question. When confirming a structure — a flow, its states, how concepts
-relate — would take two or more rounds of prose, mirror your understanding
-back as one rendered diagram and treat the user's correction as the answer.
-Everything else stays prose.
-
-Render in whatever visual medium the environment provides — an inline
-widget, an artifact page, a local HTML file the user opens — choosing the
-cheapest medium sufficient for the question. Visuals are disposable
-scaffolding: the decision they draw out is what survives. A question no
-available medium can settle is deferred explicitly as a remaining risk.
+Everything else stays prose. Render in whatever visual medium the
+environment provides (an inline widget, an artifact page, a local HTML
+file the user opens), choosing the cheapest medium sufficient for the
+question. Visuals are disposable scaffolding: the decision they draw
+out is what survives. A question no available medium can settle is
+deferred explicitly as a remaining risk.
 
 Invoke the `domain-modeling` skill and read `GLOSSARY.md` and
 `docs/decisions/` before the first question; follow it throughout the
 session.
 
-Stop when every material branch is resolved or explicitly deferred and go
-straight to the summary: confirmed decisions, rationale, assumptions,
-deferred points, and remaining risks. When the session confirmed decisions
-bound for implementation, materialize that same content as the dossier
-`docs/specs/<slug>/spec.md` (kebab-case slug, folder created lazily) so a
-later session can implement from it alone. If the user says the decisions
-are complete, take them at their word: reopen a routine default only when it
-contradicts the confirmed intent. Cover every listed category and end with
-remaining risks, not a prompt for the next action.
+Stop when every material branch is resolved or explicitly deferred and
+go straight to the summary: confirmed decisions, rationale, assumptions,
+deferred points, and remaining risks. When the session confirmed
+decisions bound for implementation, materialize that same content as the
+dossier `docs/specs/<slug>/spec.md` (kebab-case slug, folder created
+lazily) so a later session can implement from it alone. The spec holds
+decisions, not implementation instructions. If the user says the
+decisions are complete, take them at their word: reopen a routine
+default only when it contradicts the confirmed intent. Cover every
+listed category and end with remaining risks, not a prompt for the next
+action.

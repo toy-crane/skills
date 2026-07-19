@@ -2,9 +2,8 @@
 
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
-Agent skills for sharpening plans, domain models, and UI decisions. Small,
-composable, and model-agnostic — install the ones you want and make them your
-own.
+Agent skills for sharpening plans and domain models. Small, composable, and
+model-agnostic: install the ones you want and make them your own.
 
 ## Install
 
@@ -23,7 +22,7 @@ Pick the skills and the coding agents you want to install them on.
 ### Claude Code plugin (managed bundle)
 
 Installs the whole set as a read-only bundle that updates when a new version
-ships — you subscribe rather than fork.
+ships; you subscribe rather than fork.
 
 Inside Claude Code:
 
@@ -41,18 +40,15 @@ claude plugin install toycrane-skills@toycrane
 
 ## Skills
 
-- **[clarify](./skills/clarify/SKILL.md)** — Interview toward shared
-  understanding, grounding each decision in project evidence, settling visual
-  questions through whatever medium the environment renders, maintaining the
-  project's glossary and decision records along the way, and closing with a
-  spec dossier a later session can implement from.
-- **[domain-modeling](./skills/domain-modeling/SKILL.md)** — Build and sharpen a
-  project's domain model: pin down the ubiquitous language and record key
-  decisions.
-- **[prototype](./skills/prototype/SKILL.md)** — Make experiential uncertainty
-  judgeable with disposable builds (compare variants, draft a strawman, or
-  materialize the confirmed design), folding confirmed decisions into the
-  issue's accumulating artifact.
+- **[clarify](./skills/clarify/SKILL.md)**: Interview toward shared
+  understanding through drafts (stated assumptions you can veto, recommended
+  answers you can correct, rendered variants you react to), grounding each
+  decision in project evidence, maintaining the project's glossary and
+  decision records along the way, and closing with a spec dossier a later
+  session can implement from.
+- **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
+  a project's domain model, pinning down the ubiquitous language and
+  recording key decisions.
 
 ## Local development
 
@@ -73,4 +69,4 @@ immediately. Re-run the script after adding, removing, or renaming a skill.
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT. See [LICENSE](./LICENSE).

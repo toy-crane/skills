@@ -20,14 +20,14 @@ rounds), and stay portable (a published skill cannot assume any specific tool).
 ## Confirmed decisions
 
 1. **Two jobs for visuals**: settling experiential questions, and structural
-   mirroring of complex understanding. Not a third — everything else is prose.
+   mirroring of complex understanding. Not a third; everything else is prose.
 2. **Capability language, never tool names**: "whatever visual medium the
-   environment provides — an inline widget, an artifact page, a local HTML
-   file." The skill must not name a concrete tool or API.
+   environment provides (an inline widget, an artifact page, a local HTML
+   file)." The skill must not name a concrete tool or API.
 3. **Cheapest sufficient medium first**; escalate fidelity only when the
    question itself demands it (e.g. real look-and-feel needs project CSS).
 4. **Defer as last resort**: a question no available medium can settle is
-   named as such and recorded under remaining risks — never approximated into
+   named as such and recorded under remaining risks, never approximated into
    a false confirmation.
 5. **Visuals are disposable scaffolding**. The deliverable is decisions:
    chat summary + `GLOSSARY.md` + `docs/decisions/` + `spec.md`. Byproduct
@@ -52,8 +52,8 @@ question; domain-modeling integration; the no-invented-questions stop rules.
 Replace and add:
 
 - The medium-matching paragraph: propositional questions settle in prose;
-  experiential questions settle by rendering 2–3 variants — differing only on
-  the governing question — in the cheapest sufficient visual medium, with the
+  experiential questions settle by rendering 2–3 variants, differing only on
+  the governing question, in the cheapest sufficient visual medium, with the
   user's reaction as the answer. Variants shown together remain one question.
 - A structural-mirroring clause carrying the ≥2-prose-rounds threshold.
 - The capability sentence (decision 2) with graceful degradation: no visual

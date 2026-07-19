@@ -1,6 +1,6 @@
 # Glossary Format
 
-`GLOSSARY.md` lives at the repo root and holds the project's canonical vocabulary — nothing else.
+`GLOSSARY.md` lives at the repo root and holds the project's canonical vocabulary and nothing else.
 
 ## Structure
 

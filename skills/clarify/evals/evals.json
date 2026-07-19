@@ -44,7 +44,7 @@
     {
       "id": 4,
       "prompt": "/clarify 결과 화면의 핵심 작업은 Markdown 읽기와 LLM으로 보내기야. 기존 컴포넌트와 데이터는 정해졌는데, LLM 작업을 기본 화면에 펼칠지 버튼을 누른 뒤 열지 실제로 보기 전에는 판단이 안 돼. 이 한 가지를 비교해서 결정하고 인터뷰를 계속해줘.",
-      "expected_output": "The response classifies this as an experiential question and renders two or three variants — the LLM workflow persistent versus revealed on demand — in an available visual medium, keeping the confirmed components and data fixed. It asks for the user's reaction, translates the reaction into a recorded decision, and resumes the interview.",
+      "expected_output": "The response classifies this as an experiential question and renders two or three variants (the LLM workflow persistent versus revealed on demand) in an available visual medium, keeping the confirmed components and data fixed. It asks for the user's reaction, translates the reaction into a recorded decision, and resumes the interview.",
       "files": [],
       "expectations": [
         "The comparison is limited to whether the LLM workflow is persistent or revealed on demand.",
