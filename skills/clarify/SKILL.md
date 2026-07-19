@@ -26,7 +26,9 @@ a blank page. The draft takes the shape the question demands:
 - An experiential question (anything judged by looking or trying:
   layout, interaction flow, tone) becomes two or three rendered
   variants that differ only on the governing question, with the user's
-  reaction serving as the answer.
+  reaction serving as the answer. When the question outgrows variants
+  (a whole surface rather than one choice), invoke the `prototype`
+  skill.
 - A structure whose confirmation would take two or more rounds of
   prose (a flow, its states, how concepts relate) becomes one diagram
   mirroring your understanding back.
