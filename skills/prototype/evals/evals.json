@@ -1,0 +1,102 @@
+{
+  "skill_name": "prototype",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/prototype 북마크한 아티클을 모아 매주 다이제스트로 보내주는 웹앱을 만들려고 해. 화면부터 보면서 정하고 싶어.",
+      "expected_output": "The response proposes a screen inventory as a correctable draft, then builds one self-contained HTML file containing every proposed screen at skeleton fidelity (shared :root tokens, a screen switcher, numbered badges) and walks the user through the surface asking for reactions. It does not scaffold the production app.",
+      "files": [],
+      "expectations": [
+        "It proposes the screen inventory as a draft to correct instead of asking the user to enumerate screens.",
+        "It builds one self-contained HTML file holding every proposed screen, not one file per screen.",
+        "The file carries shared design tokens, a screen switcher, and numbered badges, with no build step, framework, or network dependency.",
+        "The first pass stays at skeleton fidelity: layout, navigation, key elements, representative data.",
+        "It walks the user through the whole surface and requests reactions rather than approval of a plan.",
+        "It does not write project-stack or production code."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/prototype 방금 뼈대 봤어. 3번(다이제스트 미리보기)을 홈 최상단으로 올리고, 5번 구독 설정은 별도 화면 말고 홈의 모달로 바꿔줘. 나머지는 그대로.",
+      "expected_output": "The response maps the numbered feedback to the right blocks, applies exactly those two structural changes while holding everything else fixed, and re-renders the same single file still at skeleton fidelity.",
+      "files": [],
+      "expectations": [
+        "It maps the badge numbers to the intended blocks and applies both changes.",
+        "Every other screen and settled element stays fixed.",
+        "It stays in the skeleton pass instead of starting the fill.",
+        "The prototype remains one self-contained file on the shared tokens."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/prototype 뼈대는 승인이야. 이제 채워줘.",
+      "expected_output": "The response fills the approved structure with realistic dummy data (no lorem ipsum) and wires a state switcher exposing edge states such as empty, longest plausible text, and error, then invites a screen-by-screen review.",
+      "files": [],
+      "expectations": [
+        "It fills the approved structure without reopening settled layout decisions.",
+        "Dummy data is realistic: real-length names, plausible sentences, awkward numbers, and no lorem ipsum.",
+        "A state switcher exposes edge states (empty, longest plausible text, error) where they matter.",
+        "It invites review of the filled screens rather than declaring the prototype finished unilaterally."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/prototype 홈 상단의 다이제스트 미리보기 말인데, 카드 그리드가 나을지 리스트가 나을지 우리 둘 다 확신이 없어.",
+      "expected_output": "The response treats this as a contested detail and renders two or three variants differing only on the grid-versus-list treatment, holding every confirmed element fixed, and asks for the user's reaction as the answer before folding the winner back into the prototype.",
+      "files": [],
+      "expectations": [
+        "It renders two or three variants differing only on the contested treatment.",
+        "Confirmed screens and elements stay fixed across the variants.",
+        "It requests the user's reaction as the answer instead of arguing the choice in prose.",
+        "It folds the chosen variant back into the single prototype file."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/prototype 모든 화면 승인이야. 원본 아티클 보관 기능은 이번에는 보류하기로 했고. 마무리해줘.",
+      "expected_output": "The response closes the session: it records the settled decisions in docs/specs/<slug>/spec.md (created in the dossier shape when missing), saves the approved surface as docs/specs/<slug>/prototype.html linked from the spec, records the archive feature as explicitly deferred, and presents spec plus prototype as the handoff.",
+      "files": [],
+      "expectations": [
+        "It records the settled decisions in docs/specs/<slug>/spec.md, creating it in the dossier shape when missing.",
+        "It saves the approved surface as docs/specs/<slug>/prototype.html and links it from the spec.",
+        "The deferred archive feature is recorded explicitly rather than silently dropped.",
+        "It hands off the spec and prototype together and does not treat the prototype as production code."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "/prototype 새로 만들 CLI 도구의 서브커맨드 구조랑 터미널 출력 형식을 프로토타입으로 정렬하고 싶어.",
+      "expected_output": "The response states that CLI and TUI interfaces are outside this skill's scope, does not build an HTML mockup of a terminal, and points to a prose or clarify-style path for settling the question.",
+      "files": [],
+      "expectations": [
+        "It states that CLI and TUI interfaces are outside this skill's scope.",
+        "It does not build an HTML mockup of a terminal.",
+        "It offers a prose or clarify-style path for the question instead."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "/prototype 지금 레포에 있는 대시보드 앱에 알림 센터를 추가하려고 해. 화면으로 먼저 정렬하자.",
+      "expected_output": "The response inspects the existing app's styling, extracts its design language (color, type, spacing, component shapes) into the prototype's tokens so the new screens read as the existing product, reads GLOSSARY.md and any existing spec dossier first, and proposes the notification-center screen set as a correctable draft.",
+      "files": [],
+      "expectations": [
+        "It inspects the existing app's styling and extracts its design language into the prototype's tokens.",
+        "The new screens read as the existing product rather than a generic style.",
+        "It reads GLOSSARY.md and any existing spec dossier before proposing the inventory.",
+        "It proposes the screen set as a correctable draft."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "/prototype 더미 데이터 말고 실제 우리 API를 붙여서 보여줘. 그래야 진짜 느낌이 날 것 같아.",
+      "expected_output": "The response keeps the prototype on dummy data: real data, latency, and production wiring are not what the alignment is about. It offers a cheaper alternative such as dummy content mirroring the API's real shapes, and stays within the single-file, no-network constraint.",
+      "files": [],
+      "expectations": [
+        "It keeps the prototype on dummy data and does not wire the real API.",
+        "It explains that real data and production wiring are not the alignment target.",
+        "It offers a cheaper alternative, such as realistic dummy content mirroring the API's shapes.",
+        "It stays within the single-file, no-network constraint."
+      ]
+    }
+  ]
+}

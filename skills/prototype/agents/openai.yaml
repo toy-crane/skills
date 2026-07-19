@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prototype"
+  short_description: "Align on UI by building every screen"
+  default_prompt: "Use $prototype to build every screen of this feature as one dummy-data HTML file I react to: propose the screen list as a draft, walk me through a skeleton pass, then fill with realistic data and edge states. Number the blocks so I can point, and close by saving the approved surface beside the spec."

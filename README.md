@@ -2,8 +2,9 @@
 
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
-Agent skills for sharpening plans and domain models. Small, composable, and
-model-agnostic: install the ones you want and make them your own.
+Agent skills for sharpening plans, screens, and domain models. Small,
+composable, and model-agnostic: install the ones you want and make them your
+own.
 
 ## Install
 
@@ -49,6 +50,11 @@ claude plugin install toycrane-skills@toycrane
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.
+- **[prototype](./skills/prototype/SKILL.md)**: Align on UI by building it:
+  every screen of a feature in one dummy-data HTML file (shared tokens,
+  numbered blocks for pointing, state and viewport toggles), walked through
+  as a skeleton first, filled after approval, and preserved beside the spec
+  for the implementing session.
 
 ## Local development
 

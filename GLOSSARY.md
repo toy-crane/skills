@@ -18,10 +18,14 @@ _Avoid_: Widget, prototype, artifact as umbrella terms
 One of a small set of alternatives that differs on the governing decision while holding confirmed constraints fixed. Losing variants are discarded once the decision lands.
 _Avoid_: Mockup, option
 
+**Prototype**:
+The full-surface build: every screen a feature needs in one self-contained HTML file with shared design tokens, dummy data, numbered blocks, and state toggles, built skeleton first and filled after approval. Where a variant settles one question, the prototype surfaces the questions nobody knew to ask; the approved file survives beside the spec as its visual half.
+_Avoid_: Mockup, wireframe, demo
+
 **Structural mirroring**:
 Rendering the interviewer's current understanding of a structure (a flow, its states, concept relationships) back to the user, so agreement is judged by looking instead of re-described in prose.
 _Avoid_: Diagramming
 
 **Spec**:
-The durable handoff document a clarify session writes as it ends: confirmed decisions, assumptions, deferred points, and remaining risks, addressed to a later implementation session. Decisions are the deliverable; visuals are not.
+The durable handoff document a clarify or prototype session writes as it ends: confirmed decisions, assumptions, deferred points, and remaining risks, addressed to a later implementation session. Decisions are the deliverable; visuals are disposable, except an approved prototype, preserved beside the spec as its visual half.
 _Avoid_: Alignment brief, summary
