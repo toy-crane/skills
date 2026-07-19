@@ -3,8 +3,8 @@ set -euo pipefail
 
 # Links every skill under this repo's skills/ directory into the global skill
 # directories each agent harness reads:
-#   - ~/.claude/skills  — Claude Code
-#   - ~/.agents/skills  — Codex and other Agent Skills-compatible harnesses
+#   - ~/.claude/skills  (Claude Code)
+#   - ~/.agents/skills  (Codex and other Agent Skills-compatible harnesses)
 #
 # Each entry is a symlink into this repo, so editing a skill here is reflected
 # everywhere immediately and a `git pull` keeps installed skills up to date.
