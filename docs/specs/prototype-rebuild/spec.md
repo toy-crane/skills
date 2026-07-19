@@ -74,8 +74,11 @@ implementation.
 - [x] `.claude-plugin/plugin.json` and `marketplace.json`: skill listed,
       keywords, version 0.5.0; `claude plugin validate . --strict` passes
 - [x] README: prototype blurb
-- [ ] End-to-end trial: run the skill against a scaffolded design-system
-      project and verify verbatim token extraction plus working chrome
+- [x] End-to-end trial: a context-free agent executed the skill against a
+      freshly scaffolded design-system project; verbatim token copy was
+      independently verified (32 of 32 properties identical), the chrome
+      passed 29 of 29 automated checks, and the trial's gap findings were
+      folded back into the skill text and shell template
 
 ## Assumptions
 
@@ -91,6 +94,10 @@ implementation.
 
 - Promoting settled tokens or components to a shared design-system surface.
 - Hardening the eval suite (including a clarify eval for the new hand-off).
+- Dark-theme token variants: whether a project's non-default theme block
+  counts as "the tokens", and a shell theme toggle to review it.
+- A sanctioned location for working files between passes; only the
+  close-out path is contractual today.
 - The skills.sh discoverability loose end noted in CLAUDE.md (unrelated).
 
 ## Remaining risks

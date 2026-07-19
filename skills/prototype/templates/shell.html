@@ -3,7 +3,8 @@
 
   Contract (extend freely, never strip):
   - Screens:  <section data-screen="slug" data-title="Label"> inside .sh-stage.
-               The tab bar, arrow keys, and #hash routing build themselves.
+               The tab bar, arrow keys, and #hash routing build themselves;
+               in-prototype links may target screens (href="#slug").
   - States:   a screen with meaningful states declares data-states="a,b,c"
                (free strings; first one is the default). Elements that belong
                to one state carry data-when="a" (comma-separated for several).
@@ -15,6 +16,9 @@
                The skeleton pass stays gray so structure is judged first; the
                fill pass starts by replacing that block with the project's
                real tokens (copy them verbatim when a design system exists).
+               Keep --background, --foreground, and --font defined after the
+               swap; when the system names differ, add a small mapping block
+               after the copy, and a web font substitutes a system stack.
   - Wireframe helpers: .wf-line (text bar), .wf-pic (image placeholder).
                Pencils, not floor plans: they draw nothing by themselves.
 
@@ -40,8 +44,8 @@
   * { box-sizing: border-box }
   body {
     margin: 0; padding: 0 0 40px;
-    background: var(--background); color: var(--foreground);
-    font-family: var(--font);
+    background: var(--background, #f6f6f6); color: var(--foreground, #3a3a3a);
+    font-family: var(--font, system-ui, sans-serif);
   }
   .sh-bar {
     position: sticky; top: 0; z-index: 999;
@@ -62,7 +66,7 @@
 
   /* viewport presets */
   .sh-vp-390 .sh-stage {
-    max-width: 390px; background: var(--background);
+    max-width: 390px; background: var(--background, #f6f6f6);
     border: 10px solid #191a1c; border-radius: 28px;
     padding: 16px 12px; min-height: 660px; margin-top: 12px;
   }
@@ -140,7 +144,7 @@
   const VPS = ['full', '390', '768'];
   let vp = VPS.find(v => document.body.classList.contains('sh-vp-' + v)) || 'full';
   function applyVp() {
-    VPS.forEach(v => document.body.classList.toggle('sh-vp-' + v, v === vp));
+    VPS.forEach(v => document.body.classList.toggle('sh-vp-' + v, v === vp && v !== 'full'));
     vpBtn.textContent = 'vp: ' + vp + ' (m)';
     vpBtn.classList.toggle('on', vp !== 'full');
   }
@@ -155,5 +159,6 @@
     if (e.key === 'm') vpBtn.click();
   });
 
+  addEventListener('hashchange', () => show(location.hash.slice(1)));
   show(location.hash.slice(1));
 </script>

@@ -17,10 +17,12 @@ Invoke the `domain-modeling` skill, and read `GLOSSARY.md` and
 glossary's terms, and a screen the user corrects often corrects the
 domain model too. When the project has a design system, copy its
 tokens verbatim instead of approximating them, and name screen
-elements after its own component names so the implementing session
-maps every block to a real component. A contested detail goes back
-to clarify's discipline, two or three variants differing only on the
-governing question, instead of an argument in prose.
+elements after its own component names (a `data-component`
+attribute, marking components the system lacks as new) so the
+implementing session maps every block to a real component. A
+contested detail goes back to clarify's discipline, two or three
+variants differing only on the governing question, instead of an
+argument in prose.
 
 ## One file, from the shell
 
@@ -56,19 +58,25 @@ hours after fill.
 
 Pass two starts by replacing the gray token block with the real one
 (copied from the design system, extracted from the app's styling,
-or decided with the user on a greenfield), then fills the approved
-structure with realistic dummy data. Never lorem ipsum: real-length
-names, plausible sentences, awkward numbers, and the edge states
-the state pills expose (empty, longest plausible text, error). Real
-data, real latency, and production wiring stay out; they are not
-what alignment is about. Review again, screen by screen.
+or decided with the user on a greenfield; a web font substitutes a
+system stack, noted in the spec), then fills the approved structure
+with realistic dummy data. Keep the skeleton's structural CSS apart
+from its skin so the approved structure survives the swap. Never
+lorem ipsum: real-length names, plausible sentences, awkward
+numbers, and the edge states the state pills expose where they bite
+(empty, longest plausible text, error; not every screen needs every
+state). Real data, real latency, and production wiring stay out;
+they are not what alignment is about. Review again, screen by
+screen.
 
 ## What survives
 
 Stop when every screen is approved or explicitly deferred as a
 remaining risk. Record what the screens settled in
-`docs/specs/<slug>/spec.md` (created in the dossier shape when
-missing), save the approved surface as
+`docs/specs/<slug>/spec.md` (created when missing: confirmed
+decisions, assumptions, deferred points, and remaining risks,
+addressed to the implementing session), save the approved surface
+as
 `docs/specs/<slug>/prototype.html`, and link it from the spec. The
 implementing session receives both halves: the spec says what was
 decided, the prototype shows what it looks like. Everything built
