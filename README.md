@@ -41,7 +41,7 @@ claude plugin install toycrane-skills@toycrane
 ## Skills
 
 - **[clarify](./skills/clarify/SKILL.md)** — Interview toward shared
-  understanding through straw men — stated assumptions you can veto,
+  understanding through drafts — stated assumptions you can veto,
   recommended answers you can correct, rendered variants you react to —
   grounding each decision in project evidence, maintaining the project's
   glossary and decision records along the way, and closing with a spec dossier

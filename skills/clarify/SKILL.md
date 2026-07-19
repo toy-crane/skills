@@ -12,10 +12,9 @@ authoritative sources, and when no source holds the answer to a
 technical question, manufacture the evidence with a spike or a
 benchmark.
 
-Every move is a straw man: put forward a concrete candidate for the user
-to correct, because people recognize a right answer far more reliably
-than they produce one from a blank question. The straw man takes the
-shape the question demands:
+Every move is a draft: put forward a concrete candidate for the user to
+correct, because people mark up a draft far more reliably than they fill
+a blank page. The draft takes the shape the question demands:
 
 - A decision where divergence from the user's intent is unlikely, or
   cheap to detect and fix, is yours to make — state it as an assumption

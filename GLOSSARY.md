@@ -2,9 +2,9 @@
 
 Canonical language for the decisions and artifacts produced by these agent skills.
 
-**Straw man**:
+**Draft**:
 A concrete candidate put forward for the user to correct, rather than a blank question for them to answer — a stated assumption under standing veto, a recommended answer, rendered variants, a mirrored structure. The interview's every move; the user's correction is the unit of progress.
-_Avoid_: Proposal, suggestion as umbrella terms
+_Avoid_: Straw man, proposal as umbrella terms
 
 **Experiential question**:
 A question judged by looking or trying — layout, hierarchy, interaction flow, tone — and settled by reacting to something rendered rather than argued in prose. Its complement, a propositional question, settles in prose.
