@@ -9,15 +9,13 @@
     {
       "name": "toycrane-skills",
       "source": "./",
-      "description": "Agent skills for alignment, domain modeling, and product-experience prototyping.",
+      "description": "Agent skills for alignment and domain modeling.",
       "category": "productivity",
       "keywords": [
         "skills",
         "clarify",
         "domain-modeling",
-        "planning",
-        "prototyping",
-        "prototype"
+        "planning"
       ]
     }
   ]
