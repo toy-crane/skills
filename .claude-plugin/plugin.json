@@ -1,6 +1,6 @@
 {
   "name": "toycrane-skills",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Agent skills for sharpening plans, screens, and domain models, then implementing them test-first.",
   "author": {
     "name": "toy-crane",
