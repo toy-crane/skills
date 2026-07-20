@@ -7,12 +7,8 @@ A concrete candidate put forward for the user to correct, rather than a blank qu
 _Avoid_: Straw man, proposal as umbrella terms
 
 **Opportunity**:
-An evidence-bounded possibility to improve a named audience's life or work, before detailed product behavior is chosen. It joins an audience and situation, an important desired change, the problem or workaround blocking it, a broad direction worth shaping, and the assumptions that could still kill it.
+An application direction discovered in the user's experience, access, interests, or capabilities before detailed product behavior is chosen. It connects something the user knows firsthand with a person or situation it could help and a change it might enable.
 _Avoid_: Idea, feature, solution
-
-**Opportunity brief**:
-The durable handoff a discover-opportunity session writes to `docs/opportunities/<slug>.md` after one opportunity is selected: evidence, assumptions, desired change, chosen direction, rejected alternatives, cheapest tests, and what is not being pursued. It is input to shape-idea, not a preliminary spec.
-_Avoid_: Idea brief, one-pager, pre-spec
 
 **Experiential question**:
 A question judged by looking or trying (layout, hierarchy, interaction flow, tone) and settled by reacting to something rendered rather than argued in prose. Its complement, a propositional question, settles in prose.

@@ -51,10 +51,10 @@ from shape-idea when a whole interface must be judged by using it.
   presets), walked through as a wireframe skeleton first, filled after
   approval, and preserved beside the spec for the implementing session.
 - **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Help a
-  user who does not yet know what to build discover one opportunity worth
-  shaping, grounded in people and problems they can observe, compared against
-  genuinely different alternatives, and preserved as an opportunity brief
-  without prematurely defining an MVP or product behavior.
+  user who wants to make something but does not know where their tacit
+  knowledge could apply surface a promising direction from their experience,
+  access, interests, and capabilities, then carry it naturally into
+  shape-idea without requiring an intermediate document.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.

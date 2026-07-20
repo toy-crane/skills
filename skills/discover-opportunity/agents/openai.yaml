@@ -1,4 +1,4 @@
 interface:
   display_name: "Discover Opportunity"
-  short_description: "Find what is worth shaping"
-  default_prompt: "Use $discover-opportunity to interview me from a blank page, ground the search in people and problems I can actually observe, compare distinct opportunities, and stop with one direction worth taking into $shape-idea."
+  short_description: "Find where your tacit knowledge could apply"
+  default_prompt: "Use $discover-opportunity to draw out what I know from experience, show me where it could apply, and continue with $shape-idea when a direction resonates."

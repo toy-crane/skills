@@ -9,9 +9,10 @@ Shape the user's chosen idea until you reach shared understanding. When no
 concrete problem or intended change is chosen and no broad direction can be
 named, invoke `discover-opportunity` and do not manufacture a spec from the
 blank page.
-Read a named `docs/opportunities/<slug>.md` handoff when one exists. The
-interview exists to extract what lives only in the user's head, so close every
-branch you can without them. Investigate the codebase, documentation,
+When discovery just established a direction, carry its conversational summary
+forward without requiring an intermediate document. The interview exists to
+extract what lives only in the user's head, so close every branch you can
+without them. Investigate the codebase, documentation,
 and authoritative sources, and when no source holds the answer to a
 technical question, manufacture the evidence with a spike or a
 benchmark.
@@ -66,7 +67,7 @@ decisions bound for implementation, materialize that same content as the
 spec folder `docs/specs/<slug>/spec.md` (kebab-case slug, folder created
 lazily) so a later session can implement from it alone. The spec holds
 decisions, not implementation instructions; link the opportunity handoff
-when one informed the work. If the user says the
+when the user supplied one. If the user says the
 decisions are complete, take them at their word: reopen a routine
 default only when it contradicts the confirmed intent. Cover every
 listed category and end with remaining risks, not a prompt for the next

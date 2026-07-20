@@ -1,4 +1,4 @@
 interface:
   display_name: "Shape Idea"
   short_description: "Shape an idea into implementation-ready decisions"
-  default_prompt: "Use $shape-idea to shape my chosen opportunity one decision per turn through drafts I correct; if I do not yet know the problem or direction, hand me to $discover-opportunity; for material UI changes, inspect and verify the current surface, then batch unresolved experiential decisions into one review; maintain the glossary and decision records, and close with a spec the next session can implement from."
+  default_prompt: "Use $shape-idea to shape my chosen direction one decision per turn through drafts I correct; if I do not yet know where my experience could apply, use $discover-opportunity first and carry its conversational context forward; for material UI changes, inspect and verify the current surface, then batch unresolved experiential decisions into one review; maintain the glossary and decision records, and close with a spec the next session can implement from."
