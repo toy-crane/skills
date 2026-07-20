@@ -1,6 +1,7 @@
 ---
 name: discover-opportunity
-description: Help users who want to make something but cannot yet see where their tacit knowledge, experience, interests, or access could be useful. Interview them to surface promising application directions, then continue with shape-idea when one resonates. Use shape-idea directly when the user already has a problem and direction.
+description: Interview the user to surface where their tacit knowledge could become a direction worth shaping.
+disable-model-invocation: true
 ---
 
 # Discover Opportunity

@@ -1,14 +1,14 @@
 ---
 name: shape-idea
-description: Shape a chosen idea or opportunity into shared, implementation-ready decisions. Use when the user can already name the problem or intended change and has a broad direction, but wants to clarify, align, or stress-test behavior and scope before implementation, or wants a spec a later session can implement from. If the user does not yet know what to build, use discover-opportunity instead.
+description: Shape a chosen idea or opportunity into shared, implementation-ready decisions. Use when the user can already name the problem or intended change and has a broad direction, but wants to clarify, align, or stress-test behavior and scope before implementation, or wants a spec a later session can implement from. If the user does not yet know what to build, tell them to invoke discover-opportunity instead.
 ---
 
 # Shape Idea
 
 Shape the user's chosen idea until you reach shared understanding. When no
 concrete problem or intended change is chosen and no broad direction can be
-named, invoke `discover-opportunity` and do not manufacture a spec from the
-blank page.
+named, tell the user to invoke `discover-opportunity`; do not invoke it on
+their behalf or manufacture a spec from the blank page.
 When discovery just established a direction, carry its conversational summary
 forward without requiring an intermediate document. The interview exists to
 extract what lives only in the user's head, so close every branch you can

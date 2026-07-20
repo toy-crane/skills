@@ -42,8 +42,11 @@ claude plugin install toycrane-skills@toycrane
 ## Skills
 
 The usual path is **discover-opportunity → shape-idea → draft-plan (when the
-approach needs review) → implementation with tdd**. Build-prototype branches
-from shape-idea when a whole interface must be judged by using it.
+approach needs review) → implementation with tdd**. Discover-opportunity is a
+user-invoked command rather than an automatically triggered skill: run
+`/discover-opportunity` in Claude Code or `$discover-opportunity` in Codex.
+Build-prototype branches from shape-idea when a whole interface must be judged
+by using it.
 
 - **[build-prototype](./skills/build-prototype/SKILL.md)**: Align on UI by
   building it: every screen of a feature in one dummy-data HTML file grown
@@ -54,7 +57,8 @@ from shape-idea when a whole interface must be judged by using it.
   user who wants to make something but does not know where their tacit
   knowledge could apply surface a promising direction from their experience,
   access, interests, and capabilities, then carry it naturally into
-  shape-idea without requiring an intermediate document.
+  shape-idea without requiring an intermediate document. It runs only when the
+  user invokes it explicitly.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.

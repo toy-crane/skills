@@ -20,6 +20,11 @@ artifact. Its output is lightweight context, not a durable deliverable. Write
 a handoff only when the user requests one or the work must cross sessions or
 people.
 
+Discovery is user-invoked. It must not trigger automatically from an ordinary
+vague request: the user deliberately starts the exploratory interview as a
+command. When `shape-idea` receives a blank-page request, it points the user to
+that command rather than invoking it on their behalf.
+
 ## Considered Options
 
 - **Let `shape-idea` cover both phases** (rejected): its branch-closing
@@ -38,7 +43,7 @@ people.
 ## Consequences
 
 The common path becomes `discover-opportunity` → `shape-idea` → optional
-`draft-plan` → implementation. Both discovery and shaping descriptions carry
-the reciprocal routing boundary so automatic invocation has an explicit
-near-miss. The transition normally remains in one conversation. The plugin
-adds the published skill and bumps to 0.10.0.
+`draft-plan` → implementation. Discovery remains available as an explicit
+user command in both Claude Code and Codex, while shaping carries the fallback
+instruction for blank-page requests. The transition normally remains in one
+conversation. The plugin adds the published skill and bumps to 0.10.0.
