@@ -57,13 +57,13 @@
     {
       "id": 5,
       "prompt": "/clarify 모든 결정을 마쳤어. 공개 HTML의 최초 응답만 Defuddle로 변환하고, 입력과 결과는 저장하지 않아. 복사와 md 다운로드를 지원하며, ChatGPT와 Claude는 프롬프트와 Markdown을 클립보드에 복사한 뒤 새 탭으로 연다. 동적 페이지와 로그인 페이지는 제외해. 이제 정리해줘.",
-      "expected_output": "Because all material branches are resolved, the response stops interviewing, summarizes confirmed decisions, rationale, assumptions, deferred or excluded scope, and remaining risks, and materializes that content as a spec dossier at docs/specs/<slug>/spec.md. It does not force a named alignment-brief template or invent further questions.",
+      "expected_output": "Because all material branches are resolved, the response stops interviewing, summarizes confirmed decisions, rationale, assumptions, deferred or excluded scope, and remaining risks, and materializes that content as a spec folder at docs/specs/<slug>/spec.md. It does not force a named alignment-brief template or invent further questions.",
       "files": [],
       "expectations": [
         "The response asks no new question when no material branch remains.",
         "It summarizes the confirmed decisions and their rationale.",
         "It identifies assumptions, excluded or deferred scope, and remaining risks where applicable.",
-        "It writes the confirmed decisions to a docs/specs/<slug>/spec.md dossier for a later implementation session.",
+        "It writes the confirmed decisions to the spec folder as docs/specs/<slug>/spec.md for a later implementation session.",
         "It does not require a fixed alignment-brief format or another confirmation ceremony."
       ]
     },
@@ -83,12 +83,12 @@
     {
       "id": 7,
       "prompt": "/clarify 헤더 밀도는 변형 비교에서 제목·저자·읽기 시간 구성으로 확정했어. 나머지 결정도 모두 끝났어. 이제 마무리해줘.",
-      "expected_output": "Because every material branch is resolved, the response summarizes confirmed decisions, rationale, assumptions, deferred scope, and remaining risks, and writes the spec dossier at docs/specs/<slug>/spec.md as the session's deliverable. The comparison renders stay disposable scaffolding rather than deliverables.",
+      "expected_output": "Because every material branch is resolved, the response summarizes confirmed decisions, rationale, assumptions, deferred scope, and remaining risks, and writes the spec folder anchor docs/specs/<slug>/spec.md as the session's deliverable. The comparison renders stay disposable scaffolding rather than deliverables.",
       "files": [],
       "expectations": [
         "The response asks no new question.",
         "It summarizes confirmed decisions, rationale, assumptions, and remaining risks.",
-        "It materializes the summary as a spec dossier at docs/specs/<slug>/spec.md.",
+        "It materializes the summary as the spec folder anchor docs/specs/<slug>/spec.md.",
         "It treats the earlier comparison renders as disposable scaffolding, not as deliverables to hand over."
       ]
     },
