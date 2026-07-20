@@ -2,9 +2,9 @@
 
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
-Agent skills for sharpening plans, screens, and domain models. Small,
-composable, and model-agnostic: install the ones you want and make them your
-own.
+Agent skills for sharpening plans, screens, and domain models, then
+implementing them test-first. Small, composable, and model-agnostic: install
+the ones you want and make them your own.
 
 ## Install
 
@@ -56,6 +56,12 @@ claude plugin install toycrane-skills@toycrane
   shell (shared tokens, per-screen state pills, viewport presets), walked
   through as a wireframe skeleton first, filled after approval, and preserved
   beside the spec for the implementing session.
+- **[tdd](./skills/tdd/SKILL.md)**: Implement test-first through the
+  red → green loop: tests at pre-agreed seams only (adopted from the plan
+  document when one fixes them), one vertical slice per cycle, with the
+  anti-pattern catalog that keeps tests behavioral instead of
+  implementation-coupled. Adapted from
+  [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[to-plan](./skills/to-plan/SKILL.md)**: Turn a spec folder into a
   reviewed implementation plan: one page of approach, order, acceptance
   criteria, test seams, off-limits areas, and risks, drafted whole for you
