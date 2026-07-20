@@ -1,4 +1,4 @@
 interface:
   display_name: "Clarify"
   short_description: "Interview toward shared understanding"
-  default_prompt: "Use $clarify to interview me one decision per turn through drafts I correct: assumptions I can veto, recommended answers, and rendered variants I react to. Maintain the glossary and decision records, and close with a spec the next session can implement from."
+  default_prompt: "Use $clarify to interview me one decision per turn through drafts I correct; for material UI changes, inspect and verify the current surface, then batch unresolved experiential decisions into one review; maintain the glossary and decision records, and close with a spec the next session can implement from."
