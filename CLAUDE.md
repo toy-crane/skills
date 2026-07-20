@@ -39,14 +39,6 @@ see an update. No changeset or CI automation.
 and `~/.agents/skills`. Re-run after adding, removing, or renaming a skill; plain
 edits and `git pull` need no re-run.
 
-## Writing style
-
-The em dash (U+2014) is banned everywhere in this repo: skill text, docs,
-templates, scripts, commit messages, and PR text. Connect clauses with a
-comma, a colon, parentheses, or a new sentence instead. When you touch a
-line that still carries one, rewrite it away. The vendored `.agents/` tree
-keeps its upstream text as-is.
-
 ## Going live
 
 Both channels read the `main` branch on GitHub, so changes are installable
