@@ -40,6 +40,17 @@ question. Visuals are disposable scaffolding: the decision they draw
 out is what survives. A question no available medium can settle is
 deferred explicitly as a remaining risk.
 
+When work materially changes a visible or interactive surface, inspect
+the current surface before settling its design. When a runnable product
+or preview already contains the change, exercise its states before
+closing; otherwise render the cheapest sufficient substitute without
+beginning production implementation. Keep self-verification and user
+judgment separate: verify that the states work, then present unresolved
+experiential decisions, batch related decisions into one review, and
+wait for the user's reaction. Skip that review only when the change is
+routine, the surface is already confirmed, or the user explicitly
+delegates it; record the basis as an assumption.
+
 Invoke the `domain-modeling` skill and read `GLOSSARY.md` and
 `docs/decisions/` before the first question; follow it throughout the
 session.

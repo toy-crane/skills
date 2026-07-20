@@ -1,6 +1,6 @@
 {
   "name": "toycrane-skills",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Agent skills for alignment and domain modeling.",
   "author": {
     "name": "toy-crane",
