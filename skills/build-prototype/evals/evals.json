@@ -1,9 +1,9 @@
 {
-  "skill_name": "prototype",
+  "skill_name": "build-prototype",
   "evals": [
     {
       "id": 1,
-      "prompt": "/prototype 북마크한 아티클을 모아 매주 다이제스트로 보내주는 웹앱을 만들려고 해. 화면부터 보면서 정하고 싶어.",
+      "prompt": "/build-prototype 북마크한 아티클을 모아 매주 다이제스트로 보내주는 웹앱을 만들려고 해. 화면부터 보면서 정하고 싶어.",
       "expected_output": "The response proposes a screen inventory as a correctable draft, then builds one self-contained HTML file grown from the shell template (screen tabs, state pills where declared, a viewport cycle) with every proposed screen at wireframe-gray skeleton fidelity, and walks the user through the surface asking for reactions. It does not scaffold the production app.",
       "files": [],
       "expectations": [
@@ -17,7 +17,7 @@
     },
     {
       "id": 2,
-      "prompt": "/prototype 방금 뼈대 봤어. 홈의 다이제스트 미리보기를 최상단으로 올리고, 구독 설정은 별도 화면 말고 홈에서 여는 모달로 바꿔줘. 나머지는 그대로.",
+      "prompt": "/build-prototype 방금 뼈대 봤어. 홈의 다이제스트 미리보기를 최상단으로 올리고, 구독 설정은 별도 화면 말고 홈에서 여는 모달로 바꿔줘. 나머지는 그대로.",
       "expected_output": "The response applies exactly those two structural changes while holding everything else fixed, and re-renders the same single file still at skeleton fidelity.",
       "files": [],
       "expectations": [
@@ -29,7 +29,7 @@
     },
     {
       "id": 3,
-      "prompt": "/prototype 뼈대는 승인이야. 이제 채워줘.",
+      "prompt": "/build-prototype 뼈대는 승인이야. 이제 채워줘.",
       "expected_output": "The response begins the fill pass by replacing the wireframe-gray token block with the project's real tokens (copied from its design system, extracted from its styling, or decided with the user on a greenfield), fills the approved structure with realistic dummy data, exposes edge states through the state pills, and invites a screen-by-screen review.",
       "files": [],
       "expectations": [
@@ -42,7 +42,7 @@
     },
     {
       "id": 4,
-      "prompt": "/prototype 홈 상단의 다이제스트 미리보기 말인데, 카드 그리드가 나을지 리스트가 나을지 우리 둘 다 확신이 없어.",
+      "prompt": "/build-prototype 홈 상단의 다이제스트 미리보기 말인데, 카드 그리드가 나을지 리스트가 나을지 우리 둘 다 확신이 없어.",
       "expected_output": "The response treats this as a contested detail and renders two or three variants differing only on the grid-versus-list treatment, holding every confirmed element fixed, asks for the user's reaction as the answer, then folds the winner back into the prototype.",
       "files": [],
       "expectations": [
@@ -54,7 +54,7 @@
     },
     {
       "id": 5,
-      "prompt": "/prototype 모든 화면 승인이야. 원본 아티클 보관 기능은 이번에는 보류하기로 했고. 마무리해줘.",
+      "prompt": "/build-prototype 모든 화면 승인이야. 원본 아티클 보관 기능은 이번에는 보류하기로 했고. 마무리해줘.",
       "expected_output": "The response closes the session: it records the settled decisions in docs/specs/<slug>/spec.md (created in the spec folder shape when missing), saves the approved surface as docs/specs/<slug>/prototype.html linked from the spec, records the archive feature as explicitly deferred, and presents spec plus prototype as the handoff.",
       "files": [],
       "expectations": [
@@ -66,18 +66,18 @@
     },
     {
       "id": 6,
-      "prompt": "/prototype 새로 만들 CLI 도구의 서브커맨드 구조랑 터미널 출력 형식을 프로토타입으로 정렬하고 싶어.",
-      "expected_output": "The response states that command-line and terminal interfaces are outside this skill's scope, does not build an HTML mockup of a terminal, and points to a prose or clarify-style path for settling the question.",
+      "prompt": "/build-prototype 새로 만들 CLI 도구의 서브커맨드 구조랑 터미널 출력 형식을 프로토타입으로 정렬하고 싶어.",
+      "expected_output": "The response states that command-line and terminal interfaces are outside this skill's scope, does not build an HTML mockup of a terminal, and points to a prose or write-spec-style path for settling the question.",
       "files": [],
       "expectations": [
         "It states that CLI and terminal interfaces are outside this skill's scope.",
         "It does not build an HTML mockup of a terminal.",
-        "It offers a prose or clarify-style path for the question instead."
+        "It offers a prose or write-spec-style path for the question instead."
       ]
     },
     {
       "id": 7,
-      "prompt": "/prototype 지금 레포에 있는 대시보드 앱에 알림 센터를 추가하려고 해. 화면으로 먼저 정렬하자.",
+      "prompt": "/build-prototype 지금 레포에 있는 대시보드 앱에 알림 센터를 추가하려고 해. 화면으로 먼저 정렬하자.",
       "expected_output": "The response inspects the existing app, copies its design-system tokens verbatim into the prototype's :root (or extracts the design language where no token file exists), names screen elements after the system's own component names, and proposes the notification-center screen set as a correctable draft, so the new screens read as the existing product.",
       "files": [],
       "expectations": [
@@ -89,7 +89,7 @@
     },
     {
       "id": 8,
-      "prompt": "/prototype 더미 데이터 말고 실제 우리 API를 붙여서 보여줘. 그래야 진짜 느낌이 날 것 같아.",
+      "prompt": "/build-prototype 더미 데이터 말고 실제 우리 API를 붙여서 보여줘. 그래야 진짜 느낌이 날 것 같아.",
       "expected_output": "The response keeps the prototype on dummy data: real data, latency, and production wiring are not what the alignment is about. It offers a cheaper alternative such as dummy content mirroring the API's real shapes, and stays within the single-file, no-network constraint.",
       "files": [],
       "expectations": [

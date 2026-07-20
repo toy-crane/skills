@@ -1,9 +1,9 @@
 ---
-name: clarify
+name: write-spec
 description: Interview the user about a plan or design until reaching shared understanding. Use when the user wants to clarify, align, or stress-test something before implementation, or wants a spec a later session can implement from.
 ---
 
-# Clarify
+# Write Spec
 
 Interview the user until you reach shared understanding. The interview
 exists to extract what lives only in the user's head, so close every
@@ -27,8 +27,8 @@ a blank page. The draft takes the shape the question demands:
   layout, interaction flow, tone) becomes two or three rendered
   variants that differ only on the governing question, with the user's
   reaction serving as the answer. When the question outgrows variants
-  (a whole surface rather than one choice), invoke the `prototype`
-  skill.
+  (a whole surface rather than one choice), invoke the
+  `build-prototype` skill.
 - A structure whose confirmation would take two or more rounds of
   prose (a flow, its states, how concepts relate) becomes one diagram
   mirroring your understanding back.

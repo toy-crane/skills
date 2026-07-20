@@ -27,7 +27,7 @@ Rendering the interviewer's current understanding of a structure (a flow, its st
 _Avoid_: Diagramming
 
 **Spec**:
-The durable handoff document a clarify or prototype session writes as it ends: confirmed decisions, assumptions, deferred points, and remaining risks, addressed to a later implementation session. Decisions are the deliverable; visuals are disposable, except an approved prototype, preserved beside the spec as its visual half.
+The durable handoff document a write-spec or build-prototype session writes as it ends: confirmed decisions, assumptions, deferred points, and remaining risks, addressed to a later implementation session. Decisions are the deliverable; visuals are disposable, except an approved prototype, preserved beside the spec as its visual half.
 _Avoid_: Alignment brief, summary
 
 **Spec folder**:
@@ -35,5 +35,5 @@ The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole hand
 _Avoid_: Dossier, issue folder
 
 **Plan**:
-The optional implementation map a to-plan session writes beside the spec for review: approach, order, acceptance criteria, seams, off-limits areas, and risks, under an advisory contract that the code wins where they disagree and decision-level divergence flows back to the spec.
+The optional implementation map a draft-plan session writes beside the spec for review: approach, order, acceptance criteria, seams, off-limits areas, and risks, under an advisory contract that the code wins where they disagree and decision-level divergence flows back to the spec.
 _Avoid_: Ticket list, task breakdown
