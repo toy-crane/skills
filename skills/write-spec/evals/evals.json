@@ -120,14 +120,14 @@
     {
       "id": 10,
       "prompt": "/write-spec 실행 가능한 프리뷰에 이미 승인한 알림 토글을 반영했어. 구성과 상호작용은 승인된 디자인 시스템 패턴 그대로고, 간격과 문구 같은 일상적인 시각 결정은 네게 위임할게. 다른 결정도 모두 끝났어. 마무리해줘.",
-      "expected_output": "The response inspects the preview and exercises the changed toggle state, but does not force another user review because the interaction is already confirmed and routine presentation details were explicitly delegated. It records that basis as an assumption and closes with the normal summary and spec dossier.",
+      "expected_output": "The response inspects the preview and exercises the changed toggle state, but does not force another user review because the interaction is already confirmed and routine presentation details were explicitly delegated. It records that basis as an assumption and closes with the normal summary and spec folder.",
       "files": [],
       "expectations": [
         "It inspects the runnable preview and verifies the changed toggle state.",
         "It does not ask for another visual review of an already-confirmed interaction.",
         "It treats routine spacing and copy decisions as explicitly delegated rather than silently assumed.",
         "It records the review-skipping basis as an assumption.",
-        "It closes with the normal decision summary and spec dossier."
+        "It closes with the normal decision summary and spec folder."
       ]
     }
   ]
