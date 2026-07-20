@@ -1,7 +1,7 @@
 {
   "name": "toycrane-skills",
-  "version": "0.6.0",
-  "description": "Agent skills for sharpening plans, screens, and domain models.",
+  "version": "0.7.0",
+  "description": "Agent skills for sharpening plans, screens, and domain models, then implementing them test-first.",
   "author": {
     "name": "toy-crane",
     "url": "https://github.com/toy-crane"
@@ -14,12 +14,15 @@
     "domain-modeling",
     "prototype",
     "planning",
+    "tdd",
+    "testing",
     "productivity"
   ],
   "skills": [
     "./skills/clarify",
     "./skills/domain-modeling",
     "./skills/prototype",
+    "./skills/tdd",
     "./skills/to-plan"
   ]
 }

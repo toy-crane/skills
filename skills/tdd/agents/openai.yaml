@@ -1,0 +1,4 @@
+interface:
+  display_name: "TDD"
+  short_description: "Test-driven red-green loop"
+  default_prompt: "Use $tdd to implement this test-first: agree the seams (or adopt them from the plan document), then work in vertical slices, one failing test and one minimal implementation per cycle, leaving refactoring to the review stage."
