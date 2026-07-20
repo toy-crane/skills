@@ -55,10 +55,10 @@
     {
       "id": 5,
       "prompt": "/prototype 모든 화면 승인이야. 원본 아티클 보관 기능은 이번에는 보류하기로 했고. 마무리해줘.",
-      "expected_output": "The response closes the session: it records the settled decisions in docs/specs/<slug>/spec.md (created in the dossier shape when missing), saves the approved surface as docs/specs/<slug>/prototype.html linked from the spec, records the archive feature as explicitly deferred, and presents spec plus prototype as the handoff.",
+      "expected_output": "The response closes the session: it records the settled decisions in docs/specs/<slug>/spec.md (created in the spec folder shape when missing), saves the approved surface as docs/specs/<slug>/prototype.html linked from the spec, records the archive feature as explicitly deferred, and presents spec plus prototype as the handoff.",
       "files": [],
       "expectations": [
-        "It records the settled decisions in docs/specs/<slug>/spec.md, creating it in the dossier shape when missing.",
+        "It records the settled decisions in docs/specs/<slug>/spec.md, creating it in the spec folder shape when missing.",
         "It saves the approved surface as docs/specs/<slug>/prototype.html and links it from the spec.",
         "The deferred archive feature is recorded explicitly rather than silently dropped.",
         "It hands off the spec and prototype together and does not treat the prototype as production code."
