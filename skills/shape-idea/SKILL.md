@@ -1,12 +1,16 @@
 ---
 name: shape-idea
-description: Shape an idea into shared, implementation-ready decisions. Use when the user wants to clarify, align, or stress-test a plan or design before implementation, or wants a spec a later session can implement from.
+description: Shape a chosen idea or opportunity into shared, implementation-ready decisions. Use when the user can already name the problem or intended change and has a broad direction, but wants to clarify, align, or stress-test behavior and scope before implementation, or wants a spec a later session can implement from. If the user does not yet know what to build, use discover-opportunity instead.
 ---
 
 # Shape Idea
 
-Shape the user's idea until you reach shared understanding. The interview
-exists to extract what lives only in the user's head, so close every
+Shape the user's chosen idea until you reach shared understanding. When no
+concrete problem or intended change is chosen and no broad direction can be
+named, invoke `discover-opportunity` and do not manufacture a spec from the
+blank page.
+Read a named `docs/opportunities/<slug>.md` handoff when one exists. The
+interview exists to extract what lives only in the user's head, so close every
 branch you can without them. Investigate the codebase, documentation,
 and authoritative sources, and when no source holds the answer to a
 technical question, manufacture the evidence with a spike or a
@@ -61,7 +65,8 @@ deferred points, and remaining risks. When the session confirmed
 decisions bound for implementation, materialize that same content as the
 spec folder `docs/specs/<slug>/spec.md` (kebab-case slug, folder created
 lazily) so a later session can implement from it alone. The spec holds
-decisions, not implementation instructions. If the user says the
+decisions, not implementation instructions; link the opportunity handoff
+when one informed the work. If the user says the
 decisions are complete, take them at their word: reopen a routine
 default only when it contradicts the confirmed intent. Cover every
 listed category and end with remaining risks, not a prompt for the next

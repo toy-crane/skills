@@ -6,6 +6,14 @@ Canonical language for the decisions and artifacts produced by these agent skill
 A concrete candidate put forward for the user to correct, rather than a blank question for them to answer: a stated assumption under standing veto, a recommended answer, rendered variants, a mirrored structure. The interview's every move; the user's correction is the unit of progress.
 _Avoid_: Straw man, proposal as umbrella terms
 
+**Opportunity**:
+An evidence-bounded possibility to improve a named audience's life or work, before detailed product behavior is chosen. It joins an audience and situation, an important desired change, the problem or workaround blocking it, a broad direction worth shaping, and the assumptions that could still kill it.
+_Avoid_: Idea, feature, solution
+
+**Opportunity brief**:
+The durable handoff a discover-opportunity session writes to `docs/opportunities/<slug>.md` after one opportunity is selected: evidence, assumptions, desired change, chosen direction, rejected alternatives, cheapest tests, and what is not being pursued. It is input to shape-idea, not a preliminary spec.
+_Avoid_: Idea brief, one-pager, pre-spec
+
 **Experiential question**:
 A question judged by looking or trying (layout, hierarchy, interaction flow, tone) and settled by reacting to something rendered rather than argued in prose. Its complement, a propositional question, settles in prose.
 _Avoid_: Perceptual decision

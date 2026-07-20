@@ -129,6 +129,29 @@
         "It records the review-skipping basis as an assumption.",
         "It closes with the normal decision summary and spec folder."
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "/shape-idea 뭔가 만들어보고 싶은데 아직 누구의 어떤 문제를 풀지는 전혀 모르겠어. 아이디어를 같이 찾아줘.",
+      "expected_output": "The response recognizes that there is no chosen opportunity to shape. It invokes discover-opportunity rather than beginning the normal branch-closing interview, inventing product behavior, or creating a spec folder.",
+      "files": [],
+      "expectations": [
+        "It states that the request is still at opportunity discovery rather than idea shaping.",
+        "It invokes or routes to discover-opportunity.",
+        "It does not invent an audience, product direction, behavior, or spec."
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "/shape-idea 배치 동기화가 늦어 권한이 오래 남는 문제를 이벤트 기반 증분 동기화로 바꾸기로 했어. 남은 건 실패한 이벤트를 자동 재시도할지 운영자 큐로 보낼지야. 계속 진행해줘.",
+      "expected_output": "The response recognizes a concrete technical problem, intended change, and broad direction, so it stays in shape-idea rather than routing to discover-opportunity. It investigates available system evidence and resolves the remaining failure-policy branch through the normal one-question, recommended-answer discipline.",
+      "files": [],
+      "expectations": [
+        "It does not require a product audience or route the concrete technical change to discover-opportunity.",
+        "It treats event failure policy as the remaining material branch.",
+        "It asks at most one question with a recommended answer and rationale after investigating available evidence.",
+        "It does not begin implementation."
+      ]
     }
   ]
 }
