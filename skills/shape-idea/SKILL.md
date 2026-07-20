@@ -1,13 +1,18 @@
 ---
-name: write-spec
-description: Interview the user about a plan or design until reaching shared understanding. Use when the user wants to clarify, align, or stress-test something before implementation, or wants a spec a later session can implement from.
+name: shape-idea
+description: Shape a chosen idea or opportunity into shared, implementation-ready decisions. Use when the user can already name the problem or intended change and has a broad direction, but wants to clarify, align, or stress-test behavior and scope before implementation, or wants a spec a later session can implement from. If the user does not yet know what to build, tell them to invoke discover-opportunity instead.
 ---
 
-# Write Spec
+# Shape Idea
 
-Interview the user until you reach shared understanding. The interview
-exists to extract what lives only in the user's head, so close every
-branch you can without them. Investigate the codebase, documentation,
+Shape the user's chosen idea until you reach shared understanding. When no
+concrete problem or intended change is chosen and no broad direction can be
+named, tell the user to invoke `discover-opportunity`; do not invoke it on
+their behalf or manufacture a spec from the blank page.
+When discovery just established a direction, carry its conversational summary
+forward without requiring an intermediate document. The interview exists to
+extract what lives only in the user's head, so close every branch you can
+without them. Investigate the codebase, documentation,
 and authoritative sources, and when no source holds the answer to a
 technical question, manufacture the evidence with a spike or a
 benchmark.
@@ -61,7 +66,8 @@ deferred points, and remaining risks. When the session confirmed
 decisions bound for implementation, materialize that same content as the
 spec folder `docs/specs/<slug>/spec.md` (kebab-case slug, folder created
 lazily) so a later session can implement from it alone. The spec holds
-decisions, not implementation instructions. If the user says the
+decisions, not implementation instructions; link the opportunity handoff
+when the user supplied one. If the user says the
 decisions are complete, take them at their word: reopen a routine
 default only when it contradicts the confirmed intent. Cover every
 listed category and end with remaining risks, not a prompt for the next

@@ -9,11 +9,12 @@
     {
       "name": "toycrane-skills",
       "source": "./",
-      "description": "Agent skills for sharpening plans, screens, and domain models, then implementing them test-first.",
+      "description": "Agent skills for discovering opportunities, sharpening plans, screens, and domain models, then implementing them test-first.",
       "category": "productivity",
       "keywords": [
         "skills",
-        "write-spec",
+        "discover-opportunity",
+        "shape-idea",
         "draft-plan",
         "build-prototype",
         "domain-modeling",

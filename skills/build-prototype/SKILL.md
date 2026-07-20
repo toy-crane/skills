@@ -1,6 +1,6 @@
 ---
 name: build-prototype
-description: Build a full-surface, dummy-data HTML prototype so the user aligns on UI by reacting to screens instead of prose. Use when the user wants to prototype, mock up, or see the screens of a product or feature before implementation, when UI discussion in words keeps missing, or when write-spec hands off an experiential question that outgrew variants.
+description: Build a full-surface, dummy-data HTML prototype so the user aligns on UI by reacting to screens instead of prose. Use when the user wants to prototype, mock up, or see the screens of a product or feature before implementation, when UI discussion in words keeps missing, or when shape-idea hands off an experiential question that outgrew variants.
 ---
 
 # Build Prototype
@@ -20,7 +20,7 @@ tokens verbatim instead of approximating them, and name screen
 elements after its own component names (a `data-component`
 attribute, marking components the system lacks as new) so the
 implementing session maps every block to a real component. A
-contested detail goes back to write-spec's discipline, two or three
+contested detail goes back to shape-idea's discipline, two or three
 variants differing only on the governing question, instead of an
 argument in prose.
 

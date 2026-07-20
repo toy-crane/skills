@@ -2,9 +2,9 @@
 
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
-Agent skills for sharpening plans, screens, and domain models, then
-implementing them test-first. Small, composable, and model-agnostic: install
-the ones you want and make them your own.
+Agent skills for discovering opportunities, sharpening plans, screens, and
+domain models, then implementing them test-first. Small, composable, and
+model-agnostic: install the ones you want and make them your own.
 
 ## Install
 
@@ -41,11 +41,24 @@ claude plugin install toycrane-skills@toycrane
 
 ## Skills
 
+The usual path is **discover-opportunity → shape-idea → draft-plan (when the
+approach needs review) → implementation with tdd**. Discover-opportunity is a
+user-invoked command rather than an automatically triggered skill: run
+`/discover-opportunity` in Claude Code or `$discover-opportunity` in Codex.
+Build-prototype branches from shape-idea when a whole interface must be judged
+by using it.
+
 - **[build-prototype](./skills/build-prototype/SKILL.md)**: Align on UI by
   building it: every screen of a feature in one dummy-data HTML file grown
   from a pinned shell (shared tokens, per-screen state pills, viewport
   presets), walked through as a wireframe skeleton first, filled after
   approval, and preserved beside the spec for the implementing session.
+- **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Help a
+  user who wants to make something but does not know where their tacit
+  knowledge could apply surface a promising direction from their experience,
+  access, interests, and capabilities, then carry it naturally into
+  shape-idea without requiring an intermediate document. It runs only when the
+  user invokes it explicitly.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.
@@ -59,13 +72,13 @@ claude plugin install toycrane-skills@toycrane
   anti-pattern catalog that keeps tests behavioral instead of
   implementation-coupled. Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
-- **[write-spec](./skills/write-spec/SKILL.md)**: Interview toward shared
-  understanding through drafts (stated assumptions you can veto, recommended
-  answers you can correct, rendered variants you react to), inspecting and
-  verifying material UI changes while batching unresolved experiential
-  decisions into one review, grounding each decision in project evidence,
-  maintaining the project's glossary and decision records along the way, and
-  closing with a spec folder a later session can implement from.
+- **[shape-idea](./skills/shape-idea/SKILL.md)**: Shape a chosen direction
+  into shared, implementation-ready decisions through drafts (stated
+  assumptions you can veto, recommended answers you can correct, rendered
+  variants you react to),
+  grounding each decision in project evidence, inspecting and verifying
+  material UI changes, maintaining the project's glossary and decision
+  records, and closing with a spec folder a later session can implement from.
 
 ## Local development
 
