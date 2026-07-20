@@ -12,10 +12,10 @@ user to correct. The document is a review surface: its purpose is to draw
 out corrections and the decisions only the user can make, before any code
 is written.
 
-Follow the clarify draft discipline. Fill every section yourself, present
-the whole draft at once (a review surface works only when seen whole), and
-raise a question only for a fork the draft cannot settle, one per turn
-with a recommended answer. The user's essential calls are the choice of
+Every move is a draft. Fill every section yourself, present the whole
+draft at once (a review surface works only when seen whole), and raise a
+question only for a fork the draft cannot settle, one per turn with a
+recommended answer. The user's essential calls are the choice of
 approach, whether the acceptance criteria are sufficient to mean done,
 off-limits areas invisible in the code, and which risks to accept;
 everything else is yours under standing veto.
