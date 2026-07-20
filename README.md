@@ -47,7 +47,7 @@ claude plugin install toycrane-skills@toycrane
   verifying material UI changes while batching unresolved experiential
   decisions into one review, grounding each decision in project evidence,
   maintaining the project's glossary and decision records along the way, and
-  closing with a spec dossier a later session can implement from.
+  closing with a spec folder a later session can implement from.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.

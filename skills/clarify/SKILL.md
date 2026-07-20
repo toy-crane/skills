@@ -59,7 +59,7 @@ Stop when every material branch is resolved or explicitly deferred and
 go straight to the summary: confirmed decisions, rationale, assumptions,
 deferred points, and remaining risks. When the session confirmed
 decisions bound for implementation, materialize that same content as the
-dossier `docs/specs/<slug>/spec.md` (kebab-case slug, folder created
+spec folder `docs/specs/<slug>/spec.md` (kebab-case slug, folder created
 lazily) so a later session can implement from it alone. The spec holds
 decisions, not implementation instructions. If the user says the
 decisions are complete, take them at their word: reopen a routine
