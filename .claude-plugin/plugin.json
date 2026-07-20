@@ -10,19 +10,20 @@
   "license": "MIT",
   "keywords": [
     "skills",
-    "clarify",
+    "write-spec",
+    "draft-plan",
+    "build-prototype",
     "domain-modeling",
-    "prototype",
     "planning",
     "tdd",
     "testing",
     "productivity"
   ],
   "skills": [
-    "./skills/clarify",
+    "./skills/build-prototype",
     "./skills/domain-modeling",
-    "./skills/prototype",
+    "./skills/draft-plan",
     "./skills/tdd",
-    "./skills/to-plan"
+    "./skills/write-spec"
   ]
 }

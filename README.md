@@ -41,31 +41,31 @@ claude plugin install toycrane-skills@toycrane
 
 ## Skills
 
-- **[clarify](./skills/clarify/SKILL.md)**: Interview toward shared
-  understanding through drafts (stated assumptions you can veto, recommended
-  answers you can correct, rendered variants you react to), inspecting and
-  verifying material UI changes while batching unresolved experiential
-  decisions into one review, grounding each decision in project evidence,
-  maintaining the project's glossary and decision records along the way, and
-  closing with a spec folder a later session can implement from.
+- **[build-prototype](./skills/build-prototype/SKILL.md)**: Align on UI by
+  building it: every screen of a feature in one dummy-data HTML file grown
+  from a pinned shell (shared tokens, per-screen state pills, viewport
+  presets), walked through as a wireframe skeleton first, filled after
+  approval, and preserved beside the spec for the implementing session.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.
-- **[prototype](./skills/prototype/SKILL.md)**: Align on UI by building it:
-  every screen of a feature in one dummy-data HTML file grown from a pinned
-  shell (shared tokens, per-screen state pills, viewport presets), walked
-  through as a wireframe skeleton first, filled after approval, and preserved
-  beside the spec for the implementing session.
+- **[draft-plan](./skills/draft-plan/SKILL.md)**: Turn a spec folder into a
+  reviewed implementation plan: one page of approach, order, acceptance
+  criteria, test seams, off-limits areas, and risks, drafted whole for you
+  to correct and saved beside the spec for the implementing session.
 - **[tdd](./skills/tdd/SKILL.md)**: Implement test-first through the
   red → green loop: tests at pre-agreed seams only (adopted from the plan
   document when one fixes them), one vertical slice per cycle, with the
   anti-pattern catalog that keeps tests behavioral instead of
   implementation-coupled. Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
-- **[to-plan](./skills/to-plan/SKILL.md)**: Turn a spec folder into a
-  reviewed implementation plan: one page of approach, order, acceptance
-  criteria, test seams, off-limits areas, and risks, drafted whole for you
-  to correct and saved beside the spec for the implementing session.
+- **[write-spec](./skills/write-spec/SKILL.md)**: Interview toward shared
+  understanding through drafts (stated assumptions you can veto, recommended
+  answers you can correct, rendered variants you react to), inspecting and
+  verifying material UI changes while batching unresolved experiential
+  decisions into one review, grounding each decision in project evidence,
+  maintaining the project's glossary and decision records along the way, and
+  closing with a spec folder a later session can implement from.
 
 ## Local development
 

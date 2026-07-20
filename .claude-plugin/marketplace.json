@@ -13,9 +13,10 @@
       "category": "productivity",
       "keywords": [
         "skills",
-        "clarify",
+        "write-spec",
+        "draft-plan",
+        "build-prototype",
         "domain-modeling",
-        "prototype",
         "planning",
         "tdd",
         "testing"
