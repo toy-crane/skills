@@ -28,6 +28,16 @@ at a time and skills.sh installs them individually, so a skill may invoke
 another skill by name but must never assume knowledge of another skill's text
 ("follow X's discipline"). Restate what it needs inline.
 
+## Skill naming
+
+Two name classes. A skill the user invokes directly is an imperative
+verb-object command (write-spec, draft-plan, build-prototype). A skill that
+triggers in the background or is invoked by other skills keeps its discipline
+noun (domain-modeling, tdd). Before naming a new skill, check the candidate
+against the built-in slash commands of Claude Code and Codex; `/plan` is
+reserved by both, which is why the planning skill is draft-plan. Rationale in
+[decision 0006](docs/decisions/0006-verb-object-names-for-invoked-skills.md).
+
 ## Versioning is manual
 
 Bump `.claude-plugin/plugin.json`'s `version` when installed plugin users should
