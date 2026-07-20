@@ -19,6 +19,7 @@
   "skills": [
     "./skills/clarify",
     "./skills/domain-modeling",
-    "./skills/prototype"
+    "./skills/prototype",
+    "./skills/to-plan"
   ]
 }

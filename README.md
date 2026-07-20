@@ -56,6 +56,10 @@ claude plugin install toycrane-skills@toycrane
   shell (shared tokens, per-screen state pills, viewport presets), walked
   through as a wireframe skeleton first, filled after approval, and preserved
   beside the spec for the implementing session.
+- **[to-plan](./skills/to-plan/SKILL.md)**: Turn a spec folder into a
+  reviewed implementation plan: one page of approach, order, acceptance
+  criteria, test seams, off-limits areas, and risks, drafted whole for you
+  to correct and saved beside the spec for the implementing session.
 
 ## Local development
 
