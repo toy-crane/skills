@@ -29,3 +29,11 @@ _Avoid_: Diagramming
 **Spec**:
 The durable handoff document a clarify or prototype session writes as it ends: confirmed decisions, assumptions, deferred points, and remaining risks, addressed to a later implementation session. Decisions are the deliverable; visuals are disposable, except an approved prototype, preserved beside the spec as its visual half.
 _Avoid_: Alignment brief, summary
+
+**Spec folder**:
+The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor, plan.md when planning ran as its own step, prototype.html when a surface was approved. Lives per unit and retires wholesale when the work ships. Called "dossier" in records up to 0004.
+_Avoid_: Dossier, issue folder
+
+**Plan**:
+The optional implementation map a to-plan session writes beside the spec for review: approach, order, acceptance criteria, seams, off-limits areas, and risks, under an advisory contract that the code wins where they disagree and decision-level divergence flows back to the spec.
+_Avoid_: Ticket list, task breakdown
