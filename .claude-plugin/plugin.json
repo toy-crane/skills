@@ -1,6 +1,6 @@
 {
   "name": "toycrane-skills",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Agent skills for sharpening plans, screens, and domain models, then implementing them test-first.",
   "author": {
     "name": "toy-crane",
@@ -10,7 +10,7 @@
   "license": "MIT",
   "keywords": [
     "skills",
-    "write-spec",
+    "shape-idea",
     "draft-plan",
     "build-prototype",
     "domain-modeling",
@@ -24,6 +24,6 @@
     "./skills/domain-modeling",
     "./skills/draft-plan",
     "./skills/tdd",
-    "./skills/write-spec"
+    "./skills/shape-idea"
   ]
 }

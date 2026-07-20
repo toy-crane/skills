@@ -1,11 +1,11 @@
 ---
-name: write-spec
-description: Interview the user about a plan or design until reaching shared understanding. Use when the user wants to clarify, align, or stress-test something before implementation, or wants a spec a later session can implement from.
+name: shape-idea
+description: Shape an idea into shared, implementation-ready decisions. Use when the user wants to clarify, align, or stress-test a plan or design before implementation, or wants a spec a later session can implement from.
 ---
 
-# Write Spec
+# Shape Idea
 
-Interview the user until you reach shared understanding. The interview
+Shape the user's idea until you reach shared understanding. The interview
 exists to extract what lives only in the user's head, so close every
 branch you can without them. Investigate the codebase, documentation,
 and authoritative sources, and when no source holds the answer to a

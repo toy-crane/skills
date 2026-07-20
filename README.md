@@ -59,13 +59,12 @@ claude plugin install toycrane-skills@toycrane
   anti-pattern catalog that keeps tests behavioral instead of
   implementation-coupled. Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
-- **[write-spec](./skills/write-spec/SKILL.md)**: Interview toward shared
-  understanding through drafts (stated assumptions you can veto, recommended
-  answers you can correct, rendered variants you react to), inspecting and
-  verifying material UI changes while batching unresolved experiential
-  decisions into one review, grounding each decision in project evidence,
-  maintaining the project's glossary and decision records along the way, and
-  closing with a spec folder a later session can implement from.
+- **[shape-idea](./skills/shape-idea/SKILL.md)**: Shape an idea into shared,
+  implementation-ready decisions through drafts (stated assumptions you can
+  veto, recommended answers you can correct, rendered variants you react to),
+  grounding each decision in project evidence, inspecting and verifying
+  material UI changes, maintaining the project's glossary and decision
+  records, and closing with a spec folder a later session can implement from.
 
 ## Local development
 

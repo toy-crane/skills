@@ -67,12 +67,12 @@
     {
       "id": 6,
       "prompt": "/build-prototype 새로 만들 CLI 도구의 서브커맨드 구조랑 터미널 출력 형식을 프로토타입으로 정렬하고 싶어.",
-      "expected_output": "The response states that command-line and terminal interfaces are outside this skill's scope, does not build an HTML mockup of a terminal, and points to a prose or write-spec-style path for settling the question.",
+      "expected_output": "The response states that command-line and terminal interfaces are outside this skill's scope, does not build an HTML mockup of a terminal, and points to a prose or shape-idea-style path for settling the question.",
       "files": [],
       "expectations": [
         "It states that CLI and terminal interfaces are outside this skill's scope.",
         "It does not build an HTML mockup of a terminal.",
-        "It offers a prose or write-spec-style path for the question instead."
+        "It offers a prose or shape-idea-style path for the question instead."
       ]
     },
     {
