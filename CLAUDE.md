@@ -21,6 +21,13 @@ invokable while working in this repo, and is deliberately kept out of
 `plugin.json`. Don't add it to the plugin. It is currently still discoverable by
 skills.sh, a known loose end left open on purpose, to be tidied later.
 
+## Skills stand alone
+
+A published skill must be self-sufficient at execution time: skills load one
+at a time and skills.sh installs them individually, so a skill may invoke
+another skill by name but must never assume knowledge of another skill's text
+("follow X's discipline"). Restate what it needs inline.
+
 ## Versioning is manual
 
 Bump `.claude-plugin/plugin.json`'s `version` when installed plugin users should
