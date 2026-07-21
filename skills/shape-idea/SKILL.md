@@ -15,7 +15,13 @@ extract what lives only in the user's head, so close every branch you can
 without them. Investigate the codebase, documentation,
 and authoritative sources, and when no source holds the answer to a
 technical question, manufacture the evidence with a spike or a
-benchmark.
+benchmark. When a decision lands the work on a framework or hosted
+service, check whether its vendor publishes official agent context —
+a skill, an AGENTS.md codemod, bundled docs — and install what is
+missing into the project in the form the vendor recommends:
+version-matched vendor knowledge outranks training data, and
+installing at the moment the stack is settled equips every later
+session, not just this one.
 
 Every move is a draft: put forward a concrete candidate for the user to
 correct, because people mark up a draft far more reliably than they fill
