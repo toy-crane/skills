@@ -28,6 +28,16 @@ at a time and skills.sh installs them individually, so a skill may invoke
 another skill by name but must never assume knowledge of another skill's text
 ("follow X's discipline"). Restate what it needs inline.
 
+## Skills stay thin
+
+A skill states goal, constraints, and completion criteria — not method. A
+fixed procedure earns its place only when it guards a repeated, observed
+failure (build-prototype's skeleton-then-fill). Prefer pointing at real
+artifacts (GLOSSARY.md, specs, prototypes) over describing them in prose,
+and re-prune procedures when models improve. Rationale in
+[decision 0009](docs/decisions/0009-thin-skills-over-fixed-procedures.md)
+and the [source post](https://toycrane.xyz/posts/why-better-models-need-thinner-instructions/).
+
 ## Skill naming
 
 Two name classes. A skill the user invokes directly is an imperative
