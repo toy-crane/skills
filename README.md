@@ -45,9 +45,17 @@ The usual path is **discover-opportunity → shape-idea → draft-plan (when the
 approach needs review) → implementation with tdd**. Discover-opportunity is a
 user-invoked command rather than an automatically triggered skill: run
 `/discover-opportunity` in Claude Code or `$discover-opportunity` in Codex.
+Add-stack-context is user-invoked too: run it when setting up a project
+to pull in each vendor's official agent context.
 Build-prototype branches from shape-idea when a whole interface must be judged
 by using it.
 
+- **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Survey the
+  frameworks and services a project builds on and install each vendor's
+  official agent context — a skill, an AGENTS.md codemod, bundled docs —
+  in the form the vendor recommends, so later sessions start from
+  version-matched vendor knowledge instead of training data. User-invoked,
+  for project setup.
 - **[build-prototype](./skills/build-prototype/SKILL.md)**: Align on UI by
   building it: every screen of a feature in one dummy-data HTML file grown
   from a pinned shell (shared tokens, per-screen state pills, viewport

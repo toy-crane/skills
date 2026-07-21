@@ -11,7 +11,12 @@ which; when none exists, stop and say a spec is needed first, rather than
 planning from conversation. Read the folder's spec.md and approved
 prototype, plus `GLOSSARY.md` and `docs/decisions/` where the repo keeps
 them, explore the codebase, then draft plan.md and put it in front of the
-user to correct. The document is a review surface: its purpose is to draw
+user to correct. When the work builds on a framework or hosted service,
+check that its vendor's official agent context (a skill, an AGENTS.md,
+bundled docs) is installed in the project and add what is missing in the
+vendor's recommended form before drafting the approach; an approach
+drafted from stale stack knowledge reads well in review and fails in
+implementation. The document is a review surface: its purpose is to draw
 out corrections and the decisions only the user can make, before any code
 is written.
 

@@ -1,6 +1,6 @@
 {
   "name": "toycrane-skills",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Agent skills for discovering opportunities, sharpening plans, screens, and domain models, then implementing them test-first.",
   "author": {
     "name": "toy-crane",
@@ -13,6 +13,7 @@
     "discover-opportunity",
     "shape-idea",
     "draft-plan",
+    "add-stack-context",
     "build-prototype",
     "domain-modeling",
     "planning",
@@ -21,6 +22,7 @@
     "productivity"
   ],
   "skills": [
+    "./skills/add-stack-context",
     "./skills/build-prototype",
     "./skills/discover-opportunity",
     "./skills/domain-modeling",

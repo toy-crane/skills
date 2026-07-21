@@ -38,6 +38,15 @@ and re-prune procedures when models improve. Rationale in
 [decision 0009](docs/decisions/0009-thin-skills-over-fixed-procedures.md)
 and the [source post](https://toycrane.xyz/posts/why-better-models-need-thinner-instructions/).
 
+## Stack context
+
+When shaping or planning settles work onto a framework or hosted service,
+shape-idea and draft-plan install its vendor's official agent context (a
+skill, an AGENTS.md codemod, bundled docs) into the target project, in the
+form the vendor recommends. add-stack-context does the same on demand as a
+user-invoked command, for project setup outside the pipeline. Rationale in
+[decision 0010](docs/decisions/0010-agent-context-installs-at-stack-confirmation-and-setup.md).
+
 ## Skill naming
 
 Two name classes. A skill the user invokes directly is an imperative
