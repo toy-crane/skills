@@ -4,9 +4,10 @@
     {
       "id": 1,
       "prompt": "/discover-opportunity 사이드 프로젝트를 하나 만들고 싶은데 뭘 만들지는 전혀 모르겠어. 퇴근 후 일주일에 다섯 시간 정도 쓸 수 있고, 꼭 돈을 벌어야 하는 건 아니야.",
-      "expected_output": "The response starts drawing out the user's tacit knowledge from lived experience, people, workflows, recurring interests, or capabilities instead of returning the blank page or brainstorming generic products. It treats the supplied time and motivation as context and begins an adaptive conversation.",
+      "expected_output": "The response grounds the conversation in evidence about the user instead of returning the blank page or brainstorming generic products. It offers to look at the user's real traces (repositories, published writing, notes, past sessions) after agreeing on scope, or otherwise explores what the user knows firsthand. It treats the supplied time and motivation as context and begins an adaptive conversation.",
       "files": [],
       "expectations": [
+        "It proposes grounding observations in the user's real traces and agrees on scope before reading anything personal, rather than relying on recall alone.",
         "It explores something the user knows, notices, does, or repeatedly cares about firsthand.",
         "It does not merely ask what the user wants to build or present a generic product-idea list.",
         "It respects the five-hour weekly appetite and non-commercial motivation.",
