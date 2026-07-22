@@ -70,12 +70,6 @@ discovery-to-shaping boundary is recorded in
 Bump `.claude-plugin/plugin.json`'s `version` when installed plugin users should
 see an update. No changeset or CI automation.
 
-## Local use
-
-`scripts/link-skills.sh` symlinks every `skills/` skill into `~/.claude/skills`
-and `~/.agents/skills`. Re-run after adding, removing, or renaming a skill; plain
-edits and `git pull` need no re-run.
-
 ## Going live
 
 Both channels read the `main` branch on GitHub, so changes are installable

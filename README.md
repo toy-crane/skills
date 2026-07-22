@@ -88,23 +88,6 @@ by using it.
   material UI changes, maintaining the project's glossary and decision
   records, and closing with a spec folder a later session can implement from.
 
-## Local development
-
-Skills live in [`skills/`](./skills). To use them from any project while
-developing them here, symlink them into your global harness skill directories:
-
-```bash
-scripts/link-skills.sh
-```
-
-This links every skill under `skills/` into `~/.claude/skills` (Claude Code)
-and `~/.agents/skills` (Codex and other Agent Skills harnesses). Because each
-entry is a symlink into this repo, edits and `git pull` are reflected
-immediately. Re-run the script after adding, removing, or renaming a skill.
-
-> Note: the script replaces any existing real directory of the same name in
-> those locations with a symlink into this repo.
-
 ## License
 
 MIT. See [LICENSE](./LICENSE).
