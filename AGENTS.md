@@ -17,9 +17,13 @@ touching either `.claude-plugin/` manifest.
 
 `writing-great-skills` (vendored from [mattpocock/skills](https://github.com/mattpocock/skills),
 MIT) lives under `.agents/skills/` with a `.claude/skills/` symlink so it is
-invokable while working in this repo, and is deliberately kept out of
-`plugin.json`. Don't add it to the plugin. It is currently still discoverable by
-skills.sh, a known loose end left open on purpose, to be tidied later.
+invokable while working in this repo, but ships through neither channel. The
+plugin never carries it: it is deliberately kept out of `plugin.json`, so don't
+add it there. skills.sh would otherwise find it — `.agents/skills/` and
+`.claude/skills/` are both directories its CLI scans — so its `SKILL.md` carries
+`metadata: { internal: true }`, which hides it from `npx skills add` unless
+`INSTALL_INTERNAL_SKILLS=1` is set. Keep that frontmatter when updating the
+vendored skill.
 
 ## Skills stand alone
 
