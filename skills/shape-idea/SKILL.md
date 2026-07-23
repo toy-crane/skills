@@ -5,23 +5,31 @@ description: Shape a chosen idea or opportunity into shared, implementation-read
 
 # Shape Idea
 
-Shape the user's chosen idea until you reach shared understanding. When no
-concrete problem or intended change is chosen and no broad direction can be
-named, tell the user to invoke `discover-opportunity`; do not invoke it on
-their behalf or manufacture a spec from the blank page.
-When discovery just established a direction, carry its conversational summary
-forward without requiring an intermediate document. The interview exists to
-extract what lives only in the user's head, so close every branch you can
-without them. Investigate the codebase, documentation,
-and authoritative sources, and when no source holds the answer to a
-technical question, manufacture the evidence with a spike or a
-benchmark. When a decision lands the work on a framework or hosted
+Shape the user's chosen idea until you reach shared understanding. When
+the user cannot yet name a concrete problem or a broad direction, send
+them to `discover-opportunity`; do not invoke it on their behalf or
+manufacture a spec from the blank page. When discovery just established
+a direction, carry its conversational summary forward without requiring
+an intermediate document. The interview exists to extract what lives
+only in the user's head, so close every branch you can without them.
+Investigate the codebase, documentation, and authoritative sources, and
+when no source holds the answer to a technical question, manufacture
+the evidence with a spike or a benchmark. When a decision lands the work on a framework or hosted
 service, check whether its vendor publishes official agent context —
 a skill, an AGENTS.md codemod, bundled docs — and install what is
 missing into the project in the form the vendor recommends:
-version-matched vendor knowledge outranks training data, and
-installing at the moment the stack is settled equips every later
-session, not just this one.
+version-matched vendor knowledge outranks training data and equips
+every later session, not just this one.
+
+Shaping writes documents, not source: its durable writes to the
+project are the spec folder, the glossary and decision records, and
+installed vendor agent context — nothing else. Spikes, benchmarks,
+and rendered visuals are disposable scaffolding that leaves the
+project's code as it found it: the decision they draw out is what
+survives, never the artifact. However small the edit looks, changing
+the product's code is implementation, which belongs to the session
+that builds from the spec; when a fix begs to be made on the spot,
+record it as a decision or a remaining risk instead.
 
 Every move is a draft: put forward a concrete candidate for the user to
 correct, because people mark up a draft far more reliably than they fill
@@ -47,18 +55,16 @@ a blank page. The draft takes the shape the question demands:
 Everything else stays prose. Render in whatever visual medium the
 environment provides (an inline widget, an artifact page, a local HTML
 file the user opens), choosing the cheapest medium sufficient for the
-question. Visuals are disposable scaffolding: the decision they draw
-out is what survives. A question no available medium can settle is
-deferred explicitly as a remaining risk.
+question. A question no available medium can settle is deferred
+explicitly as a remaining risk.
 
 When work materially changes a visible or interactive surface, inspect
 the current surface before settling its design. When a runnable product
 or preview already contains the change, exercise its states before
-closing; otherwise render the cheapest sufficient substitute without
-beginning production implementation. Keep self-verification and user
-judgment separate: verify that the states work, then present unresolved
-experiential decisions, batch related decisions into one review, and
-wait for the user's reaction. Skip that review only when the change is
+closing; otherwise render the cheapest sufficient substitute. Keep
+self-verification and user judgment separate: verify that the states
+work, then present unresolved experiential decisions, batch related
+decisions into one review, and wait for the user's reaction. Skip that review only when the change is
 routine, the surface is already confirmed, or the user explicitly
 delegates it; record the basis as an assumption.
 
