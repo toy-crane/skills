@@ -61,12 +61,13 @@ by using it.
   from a pinned shell (shared tokens, per-screen state pills, viewport
   presets), walked through as a wireframe skeleton first, filled after
   approval, and preserved beside the spec for the implementing session.
-- **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Help a
-  user who wants to make something but does not know where their tacit
-  knowledge could apply surface a promising direction from their experience,
-  access, interests, and capabilities, then carry it naturally into
-  shape-idea without requiring an intermediate document. It runs only when the
-  user invokes it explicitly.
+- **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Surface
+  side-project opportunities the user has not recognized by grounding the
+  conversation in evidence from outside their self-report — their own traces
+  (repositories, writing, notes, past sessions, opened by agreement) crossed
+  with current external change — then carry a resonant direction naturally
+  into shape-idea without requiring an intermediate document. It runs only
+  when the user invokes it explicitly.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.

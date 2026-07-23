@@ -1,7 +1,7 @@
 interface:
   display_name: "Discover Opportunity"
-  short_description: "Find where your tacit knowledge could apply"
-  default_prompt: "Use $discover-opportunity to draw out what I know from experience, show me where it could apply, and continue with $shape-idea when a direction resonates."
+  short_description: "Find opportunities hiding in your own traces"
+  default_prompt: "Use $discover-opportunity to mine my real traces for patterns I have not recognized, show me where they could apply, and continue with $shape-idea when a direction resonates."
 
 policy:
   allow_implicit_invocation: false
