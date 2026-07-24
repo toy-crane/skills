@@ -66,7 +66,7 @@ user-invoked command, for project setup outside the pipeline. Rationale in
 
 Two name classes. A skill the user invokes directly is an imperative
 verb-object command (discover-opportunity, shape-idea, write-plan,
-build-prototype). A skill that
+split-into-tasks, build-prototype). A skill that
 triggers in the background or is invoked by other skills keeps its discipline
 noun (domain-modeling, tdd). Before naming a new skill, check the candidate
 against the built-in slash commands of Claude Code and Codex; `/plan` is
