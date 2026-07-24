@@ -13,6 +13,7 @@
     "discover-opportunity",
     "shape-idea",
     "write-plan",
+    "split-into-tasks",
     "add-stack-context",
     "build-prototype",
     "domain-modeling",
@@ -27,6 +28,7 @@
     "./skills/discover-opportunity",
     "./skills/domain-modeling",
     "./skills/write-plan",
+    "./skills/split-into-tasks",
     "./skills/tdd",
     "./skills/shape-idea"
   ]

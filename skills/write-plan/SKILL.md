@@ -41,8 +41,9 @@ Then six sections:
 - **Approach**: the chosen strategy and why, with the rejected
   alternatives one line each.
 - **Order**: what lands first and where the work becomes verifiable; work
-  exceeding one session splits at session grain, never into a pre-cut
-  task list, whose predictions rot as execution learns the terrain.
+  exceeding one session goes to the split-into-tasks skill, which cuts it
+  at session grain — never into a finer pre-cut task list, whose
+  predictions rot as execution learns the terrain.
 - **Acceptance criteria**: observable conditions that define done, as a
   checklist the implementing session can self-grade against.
 - **Verification and seams**: where tests grip the system and at what

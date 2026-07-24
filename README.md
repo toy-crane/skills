@@ -46,8 +46,9 @@ The usual path:
 ```mermaid
 flowchart LR
     DO["discover-opportunity<br/>(no direction yet)"] --> SI[shape-idea]
-    SI --> DP["write-plan<br/>(optional)"]
-    DP --> TDD[tdd]
+    SI --> WP["write-plan<br/>(optional)"]
+    WP --> ST["split-into-tasks<br/>(when work exceeds one session)"]
+    ST --> TDD[tdd]
 ```
 
 Discover-opportunity is a
@@ -83,6 +84,12 @@ by using it.
   reviewed implementation plan: one page of approach, order, acceptance
   criteria, test seams, off-limits areas, and risks, drafted whole for you
   to correct and saved beside the spec for the implementing session.
+- **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split work
+  that exceeds one session into session-sized tasks — vertical,
+  independently verifiable cuts that declare what blocks them — reviewed
+  as a breakdown before landing one file per task in the spec folder, for
+  you to run one fresh session each. Adapted from
+  [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[tdd](./skills/tdd/SKILL.md)**: Implement test-first through the
   red → green loop: tests at pre-agreed seams only (adopted from the plan
   document when one fixes them), one vertical slice per cycle, with the
