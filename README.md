@@ -41,8 +41,16 @@ claude plugin install toycrane-skills@toycrane
 
 ## Skills
 
-The usual path is **discover-opportunity → shape-idea → draft-plan (when the
-approach needs review) → implementation with tdd**. Discover-opportunity is a
+The usual path:
+
+```mermaid
+flowchart LR
+    DO["discover-opportunity<br/>(no direction yet)"] --> SI[shape-idea]
+    SI --> DP["draft-plan<br/>(optional)"]
+    DP --> TDD[tdd]
+```
+
+Discover-opportunity is a
 user-invoked command rather than an automatically triggered skill: run
 `/discover-opportunity` in Claude Code or `$discover-opportunity` in Codex.
 Add-stack-context is user-invoked too: run it when setting up a project
