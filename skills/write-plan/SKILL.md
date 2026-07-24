@@ -1,9 +1,9 @@
 ---
-name: draft-plan
-description: "Draft a reviewable implementation plan (plan.md) from a spec folder before implementation. Use when the how deserves review: several plausible approaches, areas that must not be touched, likely retries or delegation, or verification criteria worth pinning down. Needs an existing spec folder; for work that fits one sitting with an obvious approach, skip it and implement straight from the spec."
+name: write-plan
+description: "Write a reviewable implementation plan (plan.md) from a spec folder before implementation. Use when the how deserves review: several plausible approaches, areas that must not be touched, likely retries or delegation, or verification criteria worth pinning down. Needs an existing spec folder; for work that fits one sitting with an obvious approach, skip it and implement straight from the spec."
 ---
 
-# Draft Plan
+# Write Plan
 
 Turn a spec folder into a reviewed implementation plan. Spec folders live
 at `docs/specs/<slug>/`: when none is named, list the candidates and ask

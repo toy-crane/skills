@@ -56,7 +56,7 @@ and the [source post](https://toycrane.xyz/posts/why-better-models-need-thinner-
 ## Stack context
 
 When shaping or planning settles work onto a framework or hosted service,
-shape-idea and draft-plan install its vendor's official agent context (a
+shape-idea and write-plan install its vendor's official agent context (a
 skill, an AGENTS.md codemod, bundled docs) into the target project, in the
 form the vendor recommends. add-stack-context does the same on demand as a
 user-invoked command, for project setup outside the pipeline. Rationale in
@@ -65,12 +65,13 @@ user-invoked command, for project setup outside the pipeline. Rationale in
 ## Skill naming
 
 Two name classes. A skill the user invokes directly is an imperative
-verb-object command (discover-opportunity, shape-idea, draft-plan,
+verb-object command (discover-opportunity, shape-idea, write-plan,
 build-prototype). A skill that
 triggers in the background or is invoked by other skills keeps its discipline
 noun (domain-modeling, tdd). Before naming a new skill, check the candidate
 against the built-in slash commands of Claude Code and Codex; `/plan` is
-reserved by both, which is why the planning skill is draft-plan. Rationale in
+reserved by both, which is why the planning skill is write-plan (renamed
+from draft-plan in decision 0013). Rationale in
 [decision 0006](docs/decisions/0006-verb-object-names-for-invoked-skills.md)
 and [decision 0007](docs/decisions/0007-shape-idea-names-the-work.md). The
 discovery-to-shaping boundary is recorded in
