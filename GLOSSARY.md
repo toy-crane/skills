@@ -35,9 +35,13 @@ The durable handoff document a shape-idea or build-prototype session writes as i
 _Avoid_: Alignment brief, summary
 
 **Spec folder**:
-The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor, plan.md when planning ran as its own step, prototype.html when a surface was approved. Lives per unit and retires wholesale when the work ships. Called "dossier" in records up to 0004.
+The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor, plan.md when planning ran as its own step, prototype.html when a surface was approved, tasks/ when the work was cut for multi-session execution. Lives per unit and retires wholesale when the work ships. Called "dossier" in records up to 0004.
 _Avoid_: Dossier, issue folder
 
 **Plan**:
 The optional implementation map a draft-plan session writes beside the spec for review: approach, order, acceptance criteria, seams, off-limits areas, and risks, under an advisory contract that the code wins where they disagree and decision-level divergence flows back to the spec.
 _Avoid_: Ticket list, task breakdown
+
+**Task**:
+A session-sized cut of work that exceeds one sitting: a complete, independently verifiable path through every layer it touches, sized for one fresh session to implement and one review to read, declaring which tasks block it. Tasks whose blockers are all done form the frontier a next session may pick up. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
+_Avoid_: Ticket, slice, subtask, to-do
