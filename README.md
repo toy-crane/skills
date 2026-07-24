@@ -46,7 +46,7 @@ The usual path:
 ```mermaid
 flowchart LR
     DO["discover-opportunity<br/>(no direction yet)"] --> SI[shape-idea]
-    SI --> DP["draft-plan<br/>(optional)"]
+    SI --> DP["write-plan<br/>(optional)"]
     DP --> TDD[tdd]
 ```
 
@@ -79,7 +79,7 @@ by using it.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.
-- **[draft-plan](./skills/draft-plan/SKILL.md)**: Turn a spec folder into a
+- **[write-plan](./skills/write-plan/SKILL.md)**: Turn a spec folder into a
   reviewed implementation plan: one page of approach, order, acceptance
   criteria, test seams, off-limits areas, and risks, drafted whole for you
   to correct and saved beside the spec for the implementing session.
