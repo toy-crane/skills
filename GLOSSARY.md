@@ -26,6 +26,10 @@ _Avoid_: Mockup, option
 The full-surface build: every screen a feature needs in one self-contained HTML file with shared design tokens, dummy data, and per-screen state toggles, built skeleton first and filled after approval. Where a variant settles one question, the prototype surfaces the questions nobody knew to ask; the approved file survives beside the spec as its visual half.
 _Avoid_: Mockup, wireframe, demo
 
+**Explainer**:
+A self-contained HTML page built so one piece of content — a change set, a plan, an analysis, a structure — is understood by looking instead of reading prose. Ephemeral by default: it explains an artifact without becoming one, unlike a prototype, whose approved surface survives beside the spec.
+_Avoid_: Report, dashboard, visualization as umbrella terms
+
 **Structural mirroring**:
 Rendering the interviewer's current understanding of a structure (a flow, its states, concept relationships) back to the user, so agreement is judged by looking instead of re-described in prose.
 _Avoid_: Diagramming
