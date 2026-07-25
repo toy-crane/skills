@@ -60,9 +60,8 @@ prototype-produced snippet that encodes a decision more precisely than
 prose can (a schema shape, a state machine), trimmed to its decision-rich
 part.
 
-Keep the draft in the conversation and write plan.md beside spec.md only
-once the user approves, so an interrupted review never leaves a
-half-agreed file looking authoritative; when plan.md already exists,
-present the new draft as a revision of it. The implementing session reads
-spec and plan together; plan mode remains the place to check the plan
-against the code as it stands.
+Write the draft straight to plan.md beside spec.md and hold the review
+on the file: corrections land as edits, questions stay in the
+conversation. When plan.md already exists, revise it in place. The
+implementing session reads spec and plan together; plan mode remains the
+place to check the plan against the code as it stands.
