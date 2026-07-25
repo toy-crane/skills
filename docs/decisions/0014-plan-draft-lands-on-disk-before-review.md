@@ -1,4 +1,4 @@
-# The plan draft lands on disk before review, behind a draft marker
+# The plan draft lands on disk before review
 
 write-plan kept the draft in the conversation and saved plan.md only on
 approval, so an interrupted review could never leave a half-agreed file
@@ -10,12 +10,12 @@ to re-read. The document's whole justification is being a review surface
 review.
 
 write-plan now writes the draft to plan.md beside spec.md before review
-and holds the review on the file: corrections land as visible edits,
-questions stay in the conversation. The half-agreed-file risk moves into
-the file itself — until the user approves, plan.md opens with the single
-line `Status: draft — under review` above the contract, and approval means
-removing that line. Interruption is fail-safe: the marker stays, and the
-file names its own status to any later session.
+and holds the review on the file: corrections land as edits, questions
+stay in the conversation. The half-agreed-file risk is accepted, not
+guarded: spec.md already carries the same exposure (shape-idea
+materializes it without a final gate), and the plan's opening contract
+already makes the document advisory — the terrain wins where they
+disagree.
 
 ## Considered Options
 
@@ -23,17 +23,16 @@ file names its own status to any later session.
   failure above; it also left the pipeline asymmetric — shape-idea
   materializes spec.md without ceremony while the plan waited on a gate —
   which confused actual use.
+- **A `Status: draft — under review` marker removed on approval**
+  (rejected): ceremony the pipeline doesn't need; spec.md faces the same
+  interruption risk with no marker, and the contract already subordinates
+  the plan to the code.
 - **A separate draft file renamed on approval** (plan-draft.md → plan.md)
-  (rejected): approval-as-rename is clumsier than deleting a line and
-  complicates revising an existing plan.md in place.
-- **Rely on git status (uncommitted = unapproved)** (rejected): a fresh
-  implementing session reads the worktree, not the log, and commit habits
-  vary by project.
+  (rejected): approval-as-rename is heavier still.
 
 ## Consequences
 
 write-plan's closing paragraph is rewritten. The to-plan spec's final gate
-("approving the draft saves plan.md beside spec.md") is superseded:
-approval now removes the marker instead of triggering the save. GLOSSARY's
-Plan entry already says "writes beside the spec for review" and is
-untouched. Plugin bumps to 0.13.1.
+("approving the draft saves plan.md beside spec.md") is superseded: the
+save precedes the review. GLOSSARY's Plan entry already says "writes
+beside the spec for review" and is untouched. Plugin bumps to 0.13.1.

@@ -61,12 +61,7 @@ prose can (a schema shape, a state machine), trimmed to its decision-rich
 part.
 
 Write the draft straight to plan.md beside spec.md and hold the review
-on the file: a document reads better there than re-pasted into chat, and
-each correction lands as a visible edit. Until the user approves, the
-file opens with the single line `Status: draft — under review` above the
-contract, so an interrupted review never leaves a half-agreed file
-looking authoritative; approval means removing that line, and a plan
-still carrying it is not one to implement from. When plan.md already
-exists, revise it in place under the same marker. The implementing
-session reads spec and plan together; plan mode remains the place to
-check the plan against the code as it stands.
+on the file: corrections land as edits, questions stay in the
+conversation. When plan.md already exists, revise it in place. The
+implementing session reads spec and plan together; plan mode remains the
+place to check the plan against the code as it stands.
