@@ -42,6 +42,10 @@ _Avoid_: Dossier, issue folder
 The optional implementation map a write-plan session writes beside the spec for review: approach, order, acceptance criteria, seams, off-limits areas, and risks, under an advisory contract that the code wins where they disagree and decision-level divergence flows back to the spec.
 _Avoid_: Ticket list, task breakdown
 
+**Comprehension gap**:
+The point where the user does not understand the system — a level, a mechanism, why not the alternative, or a single word. Distinct from the interviewer not understanding the user: the first is closed by rendering with the authority in the code and docs, the second by rendering with the authority in the user.
+_Avoid_: Confusion, knowledge gap
+
 **Task**:
 A session-sized cut of work that exceeds one sitting: a complete, independently verifiable path through every layer it touches, sized for one fresh session to implement and one review to read, declaring which tasks block it. Tasks whose blockers are all done form the frontier a next session may pick up. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
 _Avoid_: Ticket, slice, subtask, to-do
