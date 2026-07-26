@@ -43,7 +43,7 @@ The optional implementation map a write-plan session writes beside the spec for 
 _Avoid_: Ticket list, task breakdown
 
 **Comprehension gap**:
-A point where the user does not understand the system: a level, a mechanism, why not the alternative, or a single word. Not the same as the interviewer not understanding the user. The first is closed by answering from the code and docs, in whatever form the gap calls for; the second by drawing for the user to correct.
+A point where the user does not understand the system: a level, a mechanism, why not the alternative, or a single word. Not the same as the interviewer not understanding the user. The first is closed by rendering from the code and docs, in whatever form the gap calls for; the second by rendering for the user to correct.
 _Avoid_: Confusion, knowledge gap
 
 **Task**:
