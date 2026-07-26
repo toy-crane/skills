@@ -55,7 +55,7 @@ Render in whatever visual medium the environment provides: an inline widget, an
 artifact page, a local HTML file the user opens. Pick the cheapest one sufficient
 for the question. Defer a question no available medium can settle, explicitly, as
 a remaining risk. When the user asks you to explain something rather than to
-confirm it, invoke the `explain` skill.
+confirm it, invoke the `explain-visually` skill.
 
 ## What you may write
 

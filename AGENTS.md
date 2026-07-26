@@ -76,6 +76,9 @@ from draft-plan in decision 0013). Rationale in
 and [decision 0007](docs/decisions/0007-shape-idea-names-the-work.md). The
 discovery-to-shaping boundary is recorded in
 [decision 0008](docs/decisions/0008-opportunity-discovery-precedes-idea-shaping.md).
+One skill takes an adverb instead of an object: explain-visually, because the
+object changes every time and rendering is the whole reason to invoke it
+([decision 0016](docs/decisions/0016-explain-becomes-explain-visually.md)).
 
 ## Versioning is manual
 
