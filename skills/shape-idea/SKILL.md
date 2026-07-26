@@ -56,7 +56,8 @@ Everything else stays prose. Render in whatever visual medium the
 environment provides (an inline widget, an artifact page, a local HTML
 file the user opens), choosing the cheapest medium sufficient for the
 question. A question no available medium can settle is deferred
-explicitly as a remaining risk.
+explicitly as a remaining risk. When the user asks you to explain something
+rather than to confirm it, invoke the `explain` skill.
 
 When work materially changes a visible or interactive surface, inspect
 the current surface before settling its design. When a runnable product
