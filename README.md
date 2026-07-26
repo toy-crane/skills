@@ -82,9 +82,11 @@ have something explained, in any conversation.
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.
 - **[explain](./skills/explain/SKILL.md)**: Answer "I don't follow — explain
-  this" by drawing it instead of writing more prose: guess what is unclear,
-  render it from the real code and docs in whatever medium the environment
-  offers, one level per view. Fires when you ask, in any conversation.
+  this" without restating it at greater length: guess what is unclear, then
+  close that gap in the form it calls for — a picture for a structure, real
+  values run through a mechanism, a comparison for a why-not-that, one sentence
+  for one word — worked from the real code and docs, one level per answer.
+  Fires when you ask, in any conversation.
 - **[write-plan](./skills/write-plan/SKILL.md)**: Turn a spec folder into a
   reviewed implementation plan: one page of approach, order, acceptance
   criteria, test seams, off-limits areas, and risks, drafted whole for you
