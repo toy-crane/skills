@@ -57,7 +57,8 @@ user-invoked command rather than an automatically triggered skill: run
 Add-stack-context is user-invoked too: run it when setting up a project
 to pull in each vendor's official agent context.
 Build-prototype branches from shape-idea when a whole interface must be judged
-by using it.
+by using it. Explain sits outside the pipeline: it fires whenever you ask to
+have something explained, in any conversation.
 
 - **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Survey the
   frameworks and services a project builds on and install each vendor's
@@ -80,6 +81,10 @@ by using it.
 - **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.
+- **[explain](./skills/explain/SKILL.md)**: Answer "I don't follow — explain
+  this" by drawing it instead of writing more prose: guess what is unclear,
+  render it from the real code and docs in whatever medium the environment
+  offers, one level per view. Fires when you ask, in any conversation.
 - **[write-plan](./skills/write-plan/SKILL.md)**: Turn a spec folder into a
   reviewed implementation plan: one page of approach, order, acceptance
   criteria, test seams, off-limits areas, and risks, drafted whole for you
