@@ -15,12 +15,12 @@ Actively build and sharpen the project's domain model as you design. This is the
 ├── docs/
 │   └── decisions/
 │       ├── README.md
-│       ├── 0001-event-sourced-orders.md
-│       └── 0002-postgres-for-write-model.md
+│       ├── event-sourced-orders.md
+│       └── postgres-for-write-model.md
 └── src/
 ```
 
-`GLOSSARY.md` says what a term means now. `docs/decisions/README.md` says what the project has decided now, one line per record. The records themselves hold the arguments. Without the index the current position exists nowhere and every session rebuilds it from the whole folder.
+`GLOSSARY.md` says what a term means now. `docs/decisions/README.md` says what the project has decided now: one line per standing position, grouped by subject. The records themselves hold the arguments, addressed by slug alone. Without the index the current position exists nowhere and every session rebuilds it from the whole folder.
 
 Create files lazily, only when you have something to write. If no `GLOSSARY.md` exists, create one when the first term is resolved. If no `docs/decisions/` exists, create it when the first decision record is needed.
 
@@ -60,4 +60,4 @@ If any of the three is missing, skip it. Use the format in [decision-record temp
 
 ### Write the index line before the record
 
-A decision you cannot state in one sentence has not settled yet, so write that sentence first: `- [NNNN](NNNN-slug.md) — what was decided.` in `docs/decisions/README.md`. Then argue for it in the record. The index and the folder always match.
+A decision you cannot state in one sentence has not settled yet, so write that sentence first: `- [slug](slug.md) — what was decided.` in `docs/decisions/README.md`, under the subject's section (create the section when the subject is new). If the decision overturns a standing position, replace that line instead of adding one, and name the superseded record in the new record's body; the superseded file itself is never edited. Then argue for it in the record. Every standing position has exactly one line.

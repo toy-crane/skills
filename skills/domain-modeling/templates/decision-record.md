@@ -1,6 +1,6 @@
 # Decision Record Format
 
-Decision records live in `docs/decisions/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc.
+Decision records live in `docs/decisions/`, one file per decision, named by slug alone: `event-sourced-orders.md`. The slug states the subject and is the record's permanent address — other records and documents cite it, so it never changes.
 
 Create the `docs/decisions/` directory lazily, only when the first decision record is needed.
 
@@ -18,13 +18,13 @@ That's it. A decision record can be a single paragraph. The value is in recordin
 
 Only include these when they add genuine value. Most decision records won't need them.
 
-- **Status** frontmatter (`proposed | accepted | deprecated | superseded by 0001`): useful when decisions are revisited
+- **Status** frontmatter (`proposed | accepted | deprecated | superseded by <slug>`): useful when decisions are revisited
 - **Considered Options**: only when the rejected alternatives are worth remembering
 - **Consequences**: only when non-obvious downstream effects need to be called out
 
-## Numbering
+## Naming and supersession
 
-Scan `docs/decisions/` for the highest existing number and increment by one.
+Name the file for the claim it makes, kebab-case, no number or date prefix. When a record overturns an earlier one, say so in the body by slug; the earlier file stays untouched, and the index line it held is replaced by the new record's line.
 
 ## When to offer a decision record
 
