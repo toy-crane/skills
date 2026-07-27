@@ -2,7 +2,7 @@
 
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
-Agent skills for discovering opportunities, sharpening plans, screens, and
+Agent skills for discovering opportunities, sharpening decisions, screens, and
 project knowledge, then implementing them test-first. Small, composable, and
 model-agnostic: install the ones you want and make them your own.
 
