@@ -15,7 +15,6 @@ rejected alternatives.
 
 - [verb-object-names-for-invoked-skills](verb-object-names-for-invoked-skills.md) — User-invoked skills take imperative verb-object names; skills that fire in the background keep discipline nouns. `/plan` is reserved by both harnesses.
 - [shape-idea-names-the-work](shape-idea-names-the-work.md) — The clarification workflow is named shape-idea: the name states the work, not the document it hands off.
-- [draft-plan-becomes-write-plan](draft-plan-becomes-write-plan.md) — The planning skill is write-plan: the plan document is itself the review surface, so writing it is an honest name.
 
 ## Skill design
 
@@ -23,12 +22,11 @@ rejected alternatives.
 
 ## Pipeline
 
-- [jit-planning-with-optional-to-plan](jit-planning-with-optional-to-plan.md) — Implementation planning is just-in-time by default; an optional skill writes a reviewable plan.md when the how deserves review.
+- [write-plan-retires-into-tdd-and-the-spec](write-plan-retires-into-tdd-and-the-spec.md) — Planning is not its own pipeline stage: implementation plans stay just-in-time in plan mode, the seam rule lives in tdd judged by name durability, and off-limits splits between spec.md and task files.
 - [opportunity-discovery-precedes-idea-shaping](opportunity-discovery-precedes-idea-shaping.md) — discover-opportunity runs before shape-idea as a user-invoked blank-page phase, and may not choose an MVP or detailed product behavior.
-- [agent-context-installs-at-stack-confirmation-and-setup](agent-context-installs-at-stack-confirmation-and-setup.md) — Official vendor agent context installs wherever the stack gets settled — shaping, planning — and on demand through add-stack-context.
+- [agent-context-installs-at-stack-confirmation-and-setup](agent-context-installs-at-stack-confirmation-and-setup.md) — Official vendor agent context installs where the stack gets settled and on demand through add-stack-context.
 - [discovery-draws-material-from-outside-self-report](discovery-draws-material-from-outside-self-report.md) — Discovery sources its own material from the user's traces and current external change, and the user judges it; recall cannot produce the unrecognized.
 - [session-grain-tasks-via-split-into-tasks](session-grain-tasks-via-split-into-tasks.md) — Work exceeding one session splits into session-grain tasks, one file each, because the binding constraint is review bandwidth. Fine-grain lists stay rejected.
-- [plan-draft-lands-on-disk-before-review](plan-draft-lands-on-disk-before-review.md) — The plan draft is written to plan.md before review, and the review is held on the file rather than in the conversation.
 
 ## Shaping
 

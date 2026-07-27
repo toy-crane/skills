@@ -58,24 +58,22 @@ and the [source post](https://toycrane.xyz/posts/why-better-models-need-thinner-
 
 ## Stack context
 
-When shaping or planning settles work onto a framework or hosted service,
-shape-idea and write-plan install its vendor's official agent context (a
-skill, an AGENTS.md codemod, bundled docs) into the target project, in the
-form the vendor recommends. add-stack-context does the same on demand as a
-user-invoked command, for project setup outside the pipeline. Rationale in
+When shaping settles work onto a framework or hosted service, shape-idea
+installs its vendor's official agent context (a skill, an AGENTS.md codemod,
+bundled docs) into the target project, in the form the vendor recommends.
+add-stack-context does the same on demand as a user-invoked command, for
+project setup outside the pipeline. Rationale in
 [agent-context-installs-at-stack-confirmation-and-setup](docs/decisions/agent-context-installs-at-stack-confirmation-and-setup.md).
 
 ## Skill naming
 
 Two name classes. A skill the user invokes directly is an imperative
-verb-object command (discover-opportunity, shape-idea, write-plan,
-split-into-tasks, build-prototype). A skill that
+verb-object command (discover-opportunity, shape-idea, split-into-tasks,
+build-prototype). A skill that
 triggers in the background or is invoked by other skills keeps its discipline
 noun (domain-modeling, tdd). Before naming a new skill, check the candidate
 against the built-in slash commands of Claude Code and Codex; `/plan` is
-reserved by both, which is why the planning skill is write-plan (renamed in
-[draft-plan-becomes-write-plan](docs/decisions/draft-plan-becomes-write-plan.md)).
-Rationale in
+reserved by both. Rationale in
 [verb-object-names-for-invoked-skills](docs/decisions/verb-object-names-for-invoked-skills.md)
 and [shape-idea-names-the-work](docs/decisions/shape-idea-names-the-work.md). The
 discovery-to-shaping boundary is recorded in
@@ -93,7 +91,7 @@ a superseding record replaces the line it overturns, and the superseded file
 stays untouched. Never rewrite what a record claims.
 `GLOSSARY.md` is permanent and current — rewrite it freely, terms only.
 `docs/specs/<slug>/` carries one unit of work (spec.md as the anchor, plus
-plan.md, prototype.html, tasks/ as they arrive), is created lazily, and is
+prototype.html, tasks/ as they arrive), is created lazily, and is
 deleted once that work ships. Keep the three apart: mixing them in one folder
 breaks what each path promises. Rationale in
 [spec-dossiers-under-docs-specs](docs/decisions/spec-dossiers-under-docs-specs.md)

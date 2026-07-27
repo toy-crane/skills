@@ -46,8 +46,7 @@ The usual path:
 ```mermaid
 flowchart LR
     DO["discover-opportunity<br/>(no direction yet)"] --> SI[shape-idea]
-    SI --> WP["write-plan<br/>(optional)"]
-    WP --> ST["split-into-tasks<br/>(when work exceeds one session)"]
+    SI --> ST["split-into-tasks<br/>(when work exceeds one session)"]
     ST --> TDD[tdd]
 ```
 
@@ -97,10 +96,6 @@ once several units of work have shipped.
   mechanism, drawn with the best renderer the session actually has rather than
   dropped into the reply as text. Says the one sentence and stops when a
   sentence is all it takes. Fires when you ask, in any conversation.
-- **[write-plan](./skills/write-plan/SKILL.md)**: Turn a spec folder into a
-  reviewed implementation plan: one page of approach, order, acceptance
-  criteria, test seams, off-limits areas, and risks, drafted whole for you
-  to correct and saved beside the spec for the implementing session.
 - **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split work
   that exceeds one session into session-sized tasks — vertical,
   independently verifiable cuts that declare what blocks them — reviewed
@@ -108,8 +103,8 @@ once several units of work have shipped.
   you to run one fresh session each. Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[tdd](./skills/tdd/SKILL.md)**: Implement test-first through the
-  red → green loop: tests at pre-agreed seams only (adopted from the plan
-  document when one fixes them), one vertical slice per cycle, with the
+  red → green loop: tests at pre-agreed seams only, reusing an existing
+  boundary before cutting a new one, one vertical slice per cycle, with the
   anti-pattern catalog that keeps tests behavioral instead of
   implementation-coupled. Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).

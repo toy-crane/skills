@@ -19,9 +19,11 @@ See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking g
 
 A **seam** is the public boundary you test at: the interface where you observe behavior without reaching inside. Tests live at seams, never against internals.
 
-**Test only at pre-agreed seams.** When the work follows a reviewed plan document that already fixes the seams under test (for example `docs/specs/<slug>/plan.md` with a verification-and-seams section), those seams are the agreement: adopt them, say you did, and don't reopen them. Only when no such document exists, write down the seams under test and confirm them with the user before the first test. No test is written at an unconfirmed seam. You can't test everything — agreeing the seams up front is how testing effort lands on the critical paths and complex logic instead of every edge case.
+**Reuse a seam before creating one.** When a new seam is needed, put it at a boundary whose name will outlive the refactoring — a use case or a domain concept, never a helper that fell out of today's implementation. A test at an unsettled name pins that name in place.
 
-When no plan fixes the seams, ask: "What's the public interface, and which seams should we test?"
+**Test only at pre-agreed seams.** Write down the seams under test and confirm them with the user before the first test. No test is written at an unconfirmed seam. You can't test everything — agreeing the seams up front is how testing effort lands on the critical paths and complex logic instead of every edge case.
+
+Ask: "What's the public interface, and which seams should we test?"
 
 ## Anti-patterns
 

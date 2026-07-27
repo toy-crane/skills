@@ -15,7 +15,7 @@
     },
     {
       "id": 2,
-      "prompt": "/explain-visually 왜 write-plan이야? draft-plan이 아니고. 잘 이해가 안 돼.",
+      "prompt": "/explain-visually 왜 shape-idea야? write-spec이 아니고. 잘 이해가 안 돼.",
       "expected_output": "The response places the two names side by side with a renderer and grounds the reasoning in this repo's decision records.",
       "files": [],
       "expectations": [
