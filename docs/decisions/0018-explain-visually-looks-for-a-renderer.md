@@ -77,8 +77,15 @@ entry follows. Version 0.17.0. 0017 stands as the record of what to cut and why
 this skill is a handle for rendering; the half of its argument that set the rule
 in terms of the reply rather than the tooling is superseded here.
 
-The eval lives outside the repo, so a later re-prune reruns rather than re-reads
-it — four prompts, three rounds, one run per cell, one model, on a Claude Code
+The prompt set ships as `skills/explain-visually/evals/evals.json`, in the form
+the rounds settled into: three render-warranted prompts and three whose answer
+is one sentence, each carrying the assertions used here. The run outputs do not
+ship. 0017 kept the whole eval outside the repo on the grounds that one run per
+cell is too thin to re-read, and that reasoning holds for outputs and not for
+prompts — a set that does not go stale is what makes the next re-prune cheap,
+and the instruction to re-prune is worth little if the experiment has to be
+rebuilt first. So a later re-prune reruns these six rather than re-reading what
+they returned: three rounds, one run per cell, one model, on a Claude Code
 session that does have an inline renderer. That last point bounds the renderer
 result: it says the body reaches for a renderer where one exists, not that it
 behaves well where none does. The `---TOOLS---` footer used to observe tool calls
