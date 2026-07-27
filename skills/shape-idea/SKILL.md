@@ -51,6 +51,10 @@ question demands.
 
 Everything else stays prose.
 
+State a decision with the condition that would overturn it, when only the user
+can know that condition. A condition you can check yourself is not one to state:
+go check it.
+
 Render in whatever visual medium the environment provides: an inline widget, an
 artifact page, a local HTML file the user opens. Pick the cheapest one sufficient
 for the question. Defer a question no available medium can settle, explicitly, as
