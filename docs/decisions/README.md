@@ -23,6 +23,7 @@ records hold the evidence and the rejected alternatives.
 - [0018](0018-explain-visually-looks-for-a-renderer.md) — explain-visually looks for the best renderer the session actually has instead of settling for text in the reply.
 - [0019](0019-shaping-writes-documents-not-source.md) — A shaping session's durable writes are the spec folder, the glossary and decision records, and installed vendor context — never product code.
 - [0020](0020-decisions-get-an-index-and-a-compaction-pass.md) — Decisions gain an index stating the current position, and compact-decisions maintains it; a cluster compacts only when the merged record would come out no larger.
+- [0021](0021-stated-decisions-carry-their-overturning-condition.md) — A decision the session states carries the condition that would overturn it, when only the user can know that condition; a checkable condition is checked, not stated.
 
 Records 0019 and 0020 have been renumbered twice, which is the collision this
 index exists to make visible. 0019 was originally 0011, landing the same day as
