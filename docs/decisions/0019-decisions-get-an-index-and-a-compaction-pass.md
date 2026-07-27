@@ -46,6 +46,15 @@ these clusters at 131% of source, stating them as one shared list put them at
 30–42%. Same records, opposite verdicts, on a formatting choice the rule never
 named.
 
+The bar is "no smaller", not "clearly smaller". A fixture run — a synthetic
+architecture-ADR repo, the only place the merge path could be exercised, since
+nothing here compacts — joined three converged records and came out 9%
+shorter. That is barely a saving and the merge was still right: the subject
+went from three records that only make sense read in order to one that answers
+the question. Bytes are the symptom the test can measure; a single home is the
+thing being bought. An earlier wording of the bar would have refused that
+merge.
+
 **A cluster where one record overturns or excepts another is left alone**, and
 the run says how many times the position moved and what forced each move. The
 first wording was "still under debate", which is not decidable from the

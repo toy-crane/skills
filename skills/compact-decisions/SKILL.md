@@ -36,9 +36,14 @@ Rejected alternatives are the part of the history that has to survive: without
 them someone re-proposes a settled option in six months and nothing answers
 them. So write them out as the merged record would carry them — one shared
 list, one terse line each — and add what else that record must hold: the
-current rule and the evidence it rests on. If the total is not clearly smaller
-than the records it would replace, there is nothing to win. Leave them alone
-and say so.
+current rule and the evidence it rests on. If that record comes out no smaller
+than the records it would replace, they are already at their minimum: leave
+them alone and say so.
+
+Do not read that as a saving to maximise. Clearing the bar by a little is
+still clearing it — what you are buying is that the subject gets one home
+instead of three that only make sense read in order, and that is worth having
+at nine percent.
 
 That list is what the decision rests on, so build it properly. The
 `## Considered Options` headings are the easy part. The rest sit in body prose
