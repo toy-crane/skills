@@ -83,6 +83,18 @@ One skill takes an adverb instead of an object: explain-visually, because the
 object changes every time and rendering is the whole reason to invoke it
 ([decision 0016](docs/decisions/0016-explain-becomes-explain-visually.md)).
 
+## Three document lifecycles
+
+`docs/decisions/` is append-only history, one numbered record per decision,
+listed one line each in [docs/decisions/README.md](docs/decisions/README.md).
+Never rewrite what a record claims; a later record supersedes an earlier one.
+`GLOSSARY.md` is permanent and current — rewrite it freely, terms only.
+`docs/specs/<slug>/` carries one unit of work (spec.md as the anchor, plus
+plan.md, prototype.html, tasks/ as they arrive), is created lazily, and is
+deleted once that work ships. Keep the three apart: mixing them in one folder
+breaks what each path promises. Rationale in
+[decision 0002](docs/decisions/0002-spec-dossiers-under-docs-specs.md).
+
 ## Versioning is manual
 
 Bump `.claude-plugin/plugin.json`'s `version` when installed plugin users should

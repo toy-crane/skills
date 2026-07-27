@@ -35,7 +35,7 @@ The durable handoff document a shape-idea or build-prototype session writes as i
 _Avoid_: Alignment brief, summary
 
 **Spec folder**:
-The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor, plan.md when planning ran as its own step, prototype.html when a surface was approved, tasks/ when the work was cut for multi-session execution. Lives per unit and retires wholesale when the work ships. Called "dossier" in records up to 0004.
+The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor, plan.md when planning ran as its own step, prototype.html when a surface was approved, tasks/ when the work was cut for multi-session execution. Lives per unit and retires wholesale when the work ships.
 _Avoid_: Dossier, issue folder
 
 **Plan**:
@@ -49,3 +49,11 @@ _Avoid_: Confusion, knowledge gap
 **Task**:
 A session-sized cut of work that exceeds one sitting: a complete, independently verifiable path through every layer it touches, sized for one fresh session to implement and one review to read, declaring which tasks block it. Tasks whose blockers are all done form the frontier a next session may pick up. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
 _Avoid_: Ticket, slice, subtask, to-do
+
+**Decision index**:
+The one-line-per-record list at `docs/decisions/README.md` stating what each decision was, so the project's current position is readable without reading the arguments behind it. Written before the record it points at: a decision that cannot be stated in one sentence has not settled. It is to decisions what GLOSSARY.md is to terms; the records hold the evidence.
+_Avoid_: Table of contents, ADR list
+
+**Record cluster**:
+A group of decision records covering one subject that has stopped moving. It compacts into a single record holding the current rule and the rejected alternatives, taking the lowest number of the group and dropping the sequence. A subject still under debate is not a cluster, and neither is a record whose body is itself reused, such as an eval's method.
+_Avoid_: Group, batch, merge set
