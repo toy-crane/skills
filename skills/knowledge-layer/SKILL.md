@@ -1,11 +1,11 @@
 ---
 name: knowledge-layer
-description: Build and sharpen a project's knowledge layer — the glossary and decision records where settled terms and decisions accumulate. Use when the user wants to pin down project terminology or a shared vocabulary, record a key decision, or when another skill needs to maintain the knowledge layer.
+description: Build and sharpen a project's knowledge layer — the glossary and decision records where settled terms and decisions accumulate. A background discipline: trigger while the domain is being worked out — a concept getting named, a term turning fuzzy or conflicting with GLOSSARY.md, a decision with real alternatives settling — whether or not the user asks. Reading the glossary for vocabulary is not a trigger; load only when the layer itself may change.
 ---
 
 # Knowledge Layer
 
-Actively build and sharpen the project's knowledge layer as you design. This is the *active* discipline: challenging terms, inventing edge-case scenarios, and writing the glossary and decisions down the moment they crystallise. (Merely *reading* `GLOSSARY.md` for vocabulary is not this skill; that's a one-line habit any skill can do. This skill is for when you're changing the layer, not just consuming it.)
+Actively build and sharpen the project's knowledge layer as you design. This is the *active* discipline: challenging terms, inventing edge-case scenarios, and writing the glossary and decisions down the moment they crystallise.
 
 ## File structure
 
