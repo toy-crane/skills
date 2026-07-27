@@ -225,14 +225,14 @@ Draft body, to refine in place.
 
 ## First run on this repo
 
-Part of this work, and the only test the skill gets before shipping.
+Part of this work.
 
 ```
-docs/decisions/     52,236자 · 17개  →  약 31,500자 · 11개
+docs/decisions/     52,236자 · 17개  →  약 33,900자 · 11개
 
-  0001 + 0003 + 0004                 8,219 → ~2,000   (프로토타입)
-  0005 + 0012                        6,331 → ~1,800   (계획·분할)
-  0006 + 0007 + 0013 + 0015 + 0016  11,527 → ~1,500   (이름)
+  0006 + 0007 + 0013 + 0015 + 0016  11,527 → ~2,500   (이름)
+  0001 + 0003 + 0004                 8,219 → ~3,000   (프로토타입)
+  0005 + 0012                        6,331 → ~2,200   (계획·분할)
   0002 0008 0009 0010 0011×2 0014 0017     26,159     (그대로)
 
   사라지는 번호: 0003 0004 0007 0012 0013 0015 0016
@@ -240,10 +240,84 @@ docs/decisions/     52,236자 · 17개  →  약 31,500자 · 11개
 
 docs/specs/         38,221자 · 6개   →  compact-decisions/ 하나만 남음
 CLAUDE.md            4,880자 · 94줄  →  0002가 올라감
-docs/decisions/README.md  없음       →  11줄
+GLOSSARY.md          4,952자         →  그대로
+docs/decisions/README.md  없음       →  11줄 · 약 1,500자
 
-세션이 매번 읽는 양   61,238자  →  약 40,900자  (-33%)
+세션이 매번 읽는 양   61,238자  →  약 45,500자  (-26%)
 ```
+
+The compacted sizes are bounded by the rejection ledger, not by prose
+tightness. The three clusters carry roughly forty distinct rejected
+alternatives between them, all of which must survive under decision 14. An
+earlier draft of this spec guessed ~5,300 characters for the three merged
+records; counting the ledger put the floor closer to 7,700. The count was
+made before any run, which is the point of making it.
+
+So the byte saving is real but modest, and it is not the reason to do this.
+The reason is that after compaction the current rule is stated once instead of
+being reconstructed from five records, and the reconstruction is where a
+session picks up a skill name that no longer exists.
+
+## How this is tested
+
+The passing condition is **loss-free, not boundary-matching**. The cluster
+boundaries above were drawn by hand in one session; a run that cuts them
+differently is not thereby wrong. What a run may never do is lose a rejected
+alternative or compact a subject still under debate.
+
+**Why the test set is almost entirely absence checks.** A diff shows what
+changed. It does not show what went missing. A merged record that dropped one
+rejection reason reads, in the diff, as five files becoming one — exactly what
+success looks like. Decision 10 makes the diff the review, so the tests exist
+to cover the one thing the diff cannot.
+
+### The rejection ledger
+
+Written before any run, from the cluster records as they stand. Every entry is
+an alternative some record ruled out, named tersely enough to grep for.
+Extraction was run per cluster and then re-read by a second pass whose only
+instruction was to find what the first missed, because under-reading body
+prose is the predictable failure. The ledger lives at
+`docs/specs/compact-decisions/rejection-ledger.md`.
+
+A run passes when every ledger entry is still findable in the compacted
+record. Roughly two thirds of the check is mechanical: grep the compacted
+record for each entry's literal string. The rest is read by eye, because a
+reason can survive in different words.
+
+### Mechanical checks
+
+1. No dangling reference: every `NNNN` cited in any surviving document
+   resolves to a file that exists.
+2. No duplicate record numbers.
+3. `docs/decisions/README.md` has one line per record and fits 40 lines.
+4. `CLAUDE.md` fits 120 lines.
+5. No spec folder names work already shipped into `skills/`.
+
+### Read checks, fixed before the run
+
+6. Every rejection-ledger entry survives. This is the test; the rest is trim.
+7. 0009 and 0017 are still two records. They look like a cluster and are not.
+8. The compacted prototype record states 0004's conclusion (full-surface,
+   single file), not 0003's retirement.
+9. `CLAUDE.md` gained the lifecycle rule and nothing else.
+
+### How runs are staged
+
+Git makes a run cheap to discard, so this is not a one-shot. Runs happen in
+throwaway worktrees off one commit and are compared.
+
+- **Blind run.** A session given `SKILL.md` and the repo, and not this spec.
+  It has to find the clusters itself. This is the run that tests judgment, and
+  it is the one that matters: does it leave 0009 and 0017 alone, does it carry
+  the rejections across unprompted.
+- **Guided run.** A session given this spec. The clusters are handed to it, so
+  only execution is under test: citation rewrites, number succession, the
+  index.
+
+Repeat the blind run rather than trusting one, per 0017's practice of
+answering each prompt twice. A destructive rewrite deserves the variance
+check more than a rendered explanation did.
 
 ## Files this work touches
 
@@ -253,6 +327,8 @@ docs/decisions/README.md  없음       →  11줄
 - `.claude/skills/compact-decisions` — symlink
 - `README.md` — skill list and diagram
 - `docs/decisions/` — one ADR for this work, then the first run's compaction
+- `docs/specs/compact-decisions/rejection-ledger.md` — the pre-registered
+  ledger, written in the shaping session so it precedes every run
 - `GLOSSARY.md` — Decision index, Record cluster (both written in the
   shaping session)
 
@@ -260,21 +336,27 @@ docs/decisions/README.md  없음       →  11줄
 
 - **Narrowing shape-idea's read scope.** shape-idea reads all of
   `docs/decisions/` today. Pointing it at the index plus `CLAUDE.md` takes
-  the per-session read from ~40,900 to ~10,900 characters. Safe only once
-  promotion is known to be good enough, which takes one real run to find out.
-  It also changes a different skill.
+  the per-session read from ~45,500 to ~11,700 characters, which is the large
+  saving; compaction alone is ~26%. Safe only once promotion is known to be
+  good enough, which takes one real run to find out. It also changes a
+  different skill.
 - **The numbering scheme itself.** "Highest + 1" still collides under
   parallel worktrees; the index only makes it visible.
 - **Evals**, after first real usage, per repo practice.
 
 ## Remaining risks
 
-- **Compaction is lossy on purpose, and the loss is judged by the same pass
-  that performs it.** If a merged record drops a rejection reason, nothing
-  catches it. Decision 14 is the only defense and it is self-checking. This
-  is the sharpest failure mode.
-- **Promotion is a judgment call and decision 16 is untested.**
-- **The clusters here were identified by hand in one session.** Whether a
-  model finds the same boundaries unaided is unknown.
+- **Compaction is lossy on purpose, and in the general case the loss is judged
+  by the same pass that performs it.** Decision 14 is self-checking. The
+  rejection ledger removes this for the first run only, because the ledger was
+  written before the run; every later run on a changed repo is back to
+  self-checking unless someone writes the ledger again first. Whether the
+  skill should build its own ledger before compacting is the open question the
+  first runs should answer.
+- **Promotion is a judgment call and decision 16 is untested.** Nothing in the
+  test set catches promoting too little: check 9 catches an over-full
+  `CLAUDE.md`, not an under-full one.
 - **Links from outside the repo die** when a record number disappears.
-- **One repo is a thin evidence base.** Every failure above was observed here.
+- **One repo is a thin evidence base.** Every failure above was observed here,
+  and the ledger is drawn from the same seventeen records the skill was
+  designed against.
