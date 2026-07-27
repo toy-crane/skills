@@ -38,15 +38,27 @@ carrying the platform's own escalation rule — persistent or shareable becomes 
 artifact, everything else stays inline. It exists on Claude web, desktop, and
 Cowork, and not on iOS, Android, or the Claude Code surfaces this repo is
 usually read from. So the cheap rung is real on some surfaces, absent on others,
-and a skill that ships to all of them cannot name it — which is why the body
-says as cheaply as the gap allows and stops there. Restraint and cheapness stay,
-stated in the same breath, and the enumerations go.
+and a skill that ships to all of them cannot name it. So the body sets the rule
+in terms of the reply rather than the tooling: plain text in the reply is
+usually enough, and a rendered page is for when the reply cannot hold the
+drawing. Restraint and cheapness stay, and the closed list of forms goes.
 
 Work-from-real-sources went too. It survived the earlier draft on the strength
 of a real asymmetry — a wrong picture costs more than a wrong sentence — but the
 run that lacked the instruction still worked from the repo, and the shipped run
 volunteered which of its claims it could not verify. Neither behavior needed
 asking for.
+
+A second problem showed up once the cutting was done, and it was not a content
+problem. Three readers were pointed at the trimmed file with no context, and all
+three reported the same thing: two of its four sentences carried no instruction
+at all, five referents floated free, and the word render was never defined
+anywhere in the body, so a file titled "Explain visually" contained no visual
+noun. Being right about what to cut is not the same as being readable, and
+aphorism is the failure mode of a text that has been compressed by argument. The
+body is rewritten in plain imperatives, which is why it lands at nine lines
+rather than five. What it says is unchanged; the four extra lines name the forms
+a drawing can take and say when the reply stops being enough.
 
 The frontmatter description is untouched. It is routing metadata rather than
 instruction, its enumeration is the promise the user reads before invoking, and
@@ -69,8 +81,8 @@ no trigger eval was run here.
 
 ## Consequences
 
-`skills/explain-visually/SKILL.md` drops from twenty-one body lines to five; the
-README entry loses the enumeration it mirrored. 0016 stands as the record of the
+`skills/explain-visually/SKILL.md` drops from twenty-one body lines to nine, in
+plain imperatives; the README entry follows it. 0016 stands as the record of the
 rename and of why rendering is the skill's content; its second half, the open
 list of forms, is superseded here. Version 0.16.0. The eval set and its outputs
 live outside the repo, so a later re-prune reruns rather than re-reads them —

@@ -5,9 +5,13 @@ description: Explain something the user does not understand by rendering it — 
 
 # Explain visually
 
-Prose is what already failed, so more of it is the one move ruled out. Render
-instead, as cheaply as the gap allows.
+The user is stuck on something. Show it to them instead of describing it.
 
-A gap one sentence closes is not this skill's work: say the sentence and stop.
-Rendering is the expensive move and every tool within reach escalates it
-further, so the restraint has to come from here.
+Draw whatever shows the thing they are stuck on. A diagram for a structure,
+a table for a comparison, a trace with real numbers for a mechanism,
+annotated code for code. Use the simplest form that works. Plain text in
+the reply is usually enough, and a rendered page is for when the reply
+cannot hold the drawing.
+
+If one sentence answers the question, write that sentence and stop. A word
+they have not seen before does not need a diagram.
