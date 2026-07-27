@@ -1,15 +1,15 @@
 # explain-visually looks for a renderer, gated on a one-sentence test
 
-0017 cut this skill to nine lines and set its rendering rule in terms of the
+explain-visually-keeps-only-the-counter-defaults cut this skill to nine lines and set its rendering rule in terms of the
 reply: plain text is usually enough, and a rendered page is for when the reply
 cannot hold the drawing. On a surface that has an inline renderer, that sentence
 is an instruction to produce ASCII, and it was followed. Four prompts against
 this repo, answered by the shipped body, produced fenced box-and-arrow text in
 every render-warranted run and never once reached for a rendering tool.
 
-The constraint behind 0017's phrasing is still right. Inline custom visuals
+The constraint behind explain-visually-keeps-only-the-counter-defaults's phrasing is still right. Inline custom visuals
 exist on Claude web, desktop, and Cowork and not on iOS, Android, or a plain
-terminal session installed by skills.sh, and 0001 bars a skill from naming a
+terminal session installed by skills.sh, and visual-media-over-prototype-routing bars a skill from naming a
 tool. But naming no tool and looking for no tool are different things. The body
 now says to look: draw it with the best renderer this session actually has,
 check the available tools before choosing a form, and take text in the reply
@@ -26,7 +26,7 @@ in three of three, and it survived both later revisions of the brake. The prose
 changed character as a side effect — it stopped duplicating the drawing and
 became commentary on it.
 
-The brake is where the work went. 0017 identified over-rendering as this skill's
+The brake is where the work went. explain-visually-keeps-only-the-counter-defaults identified over-rendering as this skill's
 real failure and kept one paragraph against it. That paragraph does not hold in
 any arm: the shipped body drew an ASCII tree and a table for a one-line glossary
 question, and did it again for a one-line question about the committed symlinks.
@@ -52,12 +52,12 @@ revision retires one control.
 
 ## Considered Options
 
-- **Leave 0017's rule alone** (rejected): it is the direct cause. The body told
+- **Leave explain-visually-keeps-only-the-counter-defaults's rule alone** (rejected): it is the direct cause. The body told
   the model plain text was usually enough, and the model complied every time.
-- **Name the tools** (rejected): 0001 bars it and the surfaces genuinely differ.
+- **Name the tools** (rejected): visual-media-over-prototype-routing bars it and the surfaces genuinely differ.
   "The best renderer this session actually has" names none and still degrades
   correctly where there is none.
-- **Ship renderer-first with the brake as 0017 left it** (rejected): defensible,
+- **Ship renderer-first with the brake as explain-visually-keeps-only-the-counter-defaults left it** (rejected): defensible,
   since the shipped body fails the controls too and the renderer-first body was
   already no worse on them. Rejected because renderer-first raises the price of
   that failure three and a half times, which is precisely when a brake stops
@@ -73,14 +73,14 @@ revision retires one control.
 `skills/explain-visually/SKILL.md` goes from nine body lines to twelve. The
 brake moves ahead of the draw instructions and carries its cost, and a third
 paragraph sends the model to look at what the session can render. The README
-entry follows. Version 0.17.0. 0017 stands as the record of what to cut and why
+entry follows. Version 0.17.0. explain-visually-keeps-only-the-counter-defaults stands as the record of what to cut and why
 this skill is a handle for rendering; the half of its argument that set the rule
 in terms of the reply rather than the tooling is superseded here.
 
 The prompt set ships as `skills/explain-visually/evals/evals.json`, in the form
 the rounds settled into: three render-warranted prompts and three whose answer
 is one sentence, each carrying the assertions used here. The run outputs do not
-ship. 0017 kept the whole eval outside the repo on the grounds that one run per
+ship. explain-visually-keeps-only-the-counter-defaults kept the whole eval outside the repo on the grounds that one run per
 cell is too thin to re-read, and that reasoning holds for outputs and not for
 prompts — a set that does not go stale is what makes the next re-prune cheap,
 and the instruction to re-prune is worth little if the experiment has to be

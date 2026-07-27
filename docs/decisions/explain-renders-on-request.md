@@ -32,7 +32,7 @@ pointless.
 - **`visual-explanation`** (rejected): the noun class is for skills that fire in
   the background or are called by other skills. This one is user-facing, and the
   noun names the artifact instead of the act.
-- **`explain-visually`** (rejected): "visually" is the medium, and 0001 keeps the
+- **`explain-visually`** (rejected): "visually" is the medium, and visual-media-over-prototype-routing keeps the
   medium out of a skill's identity. The real object is whatever the user is stuck
   on, so the verb stands alone.
 - **`comprehension-gap`** (rejected): names the trigger, hides the act.

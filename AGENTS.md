@@ -50,10 +50,10 @@ fixed procedure earns its place only when it guards a repeated, observed
 failure (build-prototype's skeleton-then-fill). Prefer pointing at real
 artifacts (GLOSSARY.md, specs, prototypes) over describing them in prose,
 and re-prune procedures when models improve —
-[decision 0017](docs/decisions/0017-explain-visually-keeps-only-the-counter-defaults.md)
+[explain-visually-keeps-only-the-counter-defaults](docs/decisions/explain-visually-keeps-only-the-counter-defaults.md)
 is the worked example, an eval that retired two instructions the model now
 follows unprompted and kept the one it does not. Rationale in
-[decision 0009](docs/decisions/0009-thin-skills-over-fixed-procedures.md)
+[thin-skills-over-fixed-procedures](docs/decisions/thin-skills-over-fixed-procedures.md)
 and the [source post](https://toycrane.xyz/posts/why-better-models-need-thinner-instructions/).
 
 ## Stack context
@@ -63,7 +63,7 @@ shape-idea and write-plan install its vendor's official agent context (a
 skill, an AGENTS.md codemod, bundled docs) into the target project, in the
 form the vendor recommends. add-stack-context does the same on demand as a
 user-invoked command, for project setup outside the pipeline. Rationale in
-[decision 0010](docs/decisions/0010-agent-context-installs-at-stack-confirmation-and-setup.md).
+[agent-context-installs-at-stack-confirmation-and-setup](docs/decisions/agent-context-installs-at-stack-confirmation-and-setup.md).
 
 ## Skill naming
 
@@ -73,27 +73,31 @@ split-into-tasks, build-prototype). A skill that
 triggers in the background or is invoked by other skills keeps its discipline
 noun (domain-modeling, tdd). Before naming a new skill, check the candidate
 against the built-in slash commands of Claude Code and Codex; `/plan` is
-reserved by both, which is why the planning skill is write-plan (renamed
-from draft-plan in decision 0013). Rationale in
-[decision 0006](docs/decisions/0006-verb-object-names-for-invoked-skills.md)
-and [decision 0007](docs/decisions/0007-shape-idea-names-the-work.md). The
+reserved by both, which is why the planning skill is write-plan (renamed in
+[draft-plan-becomes-write-plan](docs/decisions/draft-plan-becomes-write-plan.md)).
+Rationale in
+[verb-object-names-for-invoked-skills](docs/decisions/verb-object-names-for-invoked-skills.md)
+and [shape-idea-names-the-work](docs/decisions/shape-idea-names-the-work.md). The
 discovery-to-shaping boundary is recorded in
-[decision 0008](docs/decisions/0008-opportunity-discovery-precedes-idea-shaping.md).
+[opportunity-discovery-precedes-idea-shaping](docs/decisions/opportunity-discovery-precedes-idea-shaping.md).
 One skill takes an adverb instead of an object: explain-visually, because the
 object changes every time and rendering is the whole reason to invoke it
-([decision 0016](docs/decisions/0016-explain-becomes-explain-visually.md)).
+([explain-becomes-explain-visually](docs/decisions/explain-becomes-explain-visually.md)).
 
 ## Three document lifecycles
 
-`docs/decisions/` is append-only history, one numbered record per decision,
-listed one line each in [docs/decisions/README.md](docs/decisions/README.md).
-Never rewrite what a record claims; a later record supersedes an earlier one.
+`docs/decisions/` is append-only history, one record per decision, named by
+slug alone (no number prefix — cite records by slug). Standing positions are
+listed by subject in [docs/decisions/README.md](docs/decisions/README.md);
+a superseding record replaces the line it overturns, and the superseded file
+stays untouched. Never rewrite what a record claims.
 `GLOSSARY.md` is permanent and current — rewrite it freely, terms only.
 `docs/specs/<slug>/` carries one unit of work (spec.md as the anchor, plus
 plan.md, prototype.html, tasks/ as they arrive), is created lazily, and is
 deleted once that work ships. Keep the three apart: mixing them in one folder
 breaks what each path promises. Rationale in
-[decision 0002](docs/decisions/0002-spec-dossiers-under-docs-specs.md).
+[spec-dossiers-under-docs-specs](docs/decisions/spec-dossiers-under-docs-specs.md)
+and [slug-addresses-and-a-standing-index](docs/decisions/slug-addresses-and-a-standing-index.md).
 
 ## Versioning is manual
 

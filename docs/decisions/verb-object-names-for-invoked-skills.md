@@ -15,7 +15,7 @@ Claude Code (plan mode, `/plan open`, `/plan share`) and Codex CLI
 (`ModeKind::Plan`, since roughly January 2026). In Claude Code a
 same-named skill shadows the built-in; in Codex the built-in always wins
 and the skill is reachable only as `$plan`. Either direction confuses
-routing, which 0005 anticipated when it flagged that `to-plan` "still
+routing, which jit-planning-with-optional-to-plan anticipated when it flagged that `to-plan` "still
 shares a word with plan mode". Verb-object names dissolve the collision
 instead of dodging it.
 
@@ -36,6 +36,6 @@ clarify becomes write-spec, to-plan becomes draft-plan, prototype
 becomes build-prototype; plugin.json bumps to 0.8.0. Copies installed
 via skills.sh keep the old names until reinstalled, and local symlinks
 need one `scripts/link-skills.sh` re-run after the rename lands on main.
-Records up to 0005 and retired spec folders keep the old names. New
+Records up to jit-planning-with-optional-to-plan and retired spec folders keep the old names. New
 skills follow the two-class rule, checking candidate names against both
 harnesses' built-in slash commands first.

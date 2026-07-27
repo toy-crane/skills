@@ -5,7 +5,7 @@ not yet know they have. As first written it interviewed the user about their
 experiences and reflected patterns back. That method shares its form with
 `shape-idea`'s interview — extract what lives in the user's head, mirror it
 — so discovery ran like a lighter shaping session in practice. The two
-skills' roles never overlapped (decision 0008 drew that boundary correctly),
+skills' roles never overlapped (decision opportunity-discovery-precedes-idea-shaping drew that boundary correctly),
 but their method did, and the skill's only remaining differentiator was
 stance: a blank-page entry point and a guard against premature convergence.
 
@@ -34,11 +34,11 @@ show. The discovery signal is recognition, not recollection.
   selection, a sharpened handoff contract (rejected): that turns the skill
   into shaping's preparation step, the opposite motion from a discovery
   window.
-- **Merge into `shape-idea`** (rejected): decision 0008's reason stands —
+- **Merge into `shape-idea`** (rejected): decision opportunity-discovery-precedes-idea-shaping's reason stands —
   convergence discipline biases blank-page exploration toward premature
   specs.
 - **Fix a mining procedure** — enumerate steps: scan repos, then notes,
-  then search (rejected): decision 0009 keeps skills thin; a constraint on
+  then search (rejected): decision thin-skills-over-fixed-procedures keeps skills thin; a constraint on
   material sources suffices and survives model improvement.
 
 ## Consequences

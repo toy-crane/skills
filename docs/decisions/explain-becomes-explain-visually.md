@@ -7,14 +7,14 @@ whole content — and a name that hides it hides the only reason to invoke it.
 weak promise to the user and a bad trigger: it invites firing on gaps a single
 sentence closes, where the skill has nothing to add.
 
-0015 rejected this name on the grounds that 0001 keeps the medium out of a
-skill's identity. That reading stretches 0001, which bars naming a *tool* — a
+explain-renders-on-request rejected this name on the grounds that visual-media-over-prototype-routing keeps the medium out of a
+skill's identity. That reading stretches visual-media-over-prototype-routing, which bars naming a *tool* — a
 widget, an artifact page, an HTML file — so the capability survives a change of
 environment. "Visually" names no tool. It survives every environment the skill
-runs in, which is exactly the test 0001 sets.
+runs in, which is exactly the test visual-media-over-prototype-routing sets.
 
-The cost is real and accepted: the verb-object scheme (0006) gets an adverb
-here. The object of explaining changes every time — 0015's own reason for
+The cost is real and accepted: the verb-object scheme (verb-object-names-for-invoked-skills) gets an adverb
+here. The object of explaining changes every time — explain-renders-on-request's own reason for
 leaving the slot empty — and the adverb fills it with the part that does not
 change.
 
@@ -35,17 +35,17 @@ the gap and refuses a closed vocabulary of shapes.
   "visualize" name the medium as the act and lose the gap being closed;
   "with-a-picture" narrows to the one shape the change is trying to widen past.
 - **Enumerate every visual form** (rejected): a closed list is the same mistake
-  as the four structural gaps, one level up. 0009 keeps skills thin.
+  as the four structural gaps, one level up. thin-skills-over-fixed-procedures keeps skills thin.
 
 ## Consequences
 
 `skills/explain/` becomes `skills/explain-visually/`, with its frontmatter
 `name`, the `plugin.json` skill path and keyword, the `.claude/skills/` symlink,
 the README entry and its outside-the-pipeline line, shape-idea's pointer, and
-`GLOSSARY.md`'s **Comprehension gap** following. Version 0.15.0. 0015 stands as
+`GLOSSARY.md`'s **Comprehension gap** following. Version 0.15.0. explain-renders-on-request stands as
 the record of why the skill exists, when it fires, and what it writes; its
 decisions 3, 6, 9, and 10, its `explain-visually` rejection, and the matching
 lines in the explain-skill spec folder (since deleted) are superseded here.
-Installed copies keep the old name until reinstalled, as with the 0006, 0007,
-and 0013 renames. A one-sentence gap now falls outside the skill and is answered by the
+Installed copies keep the old name until reinstalled, as with the verb-object-names-for-invoked-skills, shape-idea-names-the-work,
+and draft-plan-becomes-write-plan renames. A one-sentence gap now falls outside the skill and is answered by the
 model directly, which is the intended split.

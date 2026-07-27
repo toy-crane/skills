@@ -16,11 +16,11 @@ down is justified there not as information transport but because a concrete
 draft draws out the user's corrections, and those corrections are the only
 cargo the document must carry across time.
 
-This materializes the plan.md that 0002 anticipated and retires its tasks.md
+This materializes the plan.md that spec-dossiers-under-docs-specs anticipated and retires its tasks.md
 anticipation: pre-cut task lists encode predictions that rot as execution
 discovers the terrain, and every defense against the rot (behavior-shaped
 tickets, rolling replans, anchoring units to existing structure) converges
-back onto just-in-time planning against a stable spec. It also renames 0002's
+back onto just-in-time planning against a stable spec. It also renames spec-dossiers-under-docs-specs's
 "dossier" to "spec folder" in all text going forward.
 
 ## Considered Options

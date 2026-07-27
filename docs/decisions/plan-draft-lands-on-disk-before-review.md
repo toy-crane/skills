@@ -6,7 +6,7 @@ looking authoritative (the to-plan spec's "final gate"). Real usage showed
 the cost falls on the review itself: a page-long document pasted into chat
 renders once, scrolls away, and every revision streams another near-copy
 to re-read. The document's whole justification is being a review surface
-(0005), and the old rule put it in its weakest medium exactly during
+(jit-planning-with-optional-to-plan), and the old rule put it in its weakest medium exactly during
 review.
 
 write-plan now writes the draft to plan.md beside spec.md before review
