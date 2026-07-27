@@ -84,8 +84,9 @@ ask to have something explained, in any conversation.
 - **[explain-visually](./skills/explain-visually/SKILL.md)**: Answer "I don't
   follow, explain this" by showing the thing instead of describing it: a diagram
   for a structure, a table for a comparison, a trace with real numbers for a
-  mechanism, in the simplest form that works. Says the one sentence and stops
-  when a sentence is all it takes. Fires when you ask, in any conversation.
+  mechanism, drawn with the best renderer the session actually has rather than
+  dropped into the reply as text. Says the one sentence and stops when a
+  sentence is all it takes. Fires when you ask, in any conversation.
 - **[write-plan](./skills/write-plan/SKILL.md)**: Turn a spec folder into a
   reviewed implementation plan: one page of approach, order, acceptance
   criteria, test seams, off-limits areas, and risks, drafted whole for you
