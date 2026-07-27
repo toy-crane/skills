@@ -95,7 +95,9 @@ once several units of work have shipped.
   sentence is all it takes. Fires when you ask, in any conversation.
 - **[knowledge-layer](./skills/knowledge-layer/SKILL.md)**: Build and sharpen
   a project's knowledge layer, pinning down shared terms and recording key
-  decisions as they accumulate across sessions.
+  decisions as they accumulate across sessions. Runs in the background
+  whenever the domain is being worked out; shape-idea and build-prototype
+  load it explicitly.
 - **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split work
   that exceeds one session into session-sized tasks — vertical,
   independently verifiable cuts that declare what blocks them — reviewed
