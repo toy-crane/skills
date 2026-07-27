@@ -1,6 +1,6 @@
 ---
 name: split-into-tasks
-description: "Split work that exceeds one session into session-sized tasks, published one file per task for fresh sessions to pick up. Use when a spec — or its plan — is too big to implement or review in one sitting. Needs an existing spec folder; for work that fits one session, skip it and implement straight from the spec."
+description: "Split work that exceeds one session into session-sized tasks, published one file per task for fresh sessions to pick up. Use when a spec is too big to implement or review in one sitting. Needs an existing spec folder; for work that fits one session, skip it and implement straight from the spec."
 ---
 
 # Split Into Tasks
@@ -9,9 +9,8 @@ Turn a spec folder whose work exceeds one session into session-sized
 tasks. Spec folders live at `docs/specs/<slug>/`: when none is named,
 list the candidates and ask which; when none exists, stop and say a spec
 is needed first, rather than cutting from conversation. Read the
-folder's spec.md — and plan.md when planning ran as its own step — plus
-`GLOSSARY.md` and `docs/decisions/` where the repo keeps them, and
-explore the codebase before cutting.
+folder's spec.md, plus `GLOSSARY.md` and `docs/decisions/` where the
+repo keeps them, and explore the codebase before cutting.
 
 A task is a session-sized cut of the work: a complete path through
 every layer it touches, independently verifiable when done, sized for
@@ -40,7 +39,10 @@ with blockers first.
 Each task file states what to build as end-to-end behavior from the
 user's perspective, never a layer-by-layer implementation list; which
 tasks block it; its status; and acceptance criteria as a checklist the
-implementing session can self-grade against. Name modules and behavior,
+implementing session can self-grade against. Add what this task must not
+touch when the constraint is shorter-lived than the spec — a file another
+branch is moving, an interface frozen until a migration lands; constraints
+that outlive the work go to spec.md, not here. Name modules and behavior,
 never file paths or code snippets, which rot as the code moves. The one
 exception is a prototype-produced snippet that encodes a decision more
 precisely than prose can (a schema shape, a state machine), trimmed to

@@ -31,16 +31,12 @@ Rendering the interviewer's current understanding of a structure (a flow, its st
 _Avoid_: Diagramming
 
 **Spec**:
-The durable handoff document a shape-idea or build-prototype session writes as it ends: confirmed decisions, assumptions, deferred points, and remaining risks, addressed to a later implementation session. Decisions are the deliverable; visuals are disposable, except an approved prototype, preserved beside the spec as its visual half.
+The durable handoff document a shape-idea or build-prototype session writes as it ends: confirmed decisions, assumptions, off-limits areas, deferred points, and remaining risks, addressed to a later implementation session. Decisions are the deliverable; visuals are disposable, except an approved prototype, preserved beside the spec as its visual half.
 _Avoid_: Alignment brief, summary
 
 **Spec folder**:
-The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor, plan.md when planning ran as its own step, prototype.html when a surface was approved, tasks/ when the work was cut for multi-session execution. Lives per unit and retires wholesale when the work ships.
+The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor, prototype.html when a surface was approved, tasks/ when the work was cut for multi-session execution. Lives per unit and retires wholesale when the work ships.
 _Avoid_: Dossier, issue folder
-
-**Plan**:
-The optional implementation map a write-plan session writes beside the spec for review: approach, order, acceptance criteria, seams, off-limits areas, and risks, under an advisory contract that the code wins where they disagree and decision-level divergence flows back to the spec.
-_Avoid_: Ticket list, task breakdown
 
 **Comprehension gap**:
 A point where the user does not understand the system: a level, a mechanism, why not the alternative, or a single word. Not the same as the interviewer not understanding the user. The first is closed by rendering from the code and docs, in whatever form the gap calls for; the second by rendering for the user to correct.

@@ -91,14 +91,18 @@ Record the basis as an assumption.
 ## Closing
 
 Stop when every material branch is resolved or explicitly deferred. Go straight
-to the summary: confirmed decisions, rationale, assumptions, deferred points, and
-remaining risks.
+to the summary: confirmed decisions, rationale, assumptions, off-limits areas,
+deferred points, and remaining risks.
 
 When the session confirmed decisions bound for implementation, write that same
 content to `docs/specs/<slug>/spec.md` (kebab-case slug, folder created lazily),
 so a later session can implement from it alone. The spec holds decisions, not
 implementation instructions. Link the opportunity handoff when the user supplied
 one.
+
+Off-limits areas belong in the spec too: what this work must not touch, and why.
+Ownership boundaries and work in flight elsewhere are invisible in the code, so
+ask rather than infer.
 
 If the user says the decisions are complete, take them at their word. Reopen a
 routine default only when it contradicts the confirmed intent. Cover every listed
