@@ -49,7 +49,10 @@ A skill states goal, constraints, and completion criteria — not method. A
 fixed procedure earns its place only when it guards a repeated, observed
 failure (build-prototype's skeleton-then-fill). Prefer pointing at real
 artifacts (GLOSSARY.md, specs, prototypes) over describing them in prose,
-and re-prune procedures when models improve. Rationale in
+and re-prune procedures when models improve —
+[decision 0017](docs/decisions/0017-explain-visually-keeps-only-the-counter-defaults.md)
+is the worked example, an eval that retired two instructions the model now
+follows unprompted and kept the one it does not. Rationale in
 [decision 0009](docs/decisions/0009-thin-skills-over-fixed-procedures.md)
 and the [source post](https://toycrane.xyz/posts/why-better-models-need-thinner-instructions/).
 

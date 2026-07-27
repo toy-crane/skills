@@ -82,11 +82,10 @@ ask to have something explained, in any conversation.
   a project's domain model, pinning down the ubiquitous language and
   recording key decisions.
 - **[explain-visually](./skills/explain-visually/SKILL.md)**: Answer "I don't
-  follow — explain this" by rendering it instead of restating it: guess what is
-  unclear, then let the gap pick the form — a picture for a structure, real
-  values run through a mechanism, alternatives side by side, a table or a
-  timeline or annotated code when that is what shows it — rendered from the real
-  code and docs, one level per view. Fires when you ask, in any conversation.
+  follow, explain this" by showing the thing instead of describing it: a diagram
+  for a structure, a table for a comparison, a trace with real numbers for a
+  mechanism, in the simplest form that works. Says the one sentence and stops
+  when a sentence is all it takes. Fires when you ask, in any conversation.
 - **[write-plan](./skills/write-plan/SKILL.md)**: Turn a spec folder into a
   reviewed implementation plan: one page of approach, order, acceptance
   criteria, test seams, off-limits areas, and risks, drafted whole for you
