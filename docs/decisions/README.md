@@ -20,12 +20,14 @@ records hold the evidence and the rejected alternatives.
 - [0015](0015-explain-renders-on-request.md) — Explaining is its own skill and fires only when the user asks; the silent-confusion case is left uncovered on purpose.
 - [0016](0016-explain-becomes-explain-visually.md) — explain becomes explain-visually: rendering is the skill's content rather than its medium, and the verb-object scheme takes an adverb here.
 - [0017](0017-explain-visually-keeps-only-the-counter-defaults.md) — An eval retired the instructions the model now follows unprompted and kept the over-rendering brake; re-prune surviving procedures when models improve.
-- [0018](0018-shaping-writes-documents-not-source.md) — A shaping session's durable writes are the spec folder, the glossary and decision records, and installed vendor context — never product code.
-- [0019](0019-decisions-get-an-index-and-a-compaction-pass.md) — Decisions gain an index stating the current position, and compact-decisions maintains it; a cluster compacts only when its rejected alternatives are smaller than the records holding them.
+- [0018](0018-explain-visually-looks-for-a-renderer.md) — explain-visually looks for the best renderer the session actually has instead of settling for text in the reply.
+- [0019](0019-shaping-writes-documents-not-source.md) — A shaping session's durable writes are the spec folder, the glossary and decision records, and installed vendor context — never product code.
+- [0020](0020-decisions-get-an-index-and-a-compaction-pass.md) — Decisions gain an index stating the current position, and compact-decisions maintains it; a cluster compacts only when the merged record would come out no larger.
 
-Record 0018 was originally numbered 0011, colliding with the discovery record:
-both landed the same day from separate pull requests (#23 and #24) that each
-computed the next free number. Nothing cited either by number, so renumbering
-the later one cost nothing. The scheme that produced the collision is
-unchanged; the index is what makes the next one visible, because two branches
-adding a record now conflict on this file.
+Records 0019 and 0020 have been renumbered twice, which is the collision this
+index exists to make visible. 0019 was originally 0011, landing the same day as
+the discovery record from a separate pull request (#23 and #24) that each
+computed the next free number. Then this branch and #34 both took 0018 while
+the index existed on only one of them. Nothing cited either by number both
+times, so the renumbering cost nothing. The scheme is unchanged; from here two
+branches adding a record conflict on this file, which is the point.

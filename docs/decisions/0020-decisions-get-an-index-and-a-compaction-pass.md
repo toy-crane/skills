@@ -105,7 +105,13 @@ made) and sits at 106 of its 120-line cap; the index sits at 29 of 40. Five
 spec folders for shipped work were deleted; `mobile-frame-fixed-height` stayed,
 because `skills/build-prototype/templates/shell.html` still carries the
 `min-height: 660px` that spec exists to replace. The record formerly numbered
-0011 became 0018. Version 0.17.0.
+0011 became 0019. Version 0.18.0.
+
+The collision recurred while this work was in flight, which is the sharpest
+evidence for the index it introduces. This branch and #34 each took 0018,
+because the index that would have made them conflict existed on only one of
+them. Both of this branch's records moved again on the rebase. From here two
+branches adding a record collide on one file at merge time.
 
 One procedure sits in the skill on a single observation rather than a repeated
 one, against 0009's bar: list the rejections before compacting. A hand count

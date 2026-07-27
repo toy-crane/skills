@@ -315,7 +315,9 @@ edits where record text pointed at deleted paths. It kept
 It reported the 0011 collision instead of renumbering, on the ground that
 choosing which record surrenders its number is a maintainer's call. That is
 the skill behaving as written; the call was then made here and 0011-shaping
-became 0018.
+became 0018 — then 0019, when the rebase onto main found that #34 had taken
+0018 in parallel. The collision this work exists to expose recurred inside the
+work, on a branch that had the index and a branch that did not.
 
 ```
 docs/decisions/   52,236자 · 17개  →  압축 0. 충돌 해소, 색인 신설. 19개.
