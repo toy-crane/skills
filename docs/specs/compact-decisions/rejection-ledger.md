@@ -3,10 +3,18 @@
 Pre-registered for the `compact-decisions` first runs. Written 2026-07-27,
 before any run, from the cluster records as they stand at `f5ceb0e`.
 
-Every entry is something a record ruled out. A run that compacts a cluster
-may not lose an entry that a reader could plausibly re-propose. See the spec
-for what “plausibly” does here — it is the load-bearing word, and this file
-is the evidence that it has to be.
+Every entry is something a record ruled out. A run that compacts a cluster may
+not lose one.
+
+This file also decides whether the clusters compact at all. Stated
+independently the 148 entries run to about 34,200 characters, against 26,077
+characters of source records — more out than in. Under the spec's decision 15
+that means these records are already at their minimum and should be left
+alone. Expect the first run to compact nothing here, and to say so.
+
+The count is an upper bound. The omission pass was told to assume it had
+missed something, and it flagged some of its own finds as double-counted or
+not real rejections. A defensible count is somewhere between 40 and 148.
 
 Extraction ran one agent per cluster, then a second whose only instruction was
 to find what the first missed. The second pass added 35 of the 148 entries, all
