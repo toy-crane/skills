@@ -85,9 +85,10 @@ not be compacted, report that instead.
 
 ## Report rather than force
 
-Two records claiming one subject under different slugs. A record neither
-indexed nor cited from an indexed one. A supersession you cannot pin down. A
-cluster you could not tell had settled.
+Two standing index lines claiming one subject under different slugs — a
+superseded record coexisting with its successor is normal history, not this.
+A record neither indexed nor cited from an indexed one. A supersession you
+cannot pin down. A cluster you could not tell had settled.
 
 ## Done when
 
