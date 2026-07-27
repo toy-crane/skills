@@ -7,11 +7,16 @@ description: Explain something the user does not understand by rendering it — 
 
 The user is stuck on something. Show it to them instead of describing it.
 
-Draw whatever shows the thing they are stuck on. A diagram for a structure,
-a table for a comparison, a trace with real numbers for a mechanism,
-annotated code for code. Use the simplest form that works. Plain text in
-the reply is usually enough, and a rendered page is for when the reply
-cannot hold the drawing.
+First decide whether a sentence closes the gap. Rendering spends the user's
+time, so when a sentence would do, write the sentence and stop. A question
+with a one-sentence answer stays one sentence, however much structure sits
+behind it.
 
-If one sentence answers the question, write that sentence and stop. A word
-they have not seen before does not need a diagram.
+Otherwise draw whatever shows the thing they are stuck on. A diagram for a
+structure, a table for a comparison, a trace with real numbers for a
+mechanism, annotated code for code.
+
+Draw it with the best renderer this session actually has. Look at the
+available tools before choosing a form — an inline visual, a rendered page,
+an image. Text in the reply is the bottom rung, not the default: take it
+when nothing in the session can draw.
