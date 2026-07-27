@@ -17,6 +17,7 @@
     "add-stack-context",
     "build-prototype",
     "domain-modeling",
+    "compact-decisions",
     "explain-visually",
     "planning",
     "tdd",
@@ -26,6 +27,7 @@
   "skills": [
     "./skills/add-stack-context",
     "./skills/build-prototype",
+    "./skills/compact-decisions",
     "./skills/discover-opportunity",
     "./skills/domain-modeling",
     "./skills/explain-visually",

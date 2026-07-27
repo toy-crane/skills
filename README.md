@@ -58,7 +58,9 @@ Add-stack-context is user-invoked too: run it when setting up a project
 to pull in each vendor's official agent context.
 Build-prototype branches from shape-idea when a whole interface must be judged
 by using it. Explain-visually sits outside the pipeline: it fires whenever you
-ask to have something explained, in any conversation.
+ask to have something explained, in any conversation. Compact-decisions runs
+after the pipeline, on the records it left behind: run `/compact-decisions`
+once several units of work have shipped.
 
 - **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Survey the
   frameworks and services a project builds on and install each vendor's
@@ -71,6 +73,14 @@ ask to have something explained, in any conversation.
   from a pinned shell (shared tokens, per-screen state pills, viewport
   presets), walked through as a wireframe skeleton first, filled after
   approval, and preserved beside the spec for the implementing session.
+- **[compact-decisions](./skills/compact-decisions/SKILL.md)**: Bring the
+  decision records, glossary, spec folders, and always-loaded instructions
+  back in step with what shipped: joining records whose subject has settled,
+  lifting into the always-loaded file only what a session that never read the
+  history would otherwise get wrong, and deleting spec folders for finished
+  work. Lists a cluster's rejected alternatives before touching it, and leaves
+  the records alone when that list shows there is nothing left to squeeze.
+  User-invoked, after the work ships.
 - **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Surface
   side-project opportunities the user has not recognized by grounding the
   conversation in evidence from outside their self-report — their own traces
