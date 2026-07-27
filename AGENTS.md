@@ -71,7 +71,7 @@ Two name classes. A skill the user invokes directly is an imperative
 verb-object command (discover-opportunity, shape-idea, split-into-tasks,
 build-prototype). A skill that
 triggers in the background or is invoked by other skills keeps its discipline
-noun (domain-modeling, tdd). Before naming a new skill, check the candidate
+noun (knowledge-layer, tdd). Before naming a new skill, check the candidate
 against the built-in slash commands of Claude Code and Codex; `/plan` is
 reserved by both. Rationale in
 [verb-object-names-for-invoked-skills](docs/decisions/verb-object-names-for-invoked-skills.md)

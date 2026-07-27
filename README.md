@@ -3,7 +3,7 @@
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
 Agent skills for discovering opportunities, sharpening plans, screens, and
-domain models, then implementing them test-first. Small, composable, and
+project knowledge, then implementing them test-first. Small, composable, and
 model-agnostic: install the ones you want and make them your own.
 
 ## Install
@@ -87,15 +87,15 @@ once several units of work have shipped.
   with current external change — then carry a resonant direction naturally
   into shape-idea without requiring an intermediate document. It runs only
   when the user invokes it explicitly.
-- **[domain-modeling](./skills/domain-modeling/SKILL.md)**: Build and sharpen
-  a project's domain model, pinning down the ubiquitous language and
-  recording key decisions.
 - **[explain-visually](./skills/explain-visually/SKILL.md)**: Answer "I don't
   follow, explain this" by showing the thing instead of describing it: a diagram
   for a structure, a table for a comparison, a trace with real numbers for a
   mechanism, drawn with the best renderer the session actually has rather than
   dropped into the reply as text. Says the one sentence and stops when a
   sentence is all it takes. Fires when you ask, in any conversation.
+- **[knowledge-layer](./skills/knowledge-layer/SKILL.md)**: Build and sharpen
+  a project's knowledge layer, pinning down shared terms and recording key
+  decisions as they accumulate across sessions.
 - **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split work
   that exceeds one session into session-sized tasks — vertical,
   independently verifiable cuts that declare what blocks them — reviewed

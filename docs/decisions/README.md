@@ -15,6 +15,7 @@ rejected alternatives.
 
 - [verb-object-names-for-invoked-skills](verb-object-names-for-invoked-skills.md) — User-invoked skills take imperative verb-object names; skills that fire in the background keep discipline nouns. `/plan` is reserved by both harnesses.
 - [shape-idea-names-the-work](shape-idea-names-the-work.md) — The clarification workflow is named shape-idea: the name states the work, not the document it hands off.
+- [domain-modeling-becomes-knowledge-layer](domain-modeling-becomes-knowledge-layer.md) — domain-modeling becomes knowledge-layer: the background skill is named in plain words for the layer it maintains — glossary and decisions accumulating across sessions — not for the DDD practice.
 
 ## Skill design
 

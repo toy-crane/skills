@@ -16,8 +16,8 @@ every branch you can without them.
 
 ## Before the first question
 
-Invoke the `domain-modeling` skill and read `GLOSSARY.md` and
-`docs/decisions/`. Follow domain-modeling throughout the session.
+Invoke the `knowledge-layer` skill and read `GLOSSARY.md` and
+`docs/decisions/`. Follow knowledge-layer throughout the session.
 
 Investigate the codebase, the documentation, and authoritative sources. When no
 source holds the answer to a technical question, make the evidence yourself with
