@@ -1,11 +1,11 @@
 ---
-name: domain-modeling
-description: Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, record a key decision, or when another skill needs to maintain the domain model.
+name: knowledge-layer
+description: Build and sharpen a project's knowledge layer — the glossary and decision records where settled terms and decisions accumulate. Use when the user wants to pin down project terminology or a shared vocabulary, record a key decision, or when another skill needs to maintain the knowledge layer.
 ---
 
-# Domain Modeling
+# Knowledge Layer
 
-Actively build and sharpen the project's domain model as you design. This is the *active* discipline: challenging terms, inventing edge-case scenarios, and writing the glossary and decisions down the moment they crystallise. (Merely *reading* `GLOSSARY.md` for vocabulary is not this skill; that's a one-line habit any skill can do. This skill is for when you're changing the model, not just consuming it.)
+Actively build and sharpen the project's knowledge layer as you design. This is the *active* discipline: challenging terms, inventing edge-case scenarios, and writing the glossary and decisions down the moment they crystallise. (Merely *reading* `GLOSSARY.md` for vocabulary is not this skill; that's a one-line habit any skill can do. This skill is for when you're changing the layer, not just consuming it.)
 
 ## File structure
 

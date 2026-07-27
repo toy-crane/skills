@@ -11,14 +11,14 @@
         "The question addresses a material unresolved branch rather than a routine implementation detail.",
         "The response provides a recommended answer with a concise reason.",
         "It treats the supplied requirements and authoritative Defuddle documentation as facts to investigate rather than questions for the user.",
-        "It invokes the domain-modeling skill before asking its first question.",
+        "It invokes the knowledge-layer skill before asking its first question.",
         "It does not begin production implementation or prototype the entire product."
       ]
     },
     {
       "id": 2,
       "prompt": "/shape-idea 기존 용어집에서는 유료 계정을 Member라고 부르지만, 팀은 이제 Subscriber로 통일하기로 확정했어. 이 결정은 용어집에 바로 반영하고, 이어서 기존 Member의 권한 이전 정책을 나와 정리해줘.",
-      "expected_output": "The response uses domain-modeling during the session: it records the already-resolved terminology change in the glossary immediately, notes the conflict with the prior term, then asks one upstream permissions question with a recommendation. It does not postpone glossary or decision-record updates until a final summary.",
+      "expected_output": "The response uses knowledge-layer during the session: it records the already-resolved terminology change in the glossary immediately, notes the conflict with the prior term, then asks one upstream permissions question with a recommendation. It does not postpone glossary or decision-record updates until a final summary.",
       "files": [],
       "expectations": [
         "The response treats Subscriber as a resolved canonical term and updates GLOSSARY.md before continuing.",
@@ -50,7 +50,7 @@
         "The comparison is limited to whether the LLM workflow is persistent or revealed on demand.",
         "It renders two or three materially different variants in an available visual medium instead of describing them in prose.",
         "It asks for a reaction rather than approval of a plan to build something.",
-        "It translates the reaction into a decision, records durable outcomes through domain-modeling, and continues the interview.",
+        "It translates the reaction into a decision, records durable outcomes through knowledge-layer, and continues the interview.",
         "It does not broaden the render into redesigning the whole result page."
       ]
     },

@@ -12,10 +12,10 @@ of it; showing everything is what surfaces the gaps nobody had words
 for. Stay cheap enough to rebuild without regret and concrete enough
 to argue with.
 
-Invoke the `domain-modeling` skill, and read `GLOSSARY.md` and
+Invoke the `knowledge-layer` skill, and read `GLOSSARY.md` and
 `docs/specs/<slug>/spec.md` when they exist: screens speak the
 glossary's terms, and a screen the user corrects often corrects the
-domain model too. When the project has a design system, copy its
+knowledge layer too. When the project has a design system, copy its
 tokens verbatim instead of approximating them, and name screen
 elements after its own component names (a `data-component`
 attribute, marking components the system lacks as new) so the
