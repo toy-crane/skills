@@ -1,6 +1,6 @@
 # explain-visually keeps only what the model does not already do
 
-0009 said to re-prune when models improve. This is the first pruning run with
+thin-skills-over-fixed-procedures said to re-prune when models improve. This is the first pruning run with
 evidence behind it rather than judgment. Four prompts against the real repo,
 each answered twice — once by the shipped twenty-one-line body, once by a body
 reduced to the single sentence "Describe it visually." — scored against
@@ -13,7 +13,7 @@ table for a why-this-and-not-that, and a trace with this repo's real skill names
 for a mechanism. No mermaid appeared in any of the eight runs. Both instructions
 the body spent paragraphs on — guess the gap instead of asking, take the form
 from the gap rather than a fixed vocabulary — describe what the model already
-does unprompted. The second of those was the half of 0016 that was not the
+does unprompted. The second of those was the half of explain-becomes-explain-visually that was not the
 rename; it is retired here on the evidence, not by accident, which is the reason
 this record exists.
 
@@ -76,13 +76,13 @@ no trigger eval was run here.
   skill thickens.
 - **Cut the brake too and rely on the bundled skills** (rejected): they are
   bundled with a Claude Code build, not with this repo. A skill installed by
-  skills.sh into a plain terminal session has none of them, and 0001 already
+  skills.sh into a plain terminal session has none of them, and visual-media-over-prototype-routing already
   settled that a published skill cannot assume a surface.
 
 ## Consequences
 
 `skills/explain-visually/SKILL.md` drops from twenty-one body lines to nine, in
-plain imperatives; the README entry follows it. 0016 stands as the record of the
+plain imperatives; the README entry follows it. explain-becomes-explain-visually stands as the record of the
 rename and of why rendering is the skill's content; its second half, the open
 list of forms, is superseded here. Version 0.16.0. The eval set and its outputs
 live outside the repo, so a later re-prune reruns rather than re-reads them —

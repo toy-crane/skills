@@ -1,7 +1,7 @@
 # The prototype skill retires from the published set; clarify's moves collapse into the draft
 
-Prototype leaves the repo ahead of a rebuild on a new base, reversing 0001's consequence
-that it stays for direct invocation. Since 0001 already removed clarify's routing to it,
+Prototype leaves the repo ahead of a rebuild on a new base, reversing visual-media-over-prototype-routing's consequence
+that it stays for direct invocation. Since visual-media-over-prototype-routing already removed clarify's routing to it,
 the two skills shared no textual edge, so retiring prototype orphans nothing, and keeping
 a skill we intend to rebuild from scratch would keep shipping semantics already decided
 to be replaced to plugin subscribers.
@@ -32,6 +32,6 @@ clause absorbs more decisions without the text changing.
 
 ## Consequences
 
-0001's "prototype stays in the repo" consequence is superseded; its visual-medium
+visual-media-over-prototype-routing's "prototype stays in the repo" consequence is superseded; its visual-medium
 decision for clarify stands unchanged. The plugin drops to two skills and bumps to
 0.4.0. A future prototype returns as a fresh skill under its own decision record.

@@ -23,13 +23,13 @@ bullet, because the failure is not specific to assumptions. A prose decision the
 user nods at costs the same as an assumption they never read. The variants
 bullet is untouched: it already carries its own version.
 
-The evidence is reasoned, not observed, and decision 0009 asks for observed and
+The evidence is reasoned, not observed, and decision thin-skills-over-fixed-procedures asks for observed and
 repeated. Two things argue the paragraph belongs anyway, and one argues it may
 not. It constrains the form of a stated decision rather than ordering steps,
-which is the class 0009 leaves to skills — "Ask exactly one per turn" in the same
+which is the class thin-skills-over-fixed-procedures leaves to skills — "Ask exactly one per turn" in the same
 section has the same shape. It is three lines, so it is cheap to delete. But
 whether the model already names overturning conditions unprompted has not been
-tested, and if it does, this is precisely the inert kind of line decision 0017
+tested, and if it does, this is precisely the inert kind of line decision explain-visually-keeps-only-the-counter-defaults
 deleted. The test that settles it: an eval prompt carrying a decision whose
 overturning condition lives only in the user's head, run against a body without
 this paragraph. If the model names the condition on its own, the paragraph goes.
@@ -44,10 +44,10 @@ this paragraph. If the model names the condition on its own, the paragraph goes.
   The overturning condition costs one clause and no extra turn.
 - **Carry a worked example in the body** (rejected): an example fixes the
   meaning to whatever domain it is drawn from, and the constraint is general.
-  0017's finding was that the model supplies form on its own; it needs the rule,
+  explain-visually-keeps-only-the-counter-defaults's finding was that the model supplies form on its own; it needs the rule,
   not the illustration.
 - **Run the eval first and add nothing yet** (deferred, not rejected): the
-  cleaner order by 0009's standard. The paragraph ships ahead of it because it
+  cleaner order by thin-skills-over-fixed-procedures's standard. The paragraph ships ahead of it because it
   is three lines and reversible, and the eval question is recorded above so the
   next pruning pass runs it rather than re-derives it.
 

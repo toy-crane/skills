@@ -1,13 +1,13 @@
 # Oversized work splits into session-grain tasks via split-into-tasks
 
-Decision 0005 rejected porting to-tickets: at this repo's scale one spec per
+Decision jit-planning-with-optional-to-plan rejected porting to-tickets: at this repo's scale one spec per
 worktree left nothing to divide, and pre-cut slices rot as execution learns
 the terrain. Real usage produced the counterexample: when a plan outgrows one
 session, the binding constraint is the user's review bandwidth, not model
 context. A plan too big to read in one sitting gets stamped instead of
 reviewed, and the change a giant session produces is equally unreviewable.
 
-The concept returns at the grain 0005 itself sanctioned. draft-plan's Order
+The concept returns at the grain jit-planning-with-optional-to-plan itself sanctioned. draft-plan's Order
 section already split oversized work "at session grain, never into a pre-cut
 task list"; `split-into-tasks` materializes those session-grain pieces as
 files instead of prose. Each **task** (now a glossary term) is a
@@ -36,12 +36,12 @@ invalidates later tasks triggers re-cutting the remainder.
   each task's session by hand, so native blocking links buy nothing, and the
   repo has no tracker-configuration mechanism to pay for.
 - **Port the prefactoring instruction** (rejected): a method directive; the
-  thin-skills principle (0009) leaves method to the model.
+  thin-skills principle (thin-skills-over-fixed-procedures) leaves method to the model.
 - **An execute/implement companion skill** (rejected, again): plan mode,
-  tdd, commit, and pr already cover a task's session, as 0005 found.
+  tdd, commit, and pr already cover a task's session, as jit-planning-with-optional-to-plan found.
 - **Fine-grain task lists** (still rejected): the properties that make a
   task reviewable — vertical, verifiable, session-sized — are exactly what
-  a to-do-list slice lacks; 0005's objection to that grain stands.
+  a to-do-list slice lacks; jit-planning-with-optional-to-plan's objection to that grain stands.
 
 ## Consequences
 

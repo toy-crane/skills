@@ -19,7 +19,7 @@ the reader's trust in what each path promises.
 - **`docs/changes/`** (rejected): low convention recognition, clashes with changesets.
 - **Flat `docs/specs/<slug>.md`** (rejected): breaks the moment `plan.md` arrives, and
   promoting later means migrating a published convention.
-- **Reuse `artifacts/<issue-slug>/`** (rejected): retired prototype semantics (0001).
+- **Reuse `artifacts/<issue-slug>/`** (rejected): retired prototype semantics (visual-media-over-prototype-routing).
 - **A new root directory** (rejected): clarify runs on other people's repos; additions
   under `docs/` are conventional, new root directories are intrusive.
 

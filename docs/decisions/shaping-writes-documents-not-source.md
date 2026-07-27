@@ -26,7 +26,7 @@ than prohibition: "never modify code" contradicts the sanctioned
 writes, and a rule the session must violate to do its job invites
 rationalized exceptions everywhere else. Stated once rather than
 per-paragraph reminders: this is a constraint in the thin-skills
-sense (decision 0009), and it passes that decision's test — the
+sense (decision thin-skills-over-fixed-procedures), and it passes that decision's test — the
 failure is observed and repeated. An outlet rather than a bare stop:
 "record it as a decision or a remaining risk" gives the model a
 compliant action at the exact moment of temptation, which holds

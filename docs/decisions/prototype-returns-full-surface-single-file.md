@@ -1,8 +1,8 @@
 # Prototype returns as a full-surface, single-file build preserved beside the spec
 
-0003 retired the old prototype ahead of a rebuild; this record is that rebuild's
+retire-prototype-collapse-clarify-into-drafts retired the old prototype ahead of a rebuild; this record is that rebuild's
 charter. The retired skill scoped each run to one uncertainty, which clarify's
-variants already cover (0001). The rebuilt skill exists for what neither prose nor
+variants already cover (visual-media-over-prototype-routing). The rebuilt skill exists for what neither prose nor
 variants can reach: misalignment the user cannot flag because it was never
 mentioned. Its unit of work is therefore the whole surface, every screen a feature
 needs with dummy data, proposed as a correctable draft, built skeleton first in
@@ -21,15 +21,15 @@ explaining has failed". Pointing at problems belongs to the reviewing medium
 (element selection where the surface offers it) or to prose. Design tokens live
 in `:root` as the single funnel all screens style through, which makes
 cross-screen consistency (the observed failure of ad-hoc mockups) structural
-rather than aspirational. Per 0001's discipline, extended here from tool names to
+rather than aspirational. Per visual-media-over-prototype-routing's discipline, extended here from tool names to
 library and framework names, the skill text names no concrete technology.
 
 The approved surface survives at `docs/specs/<slug>/prototype.html`, linked from
-`spec.md`. This narrows 0001's "visuals are disposable scaffolding": alignment
+`spec.md`. This narrows visual-media-over-prototype-routing's "visuals are disposable scaffolding": alignment
 reached by looking cannot round-trip through prose alone, so the spec carries the
 decisions and the preserved prototype carries what they look like. Working
 visuals between passes remain disposable, and the preserved file is a reference,
-never production code. Clarify regains one narrow routing, superseding 0001's
+never production code. Clarify regains one narrow routing, superseding visual-media-over-prototype-routing's
 consequence at exactly this scale: when an experiential question outgrows
 variants (a whole surface rather than one choice), the mode switch into a build
 is no longer a cost but the point.
@@ -62,7 +62,7 @@ is no longer a cost but the point.
 ## Consequences
 
 The plugin returns to three skills at 0.5.0. Clarify's experiential clause gains
-the outgrows-variants hand-off; 0001's visual-medium decision otherwise stands.
+the outgrows-variants hand-off; visual-media-over-prototype-routing's visual-medium decision otherwise stands.
 GLOSSARY gains Prototype, and Spec widens to name both writing sessions and the
 preserved-prototype exception. The template file is the shell's molt point:
 harness evolution replaces it without touching the skill text. The rebuild's

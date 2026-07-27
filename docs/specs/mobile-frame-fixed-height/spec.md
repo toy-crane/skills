@@ -6,7 +6,7 @@ viewport preset (`.sh-vp-390` in
 `min-height: 660px`, so the phone frame grows with content. This spec fixes
 the frame's height so fold, pinned bottom UI, and scroll behavior are judged
 honestly. Companion records: ADR
-[0004](../../decisions/0004-prototype-returns-full-surface-single-file.md)
+[prototype-returns-full-surface-single-file](../../decisions/prototype-returns-full-surface-single-file.md)
 (shell charter) and the contract comment at the top of
 `skills/build-prototype/templates/shell.html`.
 

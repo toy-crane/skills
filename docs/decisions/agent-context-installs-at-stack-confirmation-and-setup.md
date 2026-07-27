@@ -44,7 +44,7 @@ ride the project as files and are discovered automatically.
 - **Workflow constraint only, defer the skill** (rejected): the
   initialization moment sits outside shaping and planning, so the
   pipeline constraint never fires there; waiting for repeated observed
-  failures (the [decision 0009](0009-thin-skills-over-fixed-procedures.md)
+  failures (the [decision thin-skills-over-fixed-procedures](thin-skills-over-fixed-procedures.md)
   bar for fixed procedures) fits steps inside a skill, not the
   deliberate, user-initiated equipping that setup help is.
 - **Let the pipeline hooks invoke the skill instead of restating the

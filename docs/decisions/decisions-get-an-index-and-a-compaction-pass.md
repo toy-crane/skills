@@ -28,7 +28,8 @@ Two rules carry the weight.
 
 **The claim is fixed; the address is not.** A record's body may never be
 edited so that a sentence makes a different claim, because records quote each
-other's exact words: deleting `write-spec` from 0006 leaves 0007 arguing
+other's exact words: deleting `write-spec` from
+verb-object-names-for-invoked-skills leaves shape-idea-names-the-work arguing
 against a word that appears nowhere. Any edit that only changes which record,
 file, or name a sentence points at is always allowed. This replaces the
 stricter "the body never changes", which made compaction impossible.
@@ -63,7 +64,7 @@ attached the first run supplied its own — commit recency, in a repo whose
 nineteen records span ten days, which separated nothing. Reversal is the case
 the size test reads backwards. A record that overturns another states its
 alternative in one terse line and spends its pages on what forced the move, so
-the more a subject has moved the cheaper its rejections look; 0017 holds the
+the more a subject has moved the cheaper its rejections look; explain-visually-keeps-only-the-counter-defaults holds the
 lowest rejection share of any record here and is the most destructive to
 merge. The count of moves is the part no later record can recover, because a
 superseding author does not know how many records were deleted.
@@ -85,7 +86,7 @@ superseding author does not know how many records were deleted.
   anything, which looked like redundancy and was not — the size test
   short-circuited before the branch the other one guards was ever reached. The
   two read a reversal in opposite directions, so they come apart exactly where
-  compaction is least safe. Cutting it would also have applied 0009's bar
+  compaction is least safe. Cutting it would also have applied thin-skills-over-fixed-procedures's bar
   asymmetrically, since the ledger procedure below is admitted on a single
   observation for the same reason: the failure destroys records.
 - **A mode of domain-modeling rather than a separate skill** (rejected):
@@ -114,7 +115,7 @@ them. Both of this branch's records moved again on the rebase. From here two
 branches adding a record collide on one file at merge time.
 
 One procedure sits in the skill on a single observation rather than a repeated
-one, against 0009's bar: list the rejections before compacting. A hand count
+one, against thin-skills-over-fixed-procedures's bar: list the rejections before compacting. A hand count
 that read only the `## Considered Options` headings found 40 where a full read
 found 148, and the low count would have licensed a destructive merge. It is
 admitted because the failure it guards destroys records, and it is written as

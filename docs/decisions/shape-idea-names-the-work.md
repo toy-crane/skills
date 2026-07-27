@@ -28,5 +28,5 @@ The published directory, manifest entries, invocation examples, related skill
 references, and eval prompts move from `write-spec` to `shape-idea`.
 `plugin.json` bumps to 0.9.0. Existing skills.sh copies keep the old name until
 reinstalled, and local symlinks need one `scripts/link-skills.sh` run after the
-rename lands on main. Decision 0006 and older historical records retain
+rename lands on main. Decision verb-object-names-for-invoked-skills and older historical records retain
 `write-spec` as the name that was current when they were written.

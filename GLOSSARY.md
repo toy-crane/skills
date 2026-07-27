@@ -51,9 +51,9 @@ A session-sized cut of work that exceeds one sitting: a complete, independently 
 _Avoid_: Ticket, slice, subtask, to-do
 
 **Decision index**:
-The one-line-per-record list at `docs/decisions/README.md` stating what each decision was, so the project's current position is readable without reading the arguments behind it. Written before the record it points at: a decision that cannot be stated in one sentence has not settled. It is to decisions what GLOSSARY.md is to terms; the records hold the evidence.
+The list at `docs/decisions/README.md` of standing positions, one line each, grouped by subject, so the project's current position is readable without reading the arguments behind it. Written before the record it points at: a decision that cannot be stated in one sentence has not settled. A superseding record replaces the line it overturns; the superseded record keeps its file and is reached through the citing record. It is to decisions what GLOSSARY.md is to terms; the records hold the evidence.
 _Avoid_: Table of contents, ADR list
 
 **Record cluster**:
-A group of decision records covering one subject that has stopped moving. It compacts into a single record holding the current rule and the rejected alternatives, taking the lowest number of the group and dropping the sequence. A subject still under debate is not a cluster, and neither is a record whose body is itself reused, such as an eval's method.
+A group of decision records covering one subject that has stopped moving. It compacts into a single record holding the current rule and the rejected alternatives, named by the slug that states the settled subject and dropping the sequence. A subject still under debate is not a cluster, and neither is a record whose body is itself reused, such as an eval's method.
 _Avoid_: Group, batch, merge set
