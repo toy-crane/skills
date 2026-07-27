@@ -45,7 +45,7 @@ the README entry and its outside-the-pipeline line, shape-idea's pointer, and
 `GLOSSARY.md`'s **Comprehension gap** following. Version 0.15.0. 0015 stands as
 the record of why the skill exists, when it fires, and what it writes; its
 decisions 3, 6, 9, and 10, its `explain-visually` rejection, and the matching
-lines in `docs/specs/explain-skill/spec.md` are superseded here. Installed
-copies keep the old name until reinstalled, as with the 0006, 0007, and 0013
-renames. A one-sentence gap now falls outside the skill and is answered by the
+lines in the explain-skill spec folder (since deleted) are superseded here.
+Installed copies keep the old name until reinstalled, as with the 0006, 0007,
+and 0013 renames. A one-sentence gap now falls outside the skill and is answered by the
 model directly, which is the intended split.

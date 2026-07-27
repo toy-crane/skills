@@ -66,4 +66,5 @@ the outgrows-variants hand-off; 0001's visual-medium decision otherwise stands.
 GLOSSARY gains Prototype, and Spec widens to name both writing sessions and the
 preserved-prototype exception. The template file is the shell's molt point:
 harness evolution replaces it without touching the skill text. The rebuild's
-interview dossier lives at `docs/specs/prototype-rebuild/`.
+interview dossier lived at `docs/specs/prototype-rebuild/`, deleted once the
+work shipped.

@@ -37,7 +37,9 @@ in, this repo shows the drift.
 - **Numbering collided.** Two records are 0011. PRs #23 and #24 each computed
   "highest + 1" inside its own worktree, exactly as the template instructs,
   and the two new files never conflicted on merge.
-- **Retirement never ran.** Six spec folders remain, all shipped work.
+- **Retirement never ran.** Six spec folders remain. Five are shipped work;
+  the sixth, `mobile-frame-fixed-height`, is not — checked during the run,
+  against the claim made here first.
 - **The glossary compensates.** Its Spec folder entry ends with "Called
   'dossier' in records up to 0004", a job the records should do themselves.
 - **Promotion happens by hand and has no name.** CLAUDE.md's "Skill naming"
@@ -269,25 +271,56 @@ between the 40 a first hand-count found and 148. Around 90 would put the
 clusters back inside the test. Decision 16 exists so a run measures this
 instead of inheriting a guess.
 
+### What the run did
+
+Compacted nothing, as predicted, and gave two reasons this spec had not.
+Rejections for one subject live in records outside its cluster — naming
+rejections sit in 0008, 0010, 0012 and 0015, which cannot be gutted — so a
+merged record could not be the subject's single home. And a subject that has
+just taken its first exception has not stopped moving: 0016 bent the
+verb-object scheme with its first adverb the day before.
+
+It also rejected the prototype cluster outright, on grounds this spec got
+wrong. 0001's subject is visual media in the interview, not the prototype, and
+its rule is live and cited by four later records and the glossary. 0003's
+subject is the draft vocabulary. Only their prototype consequences chain into
+0004.
+
+It promoted 0002's three lifecycles into `AGENTS.md` (`CLAUDE.md` is a symlink
+to it), deleted five spec folders, wrote the index, and made two address-only
+edits where record text pointed at deleted paths. It kept
+`mobile-frame-fixed-height` after checking `shell.html` and finding the
+`min-height: 660px` that spec exists to replace still there.
+
+It reported the 0011 collision instead of renumbering, on the ground that
+choosing which record surrenders its number is a maintainer's call. That is
+the skill behaving as written; the call was then made here and 0011-shaping
+became 0018.
+
 ```
-docs/decisions/     52,236자 · 17개  →  압축은 아마 0. 번호 충돌만 해소.
-docs/specs/         38,221자 · 6개   →  compact-decisions/ 하나만 남음
-CLAUDE.md            4,880자 · 94줄  →  0002가 올라감 (약 +400자)
-GLOSSARY.md          4,952자         →  그대로
-docs/decisions/README.md  없음       →  17줄 · 약 2,200자
-
-세션이 매번 읽는 양   62,068자  →  약 64,700자   (+4%)
+docs/decisions/   52,236자 · 17개  →  압축 0. 충돌 해소, 색인 신설. 19개.
+docs/specs/       38,221자 · 6개   →  2개 (compact-decisions, mobile-frame)
+AGENTS.md          4,880자 · 94줄  →  5,562자 · 106줄   (상한 120)
+GLOSSARY.md        4,952자         →  dossier 역사 주석 한 줄 제거
+docs/decisions/README.md  없음     →  31줄              (상한 40)
 ```
 
-**If nothing compacts, this run makes the per-session read slightly larger.**
-The index and the promoted section are new bytes and nothing came out. Say so
-plainly rather than reporting a saving that did not happen.
+**Nothing compacted, so the per-session read went up, not down.** The index
+and the promoted section are new bytes and none came out. Say that plainly
+rather than reporting a saving that did not happen.
 
-The value of the run is correctness, not size. After it, the project's current
-position on each decision is stated once in the index instead of being
-reconstructed from 52,236 characters of argument, and the reconstruction is
-where a session picks up a skill name that no longer exists. The size win is
-entirely in the deferred item below, and the index is its precondition.
+The value of the run is correctness. The project's current position on each
+decision is now stated once in the index instead of being reconstructed from
+52,236 characters of argument, and that reconstruction is where a session
+picks up a skill name that no longer exists. The size win is entirely in the
+deferred item below, and the index is its precondition.
+
+**This run does not count as the blind eval.** A regex slip in its own
+repo-wide citation grep spilled roughly forty lines of this spec folder into
+its context, including ledger entries and cluster counts, which it reported
+unprompted. Its conclusions came from the records and go further than what
+leaked, but a clean judgment test still has to run on a worktree where this
+folder is absent.
 
 ## How this is tested
 
