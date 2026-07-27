@@ -1,6 +1,6 @@
 ---
 name: compact-decisions
-description: Bring a project's decision records, glossary, spec folders, and always-loaded instructions back in step with what shipped — compacting records whose subject has settled, promoting what every session must know, and deleting spec folders for finished work. Use when the decision folder has grown past what anyone reads, after several units of work have shipped. Not while work is being designed.
+description: Bring a project's decision records, glossary, spec folders, and always-loaded instructions back in step with what shipped — compacting records whose subject has settled, promoting what every session must know, and deleting spec folders for finished work. Use when the decision index nears its cap or has drifted from what shipped, after several units of work have shipped. Not while work is being designed.
 ---
 
 # Compact decisions
@@ -28,7 +28,8 @@ Work on whichever exist. Name the ones that were absent.
 Several records covering one subject, and the subject has stopped moving: they
 become one record holding the current rule and every rejected alternative,
 dropping the sequence — which came first, which pull request, which reversal.
-The merged record takes the lowest number of the group. The others are deleted
+The merged record takes the slug that names the settled subject — keep the
+group's most-cited slug when it still states the claim. The others are deleted
 and every citation of them updated.
 
 **List the rejections first, and let them decide whether to compact at all.**
@@ -70,24 +71,29 @@ hard-won-ness earn nothing.
 
 ## Keep the index true
 
-`docs/decisions/README.md`, one line per record, matching the folder.
+`docs/decisions/README.md`, one line per standing position, grouped by
+subject. Every record either holds a line or is reachable through citations
+from a record that does; a superseded record keeps its file and loses its
+line.
 
 ## Caps
 
-The index stays under 40 lines and the always-loaded file under 120. They are
-what stops promotion from being one-way. When a cap cannot be met without
-compacting something that should not be compacted, report that instead.
+The index stays under 40 position lines (section headers do not count) and
+the always-loaded file under 120. They are what stops promotion from being
+one-way. When a cap cannot be met without compacting something that should
+not be compacted, report that instead.
 
 ## Report rather than force
 
-Duplicate record numbers. A supersession you cannot pin down. A cluster you
-could not tell had settled.
+Two records claiming one subject under different slugs. A record neither
+indexed nor cited from an indexed one. A supersession you cannot pin down. A
+cluster you could not tell had settled.
 
 ## Done when
 
 No two records cover one settled subject that could safely be joined, no spec
-folder describes shipped work, the glossary carries only current terms, the
-index matches the folder, and the always-loaded file holds what earns its
-cost. Close with what you changed, what you left alone and why, and what you
+folder describes shipped work, the glossary carries only current terms, every
+standing position holds one index line and every record is reachable from the
+index, and the always-loaded file holds what earns its cost. Close with what you changed, what you left alone and why, and what you
 could not fix. An untouched folder has to be a decision you state, never a
 step you skipped.
