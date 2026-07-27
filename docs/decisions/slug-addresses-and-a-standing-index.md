@@ -74,9 +74,13 @@ The twenty existing records drop their numeric prefixes — an address edit the
 compaction record's own rule allows — and in-body number citations become slug
 citations, except where a number is quoted as history (the collision
 narrative in decisions-get-an-index-and-a-compaction-pass). The index is
-rewritten into seven subject sections, twenty-one standing lines; the lines
+rewritten into seven subject sections, twenty-two standing lines; the lines
 for retire-prototype-collapse-clarify-into-drafts and its peers now state
-only the half of each record that still stands. domain-modeling's
+only the half of each record that still stands. A twenty-first record,
+stated-decisions-carry-their-overturning-condition, landed on main under the
+old scheme while this change was in flight — the parallel-authorship case
+this record is about — and is folded in here: renamed, re-cited, and indexed
+under Shaping. domain-modeling's
 file-structure example, its index-line instruction, and its decision-record
 template shed the numbering step and gain the replace-on-supersede rule;
 compact-decisions' merged-record naming, index rule, cap counting, and report

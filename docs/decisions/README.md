@@ -35,6 +35,7 @@ rejected alternatives.
 - [visual-media-over-prototype-routing](visual-media-over-prototype-routing.md) — The interview settles experiential questions through whatever visual medium the environment provides, named by capability and never by tool.
 - [retire-prototype-collapse-clarify-into-drafts](retire-prototype-collapse-clarify-into-drafts.md) — The interview's four proposing moves are one concept, the draft: a concrete candidate put forward for the user to correct.
 - [shaping-writes-documents-not-source](shaping-writes-documents-not-source.md) — A shaping session's durable writes are the spec folder, the glossary and decision records, and installed vendor context — never product code.
+- [stated-decisions-carry-their-overturning-condition](stated-decisions-carry-their-overturning-condition.md) — A decision the session states carries the condition that would overturn it, when only the user can know that condition; a checkable condition is checked, not stated.
 
 ## Prototype
 
