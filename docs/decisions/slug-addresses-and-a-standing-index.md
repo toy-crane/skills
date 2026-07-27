@@ -86,4 +86,4 @@ template shed the numbering step and gain the replace-on-supersede rule;
 compact-decisions' merged-record naming, index rule, cap counting, and report
 list follow. AGENTS.md's decision links, GLOSSARY's Decision index and
 Cluster entries, and the `mobile-frame-fixed-height` spec's record link move
-to slug addresses. Version 0.19.0.
+to slug addresses. Version 0.20.0.
