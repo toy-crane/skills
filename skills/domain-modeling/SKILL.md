@@ -14,10 +14,13 @@ Actively build and sharpen the project's domain model as you design. This is the
 ├── GLOSSARY.md
 ├── docs/
 │   └── decisions/
+│       ├── README.md
 │       ├── 0001-event-sourced-orders.md
 │       └── 0002-postgres-for-write-model.md
 └── src/
 ```
+
+`GLOSSARY.md` says what a term means now. `docs/decisions/README.md` says what the project has decided now, one line per record. The records themselves hold the arguments. Without the index the current position exists nowhere and every session rebuilds it from the whole folder.
 
 Create files lazily, only when you have something to write. If no `GLOSSARY.md` exists, create one when the first term is resolved. If no `docs/decisions/` exists, create it when the first decision record is needed.
 
@@ -54,3 +57,7 @@ Only offer to create a decision record when all three are true:
 3. **The result of a real trade-off**: there were genuine alternatives and you picked one for specific reasons
 
 If any of the three is missing, skip it. Use the format in [decision-record template](./templates/decision-record.md).
+
+### Write the index line before the record
+
+A decision you cannot state in one sentence has not settled yet, so write that sentence first: `- [NNNN](NNNN-slug.md) — what was decided.` in `docs/decisions/README.md`. Then argue for it in the record. The index and the folder always match.
