@@ -1,7 +1,7 @@
 {
   "name": "toycrane-skills",
   "version": "0.22.0",
-  "description": "Agent skills for discovering opportunities, sharpening plans, screens, and project knowledge, then implementing them test-first.",
+  "description": "Agent skills for discovering opportunities, sharpening decisions, screens, and project knowledge, then implementing them test-first.",
   "author": {
     "name": "toy-crane",
     "url": "https://github.com/toy-crane"
