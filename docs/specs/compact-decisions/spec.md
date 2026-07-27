@@ -145,14 +145,34 @@ alongside `GLOSSARY.md`.
     already requires this for non-obvious rejections.
 
 15. **What does not compact.**
-    - A cluster still under debate. Merging picks a winner early.
+    - **A cluster where one record overturns another or excepts it.** Not
+      "still under debate", which was the first wording: nobody is arguing at
+      the moment of compaction, and with no criterion attached a run invented
+      its own — commit recency, in a repo whose nineteen records span ten
+      days, which separated nothing. Reversal is decidable from the records
+      and needs no dates. It is also the case the size test reads backwards:
+      a record that overturns another states its alternative in one terse line
+      and spends its pages on what forced the move, so a subject that has
+      moved a lot looks *cheap* to compact. 0017 holds the lowest rejection
+      share of any record here and is the most destructive to merge.
+      Leaving a cluster for this reason carries an obligation: report how many
+      times the position moved and what forced each move. Three moves of one
+      boundary is itself a finding, and a merged record reporting one rule
+      destroys the count with nothing able to recover it.
     - A record whose body is itself reused: an eval's method, a measurement.
       0009 and 0017 look like a cluster and are not — 0017's value is the
       procedure the next pruning run reuses.
-    - **A cluster already at its minimum.** If listing the cluster's rejected
-      alternatives on their own takes about as much room as the records
-      themselves, there is no redundancy left to squeeze and compacting would
-      only lose things. Leave it and say so.
+    - **A cluster with nothing to win.** Write the rejections as the merged
+      record would carry them, add the current rule and the evidence it rests
+      on, and compare that total against the records it would replace. If it
+      is not clearly smaller, leave it.
+
+    The comparison had to be pinned down because it was not stable. Stating
+    each rejection as a standalone sentence put this repo's clusters at 131%
+    of source; stating them as one shared list put the same clusters at
+    30–42%. Same records, opposite verdicts, on an unstated formatting
+    choice. Measuring what the merged record would actually hold removes the
+    choice, and it is the real question anyway.
 
 16. **The ledger is built before every compaction, and it is what decides
     whether to compact.** Not a test artifact — the input. Extract the
@@ -445,10 +465,16 @@ records get destroyed.
 
 ## Remaining risks
 
-- **Decision 15's third test is a ratio with no calibration.** "About as much
-  room as the records" is doing real work and has been measured exactly once,
-  on a repo whose answer we already believed. A run could clear it on a
-  cluster that should have been left alone.
+- **Decision 15's size test is still uncalibrated, only less ambiguous.**
+  Pinning the measurement to what the merged record would hold removes the
+  131%-versus-34% swing, but "clearly smaller" is a judgement made once, on a
+  repo whose answer we believed in advance.
+- **Calibrating the size test made it permissive, which moves the load onto
+  the reversal test.** At 30–42% the naming and explain clusters clear the
+  size test; what stops them is reversal and the reused-body rule. The gate
+  that did all the work in the first run is not the gate that will do it
+  next time, and the reversal test has never yet been the thing that decided
+  a run.
 - **Extraction quality decides everything downstream.** A pass that reads only
   the `## Considered Options` headings undercounts by roughly a third here,
   and an undercount reads as "this cluster compacts". The ledger catches this

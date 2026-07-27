@@ -32,11 +32,13 @@ The merged record takes the lowest number of the group. The others are deleted
 and every citation of them updated.
 
 **List the rejections first, and let them decide whether to compact at all.**
-Rejected alternatives are the part of the history that has to survive:
-without them someone re-proposes a settled option in six months and nothing
-answers them. So write them out, then weigh them against the records. If
-stating them on their own takes about as much room as the records themselves,
-those records are already at their minimum — leave them alone and say so.
+Rejected alternatives are the part of the history that has to survive: without
+them someone re-proposes a settled option in six months and nothing answers
+them. So write them out as the merged record would carry them — one shared
+list, one terse line each — and add what else that record must hold: the
+current rule and the evidence it rests on. If the total is not clearly smaller
+than the records it would replace, there is nothing to win. Leave them alone
+and say so.
 
 That list is what the decision rests on, so build it properly. The
 `## Considered Options` headings are the easy part. The rest sit in body prose
@@ -45,8 +47,14 @@ and in consequences: as a bare negative ("no X either", "stays rejected",
 rejected mechanism rather than a rejected name. A list drawn from headings
 alone undercounts badly, and an undercount reads as permission to compact.
 
-Leave alone a subject still under debate, and a record whose body is itself
-reused — an eval's method, a measurement, a benchmark.
+Leave alone a cluster in which one record overturns another or takes an
+exception to it, and a record whose body is itself reused — an eval's method,
+a measurement, a benchmark. Reversal is the case the size test reads
+backwards: a record that overturns another states its alternative in one terse
+line and spends its pages on what forced the move, so the more a subject has
+moved the cheaper its rejections look. When you leave a cluster for this
+reason, say how many times the position moved and what forced each move. That
+count is the finding, and no later record can recover it.
 
 ## Promote what settled
 

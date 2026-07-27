@@ -34,12 +34,30 @@ file, or name a sentence points at is always allowed. This replaces the
 stricter "the body never changes", which made compaction impossible.
 
 **The rejected alternatives decide whether to compact.** They are the part of
-history that must survive, so a run lists them first and weighs them against
-the records; when stating them alone takes as much room as the records
-themselves, there is no redundancy left and the records are left alone. The
-first run on this repo measured 148 rejections across the candidate clusters,
-about 34,200 characters against 26,077 characters of source, and compacted
-nothing. That is the rule working.
+history that must survive, so a run writes them out as the merged record would
+carry them, adds the current rule and the evidence it rests on, and compacts
+only if that total is clearly smaller than the records it replaces. The first
+run measured 148 rejections across the candidate clusters and compacted
+nothing.
+
+The measurement had to be pinned to the merged record's own form because it
+was otherwise unstable: stating each rejection as a standalone sentence put
+these clusters at 131% of source, stating them as one shared list put them at
+30–42%. Same records, opposite verdicts, on a formatting choice the rule never
+named.
+
+**A cluster where one record overturns or excepts another is left alone**, and
+the run says how many times the position moved and what forced each move. The
+first wording was "still under debate", which is not decidable from the
+records: nobody is arguing at the moment of compaction, and with no criterion
+attached the first run supplied its own — commit recency, in a repo whose
+nineteen records span ten days, which separated nothing. Reversal is the case
+the size test reads backwards. A record that overturns another states its
+alternative in one terse line and spends its pages on what forced the move, so
+the more a subject has moved the cheaper its rejections look; 0017 holds the
+lowest rejection share of any record here and is the most destructive to
+merge. The count of moves is the part no later record can recover, because a
+superseding author does not know how many records were deleted.
 
 ## Considered Options
 
@@ -53,6 +71,14 @@ nothing. That is the rule working.
   record's author rather than restoring a qualifier.
 - **Weaken the survival rule to "the rejections that matter"** (rejected):
   makes the passing condition a judgment the compacting pass grades itself on.
+- **Cut the settledness test as redundant with the size test** (rejected): the
+  first run stopped every cluster on size before settledness could decide
+  anything, which looked like redundancy and was not — the size test
+  short-circuited before the branch the other one guards was ever reached. The
+  two read a reversal in opposite directions, so they come apart exactly where
+  compaction is least safe. Cutting it would also have applied 0009's bar
+  asymmetrically, since the ledger procedure below is admitted on a single
+  observation for the same reason: the failure destroys records.
 - **A mode of domain-modeling rather than a separate skill** (rejected):
   fires the sweep while work is being designed, which is the wrong phase.
 - **`consolidate-memory` as the name** (rejected): the bundled
