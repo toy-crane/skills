@@ -30,10 +30,17 @@ now runs beside. artifact-design wants a design plan before the first line of
 code; dataviz wants a seven-step procedure and a validator run; the Artifact
 tool wants CSP-safe, theme-aware, favicon'd pages. None of them overlap this
 skill — they are craft-of-the-artifact, and this is choose-the-explanation — but
-all of them start from the assumption that a page is already being built. The
-cheapest rung, characters typed straight into the reply, is what every one of
-them skips, and nothing in the environment argues for it. So restraint and
-cheapness stay, stated in the same breath, and the enumerations go.
+all of them start from the assumption that a page is already being built.
+
+What none of them describe is the rung below: custom visuals, rendered inline in
+the conversation and discarded as it moves on, on by default with no toggle, and
+carrying the platform's own escalation rule — persistent or shareable becomes an
+artifact, everything else stays inline. It exists on Claude web, desktop, and
+Cowork, and not on iOS, Android, or the Claude Code surfaces this repo is
+usually read from. So the cheap rung is real on some surfaces, absent on others,
+and a skill that ships to all of them cannot name it — which is why the body
+says as cheaply as the gap allows and stops there. Restraint and cheapness stay,
+stated in the same breath, and the enumerations go.
 
 Work-from-real-sources went too. It survived the earlier draft on the strength
 of a real asymmetry — a wrong picture costs more than a wrong sentence — but the
@@ -68,6 +75,11 @@ rename and of why rendering is the skill's content; its second half, the open
 list of forms, is superseded here. Version 0.16.0. The eval set and its outputs
 live outside the repo, so a later re-prune reruns rather than re-reads them —
 four prompts, one run per cell, one model, all sourced from this repo, which is
-thin enough that a surprising result should be rerun before it is believed. If
+thin enough that a surprising result should be rerun before it is believed. All
+eight ran on a Claude Code surface, where no inline renderer exists, so the
+finding that the form varied and no mermaid appeared is bounded by that surface;
+the same prompts on web would have had custom visuals available. The
+over-rendering result is not bounded that way — it is a question of how much,
+not of which medium. If
 a future model over-renders less, the remaining paragraph is the next candidate
 to go, and the skill becomes the bare handle rejected above.
