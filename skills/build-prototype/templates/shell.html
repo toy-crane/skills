@@ -1,6 +1,9 @@
 <!--
   prototype shell: the review chrome every prototype starts from.
 
+  Keep this comment in the prototype you grow from here: it is the contract,
+  and later turns work from that file rather than from this one.
+
   Contract (extend freely, never strip):
   - Screens:  <section data-screen="slug" data-title="Label"> inside .sh-stage.
                The tab bar, arrow keys, and #hash routing build themselves;
@@ -12,15 +15,17 @@
   - Viewport: "vp (m)" cycles full / 390 / 768. Start a mobile-first
                prototype by adding class="sh-vp-390" to <body> (or a
                bootstrap classList.add before the chrome script runs).
-  - Tokens:   the project-tokens block below ships wireframe gray on purpose.
-               The skeleton pass stays gray so structure is judged first; the
-               fill pass starts by replacing that block with the project's
-               real tokens (copy them verbatim when a design system exists).
-               Keep --background, --foreground, and --font defined after the
-               swap; when the system names differ, add a small mapping block
-               after the copy, and a web font substitutes a system stack.
-  - Wireframe helpers: .wf-line (text bar), .wf-pic (image placeholder).
-               Pencils, not floor plans: they draw nothing by themselves.
+  - Tokens:   replace the project-tokens block below with the project's own
+               design tokens, copied verbatim. Keep --background, --foreground,
+               and --font defined afterwards; when the system's names differ,
+               add a small mapping block after the copy, and a web font
+               substitutes a system stack (note that in the spec). A
+               project with no design system
+               keeps the block as it ships: that minimal palette is the
+               finished look, not a stage waiting to be swapped out.
+  - Placeholders: .wf-pic stands in for pictures the prototype has no real
+               files for. .wf-line (text bar) is here for the same reason but
+               rarely earns its use — real text belongs where it would go.
 
   Self-contained by design: no build, no framework, no network.
   Chrome that needs explaining has failed; keep it three controls.
@@ -28,7 +33,7 @@
 <title>Prototype</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  /* ── project tokens: replace this block in the fill pass ─────────── */
+  /* ── project tokens: the project's own, or this minimal set as-is ── */
   :root {
     --background: #f6f6f6;
     --surface: #ffffff;
@@ -75,7 +80,7 @@
     padding: 16px; margin-top: 12px;
   }
 
-  /* wireframe helpers */
+  /* placeholders */
   .wf-line { height: 10px; border-radius: 4px; background: #e3e3e3; margin: 7px 0 }
   .wf-pic  { border-radius: 4px; background:
              repeating-linear-gradient(45deg, #e9e9e9, #e9e9e9 6px, #f2f2f2 6px, #f2f2f2 12px) }
@@ -93,7 +98,7 @@
   <!-- Replace with real screens. One section per screen: -->
   <section data-screen="placeholder" data-title="placeholder">
     <h2>Empty shell</h2>
-    <p>Add sections with <code>data-screen</code> to begin the skeleton pass.</p>
+    <p>Add sections with <code>data-screen</code> to begin.</p>
   </section>
 </main>
 

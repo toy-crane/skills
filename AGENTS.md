@@ -47,7 +47,10 @@ another skill by name but must never assume knowledge of another skill's text
 
 A skill states goal, constraints, and completion criteria — not method. A
 fixed procedure earns its place only when it guards a repeated, observed
-failure (build-prototype's skeleton-then-fill). Prefer pointing at real
+failure, and none in the published set currently does:
+build-prototype's skeleton-then-fill was the last one and
+[prototype-builds-in-the-project-style-from-the-start](docs/decisions/prototype-builds-in-the-project-style-from-the-start.md)
+retired it, so a new procedure is answering to an empty precedent. Prefer pointing at real
 artifacts (GLOSSARY.md, specs, prototypes) over describing them in prose,
 and re-prune procedures when models improve —
 [explain-visually-keeps-only-the-counter-defaults](docs/decisions/explain-visually-keeps-only-the-counter-defaults.md)
