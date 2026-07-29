@@ -1,15 +1,12 @@
 # Check existing solutions first
 
-> **DRAFT** — under review in the 2026-07-29 shaping session. Scope is
-> confirmed (external dependencies only). Correct this file directly or
-> in chat; the marker drops when corrections stop.
-
 ## Problem
 
 A session hits a problem and builds its own fix on the spot. The answer
 often already exists. The dependency's issue tracker holds a worked-out
 countermeasure, or the official docs document the method. The user has
-observed this across sessions (reported 2026-07-29).
+observed this repeatedly in shaping sessions (confirmed 2026-07-29):
+the failure site and the carrier below are the same skill.
 
 [thin-skills-over-fixed-procedures](../../decisions/thin-skills-over-fixed-procedures.md)
 sets the bar for adding a constraint: a repeated, observed failure. This
@@ -36,9 +33,10 @@ model.
 
 ## Carrier
 
-One skill carries the rule: shape-idea, where the pipeline resolves
-technical questions. The rule is restated inline; skills stand alone,
-so no skill may assume another is present.
+One skill carries the rule: shape-idea — where the pipeline resolves
+technical questions, and where the user observed the failure. The rule
+is restated inline; skills stand alone, so no skill may assume another
+is present.
 
 ### shape-idea — sharpen one paragraph
 
@@ -113,13 +111,17 @@ against sending trivial local bugs to the web.
 - Bump .claude-plugin/plugin.json version (0.22.0 → 0.23.0) and run
   `claude plugin validate . --strict`.
 - The work fits one session. No task split.
-- The decision record and its index line are written by the shaping
-  session at close, not by the implementing session.
+- The decision record
+  [shape-idea-checks-existing-solutions-first](../../decisions/shape-idea-checks-existing-solutions-first.md)
+  and its index line are already written by the shaping session; the
+  implementing session edits the skill and bumps the version, nothing
+  more.
 
 ## Remaining risks
 
 - Sessions with no skill loaded never see the rule, and implementation
-  sessions stay uncovered by the tdd decision above. Each implements
+  sessions stay uncovered by the tdd decision above. No failure is
+  observed at either site today. Each implementation session works
   from a spec that carries shaping's research; if the failure shows up
   there anyway, that observation reopens the tdd carrier. The user's
   own CLAUDE.md could cover plain sessions; out of this work's scope.
