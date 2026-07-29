@@ -40,7 +40,7 @@ rejected alternatives.
 ## Prototype
 
 - [prototype-returns-full-surface-single-file](prototype-returns-full-surface-single-file.md) — The prototype is a full-surface build — every screen in one self-contained HTML file from a pinned shell, preserved beside the spec.
-- [prototype-builds-in-the-project-style-from-the-start](prototype-builds-in-the-project-style-from-the-start.md) — The prototype renders in the project's own design system from the first screen, minimal and terminally so when there is none, and the confirmed screen inventory replaces the skeleton pass as the cheap correction point.
+- [prototype-builds-in-the-project-style-from-the-start](prototype-builds-in-the-project-style-from-the-start.md) — The prototype renders in the project's own design system from the first screen and minimally when there is none, in one build with nothing staged or gated in front of it.
 
 ## explain-visually
 

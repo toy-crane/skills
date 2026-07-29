@@ -37,15 +37,17 @@ observes. Where the available instrument cannot see the thing, the honest move
 is to decide and record the exposure rather than to manufacture a measurement
 that answers a different question.
 
-One waypoint replaces the pass. The screen inventory was already a draft to
-correct; it is now a point the session stops at and waits on, because it is the
-only cheap correction left. A list is text and costs a sentence to fix, where
-building the wrong five screens now costs a themed, filled surface instead of
-five gray boxes. That is a single wait, not the two-pass staging it replaces,
-and it is the whole of what remains.
+Nothing replaces the pass. A mandatory stop on the screen inventory was live for
+part of this decision and is rejected below: it reinstates a fixed procedure
+under a new name, on a justification that was the predicted cost of building the
+wrong screens rather than a failure anyone had watched happen. It also gates a
+skill built to escape prose behind the approval of a prose list — a user
+confirming screen names in text before seeing anything is the exact mode this
+skill exists to leave. The inventory stays what it already was, a draft the user
+corrects, and the session builds from it without waiting.
 
-With it gone the published set carries no fixed procedure at all. thin-skills-over-fixed-procedures keeps
-its text and its rule intact; only its illustration is withdrawn, and a rule
+So the published set now carries no fixed procedure at all. thin-skills-over-fixed-procedures keeps its
+text and its rule intact; only its illustration is withdrawn, and a rule
 demonstrated by an exception being taken away is not weaker than one propped up
 by a standing exception.
 
@@ -66,19 +68,31 @@ by a standing exception.
 - **A model-proposed starter theme on greenfield** (rejected): removes one
   decision point and installs another, and makes the session argue visual
   identity, which is not what the prototype aligns.
+- **A mandatory stop on the screen inventory** (rejected): held for part of this
+  decision as the compensating control for the removed pass, and dropped under
+  review. It is a fixed procedure by AGENTS.md's own test, and the failure it
+  guards — wasted work on screens that should not exist — was predicted from the
+  higher cost of a themed render, never observed. Trading a procedure whose
+  failure cannot be measured for one whose failure was never seen is not a
+  trade. Its prose-gate defect is the second reason and would be disqualifying
+  on its own.
+- **Announcing on greenfield that a visual direction can be supplied** (rejected):
+  a user who wants a particular look says so, and instructing the model to
+  advertise the option is method, thickening the skill to no end. Greenfield
+  stays greenfield with no branch of its own.
 
 ## Consequences
 
-`skills/build-prototype/SKILL.md` loses the two-pass section; the surviving fill
-content — realistic dummy data, no lorem ipsum, edge states through the state
-pills, no real data or production wiring — moves into the single build, and the
-screen inventory becomes an explicit stop. `templates/shell.html` keeps its gray
-`:root` block and its `.wf-line` / `.wf-pic` helpers, reframed from "replace
-this in the fill pass" to the fallback a project without a design system lands
-on. Evals 1, 2, and 3 are rewritten: eval 2's assertion that the model must not
-advance to the fill has nothing left to guard and is replaced by the inventory
-stop, and eval 7 stops being the odd one out. `agents/openai.yaml` and the
-README entry drop the wireframe-skeleton phrasing. AGENTS.md keeps the
+`skills/build-prototype/SKILL.md` loses the two-pass section, and what replaces
+it is short: use the project's design system, fall back to minimal, build. The
+surviving fill content — realistic dummy data, no lorem ipsum, edge states
+through the state pills, no real data or production wiring — moves into the
+single build. `templates/shell.html` keeps its gray `:root` block and its
+`.wf-line` / `.wf-pic` helpers, reframed from "replace this in the fill pass" to
+the fallback a project without a design system lands on. Evals 1, 2, and 3 are
+rewritten: eval 2's assertion that the model must not advance to the fill has
+nothing left to guard, and eval 7 stops being the odd one out. `agents/openai.yaml`
+and the README entry drop the wireframe-skeleton phrasing. AGENTS.md keeps the
 "Skills stay thin" rule and cites this retirement in place of the procedure it
 used to name. GLOSSARY's Prototype entry drops skeleton-first. prototype-returns-full-surface-single-file keeps
 its file and every other position it holds — full surface, one self-contained
@@ -86,9 +100,12 @@ file, pinned shell, preserved beside the spec — and only its skeleton-first
 clause is superseded.
 
 How the design system gets found stays unwritten: the branch is stated, the
-search is the model's. The exposure is that a strong system can make a wrong
-structure read as right, and the inventory stop does not catch that — it catches
-wrong screens, not wrong hierarchy inside a screen. If prototypes start being
-approved with structural faults that surface at implementation, the finding
-belongs against this record, and reinstating a gray pass on greenfield only is
-the first thing to reach for.
+search is the model's. Two exposures are accepted. A strong system can make a
+wrong structure read as right, and nothing in the skill catches that any more.
+Correcting the screen list also costs more than it did, because a screen deleted
+after the build is now a themed, filled screen rather than a gray box, and no
+gate stands in front of that. Both were priced in: the first is the trade this
+record makes, and the second is what rejecting the inventory stop buys back in
+thinness. If prototypes start being approved with structural faults that surface
+at implementation, the finding belongs against this record, and reinstating a
+gray pass on greenfield only is the first thing to reach for.
