@@ -1,7 +1,8 @@
 # Check existing solutions first
 
-> **DRAFT** — under review in the 2026-07-29 shaping session. One question
-> is still open (scope, below). Correct this file directly or in chat.
+> **DRAFT** — under review in the 2026-07-29 shaping session. Scope is
+> confirmed (external dependencies only). Correct this file directly or
+> in chat; the marker drops when corrections stop.
 
 ## Problem
 
@@ -93,14 +94,12 @@ Proposed:
 - **knowledge-layer, explain-visually, compact-decisions** — no
   problem-solving moment.
 
-## Open question
+## Scope — confirmed
 
-Scope of the observed failure. Does it cover only external
-dependencies, or also the project's own prior art — its issue tracker,
-its docs? The rule above assumes external only, to keep the trigger
-narrow and avoid sending trivial local bugs to the web. If the user
-also saw sessions ignore the project's own sources, the rule names
-those too.
+The rule triggers on external dependencies only. The user confirmed the
+observed failure was external-dependency problems, not the project's
+own issue tracker or docs (2026-07-29). The narrow trigger is the brake
+against sending trivial local bugs to the web.
 
 ## Assumptions, each under standing veto
 
