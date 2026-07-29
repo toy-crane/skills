@@ -34,33 +34,11 @@ It is a constraint, not a procedure. No search order, no mandated tool.
 The skill names the failure and the gate; the method stays with the
 model.
 
-## Carriers
+## Carrier
 
-Only two skills solve technical problems mid-session: tdd and
-shape-idea. Each restates the rule inline, because skills stand alone —
-skills.sh installs them individually, so neither may assume the other is
-present.
-
-### tdd — new section
-
-tdd has no guard today: a dependency misbehaves during red–green and
-nothing points upstream. Proposed section, placed after "Anti-patterns":
-
-> ## Before building your own fix
->
-> When a failing test, an error, or a needed capability traces to an
-> external dependency — a framework, a library, a service — find how it
-> is already solved before building your own. Check the official docs
-> and any agent context installed in the project, then the dependency's
-> issue tracker and release notes. Most problems at that boundary have a
-> settled answer: a documented option, a fixed version, a known
-> workaround.
->
-> Build your own only when the found answer does not apply, and record
-> which source you checked and why it fell short, in the comment or
-> commit that introduces the workaround. A workaround with no source
-> behind it cannot be told apart from the first idea that happened to
-> work.
+One skill carries the rule: shape-idea, where the pipeline resolves
+technical questions. The rule is restated inline; skills stand alone,
+so no skill may assume another is present.
 
 ### shape-idea — sharpen one paragraph
 
@@ -84,6 +62,16 @@ Proposed:
 
 ## Not carriers
 
+- **tdd** — the user judged it unneeded (2026-07-29), and the judgment
+  holds against the repo's own bar:
+  [thin-skills-over-fixed-procedures](../../decisions/thin-skills-over-fixed-procedures.md)
+  admits a constraint only for an observed failure, and none has been
+  observed in a tdd session — the draft's placement there was
+  inference. tdd is also a testing reference; every section teaches the
+  loop, and a problem-solving rule would be its only off-subject
+  section. Implementation sessions inherit shaping's research through
+  the spec. Reopened only if the failure is actually observed during a
+  tdd session.
 - **build-prototype** — touches no framework by design (one dummy-data
   HTML file). Same ground as the build-prototype rejection recorded in
   [agent-context-installs-at-stack-confirmation-and-setup](../../decisions/agent-context-installs-at-stack-confirmation-and-setup.md).
@@ -121,7 +109,7 @@ against sending trivial local bugs to the web.
 
 ## Implementation notes
 
-- Edit skills/tdd/SKILL.md and skills/shape-idea/SKILL.md as above.
+- Edit skills/shape-idea/SKILL.md as above.
 - Bump .claude-plugin/plugin.json version (0.22.0 → 0.23.0) and run
   `claude plugin validate . --strict`.
 - The work fits one session. No task split.
@@ -130,9 +118,11 @@ against sending trivial local bugs to the web.
 
 ## Remaining risks
 
-- Sessions with no skill loaded never see the rule. A plain chat
-  session that hits a problem stays uncovered. The user's own CLAUDE.md
-  could cover that; out of this work's scope.
+- Sessions with no skill loaded never see the rule, and implementation
+  sessions stay uncovered by the tdd decision above. Each implements
+  from a spec that carries shaping's research; if the failure shows up
+  there anyway, that observation reopens the tdd carrier. The user's
+  own CLAUDE.md could cover plain sessions; out of this work's scope.
 - Inline text raises the odds; it does not guarantee. A session deep in
   context may still skip the check. If the failure recurs after this
   ships, the next lever is a harness hook, not more prose.
