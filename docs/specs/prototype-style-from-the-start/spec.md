@@ -102,13 +102,38 @@ Stated under standing veto; correct any that are wrong.
   minimally.
 - The minimal fallback reuses the shell's existing gray tokens rather than
   introducing a second palette. Nothing new is designed for it.
-- `.wf-line` and `.wf-pic` are kept. They are the minimal style's vocabulary
-  now, and they cost nothing when a design system is in use.
+- `.wf-pic` is kept. `.wf-line` is kept too, but expect it to go unused — see
+  the test build below.
 - The screen-by-screen review after the build stays a review, not a gate.
 - The version bump is minor (`0.24.0`), not patch.
 - No eval run is commissioned for this change. The failure the pass guarded is
   the user's attention landing on the wrong axis, which scoring model output
   cannot observe.
+
+## Observed in a test build
+
+One prototype was built to these decisions before implementation — greenfield,
+so the minimal fallback applied — and rendered in a browser. It was disposable
+and is not in the repo. Three things it settled:
+
+- **`.wf-line` has no role left.** It puts a gray bar where text goes, and a
+  terminal minimal style puts real text there instead; the build never reached
+  for it. `.wf-pic` was used throughout, for thumbnails a prototype legitimately
+  has no images for. Keep both for now and revisit `.wf-line` if a second build
+  also finds no use for it.
+- **The minimal path costs more than the design-system path**, which is the
+  reverse of how the fallback reads on paper. With a system, the work is copying
+  tokens; without one, cards, rows, chips, toggles, and fields are all written
+  from scratch — over a hundred lines in this build. Nothing to fix, but the
+  implementing session should not describe the fallback as the cheap branch.
+- **The shell's chrome works unmodified** at this scale: six tabs built
+  themselves, per-screen state pills varied correctly (three, four, and none
+  depending on the screen), the viewport cycle reached 390, and no console
+  errors appeared.
+
+What the build did *not* settle is whether a minimal prototype reads as
+finished or as an unfinished wireframe. Decision 3 rests on it and only a user
+looking at one can answer it. Until someone does, treat it as open.
 
 ## Off-limits
 
