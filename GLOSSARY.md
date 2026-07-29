@@ -23,7 +23,7 @@ One of a small set of alternatives that differs on the governing decision while 
 _Avoid_: Mockup, option
 
 **Prototype**:
-The full-surface build: every screen a feature needs in one self-contained HTML file with shared design tokens, dummy data, and per-screen state toggles, built skeleton first and filled after approval. Where a variant settles one question, the prototype surfaces the questions nobody knew to ask; the approved file survives beside the spec as its visual half.
+The full-surface build: every screen a feature needs in one self-contained HTML file with shared design tokens, dummy data, and per-screen state toggles, rendered in the project's own design system from the first screen and minimally where there is none. Where a variant settles one question, the prototype surfaces the questions nobody knew to ask; the approved file survives beside the spec as its visual half.
 _Avoid_: Mockup, wireframe, demo
 
 **Structural mirroring**:
