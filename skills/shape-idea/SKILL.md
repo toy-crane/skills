@@ -19,9 +19,11 @@ every branch you can without them.
 Invoke the `knowledge-layer` skill and read `GLOSSARY.md` and
 `docs/decisions/`. Follow knowledge-layer throughout the session.
 
-Investigate the codebase, the documentation, and authoritative sources. When no
-source holds the answer to a technical question, make the evidence yourself with
-a spike or a benchmark.
+Investigate the codebase, the documentation, and authoritative sources. A
+question that lives in an external dependency usually has a settled answer in
+its official docs, issue tracker, or release notes; look there before making
+evidence yourself. Only when no source holds the answer, make it with a spike
+or a benchmark, and record which sources fell short and why.
 
 When a decision lands the work on a framework or hosted service, check whether
 its vendor publishes official agent context: a skill, an AGENTS.md codemod,
