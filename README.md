@@ -86,8 +86,9 @@ is the loop that writes the code.
 - **[build-prototype](./skills/build-prototype/SKILL.md)**: Align on UI by
   building it: every screen of a feature in one dummy-data HTML file grown
   from a pinned shell (shared tokens, per-screen state pills, viewport
-  presets), walked through as a wireframe skeleton first, filled after
-  approval, and preserved beside the spec for the implementing session.
+  presets), built in the project's own design system and minimally where
+  there is none, walked through screen by screen, and preserved beside the
+  spec for the implementing session.
 - **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split work
   that exceeds one session into session-sized tasks — vertical,
   independently verifiable cuts that declare what blocks them — reviewed

@@ -15,14 +15,9 @@ to argue with.
 Invoke the `knowledge-layer` skill, and read `GLOSSARY.md` and
 `docs/specs/<slug>/spec.md` when they exist: screens speak the
 glossary's terms, and a screen the user corrects often corrects the
-knowledge layer too. When the project has a design system, copy its
-tokens verbatim instead of approximating them, and name screen
-elements after its own component names (a `data-component`
-attribute, marking components the system lacks as new) so the
-implementing session maps every block to a real component. A
-contested detail goes back to shape-idea's discipline, two or three
-variants differing only on the governing question, instead of an
-argument in prose.
+knowledge layer too. A contested detail goes back to shape-idea's
+discipline, two or three variants differing only on the governing
+question, instead of an argument in prose.
 
 ## One file, from the shell
 
@@ -44,30 +39,30 @@ Pointing at problems is the medium's job (element selection where
 the surface offers it) or prose's; build no pointing machinery into
 the file.
 
-## Skeleton, then fill
+## In the project's own style
 
 Propose the screen inventory as a draft, never as a question: list
 the screens you believe the surface needs and let the user correct
 the list.
 
-Pass one builds every screen as skeleton: layout, navigation, key
-elements, representative data, all in the shell's wireframe gray so
-the user judges structure rather than styling. Fix structure until
-it is approved; structural misalignment costs minutes here and
-hours after fill.
+Build them in the project's design system: tokens copied verbatim
+instead of approximated, screen elements named after the system's
+own component names (a `data-component` attribute, marking
+components the system lacks as new) so the implementing session
+maps every block to a real component. A web font substitutes a
+system stack, noted in the spec. Where the project has no design
+system, build minimally on the shell's own palette and leave it
+there — that is the finished look, not a stage awaiting a swap.
+Visual identity is not what the prototype aligns, and a user who
+wants a particular one will say so.
 
-Pass two starts by replacing the gray token block with the real one
-(copied from the design system, extracted from the app's styling,
-or decided with the user on a greenfield; a web font substitutes a
-system stack, noted in the spec), then fills the approved structure
-with realistic dummy data. Keep the skeleton's structural CSS apart
-from its skin so the approved structure survives the swap. Never
-lorem ipsum: real-length names, plausible sentences, awkward
-numbers, and the edge states the state pills expose where they bite
-(empty, longest plausible text, error; not every screen needs every
-state). Real data, real latency, and production wiring stay out;
-they are not what alignment is about. Review again, screen by
-screen.
+Fill the screens as you build them. Never lorem ipsum: real-length
+names, plausible sentences, awkward numbers, and the edge states
+the state pills expose where they bite (empty, longest plausible
+text, error; not every screen needs every state). Real data, real
+latency, and production wiring stay out; they are not what
+alignment is about. Then walk the user through the surface, screen
+by screen.
 
 ## What survives
 
@@ -80,7 +75,7 @@ as
 `docs/specs/<slug>/prototype.html`, and link it from the spec. The
 implementing session receives both halves: the spec says what was
 decided, the prototype shows what it looks like. Everything built
-between passes is disposable, only the approved surface is
+along the way is disposable, only the approved surface is
 preserved, and the prototype is a reference, never production code.
 
 Anything with a screen is in scope: web app, mobile web, native app
