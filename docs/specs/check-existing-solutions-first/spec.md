@@ -56,7 +56,8 @@ Proposed:
 > sources. A question that lives in an external dependency usually has a
 > settled answer in its official docs, issue tracker, or release notes;
 > look there before making evidence yourself. Only when no source holds
-> the answer, make it with a spike or a benchmark.
+> the answer, make it with a spike or a benchmark, and record which
+> sources fell short and why.
 
 ## Not carriers
 
