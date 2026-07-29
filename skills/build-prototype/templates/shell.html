@@ -1,6 +1,9 @@
 <!--
   prototype shell: the review chrome every prototype starts from.
 
+  Keep this comment in the prototype you grow from here: it is the contract,
+  and later turns work from that file rather than from this one.
+
   Contract (extend freely, never strip):
   - Screens:  <section data-screen="slug" data-title="Label"> inside .sh-stage.
                The tab bar, arrow keys, and #hash routing build themselves;
@@ -16,7 +19,8 @@
                design tokens, copied verbatim. Keep --background, --foreground,
                and --font defined afterwards; when the system's names differ,
                add a small mapping block after the copy, and a web font
-               substitutes a system stack. A project with no design system
+               substitutes a system stack (note that in the spec). A
+               project with no design system
                keeps the block as it ships: that minimal palette is the
                finished look, not a stage waiting to be swapped out.
   - Placeholders: .wf-pic stands in for pictures the prototype has no real
