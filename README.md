@@ -117,8 +117,9 @@ you ask.
 - **[knowledge-layer](./skills/knowledge-layer/SKILL.md)**: Build and sharpen
   a project's knowledge layer, pinning down shared terms and recording key
   decisions as they accumulate across sessions. Runs in the background
-  whenever the domain is being worked out; shape-idea and build-prototype
-  load it explicitly.
+  whenever terms or decisions are taking shape — a plan weighing approaches
+  included — in any kind of session; shape-idea and build-prototype load it
+  explicitly.
 - **[explain-visually](./skills/explain-visually/SKILL.md)**: Answer "I don't
   follow, explain this" by showing the thing instead of describing it: a diagram
   for a structure, a table for a comparison, a trace with real numbers for a

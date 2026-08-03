@@ -20,6 +20,7 @@ rejected alternatives.
 ## Skill design
 
 - [thin-skills-over-fixed-procedures](thin-skills-over-fixed-procedures.md) — A skill states goal, constraints, and completion criteria; a fixed procedure must name the repeated, observed failure it guards.
+- [knowledge-layer-triggers-on-decisions-taking-shape](knowledge-layer-triggers-on-decisions-taking-shape.md) — knowledge-layer's description triggers on terms or decisions taking shape — a plan weighing approaches included — in any kind of session, and names execution non-triggering; the wording was chosen by trigger eval.
 
 ## Pipeline
 
