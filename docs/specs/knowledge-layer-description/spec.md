@@ -21,10 +21,16 @@ only if the description fires, and today it often will not.
    criterion entirely.
 2. **Capture rides existing approval points; no new interruption is added.**
    The moments this skill is expected to be loaded are moments someone already
-   reads and approves something: a plan being written (record candidates land
-   in the plan and are approved with it), a shaping session closing, the diff
-   a solo session sends for review. The description change is what makes the
-   plan-mode moment reachable; the body is not changed to enforce this.
+   reads and approves something: a plan being shaped, a shaping session
+   closing, the diff a solo session sends for review. The durable write is the
+   one the loaded body already makes — the glossary entry, or the decision
+   record and its index line — never a new artifact. In plan mode, record
+   candidates ride the plan text presented for approval, and what persists
+   after approval is the record in `docs/decisions/`; the plan itself still
+   writes nothing (write-plan-retires-into-tdd-and-the-spec routes
+   decision-level corrections to durable homes, of which the knowledge layer
+   is one). The description change is what makes the plan-mode moment
+   reachable; the body is not changed to enforce this.
 3. **Execution stays non-triggering.** Implementing an already-settled
    decision is named in the guard alongside vocabulary lookup. A fork that
    surfaces mid-execution is not silently decided and recorded; it goes back
@@ -87,9 +93,13 @@ the eval fails; the criterion itself is settled):
 ## Remaining risks
 
 - The eval proves the wording triggers on scenarios, not that real sessions
-  capture every decision; a direction that settles in passing conversation can
-  still slip by. Accepted: the goal is guaranteed capture on approval-point
-  paths, not total capture.
+  capture every decision. Loading is necessary, not sufficient: the write
+  itself rests on the loaded body's standing instructions and is not verified
+  here. If plan-mode sessions load the skill and still close without a
+  record, the deferred body instruction is the next candidate — on that
+  observed failure. A direction that settles in passing conversation can
+  still slip by. Accepted: the aim is reliable capture where an approval
+  point exists, not total capture.
 - Evidence is one model at a few runs per query; rerun before believing a
   surprising result, as the explain-visually eval record advises.
 - A wider trigger can still over-fire in noisy implementation sessions; the
