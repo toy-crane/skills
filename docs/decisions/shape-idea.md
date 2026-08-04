@@ -11,8 +11,9 @@
   reason when a branch is expensive to get wrong.
 - Settle experiential questions through two or three rendered variants that
   differ only on the governing choice. When the question is a whole surface,
-  invoke `build-prototype`; when the user asks for explanation, invoke
-  `explain-visually`.
+  invoke `build-prototype`; if it is unavailable, defer the decision rather than
+  treating a partial render as approval. When the user asks for explanation,
+  invoke `explain-visually`.
 - Mirror flows, state models, and relationships with one diagram when they have
   multiple branches, transitions, or links before moving to a downstream
   decision. Ask at most one question about an unresolved part of the diagram and
@@ -33,9 +34,12 @@
 
 ## Boundaries
 
-- Keep technical experiments, benchmarks, and comparison renders disposable.
-  Preserve only an approved full-surface prototype beside the spec.
+- Keep technical experiments, benchmarks, variants, comparison renders, and
+  component previews disposable. Preserve `prototype.html` only when it covers
+  the whole surface and the user explicitly approved it as the prototype.
 - Separate functional verification from the user's experiential judgment.
+- Record unresolved product-change requests as deferred points and their
+  possible impact as remaining risks.
 - Write confirmed implementation behavior, assumptions, any off-limits areas
   and why, deferred points, and remaining risks to
   `docs/specs/<slug>/spec.md`.
