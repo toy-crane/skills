@@ -1,6 +1,6 @@
 ---
 name: project-knowledge
-description: "Maintain a project's glossary and human-approved current decision contracts. Trigger when project terms are being resolved or a durable decision with real alternatives is being weighed or confirmed, including in planning. Do not trigger for vocabulary lookup, routine AI-chosen details, or execution of already-settled decisions."
+description: "Maintain a project's glossary and its current, human-approved contracts for durable decisions. Use when project-specific terms are being clarified or when a hard-to-reverse choice with genuine alternatives is being considered or confirmed, including during planning. Do not use for simple definitions, reversible implementation details, or carrying out an already-settled decision."
 ---
 
 # Project Knowledge
