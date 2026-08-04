@@ -9,8 +9,9 @@
   `/plan` is reserved by both.
 - `shape-idea` names the work of turning a chosen direction into bounded,
   implementation-ready decisions; the spec is its handoff, not its activity.
-- `knowledge-layer` names the layer of project terms and decisions it maintains,
-  without colliding with harness meanings of memory.
+- `project-knowledge` names the current terms and human-approved durable
+  decisions it maintains. As a discipline noun, it fits a background or
+  inter-skill capability without implying that the AI owns those decisions.
 - `explain-visually` is the deliberate exception to verb-object grammar: the
   object changes on every invocation, while visual rendering is the capability
   the skill adds.
@@ -42,6 +43,8 @@ repository.
   users naturally ask each skill to do.
 - `write-spec` for shaping — it overstates document production and hides the
   investigation and decision work.
-- `domain-modeling` for the knowledge layer — it names a DDD tradition rather
+- `domain-modeling` for project knowledge — it names a DDD tradition rather
   than the files the skill maintains.
+- `knowledge-stewardship` — it describes the AI's caretaker role accurately but
+  is longer and more abstract than the project artifacts people need to find.
 - `memory-layer` — memory already names CLAUDE.md and harness-managed memory.

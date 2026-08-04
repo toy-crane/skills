@@ -1,9 +1,9 @@
 ---
-name: knowledge-layer
+name: project-knowledge
 description: "Maintain a project's glossary and human-approved current decision contracts. Trigger when project terms are being resolved or a durable decision with real alternatives is being weighed or confirmed, including in planning. Do not trigger for vocabulary lookup, routine AI-chosen details, or execution of already-settled decisions."
 ---
 
-# Knowledge Layer
+# Project Knowledge
 
 Challenge unclear terms and preserve decisions that should constrain future
 work without turning AI assumptions into project authority.

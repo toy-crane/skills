@@ -15,7 +15,7 @@
     "split-into-tasks",
     "add-stack-context",
     "build-prototype",
-    "knowledge-layer",
+    "project-knowledge",
     "compact-decisions",
     "explain-visually",
     "planning",
@@ -29,7 +29,7 @@
     "./skills/compact-decisions",
     "./skills/discover-opportunity",
     "./skills/explain-visually",
-    "./skills/knowledge-layer",
+    "./skills/project-knowledge",
     "./skills/split-into-tasks",
     "./skills/tdd",
     "./skills/shape-idea"

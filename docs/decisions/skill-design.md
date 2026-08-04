@@ -11,7 +11,7 @@
 - Every published skill is self-sufficient because skills may be installed one
   at a time. Restate a required constraint inline instead of assuming another
   skill's text is available.
-- Put trigger conditions in frontmatter descriptions. `knowledge-layer`
+- Put trigger conditions in frontmatter descriptions. `project-knowledge`
   triggers when project terms or durable decisions are taking shape in any
   session, including planning, but not for lookup or execution of settled work.
 - Evaluate suspected counter-defaults against realistic prompts. When wording is
@@ -52,8 +52,8 @@ constraint tied to an observed failure or project-specific truth.
 
 ## Evidence worth preserving
 
-- A trigger eval showed the phase-based knowledge-layer description missing all
-  plan-mode decision queries; activity-based wording improved routing while
+- A trigger eval showed the phase-based `project-knowledge` description missing
+  all plan-mode decision queries; activity-based wording improved routing while
   remaining imperfect, so trigger prompts stay in the repository.
 - An explain-visually pruning eval found most form-selection instructions inert
   but retained the over-rendering brake. Later renderer testing required fresh

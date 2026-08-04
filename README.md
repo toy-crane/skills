@@ -94,7 +94,7 @@ one runs in the background, and one runs when the user asks for an explanation.
 - **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Install each
   framework or service vendor's official agent context in its recommended form.
   User-invoked for project setup.
-- **[knowledge-layer](./skills/knowledge-layer/SKILL.md)**: Maintain project
+- **[project-knowledge](./skills/project-knowledge/SKILL.md)**: Maintain project
   terms and human-approved current decision contracts whenever they are taking
   shape, including while a plan weighs alternatives. Does not run for lookup,
   routine AI defaults, or execution of settled decisions.
