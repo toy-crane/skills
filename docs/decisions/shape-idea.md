@@ -14,8 +14,10 @@
   invoke `build-prototype`; when the user asks for explanation, invoke
   `explain-visually`.
 - Mirror flows, state models, and relationships with one diagram when they have
-  multiple branches, transitions, or links. Keep a linear structure that fits
-  in one sentence in prose.
+  multiple branches, transitions, or links before moving to a downstream
+  decision. Ask at most one question about an unresolved part of the diagram and
+  wait for the response. Keep a linear structure that fits in one sentence in
+  prose.
 - State a human-known condition that would overturn a proposed decision. Check
   conditions the agent can verify instead of pushing them back to the user.
 - Durable project writes are limited to the spec folder, glossary, current
