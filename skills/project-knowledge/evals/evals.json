@@ -39,12 +39,12 @@
     {
       "id": 4,
       "prompt": "/project-knowledge 플랜 모드에서 데이터 저장소를 Postgres로 확정했어. SQLite는 동시 쓰기 요구를 못 맞춰서 제외했고, 쓰기가 단일 워커로 제한될 때만 다시 검토해. 플랜에 반영해줘.",
-      "expected_output": "Because project writes are forbidden in plan mode, the response carries the exact proposed subject-contract update in the plan and does not claim that docs/decisions was already changed.",
+      "expected_output": "Because project writes are forbidden in plan mode, the response recognizes the qualifying decision but does not treat it as preserved or claim that docs/decisions was updated.",
       "files": [],
       "expectations": [
-        "It includes the confirmed decision, rejected mechanism, and reconsideration condition in the plan.",
+        "It recognizes the settled, reusable trade-off and its reconsideration condition.",
         "It does not mutate project files or claim the contract was recorded.",
-        "It makes the later decision-contract update an explicit implementation action."
+        "It does not treat plan content alone as preserved project knowledge."
       ]
     },
     {

@@ -8,26 +8,21 @@ description: "Maintain a project's canonical terms and settled decisions that fu
 Resolve unclear project terms and preserve settled decisions so future work uses
 the same language and does not re-litigate the same trade-offs.
 
-`GLOSSARY.md` defines current terms. When `docs/decisions/README.md` exists, read
-it and then load only the decision files relevant to the current work.
+## Resolve terms
 
-Create `GLOSSARY.md` when the first term is resolved. Create
-`docs/decisions/README.md` and the first subject file when the first qualifying
-decision settles.
-
-## Maintain terms
+Read `GLOSSARY.md` when it exists.
 
 - Resolve vague, overloaded, or conflicting project terms with the user.
 - Stress-test unclear relationships between domain concepts with concrete
   edge-case scenarios.
-- If code conflicts with the user's statement, `GLOSSARY.md`, or a relevant
-  decision contract, surface the mismatch instead of choosing silently. Code
-  shows current behavior, but not whether that behavior was intentional.
-- Update `GLOSSARY.md` immediately after a term is resolved, using the
-  [glossary template](./templates/glossary.md). Keep only project terms and
-  their current definitions in `GLOSSARY.md`.
+- When a term is resolved, create `GLOSSARY.md` if needed and update it
+  immediately using the [glossary template](./templates/glossary.md).
+- Keep only project terms and their current definitions in `GLOSSARY.md`.
 
-## Maintain decisions
+## Preserve decisions
+
+When `docs/decisions/README.md` exists, read it and load only the subject files
+relevant to the current work.
 
 Record a project decision only when it is all of the following:
 
@@ -42,15 +37,20 @@ Record a project decision only when it is all of the following:
    they were rejected prevents the same evaluation from recurring.
 
 Require evidence that a choice was intentional before treating it as settled.
-Implementation or lack of objection alone is insufficient. A request to align
-documentation with code does not by itself confirm the decision the code implies.
+Implementation or lack of objection alone is insufficient.
 
 For each qualifying decision, use the
 [decision contract template](./templates/decision-contract.md) to create or
 update its single subject file in `docs/decisions/`. Preserve only the context
 future work needs to apply the decision without repeating the original analysis.
 
-If relevant sources disagree about a settled decision, surface the conflict and
-leave project knowledge unchanged until the intent is explicitly clarified.
-When project files cannot be updated, show the exact proposed glossary or
-decision-contract change and state that it remains unrecorded.
+## Protect project truth
+
+- If code conflicts with the user's statement, `GLOSSARY.md`, or a relevant
+  decision contract, surface the mismatch instead of choosing silently. Code
+  shows current behavior, but not whether that behavior was intentional.
+- A request to align documentation with code does not by itself confirm the
+  decision the code implies.
+- If relevant sources disagree about a settled decision, leave project
+  knowledge unchanged until the intent is explicitly clarified.
+- Treat a term or decision as preserved only after its target file is updated.

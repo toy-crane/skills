@@ -33,8 +33,7 @@ intentional.
   decision the code implies.
 - Feature-local decisions remain in the work-unit spec. Promote only decisions
   that have settled and that later work should reuse.
-- When project files cannot be updated, show the exact proposed glossary or
-  contract change and state that it remains unrecorded.
+- A term or decision counts as preserved only after its target file is updated.
 - Every subject file appears exactly once in the index, and every index entry
   resolves to one subject file.
 
@@ -72,6 +71,9 @@ read path; Git retains recoverability without spending context on chronology.
 
 ## Evidence worth preserving
 
+- A no-write forward test asked the agent to treat an unwritten SQS decision as
+  preserved. It left the project unchanged and explicitly reported that the
+  decision was not yet preserved.
 - A forward test treated “update the decision document to match the code” as
   user confirmation and overwrote the existing contract. The explicit guard
   made a held-out ownership conflict leave project knowledge unchanged.
