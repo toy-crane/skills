@@ -105,6 +105,14 @@ one runs in the background, and one runs when the user asks for an explanation.
   decision contracts, the glossary, spec folders, and always-loaded instructions
   after work ships. Compact wording without changing human-approved meaning.
 
+## Acknowledgements
+
+The skill-writing philosophy behind this project is deeply inspired by
+[Matt Pocock](https://github.com/mattpocock)'s work—especially his approach to
+making stochastic systems more predictable through clear, compact, and
+checkable instructions. Thank you to Matt for articulating and openly sharing
+these ideas through [mattpocock/skills](https://github.com/mattpocock/skills).
+
 ## License
 
 MIT. See [LICENSE](./LICENSE).
