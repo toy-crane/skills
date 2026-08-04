@@ -12,8 +12,9 @@
   at a time. Restate a required constraint inline instead of assuming another
   skill's text is available.
 - Put trigger conditions in frontmatter descriptions. `project-knowledge`
-  triggers when project terms or durable decisions are taking shape in any
-  session, including planning, but not for lookup or execution of settled work.
+  triggers when project terms are being clarified or choices that may constrain
+  future work are being considered or settled in any session, including
+  planning, but not for lookup or execution of settled work.
 - Evaluate suspected counter-defaults against realistic prompts. When wording is
   revised after seeing a failure, test the revision on a new held-out control.
 

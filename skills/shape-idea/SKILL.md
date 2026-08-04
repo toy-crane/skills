@@ -18,7 +18,7 @@ whole surface and the user explicitly approves it as the prototype.
 Before the first question, invoke `project-knowledge` and apply it throughout the
 session. If it is unavailable, read `GLOSSARY.md` and relevant subjects from
 `docs/decisions/README.md` when present, update confirmed terms, and surface
-terminology or decision conflicts for human resolution.
+terminology or decision conflicts for explicit clarification.
 
 Use available evidence to resolve what you can before asking the user.
 
@@ -55,9 +55,11 @@ except where a form below resolves them better.
   question about its unresolved part and wait. Keep a linear structure that fits
   in one sentence in prose.
 
-A user's explicit choice becomes a project decision contract only when it is
-hard to reverse, surprising without context, and the result of a real trade-off;
-feature-local choices stay in the spec.
+A choice is settled when the user confirms it or it is made under authority the
+user explicitly delegated for that class of decision. It becomes a project
+decision contract only when future work should reuse it, its rationale prevents
+reasonable re-litigation, and it came from a real trade-off; feature-local
+choices stay in the spec.
 
 When the user asks for an explanation rather than a decision, invoke
 `explain-visually`. If unavailable, use one sentence when sufficient or the best

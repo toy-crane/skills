@@ -9,9 +9,9 @@
   `/plan` is reserved by both.
 - `shape-idea` names the work of turning a chosen direction into bounded,
   implementation-ready decisions; the spec is its handoff, not its activity.
-- `project-knowledge` names the current terms and human-approved durable
-  decisions it maintains. As a discipline noun, it fits a background or
-  inter-skill capability without implying that the AI owns those decisions.
+- `project-knowledge` names the current terms and settled decisions for future
+  reuse that it maintains. As a discipline noun, it fits a background or
+  inter-skill capability without naming a specific decision-maker.
 - `explain-visually` is the deliberate exception to verb-object grammar: the
   object changes on every invocation, while visual rendering is the capability
   the skill adds.

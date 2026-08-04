@@ -16,8 +16,9 @@
 - Preserve the approved file as `docs/specs/<slug>/prototype.html`, linked from
   the spec. It is a visual reference, never production code.
 - Record surface decisions in the work-unit spec. Update a project decision
-  contract only when the user confirmed a choice that independently meets the
-  durable decision gate.
+  contract only when the user confirmed a choice that future work should reuse,
+  whose rationale prevents reasonable re-litigation, and that came from a real
+  trade-off.
 
 ## Boundaries
 
