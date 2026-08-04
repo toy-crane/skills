@@ -47,9 +47,9 @@ A session-sized cut of work that exceeds one sitting: a complete, independently 
 _Avoid_: Ticket, slice, subtask, to-do
 
 **Decision index**:
-The list at `docs/decisions/README.md` of standing positions, one line each, grouped by subject, so the project's current position is readable without reading the arguments behind it. Written before the record it points at: a decision that cannot be stated in one sentence has not settled. A superseding record replaces the line it overturns; the superseded record keeps its file and is reached through the citing record. It is to decisions what GLOSSARY.md is to terms; the records hold the evidence.
-_Avoid_: Table of contents, ADR list
+The router at `docs/decisions/README.md`, one line per durable subject, saying when to read each current decision contract without restating its decision. Readers open the index and only the subjects relevant to their work.
+_Avoid_: Standing-position summary, ADR list
 
-**Record cluster**:
-A group of decision records covering one subject that has stopped moving. It compacts into a single record holding the current rule and the rejected alternatives, named by the slug that states the settled subject and dropping the sequence. A subject still under debate is not a cluster, and neither is a record whose body is itself reused, such as an eval's method.
-_Avoid_: Group, batch, merge set
+**Decision contract**:
+The human-approved current decisions for one durable subject, stored in one mutable `docs/decisions/<subject>.md` file. It carries the rules and minimum reasons needed now, plus boundaries, reconsideration conditions, still-relevant rejected alternatives, and expensive evidence when they matter. Git history carries prior versions.
+_Avoid_: ADR, decision log, record cluster

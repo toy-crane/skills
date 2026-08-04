@@ -7,8 +7,10 @@ description: Test-driven development. Use when the user wants to build features 
 
 Apply these test-quality rules during each red → green cycle.
 
-Read `GLOSSARY.md` and `docs/decisions/` when present so test names and public
-interfaces use the project's domain language and respect its decisions.
+Read `GLOSSARY.md`, then use `docs/decisions/README.md` to load only the decision
+subjects relevant to the behavior under test. If code, spec, and a decision
+contract conflict at the decision level, surface the conflict instead of
+silently choosing one. Use current terms in test names and public interfaces.
 
 ## Good tests
 

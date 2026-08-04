@@ -11,8 +11,9 @@ Resolve questions from available evidence before asking the user.
 
 ## Before the first question
 
-Invoke the `knowledge-layer` skill and read `GLOSSARY.md` and
-`docs/decisions/`. Follow `knowledge-layer` throughout the session.
+Invoke the `knowledge-layer` skill. Read `GLOSSARY.md`, then use
+`docs/decisions/README.md` to load only the decision subjects relevant to this
+work. Follow `knowledge-layer` throughout the session.
 
 For a question about an external dependency, check its official documentation,
 issue tracker, and release notes before building a workaround. If none answers
@@ -27,7 +28,8 @@ the vendor recommends.
 Present a concrete candidate for the user to correct.
 
 - When divergence from the user's intent is unlikely or cheap to detect, decide
-  and state the result as an assumption the user can override.
+  and state the result as an assumption the user can override. Do not promote an
+  AI-chosen assumption to a project decision contract.
 - When a branch is expensive to get wrong, ask one question with a recommended
   answer. Ask exactly one question per turn, requesting one fact, value, or
   choice with one question mark, and wait for the response.
@@ -38,7 +40,9 @@ Present a concrete candidate for the user to correct.
 - When confirming a flow, state model, or relationship would take multiple prose
   rounds, render one diagram of your current understanding.
 
-Keep other decisions in prose.
+Keep other decisions in prose. A user's explicit choice becomes a project
+decision contract only when it is hard to reverse, surprising without context,
+and the result of a real trade-off; feature-local choices stay in the spec.
 
 When stating a decision, include the condition that would overturn it if only
 the user can know that condition. Check conditions you can verify yourself.
@@ -49,10 +53,11 @@ user asks for an explanation rather than a decision, invoke `explain-visually`.
 
 ## Write boundary
 
-Durable project writes are limited to the spec folder, glossary and decision
-records, and installed vendor agent context. Keep spikes, benchmarks, and
-rendered visuals temporary, and leave product code unchanged. Record a product
-code change as a decision or remaining risk for the implementation session.
+Durable project writes are limited to the spec folder, glossary and current
+decision contracts, and installed vendor agent context. Keep spikes, benchmarks,
+and rendered visuals temporary, and leave product code unchanged. Record a
+requested product code change as implementation behavior or a remaining risk in
+the spec.
 
 ## Surfaces
 

@@ -1,0 +1,42 @@
+{
+  "skill_name": "compact-decisions",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/compact-decisions 같은 payments 주제를 다루는 파일이 세 개야. 사용자가 확정한 현재 규칙은 Stripe 사용이고, Paddle은 세금 운영권을 넘겨야 해서 거절했어. 예전 PR 순서와 구현 메모를 제거해서 새 형식으로 정리해줘.",
+      "expected_output": "The response consolidates the unambiguous subject into one current contract, removes chronology and implementation noise, and preserves the rejection mechanism and any reconsideration condition that prevents repeating the same evaluation.",
+      "files": [],
+      "expectations": [
+        "It produces one subject-oriented current contract and one router entry.",
+        "It preserves why Paddle was rejected rather than only its name.",
+        "It removes chronology, PR history, and supersession mechanics.",
+        "It uses required Decisions and Why sections and removes status metadata.",
+        "It updates links and removes the redundant subject files."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/compact-decisions storage.md는 S3를 현재 결정이라고 하고 uploads.md는 Supabase Storage가 현재라고 해. 둘 다 accepted라고 적혀 있고 사용자 확인 기록은 없어. 코드에는 두 구현이 섞여 있어. 하나로 합쳐줘.",
+      "expected_output": "The response refuses to select a winner from labels, recency, or mixed code, reports the semantic conflict, and leaves the decision meaning unchanged pending human resolution.",
+      "files": [],
+      "expectations": [
+        "It does not choose S3 or Supabase Storage.",
+        "It does not treat accepted labels or code prevalence as human authority.",
+        "It reports exactly what a human must resolve before consolidation."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/compact-decisions cache.md에서 오래된 논의와 벤치마크 설명을 줄여줘. Redis는 p95 70ms, 인메모리 LRU는 p95 18ms였지만 다중 인스턴스 일관성 때문에 Redis를 선택했어. 단일 인스턴스가 되면 LRU를 다시 검토할 수 있어.",
+      "expected_output": "The response shortens the contract while retaining the current Redis rule, consistency boundary, benchmark result worth preserving, rejected LRU mechanism, and single-instance reconsideration condition.",
+      "files": [],
+      "expectations": [
+        "It preserves the current rule and the reason latency did not decide the outcome.",
+        "It preserves the measured values because rerunning the benchmark is costly.",
+        "It preserves the condition that makes LRU worth revisiting.",
+        "It normalizes the file to required Decisions and Why sections without a status field.",
+        "It removes only chronology and redundant prose."
+      ]
+    }
+  ]
+}
