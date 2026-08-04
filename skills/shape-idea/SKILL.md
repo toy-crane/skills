@@ -17,7 +17,8 @@ work. Follow `project-knowledge` throughout the session.
 
 For a question about an external dependency, check its official documentation,
 issue tracker, and release notes before building a workaround. If none answers
-the question, run a spike or benchmark and record which sources fell short.
+the question, run a small technical experiment or benchmark and record which
+sources fell short.
 
 When a decision settles on a framework or hosted service, check whether its
 vendor publishes official agent context. Install what is missing in the form
@@ -54,10 +55,10 @@ user asks for an explanation rather than a decision, invoke `explain-visually`.
 ## Write boundary
 
 Durable project writes are limited to the spec folder, glossary and current
-decision contracts, and installed vendor agent context. Keep spikes, benchmarks,
-and rendered visuals temporary, and leave product code unchanged. Record a
-requested product code change as implementation behavior or a remaining risk in
-the spec.
+decision contracts, and installed vendor agent context. Keep technical
+experiments, benchmarks, and rendered visuals temporary. Leave product code
+unchanged, and record a requested product code change as implementation behavior
+or a remaining risk in the spec.
 
 ## Surfaces
 
