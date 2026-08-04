@@ -5,34 +5,47 @@ description: Test-driven development. Use when the user wants to build features 
 
 # Test-Driven Development
 
-TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle — consult them before and during the loop, not after.
+Apply these test-quality rules during each red → green cycle.
 
-When exploring the codebase, read `GLOSSARY.md` and the decision records in `docs/decisions/` (where the repo keeps them) so test names and interface vocabulary match the project's domain language, and respect the recorded decisions in the area you're touching.
+Read `GLOSSARY.md` and `docs/decisions/` when present so test names and public
+interfaces use the project's domain language and respect its decisions.
 
-## What a good test is
+## Good tests
 
-Tests verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't. A good test reads like a specification — "user can checkout with valid cart" tells you exactly what capability exists — and survives refactors because it doesn't care about internal structure.
+Test behavior through public interfaces so internal refactoring does not break
+tests. Use specification-style names that state the capability under test.
 
-See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
+See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking
+guidelines.
 
-## Seams — where tests go
+## Seams
 
-A **seam** is the public boundary you test at: the interface where you observe behavior without reaching inside. Tests live at seams, never against internals.
+A **seam** is the public boundary where a test observes behavior without
+reaching into internals.
 
-**Reuse a seam before creating one.** When a new seam is needed, put it at a boundary whose name will outlive the refactoring — a use case or a domain concept, never a helper that fell out of today's implementation. A test at an unsettled name pins that name in place.
+Reuse an existing seam before creating one. Create a seam only for a stable use
+case or domain concept, not an implementation helper whose name may change.
 
-**Test only at pre-agreed seams.** Write down the seams under test and confirm them with the user before the first test. No test is written at an unconfirmed seam. You can't test everything — agreeing the seams up front is how testing effort lands on the critical paths and complex logic instead of every edge case.
-
-Ask: "What's the public interface, and which seams should we test?"
+Write down the seams under test and confirm them with the user before the first
+test. Write no test at an unconfirmed seam. Agreeing the seams directs effort to
+critical paths and complex logic instead of trying to test everything.
 
 ## Anti-patterns
 
-- **Implementation-coupled** — mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior hasn't changed.
-- **Tautological** — the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth — a known-good literal, a worked example, the spec.
-- **Horizontal slicing** — writing all tests first, then all implementation. Bulk tests verify _imagined_ behavior: you test the _shape_ of things rather than user-facing behavior, the tests go insensitive to real changes, and you commit to test structure before understanding the implementation. Work in **vertical slices** instead — one test → one implementation → repeat, each test a **tracer bullet** that responds to what the last cycle taught you.
+- **Implementation-coupled**: mocks internal collaborators, tests private
+  methods, or verifies through a side channel. It breaks when implementation
+  changes but behavior does not.
+- **Tautological**: derives the expected value using the same logic as the code,
+  so the assertion passes by construction. Use an independent source such as a
+  known literal, worked example, or spec.
+- **Horizontal slicing**: writes many tests before any implementation. Implement
+  one failing test and its minimal code before choosing the next test.
 
-## Rules of the loop
+## Loop rules
 
-- **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
-- **One slice at a time.** One seam, one test, one minimal implementation per cycle.
-- **Refactoring is not part of the loop.** It belongs to a separate review stage after green, run with whatever code-review tooling your harness ships, not inside the red → green implementation cycle.
+- **Red before green.** Write the failing test first, then only enough code to
+  pass it. Do not anticipate future tests or add speculative features.
+- **One slice at a time.** Use one seam, one test, and one minimal implementation
+  per cycle.
+- **Refactor after green.** Refactor in a separate review stage with the
+  code-review tooling available in the current harness.

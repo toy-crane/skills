@@ -1,7 +1,7 @@
 interface:
   display_name: "Discover Opportunity"
-  short_description: "Find opportunities hiding in your own traces"
-  default_prompt: "Use $discover-opportunity to mine my real traces for patterns I have not recognized, show me where they could apply, and continue with $shape-idea when a direction resonates."
+  short_description: "Find directions in your work and experience"
+  default_prompt: "Use $discover-opportunity to find side-project directions in my existing work and experience."
 
 policy:
   allow_implicit_invocation: false

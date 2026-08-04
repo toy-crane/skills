@@ -9,7 +9,7 @@
     {
       "name": "toycrane-skills",
       "source": "./",
-      "description": "Agent skills for discovering opportunities, sharpening decisions, screens, and project knowledge, then implementing them test-first.",
+      "description": "Skills for product discovery, shaping, prototyping, task splitting, project knowledge, and test-first implementation.",
       "category": "productivity",
       "keywords": [
         "skills",

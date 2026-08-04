@@ -1,111 +1,89 @@
 ---
 name: shape-idea
-description: Shape a chosen idea or opportunity into shared, implementation-ready decisions. Use when the user can already name the problem or intended change and has a broad direction, but wants to clarify, align, or stress-test behavior and scope before implementation, or wants a spec a later session can implement from. If the user does not yet know what to build, tell them to invoke discover-opportunity instead.
+description: Turn a chosen problem and broad direction into shared decisions and an implementation-ready spec. Use when the user wants to clarify behavior or scope, stress-test an idea, align before implementation, or produce a spec. If no problem or direction exists, tell the user to invoke discover-opportunity.
 ---
 
 # Shape Idea
 
-Shape the user's chosen idea until you and the user understand it the same way.
-If the user cannot yet name a concrete problem or a broad direction, send them to
-`discover-opportunity`. Do not invoke it for them, and do not manufacture a spec
-from a blank page. When discovery just established a direction, carry its
-conversational summary forward; it needs no intermediate document.
+Start from a concrete problem and broad direction. If the user cannot name
+either, tell them to invoke `discover-opportunity`; do not invoke it for them or
+manufacture a spec. When discovery just established a direction, carry its
+summary forward without creating an intermediate document.
 
-The interview exists to extract what lives only in the user's head. So close
-every branch you can without them.
+Resolve questions from available evidence before asking the user.
 
 ## Before the first question
 
 Invoke the `knowledge-layer` skill and read `GLOSSARY.md` and
-`docs/decisions/`. Follow knowledge-layer throughout the session.
+`docs/decisions/`. Follow `knowledge-layer` throughout the session.
 
-Investigate the codebase, the documentation, and authoritative sources. A
-question that lives in an external dependency usually has a settled answer in
-its official docs, issue tracker, or release notes; look there before making
-evidence yourself. Only when no source holds the answer, make it with a spike
-or a benchmark, and record which sources fell short and why.
+For a question about an external dependency, check its official documentation,
+issue tracker, and release notes before building a workaround. If none answers
+the question, run a spike or benchmark and record which sources fell short.
 
-When a decision lands the work on a framework or hosted service, check whether
-its vendor publishes official agent context: a skill, an AGENTS.md codemod,
-bundled docs. Install what is missing, in the form the vendor recommends. Vendor
-knowledge that matches the version beats training data, and it equips every later
-session, not just this one.
+When a decision settles on a framework or hosted service, check whether its
+vendor publishes official agent context. Install what is missing in the form
+the vendor recommends.
 
-## Every move is a draft
+## Work from drafts
 
-Put forward a concrete candidate for the user to correct. People mark up a draft
-far more reliably than they fill a blank page. The draft takes the shape the
-question demands.
+Present a concrete candidate for the user to correct.
 
-- When divergence from the user's intent is unlikely, or cheap to detect and fix,
-  the decision is yours. State it as an assumption under standing veto.
-- A branch that is expensive to get wrong becomes a question carrying your
-  recommended answer. Ask exactly one per turn, requesting one fact, value, or
+- When divergence from the user's intent is unlikely or cheap to detect, decide
+  and state the result as an assumption the user can override.
+- When a branch is expensive to get wrong, ask one question with a recommended
+  answer. Ask exactly one question per turn, requesting one fact, value, or
   choice with one question mark, and wait for the response.
-- An experiential question (anything judged by looking or trying: layout,
-  interaction flow, tone) becomes two or three rendered variants that differ only
-  on the governing question. The user's reaction is the answer. When the question
-  outgrows variants — a whole surface rather than one choice — invoke the
-  `build-prototype` skill.
-- A structure whose confirmation would take two or more rounds of prose (a flow,
-  its states, how concepts relate) becomes one diagram mirroring your
-  understanding back.
+- For a choice judged by looking or trying, such as layout, interaction flow, or
+  tone, render two or three variants that differ only on that choice. Use the
+  user's reaction as the answer. When the question covers a whole surface rather
+  than one choice, invoke `build-prototype`.
+- When confirming a flow, state model, or relationship would take multiple prose
+  rounds, render one diagram of your current understanding.
 
-Everything else stays prose.
+Keep other decisions in prose.
 
-State a decision with the condition that would overturn it, when only the user
-can know that condition. A condition you can check yourself is not one to state:
-go check it.
+When stating a decision, include the condition that would overturn it if only
+the user can know that condition. Check conditions you can verify yourself.
 
-Render in whatever visual medium the environment provides: an inline widget, an
-artifact page, a local HTML file the user opens. Pick the cheapest one sufficient
-for the question. Defer a question no available medium can settle, explicitly, as
-a remaining risk. When the user asks you to explain something rather than to
-confirm it, invoke the `explain-visually` skill.
+Use the cheapest sufficient visual medium available. Explicitly defer a question
+that no available medium can settle and record it as a remaining risk. When the
+user asks for an explanation rather than a decision, invoke `explain-visually`.
 
-## What you may write
+## Write boundary
 
-Shaping writes documents, not source. Its durable writes to the project are the
-spec folder, the glossary and decision records, and installed vendor agent
-context. Nothing else.
-
-Spikes, benchmarks, and rendered visuals are disposable. They leave the project's
-code as they found it. The decision they draw out survives; the artifact does
-not.
-
-Changing the product's code is implementation, however small the edit looks, and
-it belongs to the session that builds from the spec. When a fix begs to be made
-on the spot, record it as a decision or a remaining risk instead.
+Durable project writes are limited to the spec folder, glossary and decision
+records, and installed vendor agent context. Keep spikes, benchmarks, and
+rendered visuals temporary, and leave product code unchanged. Record a product
+code change as a decision or remaining risk for the implementation session.
 
 ## Surfaces
 
 When work materially changes a visible or interactive surface, inspect the
-current surface before settling its design. When a runnable product or preview
-already contains the change, exercise its states before closing. Otherwise render
-the cheapest sufficient substitute.
+current surface before settling its design. If a runnable product or preview
+already includes the change, exercise its states before closing. Otherwise
+render the cheapest sufficient substitute.
 
-Keep your own verification separate from the user's judgment. Verify the states
-work. Then present the experiential decisions still open, batched into one review,
-and wait for the user's reaction. Skip that review only when the change is
-routine, the surface is already confirmed, or the user delegates it explicitly.
-Record the basis as an assumption.
+Separate verification from user judgment. Verify that the states work, then
+present unresolved experiential decisions together for review and wait for the
+user's reaction. Skip that review only when the change is routine, the surface
+is already confirmed, or the user explicitly delegates it. Record that basis as
+an assumption.
 
-## Closing
+## Close
 
-Stop when every material branch is resolved or explicitly deferred. Go straight
-to the summary: confirmed decisions, rationale, assumptions, off-limits areas,
-deferred points, and remaining risks.
+Stop when every implementation-relevant decision is resolved or explicitly
+deferred. Summarize confirmed decisions, rationale, assumptions, off-limits
+areas, deferred points, and remaining risks.
 
-When the session confirmed decisions bound for implementation, write that same
-content to `docs/specs/<slug>/spec.md` (kebab-case slug, folder created lazily),
-so a later session can implement from it alone. The spec holds decisions, not
-implementation instructions. Link the opportunity handoff when the user supplied
-one.
+When decisions are ready for implementation, write the same content to
+`docs/specs/<slug>/spec.md`, creating the kebab-case folder when needed. Keep
+decisions in the spec, not implementation instructions. Link an opportunity
+handoff when the user supplied one.
 
-Off-limits areas belong in the spec too: what this work must not touch, and why.
-Ownership boundaries and work in flight elsewhere are invisible in the code, so
-ask rather than infer.
+Record off-limits areas and why they must not change. Ask about ownership
+boundaries and work in flight rather than inferring them from the code.
 
-If the user says the decisions are complete, take them at their word. Reopen a
-routine default only when it contradicts the confirmed intent. Cover every listed
-category, and end with remaining risks rather than a prompt for the next action.
+If the user says the decisions are complete, accept that unless a routine
+default contradicts confirmed intent. End with the summary and remaining risks,
+not a prompt for another action.
