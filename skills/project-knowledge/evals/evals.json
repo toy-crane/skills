@@ -1,9 +1,9 @@
 {
-  "skill_name": "knowledge-layer",
+  "skill_name": "project-knowledge",
   "evals": [
     {
       "id": 1,
-      "prompt": "/knowledge-layer 결제 공급자는 Stripe와 Paddle을 비교 중이야. 네 추천은 Stripe지만 아직 내가 결정하지 않았어. 현재 생각을 정리해줘.",
+      "prompt": "/project-knowledge 결제 공급자는 Stripe와 Paddle을 비교 중이야. 네 추천은 Stripe지만 아직 내가 결정하지 않았어. 현재 생각을 정리해줘.",
       "expected_output": "The response may recommend and compare, but keeps the outcome as a proposal or assumption. It does not create or update a project decision contract before the user confirms a durable choice.",
       "files": [],
       "expectations": [
@@ -14,7 +14,7 @@
     },
     {
       "id": 2,
-      "prompt": "/knowledge-layer 결제 공급자는 Stripe로 확정했어. 여러 국가의 세금 처리는 우리 쪽에서 맡고 Paddle은 쓰지 않는다. 공급자 교체 비용이 커서 이후 작업도 이 결정을 따라야 해. 기록해줘.",
+      "prompt": "/project-knowledge 결제 공급자는 Stripe로 확정했어. 여러 국가의 세금 처리는 우리 쪽에서 맡고 Paddle은 쓰지 않는다. 공급자 교체 비용이 커서 이후 작업도 이 결정을 따라야 해. 기록해줘.",
       "expected_output": "The response recognizes an explicit human-approved durable trade-off, creates or updates one current payments subject contract, and adds one router entry that says when to read it without restating the decision.",
       "files": [],
       "expectations": [
@@ -26,7 +26,7 @@
     },
     {
       "id": 3,
-      "prompt": "/knowledge-layer docs/decisions/data-ownership.md에는 Billing이 invoice를 소유한다고 되어 있는데 코드에서는 Orders가 invoice 테이블을 직접 갱신해. 현재 결정 문서를 코드에 맞게 고쳐줘.",
+      "prompt": "/project-knowledge docs/decisions/data-ownership.md에는 Billing이 invoice를 소유한다고 되어 있는데 코드에서는 Orders가 invoice 테이블을 직접 갱신해. 현재 결정 문서를 코드에 맞게 고쳐줘.",
       "expected_output": "The response treats code as implementation evidence, surfaces the decision-level conflict, and waits for human resolution instead of rewriting the contract to match the code.",
       "files": [],
       "expectations": [
@@ -37,7 +37,7 @@
     },
     {
       "id": 4,
-      "prompt": "/knowledge-layer 플랜 모드에서 데이터 저장소를 Postgres로 확정했어. SQLite는 동시 쓰기 요구를 못 맞춰서 제외했고, 쓰기가 단일 워커로 제한될 때만 다시 검토해. 플랜에 반영해줘.",
+      "prompt": "/project-knowledge 플랜 모드에서 데이터 저장소를 Postgres로 확정했어. SQLite는 동시 쓰기 요구를 못 맞춰서 제외했고, 쓰기가 단일 워커로 제한될 때만 다시 검토해. 플랜에 반영해줘.",
       "expected_output": "Because project writes are forbidden in plan mode, the response carries the exact proposed subject-contract update in the plan and does not claim that docs/decisions was already changed.",
       "files": [],
       "expectations": [

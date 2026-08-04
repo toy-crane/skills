@@ -8,7 +8,7 @@ description: Build a self-contained dummy-data HTML prototype covering every scr
 Build every screen the surface needs with dummy data. Keep the prototype cheap
 to rebuild and concrete enough for the user to review.
 
-Invoke the `knowledge-layer` skill, and read `GLOSSARY.md` and
+Invoke the `project-knowledge` skill, and read `GLOSSARY.md` and
 `docs/specs/<slug>/spec.md` when they exist. Use glossary terms in labels and
 copy. Record confirmed surface choices in the work-unit spec; update a project
 decision contract only when the user explicitly confirmed a choice that is hard

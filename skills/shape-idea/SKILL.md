@@ -11,9 +11,9 @@ Resolve questions from available evidence before asking the user.
 
 ## Before the first question
 
-Invoke the `knowledge-layer` skill. Read `GLOSSARY.md`, then use
+Invoke the `project-knowledge` skill. Read `GLOSSARY.md`, then use
 `docs/decisions/README.md` to load only the decision subjects relevant to this
-work. Follow `knowledge-layer` throughout the session.
+work. Follow `project-knowledge` throughout the session.
 
 For a question about an external dependency, check its official documentation,
 issue tracker, and release notes before building a workaround. If none answers
