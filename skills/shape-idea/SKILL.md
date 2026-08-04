@@ -5,86 +5,78 @@ description: Turn a chosen problem and broad direction into shared decisions and
 
 # Shape Idea
 
-Start from a concrete problem and broad direction.
+## Stay in shaping
 
-Resolve questions from available evidence before asking the user.
+Limit durable project writes to the spec folder, glossary, current decision
+contracts, and installed vendor agent context. Leave product code unchanged.
+Keep technical experiments, benchmarks, variants, comparison renders, and
+component previews temporary. Preserve `prototype.html` only when it covers the
+whole surface and the user explicitly approves it as the prototype.
 
-## Before the first question
+## Establish project truth
 
-Invoke the `project-knowledge` skill. Read `GLOSSARY.md`, then use
-`docs/decisions/README.md` to load only the decision subjects relevant to this
-work. Follow `project-knowledge` throughout the session.
+Before the first question, invoke `project-knowledge` and apply it throughout the
+session. If it is unavailable, read `GLOSSARY.md` and relevant subjects from
+`docs/decisions/README.md` when present, update confirmed terms, and surface
+terminology or decision conflicts for human resolution.
 
-For a question about an external dependency, check its official documentation,
-issue tracker, and release notes before building a workaround. If none answers
-the question, run a spike or benchmark and record which sources fell short.
+Use available evidence to resolve what you can before asking the user.
 
-When a decision settles on a framework or hosted service, check whether its
-vendor publishes official agent context. Install what is missing in the form
-the vendor recommends.
+For an external-dependency question, check official documentation, issues, and
+release notes before a workaround. If they do not answer it, run a small
+technical experiment or benchmark and record the gaps. When a decision selects
+a framework or hosted service, install any official vendor agent context in the
+form the vendor recommends.
 
-## Work from drafts
+## Shape decisions
 
-Present a concrete candidate for the user to correct.
+Present a concrete candidate for the user to correct. Keep decisions in prose
+except where a form below resolves them better.
 
-- When divergence from the user's intent is unlikely or cheap to detect, decide
-  and state the result as an assumption the user can override. Do not promote an
-  AI-chosen assumption to a project decision contract.
-- When a branch is expensive to get wrong, ask one question with a recommended
-  answer. Ask exactly one question per turn, requesting one fact, value, or
-  choice with one question mark, and wait for the response.
-- For a choice judged by looking or trying, such as layout, interaction flow, or
-  tone, render two or three variants that differ only on that choice. Use the
-  user's reaction as the answer. When the question covers a whole surface rather
-  than one choice, invoke `build-prototype`.
-- When confirming a flow, state model, or relationship would take multiple prose
-  rounds, render one diagram of your current understanding.
+- Decide an inexpensive, reversible choice when a mismatch is unlikely or easy
+  to detect; state it as an overridable assumption, never a project decision
+  contract.
+- For a branch expensive to get wrong, ask exactly one question per turn for one
+  fact, value, or choice. Include a recommended answer and concise reason, then
+  wait.
+- If a proposed decision depends on information only the user can know, state
+  that information and ask whether it applies. Verify any condition you can
+  check yourself.
+- For a choice judged by looking or trying, inspect the current surface first.
+  Use a runnable candidate when it contains the change; otherwise use the
+  lowest-effort sufficient renderer. Present two or three variants differing
+  only on one unresolved choice, verify only the states needed for comparison,
+  and wait for the user's reaction. Invoke `build-prototype` for a whole-surface
+  question; if unavailable, defer it rather than treating a partial render as
+  approval. If no visual medium makes the choice judgeable, defer it and record
+  the uncertainty as a remaining risk.
+- When a flow, state model, or relationship has multiple branches, transitions,
+  or links, render one diagram before a downstream decision. Ask at most one
+  question about its unresolved part and wait. Keep a linear structure that fits
+  in one sentence in prose.
 
-Keep other decisions in prose. A user's explicit choice becomes a project
-decision contract only when it is hard to reverse, surprising without context,
-and the result of a real trade-off; feature-local choices stay in the spec.
+A user's explicit choice becomes a project decision contract only when it is
+hard to reverse, surprising without context, and the result of a real trade-off;
+feature-local choices stay in the spec.
 
-When stating a decision, include the condition that would overturn it if only
-the user can know that condition. Check conditions you can verify yourself.
+When the user asks for an explanation rather than a decision, invoke
+`explain-visually`. If unavailable, use one sentence when sufficient or the best
+available renderer otherwise.
 
-Use the cheapest sufficient visual medium available. Explicitly defer a question
-that no available medium can settle and record it as a remaining risk. When the
-user asks for an explanation rather than a decision, invoke `explain-visually`.
+Skip review only for an already confirmed pattern, routine presentation details,
+or explicit user delegation. Record the reason and treat only agent-judged
+reasons as assumptions.
 
-## Write boundary
+## Close autonomously
 
-Durable project writes are limited to the spec folder, glossary and current
-decision contracts, and installed vendor agent context. Keep spikes, benchmarks,
-and rendered visuals temporary, and leave product code unchanged. Record a
-requested product code change as implementation behavior or a remaining risk in
-the spec.
+Stop asking questions when every implementation-relevant decision is resolved
+or explicitly deferred; do not wait for the user to declare completion.
+Translate confirmed product-change requests into required behavior and record
+unresolved requests as deferred points with their possible impact as remaining
+risks.
 
-## Surfaces
-
-When work materially changes a visible or interactive surface, inspect the
-current surface before settling its design. If a runnable product or preview
-already includes the change, exercise its states before closing. Otherwise
-render the cheapest sufficient substitute.
-
-Separate verification from user judgment. Verify that the states work, then
-present unresolved experiential decisions together for review and wait for the
-user's reaction. Skip that review only when the change is routine, the surface
-is already confirmed, or the user explicitly delegates it. Record that basis as
-an assumption.
-
-## Close
-
-Stop when every implementation-relevant decision is resolved or explicitly
-deferred. Summarize confirmed decisions, rationale, assumptions, off-limits
-areas, deferred points, and remaining risks.
-
-When decisions are ready for implementation, write the same content to
-`docs/specs/<slug>/spec.md`, creating the kebab-case folder when needed. Keep
-decisions in the spec, not implementation instructions.
-
-Record off-limits areas and why they must not change. Ask about ownership
-boundaries and work in flight rather than inferring them from the code.
-
-If the user says the decisions are complete, accept that unless a routine
-default contradicts confirmed intent. End with the summary and remaining risks,
-not a prompt for another action.
+Summarize confirmed decisions, rationale, assumptions, off-limits areas and why,
+deferred points, and remaining risks. When ready for implementation, write that
+content to `docs/specs/<slug>/spec.md`, creating the kebab-case folder when
+needed. Record decisions, not implementation instructions. Do not prompt for
+another action after the summary and risks.
