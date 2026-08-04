@@ -12,9 +12,12 @@
                (free strings; first one is the default). Elements that belong
                to one state carry data-when="a" (comma-separated for several).
                Elements without data-when always show.
-  - Viewport: "vp (m)" cycles full / 390 / 768. Start a mobile-first
-               prototype by adding class="sh-vp-390" to <body> (or a
-               bootstrap classList.add before the chrome script runs).
+  - Viewport: "vp (m)" cycles full / 390 / 768. The 390 preset is a
+               fixed-height, internally scrolling phone frame. Start a
+               mobile-first prototype by adding class="sh-vp-390" to <body>
+               (or a bootstrap classList.add before the chrome script runs).
+  - Pinning:  keep in-frame bars (tab bars, CTAs) inside the phone with
+               position: sticky; position: fixed pins to the browser window.
   - Tokens:   replace the project-tokens block below with the project's own
                design tokens, copied verbatim. Keep --background, --foreground,
                and --font defined afterwards; when the system's names differ,
@@ -73,7 +76,8 @@
   .sh-vp-390 .sh-stage {
     max-width: 390px; background: var(--background, #f6f6f6);
     border: 10px solid #191a1c; border-radius: 28px;
-    padding: 16px 12px; min-height: 660px; margin-top: 12px;
+    padding: 16px 12px; height: min(844px, calc(100dvh - 52px));
+    overflow-y: auto; margin-top: 12px;
   }
   .sh-vp-768 .sh-stage {
     max-width: 768px; border: 1px solid #c4c4c4; border-radius: 12px;
