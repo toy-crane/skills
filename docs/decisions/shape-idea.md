@@ -13,8 +13,9 @@
   differ only on the governing choice. When the question is a whole surface,
   invoke `build-prototype`; when the user asks for explanation, invoke
   `explain-visually`.
-- Mirror flows, state models, and relationships with one diagram when prose
-  confirmation would take multiple rounds.
+- Mirror flows, state models, and relationships with one diagram when they have
+  multiple branches, transitions, or links. Keep a linear structure that fits
+  in one sentence in prose.
 - State a human-known condition that would overturn a proposed decision. Check
   conditions the agent can verify instead of pushing them back to the user.
 - Durable project writes are limited to the spec folder, glossary, current

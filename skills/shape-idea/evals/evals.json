@@ -131,6 +131,19 @@
       ]
     },
     {
+      "id": 11,
+      "prompt": "/shape-idea 워크스페이스 초대 상태는 확정했어. 초대는 pending에서 시작해 7일 뒤 expired가 되고, 수락하면 membership을 만들면서 accepted가 돼. 관리자는 pending 초대를 revoked로 바꿀 수 있고, expired나 revoked 주소를 다시 초대하면 기존 초대를 되살리지 않고 새 초대를 만들어. 기존 멤버에게는 두 번째 membership을 만들면 안 돼. 남은 건 이 상태와 동작이 제대로 연결됐는지 확인하는 거야. 계속 진행해줘.",
+      "expected_output": "The response mirrors the multi-branch invitation state model in exactly one diagram before asking any downstream question. It presents the diagram as its current understanding for the user to correct and waits for that correction.",
+      "files": [],
+      "expectations": [
+        "It renders exactly one diagram of the invitation state model.",
+        "The diagram includes the pending-to-accepted, pending-to-expired, and pending-to-revoked transitions and distinguishes reinviting from reopening an old invitation.",
+        "It presents the diagram as a correctable draft of its current understanding.",
+        "It waits for the user's correction before asking about a downstream security or implementation decision.",
+        "It does not replace the diagram with only prose or a bullet list."
+      ]
+    },
+    {
       "id": 12,
       "prompt": "/shape-idea 배치 동기화가 늦어 권한이 오래 남는 문제를 이벤트 기반 증분 동기화로 바꾸기로 했어. 남은 건 실패한 이벤트를 자동 재시도할지 운영자 큐로 보낼지야. 계속 진행해줘.",
       "expected_output": "The response recognizes a concrete technical problem, intended change, and broad direction. It investigates available system evidence and resolves the remaining failure-policy branch through the normal one-question, recommended-answer discipline.",
@@ -140,6 +153,18 @@
         "It treats event failure policy as the remaining material branch.",
         "It asks at most one question with a recommended answer and rationale after investigating available evidence.",
         "It does not begin implementation."
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "/shape-idea CSV 가져오기는 업로드, 형식 검사, 저장의 세 단계로 확정했어. 분기나 예외 흐름은 없어. 이 흐름에 대한 이해만 확인하고 계속해줘.",
+      "expected_output": "The response mirrors the confirmed linear flow in one concise prose sentence and does not render a diagram or invent branches. It asks for correction as the single question and waits.",
+      "files": [],
+      "expectations": [
+        "It states the upload-to-validation-to-save flow in one concise prose sentence.",
+        "It does not render a diagram, mockup, or variant comparison.",
+        "It does not invent branches, failure states, or exception handling.",
+        "It asks for correction as the single question and waits for the response."
       ]
     }
   ]

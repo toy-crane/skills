@@ -38,8 +38,9 @@ Present a concrete candidate for the user to correct.
   tone, render two or three variants that differ only on that choice. Use the
   user's reaction as the answer. When the question covers a whole surface rather
   than one choice, invoke `build-prototype`.
-- If confirming your understanding of a flow, state model, or relationship would
-  take multiple prose rounds, render one diagram for the user to correct.
+- When a flow, state model, or relationship has multiple branches, transitions,
+  or links, render one diagram for the user to correct before asking the next
+  question. Keep a linear structure that fits in one sentence in prose.
 
 Keep other decisions in prose. A user's explicit choice becomes a project
 decision contract only when it is hard to reverse, surprising without context,
