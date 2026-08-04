@@ -7,8 +7,8 @@
 - Treat low-risk, reversible choices made by the AI as assumptions. Only a
   human-confirmed outcome that meets the durable project-decision gate enters a
   decision contract; feature-local choices remain in the spec.
-- Ask one consequential question at a time with a recommended answer when a
-  branch is expensive to get wrong.
+- Ask one consequential question at a time with a recommended answer and concise
+  reason when a branch is expensive to get wrong.
 - Settle experiential questions through two or three rendered variants that
   differ only on the governing choice. When the question is a whole surface,
   invoke `build-prototype`; when the user asks for explanation, invoke
@@ -18,21 +18,27 @@
   decision. Ask at most one question about an unresolved part of the diagram and
   wait for the response. Keep a linear structure that fits in one sentence in
   prose.
-- State a human-known condition that would overturn a proposed decision. Check
-  conditions the agent can verify instead of pushing them back to the user.
+- When a proposed decision depends on information only the user can know, state
+  that information and ask whether it applies. Check conditions the agent can
+  verify instead of pushing them back to the user.
+- Ground visible and interactive decisions in the current surface. Use a
+  runnable candidate when available; otherwise render a sufficient substitute.
+  Verify only the states needed for a trustworthy comparison before the user
+  judges one unresolved experiential decision.
 - Durable project writes are limited to the spec folder, glossary, current
   decision contracts, and installed vendor agent context. Do not edit product
   source during shaping.
 - For external-dependency questions, check official docs, issue trackers, and
-  release notes before making a spike or workaround.
+  release notes before making a technical experiment or workaround.
 
 ## Boundaries
 
-- Keep spikes, benchmarks, and comparison renders disposable. Preserve only an
-  approved full-surface prototype beside the spec.
+- Keep technical experiments, benchmarks, and comparison renders disposable.
+  Preserve only an approved full-surface prototype beside the spec.
 - Separate functional verification from the user's experiential judgment.
-- Write confirmed implementation behavior, assumptions, off-limits areas,
-  deferred points, and remaining risks to `docs/specs/<slug>/spec.md`.
+- Write confirmed implementation behavior, assumptions, any off-limits areas
+  and why, deferred points, and remaining risks to
+  `docs/specs/<slug>/spec.md`.
 - If code contradicts a user statement or current decision contract, surface
   the conflict rather than treating code as the decision-maker.
 
