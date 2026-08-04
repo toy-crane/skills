@@ -1,14 +1,11 @@
 ---
 name: shape-idea
-description: Turn a chosen problem and broad direction into shared decisions and an implementation-ready spec. Use when the user wants to clarify behavior or scope, stress-test an idea, align before implementation, or produce a spec. If no problem or direction exists, tell the user to invoke discover-opportunity.
+description: Turn a chosen problem and broad direction into shared decisions and an implementation-ready spec. Use when the user wants to clarify behavior or scope, stress-test an idea, align before implementation, or produce a spec.
 ---
 
 # Shape Idea
 
-Start from a concrete problem and broad direction. If the user cannot name
-either, tell them to invoke `discover-opportunity`; do not invoke it for them or
-manufacture a spec. When discovery just established a direction, carry its
-summary forward without creating an intermediate document.
+Start from a concrete problem and broad direction.
 
 Resolve questions from available evidence before asking the user.
 
@@ -78,8 +75,7 @@ areas, deferred points, and remaining risks.
 
 When decisions are ready for implementation, write the same content to
 `docs/specs/<slug>/spec.md`, creating the kebab-case folder when needed. Keep
-decisions in the spec, not implementation instructions. Link an opportunity
-handoff when the user supplied one.
+decisions in the spec, not implementation instructions.
 
 Record off-limits areas and why they must not change. Ask about ownership
 boundaries and work in flight rather than inferring them from the code.
