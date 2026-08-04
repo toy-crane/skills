@@ -31,9 +31,9 @@ Present a concrete candidate for the user to correct.
 - When divergence from the user's intent is unlikely or cheap to detect, decide
   and state the result as an assumption the user can override. Do not promote an
   AI-chosen assumption to a project decision contract.
-- When a branch is expensive to get wrong, ask one question with a recommended
-  answer. Ask exactly one question per turn, requesting one fact, value, or
-  choice with one question mark, and wait for the response.
+- When a branch is expensive to get wrong, ask exactly one question per turn.
+  Request one fact, value, or choice, include a recommended answer with a concise
+  reason, and wait for the response.
 - For a choice judged by looking or trying, such as layout, interaction flow, or
   tone, render two or three variants that differ only on that choice. Use the
   user's reaction as the answer. When the question covers a whole surface rather
