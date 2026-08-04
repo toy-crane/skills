@@ -1,6 +1,6 @@
 ---
 name: knowledge-layer
-description: "Build and sharpen a project's knowledge layer — the glossary and decision records where settled terms and decisions accumulate. A background discipline: trigger while the domain is being worked out — a concept getting named, a term turning fuzzy or conflicting with GLOSSARY.md, a decision with real alternatives settling — whether or not the user asks. Reading the glossary for vocabulary is not a trigger; load only when the layer itself may change."
+description: "Build and sharpen a project's knowledge layer — the glossary and decision records where settled terms and decisions accumulate. A background discipline: trigger whenever the project's terms or decisions are taking shape — a concept getting named, a term turning fuzzy or conflicting with GLOSSARY.md, a decision with real alternatives settling, a plan weighing approaches — in any kind of session, whether or not the user asks. Reading the glossary for vocabulary is not a trigger, nor is executing already-settled decisions; load only when the layer itself may change."
 ---
 
 # Knowledge Layer
