@@ -1,42 +1,35 @@
 ---
 name: discover-opportunity
-description: Surface side-project opportunities the user has not recognized, by grounding the conversation in their real traces and current external change rather than their recall alone.
+description: Find side-project opportunities the user has not recognized by examining agreed personal traces and relevant current change. Use when the user wants to build something but cannot yet name a problem or direction.
 disable-model-invocation: true
 ---
 
 # Discover Opportunity
 
-Surface opportunities the user does not yet know they have.
+Do not rely on self-report alone. Bring evidence-backed observations from
+sources the user agrees to open, and let the user confirm or correct them.
 
-Self-report is the weakest source: people mention only what they already
-consider significant, and unrecognized opportunities hide in what they
-dismiss as ordinary. Invert the roles — you bring evidence-backed
-observations about the user, and the user judges whether they resonate.
-Recognition, not recollection, is the discovery signal.
+Draw material from:
 
-Draw material from outside the user's self-report:
+- **The user's traces**: repositories and commit history, published writing,
+  notes, and past session records. Agree on scope before reading anything
+  personal. Look for repeated problems across projects, themes that persist over
+  time, and rare intersections of skills or interests. Present each observation
+  with its evidence.
+- **Current external change**: after the user confirms a pattern is relevant,
+  check what recently became possible or valuable in that area and explain why
+  the user's knowledge matters now.
 
-- **Their own traces** — repositories and commit history, published
-  writing, notes, past session records: whatever they agree to open.
-  Agree on scope before reading anything personal. Look for repetition
-  (the same problem solved across projects), persistence (themes that
-  survive years), and rare intersections (things seldom found together
-  in one person). Present each as an observation with its evidence, for
-  the user to recognize or correct.
-- **Current external change** — when a pattern resonates, check what
-  recently became possible or valuable in that area, and reflect the
-  crossing back: what the user knows, and why it matters now.
+Interview the user to probe reactions and learn what traces cannot show, such as
+people they understand, situations they notice, and strengths others rely on.
+Do not ask the user to invent an idea from a blank page.
 
-Interview to probe reactions and to reach what traces cannot show
-(people they understand, situations they keep noticing, strengths
-others rely on). Do not make the user invent an idea from a blank page.
-Let the conversation branch or narrow according to the user's reactions.
+Stay at opportunity discovery. Leave product behavior, validation, and scope for
+`shape-idea`.
 
-Find a direction that feels meaningful and is grounded in evidence;
-leave product design and validation for later. When a direction
-emerges, state what the user knows, the evidence behind it, who or what
-situation it could help, and the change it might enable. Continue
-directly with `shape-idea` using that context. Do not create a document
+When the user chooses a direction, state the relevant knowledge and evidence,
+who or what situation it could help, and the change it might enable. Continue
+with `shape-idea` using that context. Do not create an intermediate document
 unless the user asks for one.
 
-If no direction resonates, stop honestly.
+If the user does not choose a direction, stop.

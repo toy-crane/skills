@@ -2,28 +2,28 @@
 
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
-Agent skills for discovering opportunities, sharpening decisions, screens, and
-project knowledge, then implementing them test-first. Small, composable, and
-model-agnostic: install the ones you want and make them your own.
+A composable, model-agnostic set of skills for product discovery, shaping,
+prototyping, task splitting, project knowledge, and test-first implementation.
+Install selected skills or the complete plugin.
 
 ## Install
 
-Two ways, two philosophies.
+Choose copy-in installation or the managed plugin.
 
 ### skills.sh (copy into your project)
 
-Copies the skill files into your project so you can hack on them.
+Copies selected skill folders into your project for local editing.
 
 ```bash
 npx skills@latest add toy-crane/skills
 ```
 
-Pick the skills and the coding agents you want to install them on.
+Choose the skills and coding agents to install.
 
 ### Claude Code plugin (managed bundle)
 
-Installs the whole set as a read-only bundle that updates when a new version
-ships; you subscribe rather than fork.
+Installs the complete set as a read-only bundle. Updates arrive with new plugin
+versions.
 
 Inside Claude Code:
 
@@ -41,7 +41,7 @@ claude plugin install toycrane-skills@toycrane
 
 ## The pipeline
 
-Five skills carry one unit of work from a rough direction to shipped code.
+Five skills cover discovery through implementation.
 
 ```mermaid
 flowchart LR
@@ -54,86 +54,56 @@ flowchart LR
     ST --> TDD
 ```
 
-Enter where your direction is. Discover-opportunity is for the blank page, and
-it runs only when you invoke it: `/discover-opportunity` in Claude Code,
-`$discover-opportunity` in Codex. It hands its direction to shape-idea as
-conversation, not as a document. Start at shape-idea instead when you can
-already name the problem and a rough direction — making it concrete is shaping's
-job, not a prerequisite for it.
+Invoke `discover-opportunity` when no problem or direction is known. It runs only
+on `/discover-opportunity` in Claude Code or `$discover-opportunity` in Codex.
+Start with `shape-idea` when the problem and a broad direction are already known.
+The discovery handoff remains in the conversation rather than a separate file.
 
-Everything converges on `docs/specs/<slug>/spec.md`, the decisions a later
-session can implement from. Build-prototype branches off when a whole interface
-has to be judged by using it, and leaves `prototype.html` beside the spec.
-Split-into-tasks is optional: skip it when the work fits one session and
-implement straight from the spec. There is no planning stage — the
-implementation plan is made just in time, in your harness's plan mode, and tdd
-is the loop that writes the code.
+`shape-idea` records implementation-ready decisions in
+`docs/specs/<slug>/spec.md`. `build-prototype` adds `prototype.html` when a whole
+interface needs review. Use `split-into-tasks` only when the work exceeds one
+session; otherwise implement directly from the spec. Implementation planning is
+just in time, and `tdd` provides the implementation loop.
 
-- **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Surface
-  side-project opportunities the user has not recognized by grounding the
-  conversation in evidence from outside their self-report — their own traces
-  (repositories, writing, notes, past sessions, opened by agreement) crossed
-  with current external change — then carry a resonant direction naturally
-  into shape-idea without requiring an intermediate document. It runs only
-  when the user invokes it explicitly.
-- **[shape-idea](./skills/shape-idea/SKILL.md)**: Shape a chosen direction
-  into shared, implementation-ready decisions through drafts (stated
-  assumptions you can veto, recommended answers you can correct, rendered
-  variants you react to),
-  grounding each decision in project evidence, inspecting and verifying
-  material UI changes, maintaining the project's glossary and decision
-  records, and closing with a spec folder a later session can implement from.
-- **[build-prototype](./skills/build-prototype/SKILL.md)**: Align on UI by
-  building it: every screen of a feature in one dummy-data HTML file grown
-  from a pinned shell (shared tokens, per-screen state pills, viewport
-  presets), built in the project's own design system and minimally where
-  there is none, walked through screen by screen, and preserved beside the
-  spec for the implementing session.
-- **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split work
-  that exceeds one session into session-sized tasks — vertical,
-  independently verifiable cuts that declare what blocks them — reviewed
-  as a breakdown before landing one file per task in the spec folder, for
-  you to run one fresh session each. Needs a spec folder to cut from.
+- **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Find
+  side-project directions from agreed personal traces and relevant current
+  change. Runs only when explicitly invoked and hands the chosen direction to
+  `shape-idea` without creating a document.
+- **[shape-idea](./skills/shape-idea/SKILL.md)**: Clarify a chosen problem and
+  direction through correctable drafts, project evidence, and rendered UI
+  variants. Maintains project terms and decisions, then writes an
+  implementation-ready spec.
+- **[build-prototype](./skills/build-prototype/SKILL.md)**: Build every screen in
+  one dummy-data HTML file using the project's design system, or the shell's
+  minimal style when none exists. Review the rendered screens and preserve the
+  approved prototype beside the spec.
+- **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split an existing
+  spec into approved, session-sized vertical tasks with explicit blockers and
+  acceptance criteria. Run each task in a fresh session.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
-- **[tdd](./skills/tdd/SKILL.md)**: Implement test-first through the
-  red → green loop: tests at pre-agreed seams only, reusing an existing
-  boundary before cutting a new one, one vertical slice per cycle, with the
-  anti-pattern catalog that keeps tests behavioral instead of
-  implementation-coupled. Adapted from
+- **[tdd](./skills/tdd/SKILL.md)**: Implement one red → green slice at a time at
+  pre-agreed public seams. Includes rules for stable seams and behavioral tests.
+  Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 
 ## Outside the pipeline
 
-Four more skills serve the project rather than one unit of work. Each carries
-its own trigger: two you invoke, one fires in the background, one answers when
-you ask.
+Four additional skills run independently of the pipeline. Two are user-invoked,
+one runs in the background, and one runs when the user asks for an explanation.
 
-- **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Survey the
-  frameworks and services a project builds on and install each vendor's
-  official agent context — a skill, an AGENTS.md codemod, bundled docs —
-  in the form the vendor recommends, so later sessions start from
-  version-matched vendor knowledge instead of training data. User-invoked,
-  for project setup.
-- **[knowledge-layer](./skills/knowledge-layer/SKILL.md)**: Build and sharpen
-  a project's knowledge layer, pinning down shared terms and recording key
-  decisions as they accumulate across sessions. Runs in the background
-  whenever terms or decisions are taking shape — a plan weighing approaches
-  included — in any kind of session; shape-idea and build-prototype load it
-  explicitly.
-- **[explain-visually](./skills/explain-visually/SKILL.md)**: Answer "I don't
-  follow, explain this" by showing the thing instead of describing it: a diagram
-  for a structure, a table for a comparison, a trace with real numbers for a
-  mechanism, drawn with the best renderer the session actually has rather than
-  dropped into the reply as text. Says the one sentence and stops when a
-  sentence is all it takes. Fires when you ask, in any conversation.
-- **[compact-decisions](./skills/compact-decisions/SKILL.md)**: Bring the
-  decision records, glossary, spec folders, and always-loaded instructions
-  back in step with what shipped: joining records whose subject has settled,
-  lifting into the always-loaded file only what a session that never read the
-  history would otherwise get wrong, and deleting spec folders for finished
-  work. Lists a cluster's rejected alternatives before touching it, and leaves
-  the records alone when that list shows there is nothing left to squeeze.
-  User-invoked, after the work ships.
+- **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Install each
+  framework or service vendor's official agent context in its recommended form.
+  User-invoked for project setup.
+- **[knowledge-layer](./skills/knowledge-layer/SKILL.md)**: Maintain project
+  terms and decision records whenever they are taking shape, including while a
+  plan weighs alternatives. Does not run for vocabulary lookup or execution of
+  settled decisions; `shape-idea` and `build-prototype` invoke it explicitly.
+- **[explain-visually](./skills/explain-visually/SKILL.md)**: Render explanations
+  with the best available tool. Use one sentence instead when one sentence fully
+  answers the question.
+- **[compact-decisions](./skills/compact-decisions/SKILL.md)**: Reconcile decision
+  records, the glossary, spec folders, and always-loaded instructions after work
+  ships. Preserve rejected alternatives and leave unsafe clusters unchanged.
 
 ## License
 

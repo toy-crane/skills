@@ -1,22 +1,17 @@
 ---
 name: explain-visually
-description: Explain something the user does not understand by rendering it — the structure as a picture, a mechanism with real values run through it, alternatives side by side. Use when the user asks to have something explained — a concept, a decision, a flow, a piece of code — or says they do not follow.
+description: Render an explanation as a diagram, comparison, trace with real values, or annotated code. Use when the user asks to have a concept, decision, flow, or code explained, or says they do not follow.
 ---
 
-# Explain visually
+# Explain Visually
 
-The user is stuck on something. Show it to them instead of describing it.
+Render the subject when a visual explanation is needed.
 
-First decide whether a sentence closes the gap. Rendering spends the user's
-time, so when a sentence would do, write the sentence and stop. A question
-with a one-sentence answer stays one sentence, however much structure sits
-behind it.
+First decide whether one sentence fully answers the question. Rendering costs
+the user's time, so when one sentence is enough, write it and stop.
 
-Otherwise draw whatever shows the thing they are stuck on. A diagram for a
-structure, a table for a comparison, a trace with real numbers for a
-mechanism, annotated code for code.
+Otherwise choose a form suited to the question: a diagram for structure, a table
+for comparison, a trace with real numbers for a mechanism, or annotated code.
 
-Draw it with the best renderer this session actually has. Look at the
-available tools before choosing a form — an inline visual, a rendered page,
-an image. Text in the reply is the bottom rung, not the default: take it
-when nothing in the session can draw.
+Check the available tools and use the best renderer the session provides. Use
+text in the reply only when nothing in the session can draw.

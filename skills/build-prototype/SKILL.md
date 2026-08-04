@@ -1,64 +1,63 @@
 ---
 name: build-prototype
-description: Build a full-surface, dummy-data HTML prototype so the user aligns on UI by reacting to screens instead of prose. Use when the user wants to prototype, mock up, or see the screens of a product or feature before implementation, when UI discussion in words keeps missing, or when shape-idea hands off an experiential question that outgrew variants.
+description: Build a self-contained dummy-data HTML prototype covering every screen of a product or feature. Use when the user wants to review UI before implementation, or when prose and a few variants cannot settle a full surface.
 ---
 
 # Build Prototype
 
-The worst UI misalignment hides in what the prose never mentioned: the
-user cannot point at a missing sentence. Build every screen the surface
-needs, with dummy data, and walk the user through the whole of it.
+Build every screen the surface needs with dummy data. Keep the prototype cheap
+to rebuild and concrete enough for the user to review.
 
 Invoke the `knowledge-layer` skill, and read `GLOSSARY.md` and
-`docs/specs/<slug>/spec.md` when they exist: screens speak the
-glossary's terms. A contested detail becomes two or three variants
-differing only on the governing question, instead of an argument in
-prose. Write the interface in the language the user is speaking, unless
-the product's own is known to differ.
+`docs/specs/<slug>/spec.md` when they exist. Use glossary terms in labels and
+copy, and update the knowledge layer when a correction changes a term or
+decision. Use the user's language unless the product uses different terms.
+
+For a contested detail, render two or three variants that differ only on that
+question and let the user choose.
 
 ## One file, from the shell
 
-The prototype is one self-contained HTML file holding every screen.
-Start it from [templates/shell.html](./templates/shell.html), whose
-header comment is the contract — keep that comment in the file you
-grow, so its rules are still there in later turns. Design tokens in
-`:root` are the funnel every screen styles through; one shared funnel
-is what keeps many screens reading as one product. Nothing is wired: a
-button here is just a button.
+Build one self-contained HTML file containing every screen. Start from
+[templates/shell.html](./templates/shell.html) and keep its header comment in the
+prototype so later turns retain the contract. Keep the shell's screen tabs,
+per-screen state pills, and viewport cycle. Add review chrome only when the
+surface requires it, and do not add controls that need an explanation.
 
-Render it in whatever visual medium the environment provides, cheapest
-sufficient one first, and look at what you rendered before handing it
-over — layout faults that are obvious on screen are invisible in the
-markup. Pointing at problems is the medium's job or prose's; build no
-pointing machinery into the file.
+Put design tokens in `:root` and style every screen through them. Use no build
+step, framework, network dependency, real routing, or production state wiring.
 
-## In the project's own style
+Render the prototype in the cheapest sufficient visual medium available and
+inspect the rendered result before presenting it. Use the medium's element
+selection or prose to identify problems; do not add pointing controls to the
+prototype.
 
-Propose the screen inventory as a draft, never as a question.
+## Use the project's style from the start
 
-Build the screens in the project's design system: tokens copied
-verbatim instead of approximated, elements named after the system's own
-component names (a `data-component` attribute, marking components the
-system lacks as `new:Name`) so the implementing session maps every
-block to a real component. Where the project has no design system, the
-shell's minimal palette is the finished look, not a stage awaiting a
-swap.
+Present the screen inventory as a correctable draft and begin building without
+waiting for approval.
 
-Never lorem ipsum: real-length names, plausible sentences, awkward
-numbers, and the edge states that bite (empty, longest plausible text,
-error; not every screen needs every state). Real data, latency, and
-production wiring stay out.
+Inspect the existing product and design system before building. Copy its tokens
+verbatim, or extract the design language when no token file exists. Name elements
+after the system's component names with a `data-component` attribute, using
+`new:Name` for components the system lacks. When no design system exists, keep
+the shell's minimal palette as the finished style rather than a temporary stage.
+
+Never use lorem ipsum. Use real-length names, plausible sentences, awkward
+numbers, and only the edge states relevant to each screen, such as empty,
+longest plausible text, and error. Keep real data, latency, and production wiring
+out. Review the rendered prototype screen by screen.
 
 ## What survives
 
-Stop when every screen is approved or explicitly deferred as a
-remaining risk. Record what the screens settled in
-`docs/specs/<slug>/spec.md` (kebab-case slug, created when missing:
-confirmed decisions, assumptions, deferred points, and remaining
-risks, addressed to the implementing session), save the approved
-surface as `docs/specs/<slug>/prototype.html`, and link it from the
-spec. Everything else built along the way is disposable, and the
-prototype is a reference, never production code.
+Stop when every screen is approved or explicitly deferred. Record confirmed
+decisions, assumptions, deferred points, and remaining risks in
+`docs/specs/<slug>/spec.md`, creating it when missing. Save the approved surface
+as `docs/specs/<slug>/prototype.html` and link it from the spec.
 
-Anything with a screen is in scope; command-line, terminal, and voice
-interfaces are not.
+Discard intermediate work. Keep the approved prototype as a reference, never as
+production code.
+
+Any interface with a screen is in scope, including web, mobile web, and native
+app mockups in a phone frame. Start mobile-first prototypes in the shell's narrow
+viewport. Command-line, terminal, and voice interfaces are not.
