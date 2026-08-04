@@ -16,12 +16,12 @@
     {
       "id": 2,
       "prompt": "/explain-visually 왜 shape-idea야? write-spec이 아니고. 잘 이해가 안 돼.",
-      "expected_output": "The response places the two names side by side with a renderer and grounds the reasoning in this repo's decision records.",
+      "expected_output": "The response places the two names side by side with a renderer and grounds the reasoning in this repo's current skill-naming decision contract.",
       "files": [],
       "expectations": [
         "It invokes a rendering tool rather than settling for fenced ASCII or a markdown table.",
         "The form places the alternatives side by side rather than narrating one and then the other.",
-        "It cites the decision records behind the rename instead of reasoning from the names alone.",
+        "It cites the current skill-naming decision contract instead of reasoning from the names alone.",
         "It does not answer in prose only."
       ]
     },

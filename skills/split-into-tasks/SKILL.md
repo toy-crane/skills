@@ -7,8 +7,10 @@ description: Split work that exceeds one session into session-sized task files f
 
 Start from a spec folder at `docs/specs/<slug>/`. If none is named, list the
 candidates and ask which to use. If none exists, stop and request a spec instead
-of splitting directly from conversation. Read `spec.md`, plus `GLOSSARY.md` and
-`docs/decisions/` when present, and inspect the codebase before splitting.
+of splitting directly from conversation. Read `spec.md` and `GLOSSARY.md`, then
+use `docs/decisions/README.md` to load only relevant decision subjects. Inspect
+the codebase before splitting. If spec, code, and a decision contract conflict
+at the decision level, surface the conflict rather than choosing an authority.
 
 Make each task a session-sized vertical slice: a complete path through every
 layer it touches, independently verifiable when done, and small enough for one

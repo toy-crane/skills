@@ -18,7 +18,7 @@
     {
       "id": 2,
       "prompt": "/shape-idea 기존 용어집에서는 유료 계정을 Member라고 부르지만, 팀은 이제 Subscriber로 통일하기로 확정했어. 이 결정은 용어집에 바로 반영하고, 이어서 기존 Member의 권한 이전 정책을 나와 정리해줘.",
-      "expected_output": "The response uses knowledge-layer during the session: it records the already-resolved terminology change in the glossary immediately, notes the conflict with the prior term, then asks one upstream permissions question with a recommendation. It does not postpone glossary or decision-record updates until a final summary.",
+      "expected_output": "The response uses knowledge-layer during the session: it records the already-resolved terminology change in the glossary immediately, notes the conflict with the prior term, then asks one upstream permissions question with a recommendation. It does not postpone the glossary update until a final summary.",
       "files": [],
       "expectations": [
         "The response treats Subscriber as a resolved canonical term and updates GLOSSARY.md before continuing.",
@@ -44,13 +44,13 @@
     {
       "id": 4,
       "prompt": "/shape-idea 결과 화면의 핵심 작업은 Markdown 읽기와 LLM으로 보내기야. 기존 컴포넌트와 데이터는 정해졌는데, LLM 작업을 기본 화면에 펼칠지 버튼을 누른 뒤 열지 실제로 보기 전에는 판단이 안 돼. 이 한 가지를 비교해서 결정하고 인터뷰를 계속해줘.",
-      "expected_output": "The response classifies this as an experiential question and renders two or three variants (the LLM workflow persistent versus revealed on demand) in an available visual medium, keeping the confirmed components and data fixed. It asks for the user's reaction, translates the reaction into a recorded decision, and resumes the interview.",
+      "expected_output": "The response classifies this as an experiential question and renders two or three variants (the LLM workflow persistent versus revealed on demand) in an available visual medium, keeping the confirmed components and data fixed. It asks for the user's reaction, records the chosen feature-local behavior for the spec without automatically promoting it to a project decision contract, and resumes the interview.",
       "files": [],
       "expectations": [
         "The comparison is limited to whether the LLM workflow is persistent or revealed on demand.",
         "It renders two or three materially different variants in an available visual medium instead of describing them in prose.",
         "It asks for a reaction rather than approval of a plan to build something.",
-        "It translates the reaction into a decision, records durable outcomes through knowledge-layer, and continues the interview.",
+        "It translates the reaction into a confirmed feature decision for the spec and does not automatically promote it to a project decision contract.",
         "It does not broaden the render into redesigning the whole result page."
       ]
     },

@@ -5,9 +5,8 @@ viewport preset (`.sh-vp-390` in
 `skills/build-prototype/templates/shell.html`) currently sets only
 `min-height: 660px`, so the phone frame grows with content. This spec fixes
 the frame's height so fold, pinned bottom UI, and scroll behavior are judged
-honestly. Companion records: ADR
-[prototype-returns-full-surface-single-file](../../decisions/prototype-returns-full-surface-single-file.md)
-(shell charter) and the contract comment at the top of
+honestly. Companion project decision:
+[build-prototype](../../decisions/build-prototype.md) and the contract comment at the top of
 `skills/build-prototype/templates/shell.html`.
 
 ## Goal
@@ -42,8 +41,8 @@ internally scrolling device frame.
    gains one line: pin in-frame bars (tab bars, CTAs) with
    `position: sticky`; `position: fixed` escapes the frame and pins to the
    browser window.
-6. **Applies from the skeleton pass.** The fold is part of structure; the
-   frame behaves identically in both passes.
+6. **Applies to the single build from its first render.** The fold is part of
+   structure, so the frame must be fixed-height before the surface is reviewed.
 7. **Template-only change.** No retrofit of preserved
    `docs/specs/<slug>/prototype.html` files.
 
