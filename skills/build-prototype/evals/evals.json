@@ -4,14 +4,16 @@
     {
       "id": 1,
       "prompt": "/build-prototype 북마크한 아티클을 모아 매주 다이제스트로 보내주는 웹앱을 만들려고 해. 화면부터 보면서 정하고 싶어.",
-      "expected_output": "The response proposes a screen inventory as a correctable draft, then builds one self-contained HTML file grown from the shell template (screen tabs, state pills where declared, a viewport cycle) with every proposed screen finished the first time it is shown, and walks the user through the surface asking for reactions. This project has no design system, so it builds on the shell's minimal palette and treats that as the finished look. It does not scaffold the production app.",
+      "expected_output": "The response uses the current request and conversation as sufficient context without requiring or searching for a pre-existing spec. It proposes a screen inventory as a correctable draft, then builds one temporary self-contained HTML file grown from the shell template (screen tabs, state pills where declared, a viewport cycle) with every proposed screen finished the first time it is shown, and walks the user through the surface asking for reactions. It does not create a durable spec folder before approval. This project has no design system, so it builds on the shell's minimal palette and treats that as the finished look. It does not scaffold the production app.",
       "files": [],
       "expectations": [
         "It proposes the screen inventory as a draft to correct instead of asking the user to enumerate screens.",
         "It builds one self-contained HTML file holding every proposed screen, not one file per screen.",
-        "The file carries the shell chrome (screen tabs, per-screen state pills, viewport cycle) and shared :root tokens, with no build step, framework, or network dependency.",
+        "The file declares UTF-8 and carries the shell chrome (screen tabs, per-screen state pills, viewport cycle) and shared :root tokens, with no build step, framework, or network dependency.",
         "With no design system to copy, it builds on the shell's minimal palette and presents it as the finished look rather than a stage to be replaced later.",
         "Screens carry realistic dummy data and their edge states from the first render, with no lorem ipsum and no staged fidelity.",
+        "It treats the current request and conversation as sufficient context and neither requires nor searches for a pre-existing work-unit spec before building.",
+        "It keeps the working prototype temporary and does not create or populate docs/specs before every screen is approved or explicitly deferred.",
         "It walks the user through the whole surface and requests reactions rather than approval of a plan.",
         "It does not write project-stack or production code."
       ]
@@ -47,7 +49,7 @@
       "files": [],
       "expectations": [
         "It renders two or three variants differing only on the contested treatment.",
-        "Confirmed screens and elements stay fixed across the variants.",
+        "Confirmed screens, content, data, surrounding layout, and behavior stay fixed across the variants.",
         "It requests the user's reaction as the answer instead of arguing the choice in prose.",
         "It folds the chosen variant back into the single prototype file."
       ]
@@ -55,12 +57,14 @@
     {
       "id": 5,
       "prompt": "/build-prototype 모든 화면 승인이야. 원본 아티클 보관 기능은 이번에는 보류하기로 했고. 마무리해줘.",
-      "expected_output": "The response closes the session: it records the settled decisions in docs/specs/<slug>/spec.md (created in the spec folder shape when missing), saves the approved surface as docs/specs/<slug>/prototype.html linked from the spec, records the archive feature as explicitly deferred, and presents spec plus prototype as the handoff.",
+      "expected_output": "The response closes the session: it reuses a work-unit folder identified by the request or prior handoff, or otherwise derives a kebab-case slug from the product or feature name. It records the settled decisions in docs/specs/<slug>/spec.md (created in the spec folder shape when missing), saves the approved surface as docs/specs/<slug>/prototype.html linked from the spec, records the archive feature as explicitly deferred, and presents spec plus prototype as the handoff.",
       "files": [],
       "expectations": [
         "It records the settled decisions in docs/specs/<slug>/spec.md, creating it in the spec folder shape when missing.",
+        "It reuses an identified work-unit folder or derives the slug at close instead of requiring one before prototyping.",
         "It saves the approved surface as docs/specs/<slug>/prototype.html and links it from the spec.",
         "The deferred archive feature is recorded explicitly rather than silently dropped.",
+        "The spec records only confirmed or visibly approved behavior and does not infer navigation or screen order from the prototype's source order.",
         "It hands off the spec and prototype together and does not treat the prototype as production code."
       ]
     },
@@ -83,6 +87,8 @@
       "expectations": [
         "It copies the project's design tokens verbatim into the prototype rather than approximating the look.",
         "Screen elements are named after the design system's own component names so implementation maps one to one.",
+        "Existing overlays, drawers, and modals keep their relationship to the source screen instead of becoming separate routes.",
+        "Responsive prototype styles follow the shell's simulated viewport classes rather than relying on browser media queries alone.",
         "The new screens read as the existing product rather than a generic style.",
         "It proposes the screen set as a correctable draft."
       ]
