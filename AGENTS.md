@@ -10,19 +10,21 @@ toy-crane's agent skills, distributed two ways: copy-in via **skills.sh**
 `.claude-plugin/plugin.json`'s `skills` array: the plugin ships exactly that
 array, while skills.sh discovers everything under `skills/`. Adding a skill =
 create `skills/<name>/`, add its `./skills/<name>` path to `plugin.json`,
-symlink it into `.claude/skills/`, then link it from the README. Run
+symlink it into both `.agents/skills/` and `.claude/skills/`, then link it from
+the README. Run
 `claude plugin validate . --strict` after touching either `.claude-plugin/`
 manifest.
 
 ## Published skills are invokable in-repo
 
-Neither harness reads a bare `skills/` directory, so each published skill is
-symlinked as `.claude/skills/<name> -> ../../skills/<name>` — the same
-mechanism that makes the vendored skill invokable. The symlinks are committed
-so they reach every clone and worktree; edits under `skills/` apply in place
-with no copy to drift. skills.sh scans `.claude/skills/` too but dedupes by
-skill name, so the second path adds nothing to `npx skills add`. Keep the
-symlinks in step when adding, removing, or renaming a skill.
+Neither Codex nor Claude Code reads a bare `skills/` directory, so each
+published skill is symlinked as `.agents/skills/<name> -> ../../skills/<name>`
+for Codex and `.claude/skills/<name> -> ../../skills/<name>` for Claude Code.
+The symlinks are committed so they reach every clone and worktree; edits under
+`skills/` apply in place with no copy to drift. skills.sh scans both agent
+directories too but dedupes by skill name, so the extra paths add nothing to
+`npx skills add`. Keep both sets of symlinks in step when adding, removing, or
+renaming a skill.
 
 ## Not everything here ships
 
