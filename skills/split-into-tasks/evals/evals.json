@@ -32,7 +32,7 @@
       "expectations": [
         "It groups the complete personal Todo lifecycle and persistence into one deliverable task.",
         "It separates collaboration and reminders only where each produces independently reviewable behavior.",
-        "It does not create standalone database, API, UI, scaffolding, or per-CRUD-operation tasks.",
+        "It keeps preparatory or layer-specific work in the earliest task that turns it into independently usable behavior unless that work independently meets the same task standard.",
         "It states genuine blockers and explains why each one gates completion.",
         "It waits for user approval before writing task files."
       ]
@@ -72,6 +72,18 @@
         "It replaces the superseded unfinished task files only after the revised breakdown is approved.",
         "It leaves the tasks directory with the completed history and the current remaining breakdown, not obsolete pending variants.",
         "It does not create an archive directory for superseded task files."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "/split-into-tasks docs/specs/todo-api/spec.md에는 인증과 문서화를 갖춘 공개 Todo API를 먼저 제공해 파트너가 직접 연동할 수 있게 하고, 이후 같은 API를 사용하는 운영자용 웹 UI를 제공하기로 확정돼 있어. API는 UI 없이도 파트너가 사용할 수 있고 별도로 배포하고 검증할 수 있어. 현재 코드와 spec을 확인해서 task 분리안을 보여줘.",
+      "expected_output": "The response proposes the public Todo API as an independently usable, verifiable, and reviewable task, then proposes the operator UI as a dependent outcome. It applies the outcome standard rather than treating an API as a categorically prohibited task type, presents the breakdown for approval, and writes no files yet.",
+      "files": [],
+      "expectations": [
+        "It recognizes the authenticated and documented public API as a complete outcome for partner users.",
+        "It proposes the API as a standalone task because it is independently usable, deployable, verifiable, and reviewable.",
+        "It makes the operator UI depend on the API and explains why that outcome gates the UI.",
+        "It presents the proposed breakdown for approval before writing task files."
       ]
     }
   ]
