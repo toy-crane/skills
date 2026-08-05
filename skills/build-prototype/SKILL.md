@@ -5,104 +5,83 @@ description: Build a self-contained dummy-data HTML prototype covering every scr
 
 # Build Prototype
 
-Build every screen and relevant state with realistic dummy data. Keep the
-prototype cheap to rebuild and concrete enough for the user to judge the whole
-surface visually.
+Build a disposable but finished-looking model of the whole surface so the user
+can settle structure, relationships, and behavior before implementation.
 
-## Ground the surface
+## Ground the prototype
 
-Use the current request and conversation as the primary source of scope,
-confirmed choices, and unresolved questions.
+Use the request and conversation as the primary scope. When present, read
+`GLOSSARY.md`, only relevant entries from `docs/decisions/README.md`, and any
+work-unit spec identified by the request or a prior handoff. Do not require or
+search for a spec before building.
 
-Read `GLOSSARY.md` and only the relevant subjects from
-`docs/decisions/README.md` when they exist, and use the project's canonical
-terms. If the request or a prior handoff identifies an existing work-unit spec,
-read it for durable context. Do not require or search for a spec before
-building.
+Inspect the existing product and design system. Use their canonical terms,
+interface language, tokens, and components; otherwise use the user's language
+and the template's finished minimal style. Surface conflicts instead of
+resolving them silently.
 
-Inspect the existing product and design system before building. Surface
-conflicts between the current context and project artifacts instead of resolving
-them silently. Use the existing product's interface language and terminology;
-otherwise use the user's language.
+Hold confirmed relationships fixed. Keep overlays, drawers, and modals attached
+to their source screen unless the user is reconsidering that relationship.
 
-Treat confirmed surface relationships as fixed constraints. Preserve overlays,
-drawers, and modals as relationships to their source screen instead of turning
-them into separate screens or routes.
-
-## Build one review artifact
+## Build the artifact
 
 Present the screen inventory as a correctable draft and begin building without
 waiting for approval.
 
-Build one self-contained HTML file containing every screen. Start from
-[templates/shell.html](./templates/shell.html) and keep its header comment,
-screen selector, current-screen state selector, and viewport cycle. Let the
-screen selector show the current screen name and the available screens, without
-an index or total that implies a linear product flow or review progress.
+Copy [templates/shell.html](./templates/shell.html) into one temporary,
+self-contained HTML file and grow every screen inside it. Preserve the
+template's contract comment and its three-control review shell. List screen
+names without an index or total; source order is neither product flow nor review
+progress.
 
 Treat states as representative review presets, not an inventory of every UI
-change. The shell supplies `Default`; name any additional states naturally for
-their screen. Add a state only when it gives direct access to an important
-multi-step result, a forced data or error condition, or a materially different
-screen structure. Even when visually distinct, leave anything reached by one
-obvious interaction—along with menus, filters, expanded details,
-hover, focus, typing, and combinatorial variations—to the interactive prototype.
-When an interaction enters or leaves a declared representative state, keep the
-state selector synchronized in both directions; exercise every entry and reset
-path in the browser before presenting the result.
+change. Keep the automatic `Default`; add a naturally named state only for an
+important multi-step result, forced data or error condition, or materially
+different structure. Keep one-click results, menus, filters, expanded details,
+hover, focus, typing, and combinations as real interactions, however different
+they look. Synchronize the selector whenever an interaction enters or leaves a
+declared state, including when repeated actions cross that state's condition.
 
-Copy the project's design tokens verbatim into `:root`, or extract its design
-language when no token file exists. Style every screen through those tokens.
-Name elements after the design system's component names with a `data-component`
-attribute, using `new:Name` for components the system lacks. When no design
-system exists, keep the shell's minimal palette as the finished style.
+Copy project tokens verbatim into `:root`, or extract the existing design
+language when no token file exists. Style every screen through those tokens and
+mark elements with the design system's component names in `data-component`;
+use `new:Name` only when no component exists.
 
-Use real-length names, plausible sentences, awkward numbers, and only the edge
-states relevant to each screen, such as empty, longest plausible text, and
-error. Never use lorem ipsum.
-
-Keep real data, APIs, latency, production routing, state wiring, frameworks,
-build steps, and network dependencies out. Add review chrome only when the
-surface requires it, and do not add controls that need an explanation.
+Use realistic dummy content with real-length names, plausible copy, awkward
+numbers, and only relevant edge conditions. Never use lorem ipsum. Keep out real
+data, APIs, latency, production routing or state wiring, frameworks, build
+steps, and network dependencies.
 
 Use a phone frame for native app mockups and start mobile-first prototypes in
 the shell's narrow viewport. Drive viewport-dependent styles from the shell's
 `.sh-vp-390` and `.sh-vp-768` classes, not browser media queries alone; the
 shell simulates those widths inside a wider browser window.
 
-Keep the working file in a temporary location while review remains open. Do not
-create a work-unit folder or write under `docs/specs/` until every screen is
-approved or explicitly deferred.
+## Review and converge
 
-## Review to convergence
-
-Render the prototype in the cheapest sufficient visual medium available and
-inspect the rendered result before presenting it. Review the surface screen by
-screen.
+Render and inspect the artifact before presenting it. Exercise every screen,
+declared state, interaction entry and reset path, and relevant viewport in a
+browser. Present the artifact and correctable screen draft, walk the user through
+the surface screen by screen, and ask what to change. Do not close an open review
+with a completion handoff.
 
 For an unresolved detail, render two or three variants that differ only on that
-question while holding confirmed elements fixed. Keep their content, data,
-surrounding layout, and behavior identical; change only the contested treatment.
-Let the user choose, then fold the chosen direction back into the single
-prototype.
+question. Hold content, data, surrounding layout, behavior, and every confirmed
+element fixed. Let the user choose, then fold the choice into the single file.
 
 Use the rendering medium's element selection or prose to identify problems. Do
 not add pointing, annotation, approval, or change-tracking controls to the
 prototype.
 
-## Preserve only approval
+## Preserve the approved result
 
-When every screen is approved or explicitly deferred, reuse the work-unit folder
-identified by the request or a prior handoff. Otherwise derive a kebab-case slug
-from the product or feature name.
-
-Record confirmed decisions, assumptions, deferred points, and remaining risks
-from the current conversation in `docs/specs/<slug>/spec.md`, creating it when
-missing. Save the approved surface as `docs/specs/<slug>/prototype.html` and
-link it from the spec.
-
-Record only what the user confirmed or the approved artifact shows. Do not infer
-navigation, screen order, or behavior from source order or visual proximity.
+Keep the working file temporary and write nothing under `docs/specs/` while
+review remains open. Once every screen is approved or explicitly deferred,
+reuse an identified work-unit folder or derive a kebab-case slug. Record only
+confirmed decisions, assumptions, deferrals, and risks in
+`docs/specs/<slug>/spec.md`; save and link the approved surface as
+`docs/specs/<slug>/prototype.html`. Never infer navigation, order, or behavior
+from source order or visual proximity.
 
 Update a project decision contract only when the user explicitly confirmed a
 choice that future work should reuse, whose rationale prevents reasonable

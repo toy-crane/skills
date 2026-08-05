@@ -6,35 +6,30 @@
 
   Contract (extend freely, never strip):
   - Screens:  <section data-screen="slug" data-title="Label"> inside .sh-stage.
-               The screen selector, arrow keys, and #hash routing build themselves;
-               in-prototype links may target screens (href="#slug").
+               The selector, arrow keys, and #hash routing build themselves.
+               Links may use href="#slug". Labels are names only: never add an
+               index or total.
   - States:   "Default" is automatic. A screen declares only representative
-               direct-entry presets as data-states="Empty,Error" using natural,
-               screen-specific names. Reserve them for important multi-step
-               results, forced data or errors, or materially different structure;
-               leave obvious one-click and transient states to real interactions,
-               even when they look substantially different.
-               Elements for one preset carry data-when="Empty" (comma-separated
-               for several); elements without data-when always show. Interaction
-               code calls prototypeShell.setState("Name") when entering and
-               prototypeShell.setState("Default") when leaving a preset.
+               presets in data-states="Empty,Error". Use natural, screen-specific
+               names. Reserve presets for important multi-step results, forced
+               data or errors, or materially different structure; keep one-click
+               and transient states as interactions. Use data-when="Empty" on
+               preset-only elements. Call prototypeShell.setState("Name") on
+               entry and setState("Default") on exit, including when repeated
+               actions cross a preset condition.
   - Viewport: "vp (m)" cycles full / 390 / 768. The 390 preset is a
                fixed-height, internally scrolling phone frame. Start a
                mobile-first prototype by adding class="sh-vp-390" to <body>
                (or a bootstrap classList.add before the chrome script runs).
   - Pinning:  keep in-frame bars (tab bars, CTAs) inside the phone with
                position: sticky; position: fixed pins to the browser window.
-  - Tokens:   replace the project-tokens block below with the project's own
-               design tokens, copied verbatim. Keep --background, --foreground,
-               and --font defined afterwards; when the system's names differ,
-               add a small mapping block after the copy, and a web font
-               substitutes a system stack (note that in the spec). A
-               project with no design system
-               keeps the block as it ships: that minimal palette is the
-               finished look, not a stage waiting to be swapped out.
+  - Tokens:   replace the project-tokens block with project tokens copied
+               verbatim. Map differing names to --background, --foreground, and
+               --font afterwards; replace network fonts with a system stack and
+               note that substitution. Without a design system, keep this
+               palette as the finished style.
   - Placeholders: .wf-pic stands in for pictures the prototype has no real
-               files for. .wf-line (text bar) is here for the same reason but
-               rarely earns its use — real text belongs where it would go.
+               files for. Use real text everywhere text belongs.
 
   Self-contained by design: no build, no framework, no network.
   Chrome that needs explaining has failed; keep it three controls.
@@ -98,7 +93,6 @@
   }
 
   /* placeholders */
-  .wf-line { height: 10px; border-radius: 4px; background: #e3e3e3; margin: 7px 0 }
   .wf-pic  { border-radius: 4px; background:
              repeating-linear-gradient(45deg, #e9e9e9, #e9e9e9 6px, #f2f2f2 6px, #f2f2f2 12px) }
 </style>

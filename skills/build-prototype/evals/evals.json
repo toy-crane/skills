@@ -137,6 +137,22 @@
         "Each clear, retry, recovery, or reset path leaves the preset and synchronizes the selector back to Default.",
         "The prototype is browser-verified rather than accepted from source inspection alone."
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "/build-prototype 가족이 함께 쓰는 반려동물 돌봄 모바일 앱을 화면으로 검토하고 싶어. 오늘 돌봄, 일정, 사료 재고, 건강 기록, 가족 초대, 알림, 설정을 한 파일에 넣어줘. 필터와 전체 읽음은 바로 눌러보고, 사료 수량은 여러 번 줄여서 재고 없음까지 갔다가 다시 채워볼 수 있게 해줘.",
+      "expected_output": "The response builds one temporary self-contained mobile prototype and keeps the review open for user feedback. Filters, mark-all-read, stock adjustments, and restocking are product interactions rather than separate review presets. If repeated stock reductions cross into a declared out-of-stock preset, the state selector synchronizes on entry; restocking synchronizes it back to Default. The response presents the screen draft and asks what the user wants changed instead of closing with a completion handoff.",
+      "files": [],
+      "expectations": [
+        "All requested screens live in one self-contained HTML file with realistic dummy content and no external runtime dependencies.",
+        "The shell uses natural screen names without indexes or totals, contextual representative states, and the viewport cycle.",
+        "Filters, mark-all-read, stock adjustments, and restocking remain working product interactions rather than separate presets.",
+        "Only a forced out-of-stock condition or another important non-trivial condition becomes a representative preset.",
+        "Repeated stock reductions that cross the declared out-of-stock condition synchronize the state selector on entry.",
+        "Restocking from the declared out-of-stock condition synchronizes the selector back to Default.",
+        "The cumulative entry and recovery paths are browser-verified.",
+        "The response presents the artifact and correctable screen draft, then asks what the user wants changed instead of treating the open review as complete."
+      ]
     }
   ]
 }

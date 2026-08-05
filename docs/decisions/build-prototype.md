@@ -123,3 +123,7 @@ prototype provide the durable handoff after the visual work settles.
   to a preset and updated selectors on entry without resetting them on recovery.
   Explicit one-click exclusion and bidirectional synchronization target those
   observed failures.
+- A later held-out test handled single-step synchronization but missed the point
+  where repeated removals crossed into a declared empty condition, then closed
+  the open review without asking what to change. Explicit cumulative boundary
+  checks and an open-review response contract target those observed failures.
