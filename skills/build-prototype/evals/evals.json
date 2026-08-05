@@ -9,7 +9,7 @@
       "expectations": [
         "It proposes the screen inventory as a draft to correct instead of asking the user to enumerate screens.",
         "It builds one self-contained HTML file holding every proposed screen, not one file per screen.",
-        "The file carries the shell chrome (screen tabs, per-screen state pills, viewport cycle) and shared :root tokens, with no build step, framework, or network dependency.",
+        "The file declares UTF-8 and carries the shell chrome (screen tabs, per-screen state pills, viewport cycle) and shared :root tokens, with no build step, framework, or network dependency.",
         "With no design system to copy, it builds on the shell's minimal palette and presents it as the finished look rather than a stage to be replaced later.",
         "Screens carry realistic dummy data and their edge states from the first render, with no lorem ipsum and no staged fidelity.",
         "It treats the current request and conversation as sufficient context and neither requires nor searches for a pre-existing work-unit spec before building.",
