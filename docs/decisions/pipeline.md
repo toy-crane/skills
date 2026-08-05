@@ -25,9 +25,9 @@
 - Tasks are vertical, independently verifiable, and coarse enough for one fresh
   session. A task is not a fine-grained to-do list.
 - Work-unit product constraints belong in `spec.md`; constraints that expire
-  with one task belong in that task file. A human-approved constraint that will
-  govern later work units belongs in a decision contract when it passes the
-  durable decision gate.
+  with one task belong in that task file. A settled constraint that later work
+  should reuse belongs in a decision contract when it passes the project
+  decision gate.
 - Vendor context uses official sources only and must not be hardcoded to a fixed
   provider list or installation form.
 

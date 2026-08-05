@@ -11,9 +11,10 @@ to rebuild and concrete enough for the user to review.
 Invoke the `project-knowledge` skill, and read `GLOSSARY.md` and
 `docs/specs/<slug>/spec.md` when they exist. Use glossary terms in labels and
 copy. Record confirmed surface choices in the work-unit spec; update a project
-decision contract only when the user explicitly confirmed a choice that is hard
-to reverse, surprising without context, and the result of a real trade-off. Use
-the user's language unless the product uses different terms.
+decision contract only when the user explicitly confirmed a choice that future
+work should reuse, whose rationale prevents reasonable re-litigation, and that
+came from a real trade-off. Use the user's language unless the product uses
+different terms.
 
 For a contested detail, render two or three variants that differ only on that
 question and let the user choose.

@@ -1,10 +1,10 @@
 # Decision Contract Format
 
-Decision contracts live in `docs/decisions/`, one mutable file per durable
-subject. The filename is the subject in kebab-case, such as `data-ownership.md`.
-Only human-approved current decisions belong here; Git retains prior versions.
+Decision contracts live in `docs/decisions/`, one mutable file per subject. The
+filename is the subject in kebab-case, such as `data-ownership.md`. Only settled
+decisions that future work should reuse belong here; Git retains prior versions.
 
-Create `docs/decisions/` lazily with a `README.md` router when the first contract
+Create `docs/decisions/` lazily with a `README.md` index when the first contract
 is needed.
 
 ## Template
@@ -14,7 +14,7 @@ is needed.
 
 ## Decisions
 
-- {Current human-approved rule.}
+- {Current settled rule.}
 
 ## Boundaries
 
@@ -26,7 +26,7 @@ is needed.
 
 ## Reconsider when
 
-- {An observable condition that should return the choice to a human.}
+- {An observable condition that should reopen the choice.}
 
 ## Still-rejected alternatives
 
@@ -41,7 +41,7 @@ is needed.
 carry real content. Never add empty headings, status fields, supersession chains,
 chronology, or pull-request history.
 
-## Router entry
+## Index entry
 
 Add the subject once to `docs/decisions/README.md`:
 
@@ -49,4 +49,4 @@ Add the subject once to `docs/decisions/README.md`:
 - [data-ownership](data-ownership.md) — Read when changing module ownership or cross-module data access.
 ```
 
-The router says when to read the contract, not what it decides.
+The index says when to read the contract, not what it decides.

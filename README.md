@@ -71,8 +71,8 @@ just in time, and `tdd` provides the implementation loop.
   `shape-idea` without creating a document.
 - **[shape-idea](./skills/shape-idea/SKILL.md)**: Clarify a chosen problem and
   direction through correctable drafts, project evidence, and rendered UI
-  variants. Maintains project terms, records only human-approved durable
-  project decisions, then writes an implementation-ready spec.
+  variants. Maintains project terms, records only settled decisions that future
+  work should reuse, then writes an implementation-ready spec.
 - **[build-prototype](./skills/build-prototype/SKILL.md)**: Build every screen in
   one dummy-data HTML file using the project's design system, or the shell's
   minimal style when none exists. Review the rendered screens and preserve the
@@ -95,15 +95,15 @@ one runs in the background, and one runs when the user asks for an explanation.
   framework or service vendor's official agent context in its recommended form.
   User-invoked for project setup.
 - **[project-knowledge](./skills/project-knowledge/SKILL.md)**: Maintain project
-  terms and human-approved current decision contracts whenever they are taking
-  shape, including while a plan weighs alternatives. Does not run for lookup,
-  routine AI defaults, or execution of settled decisions.
+  terms and settled decisions that future work should reuse whenever they are
+  taking shape, including while a plan weighs alternatives. Does not run for
+  lookup, routine implementation details, or execution of settled decisions.
 - **[explain-visually](./skills/explain-visually/SKILL.md)**: Render explanations
   with the best available tool. Use one sentence instead when one sentence fully
   answers the question.
 - **[compact-decisions](./skills/compact-decisions/SKILL.md)**: Reconcile current
   decision contracts, the glossary, spec folders, and always-loaded instructions
-  after work ships. Compact wording without changing human-approved meaning.
+  after work ships. Compact wording without changing settled meaning.
 
 ## Acknowledgements
 

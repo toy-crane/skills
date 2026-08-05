@@ -4,9 +4,10 @@
 
 - Start from a concrete problem and broad direction, investigate available
   evidence, and present a concrete draft for the user to correct.
-- Treat low-risk, reversible choices made by the AI as assumptions. Only a
-  human-confirmed outcome that meets the durable project-decision gate enters a
-  decision contract; feature-local choices remain in the spec.
+- Treat low-risk, reversible choices made by the AI as assumptions. A choice is
+  settled when the user confirms it or it is made under explicitly delegated
+  authority. Only a settled outcome that meets the reusable project-decision
+  gate enters a decision contract; feature-local choices remain in the spec.
 - Ask one consequential question at a time with a recommended answer and concise
   reason when a branch is expensive to get wrong.
 - Settle experiential questions through two or three rendered variants that
@@ -49,15 +50,15 @@
 ## Why
 
 People correct concrete drafts more reliably than they answer blank questions.
-The authority boundary prevents the same mechanism from silently turning an
-AI default into a durable human decision. Visual reactions expose experiential
+The settlement boundary prevents the same mechanism from silently turning an AI
+default into a reusable project decision. Visual reactions expose experiential
 misalignment that prose cannot settle, while the write boundary prevents a
 shaping session from sliding into implementation.
 
 ## Reconsider when
 
-- A user explicitly delegates a class of durable project decisions rather than
-  only routine implementation details.
+- Explicitly delegated decision classes repeatedly produce project decisions
+  the user later overturns.
 - Forward tests show models consistently surface human-known overturning
   conditions without the instruction.
 - Product-code edits during shaping stop recurring, allowing the explicit write
@@ -67,8 +68,8 @@ shaping session from sliding into implementation.
 
 - Asking the user every small question — it spends attention on reversible
   defaults that a stated assumption can safely expose.
-- Treating silence or lack of correction as durable approval — a well-written
-  draft can hide its wrong part inside mostly correct content.
+- Treating silence or lack of correction as evidence that a choice settled — a
+  well-written draft can hide its wrong part inside mostly correct content.
 - Describing experiential alternatives only in prose — users must imagine the
   very difference the session needs them to judge.
 - Editing product code while shaping — it mixes alignment and implementation
