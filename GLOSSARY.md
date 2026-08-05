@@ -26,10 +26,6 @@ _Avoid_: Mockup, option
 The full-surface build: every screen a feature needs in one self-contained HTML file with shared design tokens, dummy data, and per-screen state toggles, rendered in the project's own design system from the first screen and minimally where there is none. Where a variant settles one question, the prototype surfaces the questions nobody knew to ask; the approved file survives beside the spec as its visual half.
 _Avoid_: Mockup, wireframe, demo
 
-**Structural mirroring**:
-Rendering the interviewer's current understanding of a structure (a flow, its states, concept relationships) back to the user, so agreement is judged by looking instead of re-described in prose.
-_Avoid_: Diagramming
-
 **Spec**:
 The durable handoff document a shape-idea or build-prototype session writes as it ends: confirmed decisions, assumptions, off-limits areas, deferred points, and remaining risks, addressed to a later implementation session. Decisions are the deliverable; visuals are disposable, except an approved prototype, preserved beside the spec as its visual half.
 _Avoid_: Alignment brief, summary
@@ -51,5 +47,5 @@ The router at `docs/decisions/README.md`, one line per durable subject, saying w
 _Avoid_: Standing-position summary, ADR list
 
 **Decision contract**:
-The human-approved current decisions for one durable subject, stored in one mutable `docs/decisions/<subject>.md` file. It carries the rules and minimum reasons needed now, plus boundaries, reconsideration conditions, still-relevant rejected alternatives, and expensive evidence when they matter. Git history carries prior versions.
+The settled current decisions for one durable subject, stored in one mutable `docs/decisions/<subject>.md` file. A decision settles when the user confirms it or it is made under authority the user explicitly delegated for that class of decision. The contract carries the rules and minimum reasons needed now, plus boundaries, reconsideration conditions, still-relevant rejected alternatives, and expensive evidence when they matter. Git history carries prior versions.
 _Avoid_: ADR, decision log, record cluster
