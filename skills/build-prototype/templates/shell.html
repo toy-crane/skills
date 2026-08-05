@@ -6,12 +6,18 @@
 
   Contract (extend freely, never strip):
   - Screens:  <section data-screen="slug" data-title="Label"> inside .sh-stage.
-               The tab bar, arrow keys, and #hash routing build themselves;
+               The screen selector, arrow keys, and #hash routing build themselves;
                in-prototype links may target screens (href="#slug").
-  - States:   a screen with meaningful states declares data-states="a,b,c"
-               (free strings; first one is the default). Elements that belong
-               to one state carry data-when="a" (comma-separated for several).
-               Elements without data-when always show.
+  - States:   "Default" is automatic. A screen declares only representative
+               direct-entry presets as data-states="Empty,Error" using natural,
+               screen-specific names. Reserve them for important multi-step
+               results, forced data or errors, or materially different structure;
+               leave obvious one-click and transient states to real interactions,
+               even when they look substantially different.
+               Elements for one preset carry data-when="Empty" (comma-separated
+               for several); elements without data-when always show. Interaction
+               code calls prototypeShell.setState("Name") when entering and
+               prototypeShell.setState("Default") when leaving a preset.
   - Viewport: "vp (m)" cycles full / 390 / 768. The 390 preset is a
                fixed-height, internally scrolling phone frame. Start a
                mobile-first prototype by adding class="sh-vp-390" to <body>
@@ -62,13 +68,19 @@
     padding: 8px 12px; background: #191a1c; color: #d7d7d7;
     font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
   }
-  .sh-bar b { color: #8a8f98; font-weight: 500 }
+  .sh-bar b, .sh-control-label { color: #8a8f98; font-weight: 500 }
+  .sh-control { display: inline-flex; gap: 5px; align-items: center }
   .sh-bar button {
     border: 1px solid #3a3d42; background: none; color: inherit;
     font: inherit; padding: 2px 9px; border-radius: 99px; cursor: pointer;
   }
+  .sh-bar select {
+    width: 170px; border: 1px solid #3a3d42; background: #232428; color: inherit;
+    font: inherit; padding: 3px 28px 3px 9px; border-radius: 7px; cursor: pointer;
+    color-scheme: dark;
+  }
+  #sh-screen { width: 190px }
   .sh-bar button.on { background: #d7d7d7; color: #191a1c; border-color: #d7d7d7 }
-  #sh-states:not([hidden])::before { content: "state"; color: #8a8f98; margin-right: 4px }
   .sh-spacer { flex: 1 }
   .sh-stage { max-width: 960px; margin: 0 auto; padding: 12px 16px 0 }
   [hidden] { display: none !important }
@@ -93,9 +105,9 @@
 
 <header class="sh-bar">
   <b>proto</b>
-  <nav id="sh-tabs"></nav>
+  <label class="sh-control"><span class="sh-control-label">screen</span><select id="sh-screen"></select></label>
   <span class="sh-spacer"></span>
-  <span id="sh-states" hidden></span>
+  <label class="sh-control"><span class="sh-control-label">state</span><select id="sh-state"></select></label>
   <button id="sh-vp">vp: full (m)</button>
 </header>
 
@@ -110,46 +122,56 @@
 <script>
   const stage = document.querySelector('.sh-stage');
   const screens = [...stage.querySelectorAll('[data-screen]')];
-  const tabs = document.getElementById('sh-tabs');
-  const statebox = document.getElementById('sh-states');
+  const screenSelect = document.getElementById('sh-screen');
+  const stateSelect = document.getElementById('sh-state');
   const vpBtn = document.getElementById('sh-vp');
   let current = null;
+  let currentStates = [];
 
   screens.forEach(s => {
-    const b = document.createElement('button');
-    b.textContent = s.dataset.title || s.dataset.screen;
-    b.dataset.for = s.dataset.screen;
-    b.onclick = () => show(s.dataset.screen);
-    tabs.append(b);
+    const option = document.createElement('option');
+    option.textContent = s.dataset.title || s.dataset.screen;
+    option.value = s.dataset.screen;
+    screenSelect.append(option);
   });
+  screenSelect.onchange = () => show(screenSelect.value);
 
   function show(slug) {
     current = screens.find(s => s.dataset.screen === slug) || screens[0];
     screens.forEach(s => s.hidden = s !== current);
-    [...tabs.children].forEach(b => b.classList.toggle('on', b.dataset.for === current.dataset.screen));
+    screenSelect.value = current.dataset.screen;
     history.replaceState(null, '', '#' + current.dataset.screen);
     buildStates();
   }
 
   function buildStates() {
-    const names = (current.dataset.states || '').split(',').map(x => x.trim()).filter(Boolean);
-    statebox.innerHTML = '';
-    statebox.hidden = !names.length;
-    names.forEach(name => {
-      const b = document.createElement('button');
-      b.textContent = name;
-      b.onclick = () => applyState(name);
-      statebox.append(b);
+    const declared = (current.dataset.states || '').split(',').map(x => x.trim()).filter(Boolean);
+    currentStates = ['Default', ...declared.filter(name => name !== 'Default')];
+    stateSelect.innerHTML = '';
+    currentStates.forEach(name => {
+      const option = document.createElement('option');
+      option.textContent = name;
+      option.value = name;
+      stateSelect.append(option);
     });
-    applyState(names[0] || null);
+    applyState('Default');
   }
 
   function applyState(name) {
+    const active = currentStates.includes(name) ? name : 'Default';
     current.querySelectorAll('[data-when]').forEach(el => {
-      el.hidden = !name || !el.dataset.when.split(',').map(x => x.trim()).includes(name);
+      el.hidden = !el.dataset.when.split(',').map(x => x.trim()).includes(active);
     });
-    [...statebox.children].forEach(b => b.classList.toggle('on', b.textContent === name));
+    stateSelect.value = active;
   }
+  stateSelect.onchange = () => applyState(stateSelect.value);
+
+  window.prototypeShell = {
+    showScreen: show,
+    setState: applyState,
+    getScreen: () => current?.dataset.screen,
+    getState: () => stateSelect.value
+  };
 
   const VPS = ['full', '390', '768'];
   let vp = VPS.find(v => document.body.classList.contains('sh-vp-' + v)) || 'full';

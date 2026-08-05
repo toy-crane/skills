@@ -36,7 +36,20 @@ waiting for approval.
 
 Build one self-contained HTML file containing every screen. Start from
 [templates/shell.html](./templates/shell.html) and keep its header comment,
-screen tabs, per-screen state pills, and viewport cycle.
+screen selector, current-screen state selector, and viewport cycle. Let the
+screen selector show the current screen name and the available screens, without
+an index or total that implies a linear product flow or review progress.
+
+Treat states as representative review presets, not an inventory of every UI
+change. The shell supplies `Default`; name any additional states naturally for
+their screen. Add a state only when it gives direct access to an important
+multi-step result, a forced data or error condition, or a materially different
+screen structure. Even when visually distinct, leave anything reached by one
+obvious interaction—along with menus, filters, expanded details,
+hover, focus, typing, and combinatorial variations—to the interactive prototype.
+When an interaction enters or leaves a declared representative state, keep the
+state selector synchronized in both directions; exercise every entry and reset
+path in the browser before presenting the result.
 
 Copy the project's design tokens verbatim into `:root`, or extract its design
 language when no token file exists. Style every screen through those tokens.

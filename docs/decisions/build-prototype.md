@@ -5,6 +5,15 @@
 - Build every screen of the surface in one self-contained HTML file with shared
   design tokens, realistic dummy data, relevant edge states, and the pinned
   review shell.
+- Keep the review shell to a screen selector, the selected screen's state
+  selector, and the viewport cycle. Show screen names without counts or indexes;
+  screen order is not product progress.
+- Treat states as representative direct-entry presets. Supply `Default`
+  automatically and add only important multi-step results, forced data or error
+  conditions, and materially different screen structures. Keep obvious
+  one-click-entry and transient interaction states in the prototype itself even
+  when they look substantially different. Synchronize the selector both when an
+  interaction enters a declared preset and when it returns to `Default`.
 - Keep the skill independently invokable. Use the current request and
   conversation as its primary context, read project truth directly, and read an
   existing work-unit spec only when the request or a prior handoff identifies
@@ -31,8 +40,9 @@
 
 ## Boundaries
 
-- Keep the shell's screen tabs, state pills, viewport cycle, contract comment,
-  and token funnel.
+- Keep the shell's screen selector, current-screen state selector, viewport
+  cycle, contract comment, and token funnel. State names remain contextual
+  rather than following a fixed global taxonomy.
 - Drive simulated narrow-view styles from the shell's viewport classes rather
   than browser media queries alone.
 - Web, mobile web, and native app mockups in a phone frame are in scope; CLI,
@@ -79,6 +89,12 @@ prototype provide the durable handoff after the visual work settles.
   that skill is unavailable.
 - One file per screen or shared external CSS — the surface stops travelling and
   rendering as a single consistent artifact.
+- Screen tabs and state pills — their width grows with the surface, and listing
+  every reachable UI change obscures the representative states worth reviewing.
+- Screen indexes or totals — they imply a linear flow or review progress even
+  when the product's screens have no meaningful order.
+- A separate coverage inspector or cases taxonomy — it asks the reviewer to
+  learn a meta-model instead of navigating screens and representative states.
 - Project-stack components or a real API — wiring cost and production behavior
   distract from alignment and break self-containment.
 - In-prototype review badges, stamps, and change tracking — they duplicate the
@@ -99,3 +115,11 @@ prototype provide the durable handoff after the visual work settles.
   alongside a CTA treatment, and inferred navigation from an approved static
   artifact. Explicit relationship, controlled-variant, and no-inference guards
   target those observed failures.
+- A live prototype review showed per-screen state pills becoming too numerous
+  to scan. Separate inspector and cases experiments added unfamiliar concepts;
+  screen tabs still failed to scale. A screen selector plus contextual,
+  representative state presets preserved direct access without those costs.
+- Initial selector forward tests still promoted a one-click "all read" result
+  to a preset and updated selectors on entry without resetting them on recovery.
+  Explicit one-click exclusion and bidirectional synchronization target those
+  observed failures.

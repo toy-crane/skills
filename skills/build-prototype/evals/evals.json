@@ -4,12 +4,13 @@
     {
       "id": 1,
       "prompt": "/build-prototype 북마크한 아티클을 모아 매주 다이제스트로 보내주는 웹앱을 만들려고 해. 화면부터 보면서 정하고 싶어.",
-      "expected_output": "The response uses the current request and conversation as sufficient context without requiring or searching for a pre-existing spec. It proposes a screen inventory as a correctable draft, then builds one temporary self-contained HTML file grown from the shell template (screen tabs, state pills where declared, a viewport cycle) with every proposed screen finished the first time it is shown, and walks the user through the surface asking for reactions. It does not create a durable spec folder before approval. This project has no design system, so it builds on the shell's minimal palette and treats that as the finished look. It does not scaffold the production app.",
+      "expected_output": "The response uses the current request and conversation as sufficient context without requiring or searching for a pre-existing spec. It proposes a screen inventory as a correctable draft, then builds one temporary self-contained HTML file grown from the shell template (a screen selector, the selected screen's representative state selector, and a viewport cycle) with every proposed screen finished the first time it is shown, and walks the user through the surface asking for reactions. It does not create a durable spec folder before approval. This project has no design system, so it builds on the shell's minimal palette and treats that as the finished look. It does not scaffold the production app.",
       "files": [],
       "expectations": [
         "It proposes the screen inventory as a draft to correct instead of asking the user to enumerate screens.",
         "It builds one self-contained HTML file holding every proposed screen, not one file per screen.",
-        "The file declares UTF-8 and carries the shell chrome (screen tabs, per-screen state pills, viewport cycle) and shared :root tokens, with no build step, framework, or network dependency.",
+        "The file declares UTF-8 and carries the shell chrome (screen selector, current-screen state selector, viewport cycle) and shared :root tokens, with no build step, framework, or network dependency.",
+        "The screen selector uses screen names without counts or indexes, and the state selector supplies Default plus only representative direct-entry presets rather than every one-click or transient interaction state.",
         "With no design system to copy, it builds on the shell's minimal palette and presents it as the finished look rather than a stage to be replaced later.",
         "Screens carry realistic dummy data and their edge states from the first render, with no lorem ipsum and no staged fidelity.",
         "It treats the current request and conversation as sufficient context and neither requires nor searches for a pre-existing work-unit spec before building.",
@@ -103,6 +104,38 @@
         "It explains that real data and production wiring are not the alignment target.",
         "It offers a cheaper alternative, such as realistic dummy content mirroring the API's shapes.",
         "It stays within the single-file, no-network constraint."
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "/build-prototype 팀이 함께 여행 일정을 만들고 예약 후보를 비교하는 모바일 앱을 화면으로 먼저 정리해줘. 일정 목록, 일정 상세, 장소 검색, 후보 비교, 투표, 초대, 알림, 설정까지 보고 싶어. 대부분의 버튼은 직접 눌러볼 수 있게 해줘.",
+      "expected_output": "The response builds the complete mobile surface in one temporary self-contained HTML file. The pinned shell remains compact even with the larger inventory: one screen selector shows names without an index or total, one state selector shows Default plus only representative presets for the selected screen, and the viewport control remains. Obvious filters, menus, expansion, and other one-click states stay reachable through working interactions instead of becoming state presets; important multi-step results, forced data or errors, and materially different structures may be direct-entry states. When an interaction enters or leaves one of those declared states, the state selector stays synchronized in both directions, including recovery to Default.",
+      "files": [],
+      "expectations": [
+        "All requested screens live in one self-contained HTML file rather than one file per screen.",
+        "The pinned shell uses a single screen selector, a current-screen state selector, and a viewport cycle; it does not render screen tabs, state pills, a separate inspector, or a cases taxonomy.",
+        "The screen selector lists natural screen names without counts or indexes that imply a linear flow or progress.",
+        "Each screen gets Default automatically, while additional state names remain contextual rather than following a fixed global naming schema.",
+        "State presets are limited to important multi-step results, forced data or error conditions, and materially different structures.",
+        "Obvious one-click filters, menus, expanded details, hover, focus, typing, and combinatorial variations remain interactive behavior rather than state presets.",
+        "When working interactions enter or leave a declared representative state, the selector stays synchronized in both directions, including recovery to Default.",
+        "The prototype uses realistic dummy data and no real API, framework, build step, or network dependency."
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "/build-prototype 고객지원팀이 쓰는 모바일 인박스를 구현 전에 검토하고 싶어. 대화 목록, 대화 상세, 통합 검색, 고객 정보, 답변 작성, 큐 현황, 알림, 자동화 규칙, 설정 화면을 한 파일에서 보고 싶고 필터, 전체 읽음, 검색 초기화, 답변 전송, 오류 복구 같은 동작은 직접 눌러볼 수 있게 해줘.",
+      "expected_output": "The response builds the complete mobile support surface in one temporary self-contained HTML file with a screen selector, contextual representative-state selector, and viewport control. It keeps filters, mark-all-read, menus, expanded details, and other obvious one-click results as direct interactions rather than state presets. Forced empty or error conditions and important multi-step results may be presets. Every interaction that enters a declared preset updates the state selector, and every clear, retry, recovery, or reset path returns it to Default.",
+      "files": [],
+      "expectations": [
+        "All requested screens live in one self-contained HTML file with realistic dummy content and no external runtime dependencies.",
+        "The shell contains one screen selector with natural names and no counts or indexes, one contextual state selector, and the viewport cycle.",
+        "Default is automatic and any additional state names are contextual to their selected screen.",
+        "Filters, mark-all-read, menus, expanded details, and other obvious one-click results remain working interactions and are not duplicated as state presets.",
+        "Only important multi-step results, forced data or error conditions, and materially different structures that are not trivial to reach become state presets.",
+        "Each interaction that enters a declared preset synchronizes the state selector.",
+        "Each clear, retry, recovery, or reset path leaves the preset and synchronizes the selector back to Default.",
+        "The prototype is browser-verified rather than accepted from source inspection alone."
       ]
     }
   ]
