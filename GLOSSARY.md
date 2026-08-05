@@ -43,7 +43,7 @@ A point where the user does not understand the system: a level, a mechanism, why
 _Avoid_: Confusion, knowledge gap
 
 **Task**:
-A session-sized cut of work that exceeds one sitting: a complete, independently verifiable path through every layer it touches, sized for one fresh session to implement and one review to read, declaring which tasks block it. Tasks whose blockers are all done form the frontier a next session may pick up. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
+A delivery-sized unit cut from a spec: a complete, independently deliverable and verifiable path through every layer it touches, separated only when it can be implemented and reviewed on its own. Work that becomes meaningful only when completed together remains one task. Tasks whose genuine blockers are all done form the frontier a fresh implementation session may pick up. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
 _Avoid_: Ticket, slice, subtask, to-do
 
 **Decision index**:

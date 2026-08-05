@@ -49,7 +49,7 @@ flowchart LR
     SI --> BP["build-prototype<br/>(judge it by using it)"]
     SI --> SPEC[/spec.md/]
     BP --> SPEC
-    SPEC --> ST["split-into-tasks<br/>(exceeds one session)"]
+    SPEC --> ST["split-into-tasks<br/>(multiple deliverables)"]
     SPEC --> TDD[tdd]
     ST --> TDD
 ```
@@ -63,9 +63,9 @@ The discovery handoff remains in the conversation rather than a separate file.
 `docs/specs/<slug>/spec.md`. `build-prototype` can start from the current
 conversation alone; when a whole interface is approved, it creates or updates
 the spec and preserves `prototype.html` beside it. Use `split-into-tasks` only
-when the work exceeds one session; otherwise implement directly from the spec.
-Implementation planning is just in time, and `tdd` provides the implementation
-loop.
+when the spec contains outcomes that should be implemented and reviewed
+separately; otherwise implement directly from the spec. Implementation planning
+is just in time, and `tdd` provides the implementation loop.
 
 - **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Find
   side-project directions from agreed personal traces and relevant current
@@ -80,8 +80,8 @@ loop.
   minimal style when none exists. Review the rendered screens and preserve the
   approved prototype beside the spec.
 - **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split an existing
-  spec into approved, session-sized vertical tasks with explicit blockers and
-  acceptance criteria. Run each task in a fresh session.
+  spec into the fewest approved, independently deliverable vertical tasks with
+  explicit blockers and acceptance criteria. Run each task in a fresh session.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[tdd](./skills/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
