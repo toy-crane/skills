@@ -9,8 +9,9 @@
   defers material decisions, and writes the implementation-ready spec.
 - Implementation planning is just-in-time against current code. There is no
   separate plan-writing skill or durable `plan.md` lifecycle.
-- Work that exceeds one implementation and review session is split by
-  `split-into-tasks` into session-sized vertical slices with explicit blockers.
+- A spec with multiple outcomes that should be implemented and reviewed
+  separately is split by `split-into-tasks` into the fewest independently
+  deliverable vertical tasks with explicit blockers.
 - When shaping settles on a framework or hosted service, install the vendor's
   official agent context in its recommended form. `add-stack-context` provides
   the same capability on demand during project setup.
@@ -22,8 +23,12 @@
 
 - Discovery reads personal traces only with the user's agreement and normally
   hands off through conversation rather than a new artifact.
-- Tasks are vertical, independently verifiable, and coarse enough for one fresh
-  session. A task is not a fine-grained to-do list.
+- Tasks are vertical, independently deliverable and verifiable, and separated
+  only at outcomes that can be implemented and reviewed on their own. Work that
+  becomes meaningful only when completed together remains one task. A task is
+  not a fine-grained to-do list.
+- `split-into-tasks` ends when the approved task handoff is current. Subsequent
+  execution consumes that handoff through the repository's normal workflow.
 - Work-unit product constraints belong in `spec.md`; constraints that expire
   with one task belong in that task file. A settled constraint that later work
   should reuse belongs in a decision contract when it passes the project
@@ -35,15 +40,15 @@
 
 Discovery and shaping move in opposite directions: discovery broadens from
 evidence, while shaping converges on a chosen direction. Plans derived at
-execution time age better than stored implementation predictions. When work is
-too large, the limiting resource is human review bandwidth, so the durable unit
-is a reviewable session-sized task rather than a detailed plan.
+execution time age better than stored implementation predictions. Session
+duration is not a stable task boundary, so the durable unit is an independently
+deliverable outcome rather than a predicted amount of implementation work.
 
 ## Reconsider when
 
-- Multiple implementation sessions following one spec repeatedly diverge on an
-  approach that the current code cannot settle.
-- Real task runs show that session-sized vertical slices still rot before they
+- Delivery-sized tasks routinely prove too broad for one fresh implementation
+  session or one coherent review.
+- Real task runs show that delivery-sized vertical slices still rot before they
   are executed.
 - External-dependency workaround failures are repeatedly observed outside
   shape-idea, justifying another standalone carrier for the check-first rule.
@@ -57,6 +62,9 @@ is a reviewable session-sized task rather than a detailed plan.
 - Durable `plan.md` and a plan-writing skill — implementation predictions age,
   while decision-level corrections already have homes in specs, tasks, project
   decisions, or repository instructions.
+- Session duration as the task boundary — agent sessions can sustain long-running
+  work, and sizing against a predicted session fragments one coherent outcome
+  into incomplete review points.
 - Fine-grained tickets or horizontal layer tasks — they become stale and produce
   changes too broad to verify end to end.
 - Depending on agents to discover vendor context on their own — official
