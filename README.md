@@ -105,10 +105,9 @@ explanation.
 - **[explain-visually](./skills/explain-visually/SKILL.md)**: Render explanations
   with the best available tool. Use one sentence instead when one sentence fully
   answers the question.
-- **[compact-decisions](./skills/compact-decisions/SKILL.md)**: Reconcile current
-  decision contracts, the glossary, spec folders, and always-loaded instructions
-  periodically after shipped work accumulates. Compact their representation
-  without changing settled meaning.
+- **[compact-decisions](./skills/compact-decisions/SKILL.md)**: Periodically clean
+  up decision files, the glossary, shipped specs, and agent instructions after
+  work accumulates. Shorten the documents without changing confirmed decisions.
 
 ## Acknowledgements
 
