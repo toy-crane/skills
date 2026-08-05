@@ -60,10 +60,12 @@ Start with `shape-idea` when the problem and a broad direction are already known
 The discovery handoff remains in the conversation rather than a separate file.
 
 `shape-idea` records implementation-ready decisions in
-`docs/specs/<slug>/spec.md`. `build-prototype` adds `prototype.html` when a whole
-interface needs review. Use `split-into-tasks` only when the work exceeds one
-session; otherwise implement directly from the spec. Implementation planning is
-just in time, and `tdd` provides the implementation loop.
+`docs/specs/<slug>/spec.md`. `build-prototype` can start from the current
+conversation alone; when a whole interface is approved, it creates or updates
+the spec and preserves `prototype.html` beside it. Use `split-into-tasks` only
+when the work exceeds one session; otherwise implement directly from the spec.
+Implementation planning is just in time, and `tdd` provides the implementation
+loop.
 
 - **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Find
   side-project directions from agreed personal traces and relevant current

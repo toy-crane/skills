@@ -5,6 +5,10 @@
 - Build every screen of the surface in one self-contained HTML file with shared
   design tokens, realistic dummy data, relevant edge states, and the pinned
   review shell.
+- Keep the skill independently invokable. Use the current request and
+  conversation as its primary context, read project truth directly, and read an
+  existing work-unit spec only when the request or a prior handoff identifies
+  one. Do not require or search for a spec before building.
 - Inspect the existing product first and render in its design system from the
   first screen. Copy its tokens and component names; when no system exists, use
   the shell's minimal palette as the finished style.
@@ -13,8 +17,10 @@
   that detail and fold the user's choice back into the single prototype.
 - Keep real APIs, production routing, latency, frameworks, and network
   dependencies out of the prototype.
-- Preserve the approved file as `docs/specs/<slug>/prototype.html`, linked from
-  the spec. It is a visual reference, never production code.
+- At approval, reuse an identified work-unit folder or derive a kebab-case slug
+  from the product or feature name. Preserve the approved file as
+  `docs/specs/<slug>/prototype.html`, linked from the spec. It is a visual
+  reference, never production code.
 - Record surface decisions in the work-unit spec. Update a project decision
   contract only when the user confirmed a choice that future work should reuse,
   whose rationale prevents reasonable re-litigation, and that came from a real
@@ -26,7 +32,12 @@
   and token funnel.
 - Web, mobile web, and native app mockups in a phone frame are in scope; CLI,
   terminal, and voice interfaces are not.
+- Keep the working prototype temporary while review remains open. Do not create
+  or populate the durable work-unit folder until every screen is approved or
+  explicitly deferred.
 - Intermediate variants are disposable once the user selects a direction.
+- `shape-idea` may invoke this skill, but this skill does not require
+  `shape-idea`, `project-knowledge`, or a pre-existing spec to run to completion.
 
 ## Why
 
@@ -34,7 +45,9 @@ A full surface exposes missing screens and cross-screen inconsistencies that no
 one knew to mention in prose. One portable file keeps the review cheap and the
 shared token funnel makes consistency structural. Using the project's style
 from the first render answers whether the new surface belongs in the existing
-product, which a generic wireframe cannot.
+product, which a generic wireframe cannot. Conversation-first input lets direct
+requests and `shape-idea` handoffs use the same workflow; the approved spec and
+prototype provide the durable handoff after the visual work settles.
 
 ## Reconsider when
 
@@ -44,6 +57,8 @@ product, which a generic wireframe cannot.
 - A closed rendering surface can no longer run the self-contained shell.
 - Real production wiring becomes necessary to settle an interaction that dummy
   state cannot represent.
+- Individually installed skills gain a reliable dependency mechanism that can
+  share project-knowledge rules without making this skill unavailable alone.
 
 ## Still-rejected alternatives
 
@@ -51,6 +66,12 @@ product, which a generic wireframe cannot.
   belongs in the existing product.
 - A mandatory approval stop on the prose screen inventory — it gates a visual
   alignment tool on the medium it exists to escape.
+- Requiring a pre-existing spec or a `shape-idea` session — direct prototype
+  requests and in-progress shaping may have complete conversational context
+  before any spec exists.
+- Delegating core context and preservation behavior to `project-knowledge` — it
+  shortens this file but breaks standalone installs and direct invocation when
+  that skill is unavailable.
 - One file per screen or shared external CSS — the surface stops travelling and
   rendering as a single consistent artifact.
 - Project-stack components or a real API — wiring cost and production behavior
@@ -64,3 +85,7 @@ product, which a generic wireframe cannot.
   hierarchy feel correct. If that failure appears in implementation reviews,
   restore a targeted guard instead of recreating the old two-pass workflow by
   default.
+- A standalone forward test correctly started without a pre-existing spec but
+  immediately wrote its unapproved prototype and spec under `docs/specs/`.
+  Keeping the review file temporary prevents an open visual proposal from
+  becoming a durable work-unit artifact.

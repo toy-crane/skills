@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "/build-prototype 북마크한 아티클을 모아 매주 다이제스트로 보내주는 웹앱을 만들려고 해. 화면부터 보면서 정하고 싶어.",
-      "expected_output": "The response proposes a screen inventory as a correctable draft, then builds one self-contained HTML file grown from the shell template (screen tabs, state pills where declared, a viewport cycle) with every proposed screen finished the first time it is shown, and walks the user through the surface asking for reactions. This project has no design system, so it builds on the shell's minimal palette and treats that as the finished look. It does not scaffold the production app.",
+      "expected_output": "The response uses the current request and conversation as sufficient context without requiring or searching for a pre-existing spec. It proposes a screen inventory as a correctable draft, then builds one temporary self-contained HTML file grown from the shell template (screen tabs, state pills where declared, a viewport cycle) with every proposed screen finished the first time it is shown, and walks the user through the surface asking for reactions. It does not create a durable spec folder before approval. This project has no design system, so it builds on the shell's minimal palette and treats that as the finished look. It does not scaffold the production app.",
       "files": [],
       "expectations": [
         "It proposes the screen inventory as a draft to correct instead of asking the user to enumerate screens.",
@@ -12,6 +12,8 @@
         "The file carries the shell chrome (screen tabs, per-screen state pills, viewport cycle) and shared :root tokens, with no build step, framework, or network dependency.",
         "With no design system to copy, it builds on the shell's minimal palette and presents it as the finished look rather than a stage to be replaced later.",
         "Screens carry realistic dummy data and their edge states from the first render, with no lorem ipsum and no staged fidelity.",
+        "It treats the current request and conversation as sufficient context and neither requires nor searches for a pre-existing work-unit spec before building.",
+        "It keeps the working prototype temporary and does not create or populate docs/specs before every screen is approved or explicitly deferred.",
         "It walks the user through the whole surface and requests reactions rather than approval of a plan.",
         "It does not write project-stack or production code."
       ]
@@ -55,10 +57,11 @@
     {
       "id": 5,
       "prompt": "/build-prototype 모든 화면 승인이야. 원본 아티클 보관 기능은 이번에는 보류하기로 했고. 마무리해줘.",
-      "expected_output": "The response closes the session: it records the settled decisions in docs/specs/<slug>/spec.md (created in the spec folder shape when missing), saves the approved surface as docs/specs/<slug>/prototype.html linked from the spec, records the archive feature as explicitly deferred, and presents spec plus prototype as the handoff.",
+      "expected_output": "The response closes the session: it reuses a work-unit folder identified by the request or prior handoff, or otherwise derives a kebab-case slug from the product or feature name. It records the settled decisions in docs/specs/<slug>/spec.md (created in the spec folder shape when missing), saves the approved surface as docs/specs/<slug>/prototype.html linked from the spec, records the archive feature as explicitly deferred, and presents spec plus prototype as the handoff.",
       "files": [],
       "expectations": [
         "It records the settled decisions in docs/specs/<slug>/spec.md, creating it in the spec folder shape when missing.",
+        "It reuses an identified work-unit folder or derives the slug at close instead of requiring one before prototyping.",
         "It saves the approved surface as docs/specs/<slug>/prototype.html and links it from the spec.",
         "The deferred archive feature is recorded explicitly rather than silently dropped.",
         "It hands off the spec and prototype together and does not treat the prototype as production code."
