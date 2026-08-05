@@ -90,12 +90,14 @@ is just in time, and `tdd` provides the implementation loop.
 
 ## Outside the pipeline
 
-Four additional skills run independently of the pipeline. Two are user-invoked,
-one runs in the background, and one runs when the user asks for an explanation.
+Four additional skills run independently of the pipeline. One is user-invoked,
+two run when their conditions arise, and one runs when the user asks for an
+explanation.
 
-- **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Install each
-  framework or service vendor's official agent context in its recommended form.
-  User-invoked for project setup.
+- **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Audit the
+  technologies that define a project's stack and install each vendor's official
+  agent context in its recommended form. Runs during agent setup, after stack
+  changes, or on entering an unaudited project.
 - **[project-knowledge](./skills/project-knowledge/SKILL.md)**: Maintain project
   terms and settled decisions that future work should reuse whenever they are
   taking shape, including while a plan weighs alternatives. Does not run for

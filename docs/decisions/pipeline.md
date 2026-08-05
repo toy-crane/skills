@@ -13,8 +13,10 @@
   separately is split by `split-into-tasks` into the fewest independently
   deliverable vertical tasks with explicit blockers.
 - When shaping settles on a framework or hosted service, install the vendor's
-  official agent context in its recommended form. `add-stack-context` provides
-  the same capability on demand during project setup.
+  official agent context in its recommended form. `add-stack-context` is
+  model-invoked to audit and install the same context during agent setup, after
+  stack changes, and on entering an existing project whose vendor context has
+  not been checked.
 - Before building a workaround for an external dependency, shape-idea checks
   official documentation, issue trackers, and release notes. If no answer
   applies, the spec records what was checked and why it fell short.

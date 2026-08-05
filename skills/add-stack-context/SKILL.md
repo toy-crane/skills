@@ -1,22 +1,42 @@
 ---
 name: add-stack-context
-description: Install the official agent context published for a project's frameworks and hosted services, using each vendor's recommended form. Use when initializing a project or adding agent workflows to an existing project.
-disable-model-invocation: true
+description: Audit and install official agent context for the technologies that define a project's stack. Use when setting up a project for agent work, after selecting or adding a framework, library, developer tool, or hosted service, or when entering an existing project whose official agent context has not been audited.
 ---
 
 # Add Stack Context
 
-Identify the stack from manifests, lockfiles, and config files. On a fresh
-project with nothing declared yet, ask the user for the intended stack.
+## Inventory the stack
 
-For each part of the stack, check current vendor documentation for official
-agent context and install what is missing in the form the vendor recommends.
-Accept only sources from the vendor's own organization or documentation; when
-nothing official exists, report that instead of substituting a community skill.
-Review what an install adds before accepting it. Preserve existing context and
-vendor-managed marker blocks, and do not modify files beyond what the vendor's
-installer creates.
+Build a checklist of the direct technologies that shape how the project is
+built or operated from manifests and configuration files. Include frameworks,
+libraries, developer tools, and hosted services; exclude transitive
+dependencies. Use lockfiles to confirm installed versions, not to expand the
+checklist. If the project does not declare a stack yet, ask the user what they
+intend to use.
 
-Stop when every part of the stack has official context installed, already has
-it, or is reported as having no official channel. Summarize what was installed
-and how it updates, what was already present, and what has no official channel.
+## Resolve each technology
+
+For every checklist item, search the vendor's current documentation and
+official organization for official agent context. Match the installed version
+when the vendor provides version-specific context.
+
+Inspect the documented installation method and expected changes, then install
+missing context in the form the vendor recommends. Accept only sources
+controlled by the vendor. When none exists, record the gap instead of
+substituting community-made context.
+
+Preserve user-authored context. Treat vendor-managed blocks as vendor-owned:
+update them only through the official method. Make only the changes required by
+that method.
+
+## Account for every technology
+
+Finish only when every checklist item has one of four outcomes:
+
+- installed;
+- already present;
+- unavailable from an official source; or
+- blocked, with the reason stated.
+
+Summarize the outcome and official sources checked for every item. For installed
+context, include the changes made and the vendor's documented update path.
