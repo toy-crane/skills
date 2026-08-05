@@ -49,7 +49,7 @@
       "files": [],
       "expectations": [
         "It renders two or three variants differing only on the contested treatment.",
-        "Confirmed screens and elements stay fixed across the variants.",
+        "Confirmed screens, content, data, surrounding layout, and behavior stay fixed across the variants.",
         "It requests the user's reaction as the answer instead of arguing the choice in prose.",
         "It folds the chosen variant back into the single prototype file."
       ]
@@ -64,6 +64,7 @@
         "It reuses an identified work-unit folder or derives the slug at close instead of requiring one before prototyping.",
         "It saves the approved surface as docs/specs/<slug>/prototype.html and links it from the spec.",
         "The deferred archive feature is recorded explicitly rather than silently dropped.",
+        "The spec records only confirmed or visibly approved behavior and does not infer navigation or screen order from the prototype's source order.",
         "It hands off the spec and prototype together and does not treat the prototype as production code."
       ]
     },
@@ -86,6 +87,8 @@
       "expectations": [
         "It copies the project's design tokens verbatim into the prototype rather than approximating the look.",
         "Screen elements are named after the design system's own component names so implementation maps one to one.",
+        "Existing overlays, drawers, and modals keep their relationship to the source screen instead of becoming separate routes.",
+        "Responsive prototype styles follow the shell's simulated viewport classes rather than relying on browser media queries alone.",
         "The new screens read as the existing product rather than a generic style.",
         "It proposes the screen set as a correctable draft."
       ]

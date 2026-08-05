@@ -12,6 +12,9 @@
 - Inspect the existing product first and render in its design system from the
   first screen. Copy its tokens and component names; when no system exists, use
   the shell's minimal palette as the finished style.
+- Treat confirmed component relationships as fixed constraints. An overlay,
+  drawer, or modal remains attached to its source screen unless the user is
+  explicitly reconsidering that relationship.
 - Propose the screen inventory as a correctable draft and begin building without
   an approval gate. For a contested detail, render variants that change only
   that detail and fold the user's choice back into the single prototype.
@@ -30,6 +33,8 @@
 
 - Keep the shell's screen tabs, state pills, viewport cycle, contract comment,
   and token funnel.
+- Drive simulated narrow-view styles from the shell's viewport classes rather
+  than browser media queries alone.
 - Web, mobile web, and native app mockups in a phone frame are in scope; CLI,
   terminal, and voice interfaces are not.
 - Keep the working prototype temporary while review remains open. Do not create
@@ -89,3 +94,8 @@ prototype provide the durable handoff after the visual work settles.
   immediately wrote its unapproved prototype and spec under `docs/specs/`.
   Keeping the review file temporary prevents an open visual proposal from
   becoming a durable work-unit artifact.
+- In the first structure A/B, the reorganized skill improved greenfield
+  consistency but turned a confirmed `DetailDrawer` into a route, changed copy
+  alongside a CTA treatment, and inferred navigation from an approved static
+  artifact. Explicit relationship, controlled-variant, and no-inference guards
+  target those observed failures.
