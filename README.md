@@ -107,7 +107,8 @@ explanation.
   answers the question.
 - **[compact-decisions](./skills/compact-decisions/SKILL.md)**: Reconcile current
   decision contracts, the glossary, spec folders, and always-loaded instructions
-  after work ships. Compact wording without changing settled meaning.
+  periodically after shipped work accumulates. Compact their representation
+  without changing settled meaning.
 
 ## Acknowledgements
 

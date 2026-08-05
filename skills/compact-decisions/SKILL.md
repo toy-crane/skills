@@ -1,81 +1,99 @@
 ---
 name: compact-decisions
-description: Reconcile a project's current decision contracts, glossary, spec folders, and always-loaded instructions with shipped work. Use after several units have shipped, when subjects overlap, the decision index has drifted, or active project memory has grown noisy. Do not use while decisions are still being made.
+description: Periodically reconcile a project's current decision contracts, glossary, spec folders, and always-loaded instructions after shipped work has accumulated. Use when subjects overlap, shipped specs remain, the decision index has drifted, or active project knowledge contains duplicated or stale context. Do not use to make or infer unsettled decisions.
 ---
 
 # Compact Decisions
 
-Run this pass after work ships. Compact the representation of settled decisions,
-never their intent or meaning.
+Run this pass after shipped work has accumulated. Compact only the
+representation of settled decisions, never their intent or meaning.
 
-## Document promises
+## Respect document roles
 
-- `GLOSSARY.md` is current terms only and may be rewritten.
-- `docs/decisions/` is current, settled decisions that future work should reuse:
-  one mutable contract per subject, with Git as the only history.
-- `docs/specs/<slug>/` belongs to one work unit. Preserve any settled decision
-  that future work should reuse, then delete the folder after the work
-  ships.
-- `CLAUDE.md` or `AGENTS.md` carries repository mechanics and the route to
-  decisions, not a cache of their content.
+- Define only current terminology in `GLOSSARY.md`; rewrite it as the project's
+  language changes.
+- Store current, settled decisions for future reuse in `docs/decisions/`. Keep
+  one mutable contract per subject and use Git as the only history.
+- Treat `docs/specs/<slug>/` as the temporary document set for one work unit,
+  not permanent project knowledge.
+- Keep repository-wide working instructions in `CLAUDE.md` and `AGENTS.md`,
+  when present. Direct agents to `docs/decisions/README.md` for project
+  decisions instead of repeating or summarizing those decisions in either file.
 
-Work on the documents that exist and report those that are absent.
+Apply these rules only to document systems relevant to the repository. Missing
+optional documents require no action. Create, rename, or rebuild decision
+contracts and their index when needed to preserve or consolidate settled
+decisions.
 
-A choice is settled when the user confirmed it or it was made under authority
-the user explicitly delegated for that class of decision. Implementation or lack
-of objection alone is insufficient.
+When promoting a choice into a decision contract or resolving conflicting
+claims, treat it as settled only if the user confirmed it or it was made under
+explicitly delegated authority for that kind of decision. Do not infer
+settlement from implementation or lack of objection alone.
 
 ## Compact current contracts
 
-Read the decision index and relevant subject files, then compare them with
-shipped code and remaining specs. Remove chronology, pull-request history,
-obsolete implementation detail, repetition, and alternatives that cannot
-reasonably recur.
+Inventory the decision index and subject files. Use the index, when present, to
+identify the contracts relevant to the cleanup, then compare them with shipped
+code and remaining specs. Use code to detect stale descriptions and
+implementation details, not to infer decision intent. Remove chronology,
+pull-request history, obsolete implementation details, repetition, and
+alternatives whose mechanisms cannot reasonably recur.
 
-Normalize every touched contract to this shape: a subject title, required
-`Decisions` and `Why` sections, then `Boundaries`, `Reconsider when`,
+Normalize each contract you create or modify to this shape: a subject title;
+required `Decisions` and `Why` sections; then `Boundaries`, `Reconsider when`,
 `Still-rejected alternatives`, and `Evidence worth preserving` only when they
-carry real content. Remove status fields, supersession chains, dates, and event
-metadata. Do not add empty headings.
+contain useful content. Remove status fields, supersession chains, and event
+metadata such as adoption or update dates. Preserve dates that constrain a
+current decision or its reconsideration. Do not add empty headings.
 
-Preserve:
+Keep in the current contract:
 
 - every current rule and boundary;
-- the minimum reason needed to apply it;
+- the minimum rationale needed to apply it without reopening the same settled
+  debate;
 - conditions that should reopen the choice;
-- rejected alternatives whose mechanism could otherwise be retried;
-- measurements or experiments expensive to reproduce.
+- rejected alternatives whose mechanisms a future agent might otherwise retry;
+- measurements or experiment results that would be costly to reproduce.
 
-When multiple files cover one subject and the settled position is
-unambiguous, merge them into the best subject name, update links, and delete the
-others. If choosing what stands would require interpreting recency, code,
-silence, or conflicting claims, leave the meaning unchanged and report what
-needs explicit clarification.
+When multiple files cover one subject and the settled position is unambiguous,
+consolidate them into one contract under the clearest stable subject name,
+update every inbound link, then delete the redundant files. If consolidation
+would require choosing among claims based on recency, implementation, silence,
+or unresolved conflict, do not merge or delete the conflicting files. Report
+the exact clarification required from the user.
 
-Use this deletion test: if removing a statement would make a capable future AI
-reasonably repeat the same proposal, investigation, experiment, or failed
-mechanism under the same conditions, keep a terse version in the current
-contract.
+Before deleting a statement, ask whether a capable future agent working under
+the same conditions could reasonably repeat the same proposal, investigation,
+experiment, or failed mechanism without it. If so, keep in the current contract
+the shortest version that prevents the repetition.
 
 ## Keep the index and lifecycles true
 
-Keep one `docs/decisions/README.md` entry per subject, formatted as
-`- [subject](subject.md) — Read when ...`. Every subject file appears exactly
-once and every entry resolves. The index does not summarize decisions.
+Maintain exactly one `docs/decisions/README.md` entry for every subject
+contract, formatted as `- [subject](subject.md) — Read when ...`. Every subject
+file must appear once and every link must resolve. Use `Read when ...` only to
+describe when to load the contract; do not summarize its decisions.
 
-Remove decision content duplicated into always-loaded instructions. Keep those
-files below 120 lines and the index below 40 subject entries; report when a cap
-cannot be met without removing necessary operational guidance.
+Remove decision content duplicated in `CLAUDE.md` or `AGENTS.md`, leaving
+unrelated repository instructions unchanged. If the always-loaded instructions
+or decision index have grown too large for reliable routing, report the source
+of that growth. Do not remove necessary guidance or merge unrelated subjects
+solely to meet a size target.
 
-Delete shipped spec folders only after preserving decisions that will constrain
-later work. Leave unshipped work in place and reconcile its links and language
-with the current contracts.
+For each clearly shipped spec folder, first incorporate any settled decision
+that will constrain later work into the relevant current contract, then delete
+the folder. Leave unshipped or ambiguously shipped folders in place. Update
+their links and terminology to match current contracts without changing
+unsettled choices.
 
 ## Done when
 
-Finish when each subject has one current contract, indexing is one-to-one, no
-shipped spec remains, the glossary contains current terms only, always-loaded
-instructions carry no decision cache, and unresolved semantic conflicts are
-reported rather than hidden. Every touched contract has the current required
-sections and no event-record metadata. Report what changed, what stayed and why,
-and what requires explicit clarification.
+Finish when every safely resolvable subject has one current contract and one
+matching index entry. Report every unresolved semantic conflict, ambiguous ship
+status, or other blocker with the exact clarification required. Leave no clearly
+shipped spec unless its safe deletion is blocked by one of those reported
+issues. When present, the glossary contains only current terminology and
+always-loaded instructions contain no duplicated decision content. Every
+contract created or modified in this pass has the required sections and no
+event-record metadata. Report changes, deletions, intentional non-changes, and
+blockers.
