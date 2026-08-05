@@ -22,6 +22,7 @@
       "expectations": [
         "It does not choose S3 or Supabase Storage.",
         "It does not treat accepted labels or code prevalence alone as proof of intent.",
+        "It does not propose changing either implementation during this document-compaction pass.",
         "It reports exactly what must be clarified before consolidation."
       ]
     },
