@@ -15,13 +15,13 @@
     {
       "id": 2,
       "prompt": "/split-into-tasks docs/specs/todo/spec.md에는 기존 웹앱에 기본 Todo List를 추가하는 작업이 확정돼 있어. 사용자는 할 일을 추가, 완료, 수정, 삭제할 수 있고 새로고침 후에도 목록이 유지되며 상태 필터를 사용할 수 있어야 해. 현재 코드와 승인된 spec을 확인해서 task로 나눠줘.",
-      "expected_output": "After inspecting the named spec and current code, the response recognizes one coherent Todo-management deliverable, creates no task files, and recommends implementing directly from the spec.",
+      "expected_output": "After inspecting the named spec and current code, the response recognizes one coherent Todo-management deliverable, creates no task files, and keeps the spec itself as the sole handoff.",
       "files": [],
       "expectations": [
         "It does not split create, complete, edit, delete, persistence, and filtering into separate tasks merely because they are separate implementation steps.",
         "It treats the complete Todo workflow as one coherent deliverable.",
         "It creates no docs/specs/todo/tasks files.",
-        "It recommends direct implementation from the existing spec."
+        "It identifies the existing spec as the sole handoff."
       ]
     },
     {
@@ -51,7 +51,7 @@
     {
       "id": 5,
       "prompt": "/split-into-tasks 방금 제안한 세 task와 blocker를 승인해. task 파일을 작성해줘.",
-      "expected_output": "The response writes one task file per approved deliverable in dependency order. Each file carries the execution contract, complete behavior, blocker reasons, status, outcome-level acceptance checkboxes, and task-specific constraints without implementation to-do lists or copied prototype code.",
+      "expected_output": "The response writes one task file per approved deliverable in dependency order. Each file carries complete behavior, blocker reasons, status, outcome-level acceptance checkboxes, and task-specific constraints. It ends after publishing the approved task definitions without adding a generic execution contract or beginning implementation.",
       "files": [],
       "expectations": [
         "It writes only the approved tasks and preserves their approved boundaries.",
@@ -59,12 +59,14 @@
         "Each blocker includes the reason it gates completion.",
         "Acceptance criteria verify observable completed behavior instead of naming files, classes, hooks, or implementation steps.",
         "It references an approved prototype when relevant rather than copying its implementation.",
-        "It numbers blockers before dependents."
+        "It numbers blockers before dependents.",
+        "It does not add a generic implementation-session contract or implementation procedure to task files.",
+        "It ends after publishing the approved task files."
       ]
     },
     {
       "id": 6,
-      "prompt": "/split-into-tasks Task 01은 완료됐고 Task 02와 03은 아직 시작하지 않았어. 구현에서 새로 확인한 내용에 따라 02와 03을 하나의 전달 결과로 합치는 분리안을 방금 승인했어. task 파일을 갱신해줘.",
+      "prompt": "/split-into-tasks Task 01은 완료됐고 Task 02와 03은 아직 시작하지 않았어. 새로 확인한 내용에 따라 02와 03을 하나의 전달 결과로 합치는 분리안을 방금 승인했어. task 파일을 갱신해줘.",
       "expected_output": "The response preserves the completed Task 01 file and replaces the superseded unfinished Task 02 and 03 files with the approved merged task. It leaves no obsolete pending task files active.",
       "files": [],
       "expectations": [

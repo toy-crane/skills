@@ -1,6 +1,6 @@
 ---
 name: split-into-tasks
-description: Split an existing implementation-ready spec into the fewest independently deliverable, end-to-end task files with explicit blockers. Use when the spec contains multiple outcomes that benefit from separate implementation, review, or dependency tracking. A single coherent outcome uses the spec itself as the implementation handoff.
+description: Split an existing implementation-ready spec into the fewest independently deliverable, end-to-end task files with explicit blockers. Use when the spec contains multiple outcomes that benefit from separate delivery, review, or dependency tracking. A single coherent outcome keeps the spec itself as the sole handoff.
 ---
 
 # Split Into Tasks
@@ -14,11 +14,12 @@ such spec exists, ask the user to establish one before continuing.
 Ground task boundaries in `spec.md`, `GLOSSARY.md`, any approved
 `prototype.html`, relevant decision contracts found through
 `docs/decisions/README.md`, and the current code. Treat behavior introduced by
-the spec but absent from the code as expected implementation work. Reserve
-conflicts for sources that disagree about an existing decision.
+the spec but absent from the code as the expected gap between current and target
+behavior. Reserve conflicts for sources that disagree about an existing
+decision.
 
-When the spec describes one coherent deliverable, use the spec itself as the
-implementation handoff and recommend direct implementation.
+When the spec describes one coherent deliverable, keep the spec itself as the
+sole handoff.
 
 ## Choose task boundaries
 
@@ -58,27 +59,15 @@ Each task file contains:
 - blocking tasks and why each one gates completion
 - status
 - outcome-level acceptance-criteria checkboxes for observable completed behavior
-- constraints specific to that task, such as concurrent work in the same module
-  or an interface that must remain unchanged until another task lands
+- constraints specific to that task's delivery or coordination
 
 Record constraints shared by multiple tasks in `spec.md` and constraints that
-apply to one task in that task file. Describe observable behavior and stable
-module boundaries at a level that remains valid as implementation evolves. Use
-an approved prototype as the authority for the intended experience. Ground
-implementation choices in the current code at execution time.
+apply to one task in that task file. Describe observable behavior and settled
+boundaries at a level that remains valid as the code evolves. Use an approved
+prototype as the authority for the intended experience.
 
-Open every task file with this contract:
+## Revisit a breakdown
 
-> Follow current code for implementation details and `spec.md` for intended
-> behavior. If implementation reveals that a spec decision must change, surface
-> the divergence, clarify the intended behavior, and update `spec.md` before
-> proceeding.
-
-## Run and revise
-
-Start each implementation session from one frontier task. Let its independently
-deliverable outcome define the task boundary while implementation effort varies.
-Keep the task's status and acceptance-criteria checkboxes current during
-implementation. When implementation learning invalidates the current or later
-tasks, return to this skill, revise the affected tasks with the user, and
-continue from the approved breakdown.
+Return to this skill when new evidence invalidates task boundaries or blockers.
+Reassess the affected unfinished tasks and apply the same review and publishing
+rules to the revised remainder.

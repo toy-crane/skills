@@ -27,6 +27,8 @@
   only at outcomes that can be implemented and reviewed on their own. Work that
   becomes meaningful only when completed together remains one task. A task is
   not a fine-grained to-do list.
+- `split-into-tasks` ends when the approved task handoff is current. Subsequent
+  execution consumes that handoff through the repository's normal workflow.
 - Work-unit product constraints belong in `spec.md`; constraints that expire
   with one task belong in that task file. A settled constraint that later work
   should reuse belongs in a decision contract when it passes the project
