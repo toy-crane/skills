@@ -3,8 +3,8 @@
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
 A composable, model-agnostic set of skills for product discovery, shaping,
-prototyping, task splitting, project knowledge, and test-first implementation.
-Install selected skills or the complete plugin.
+prototyping, task splitting, human review, project knowledge, and test-first
+implementation. Install selected skills or the complete plugin.
 
 ## Install
 
@@ -90,9 +90,9 @@ is just in time, and `tdd` provides the implementation loop.
 
 ## Outside the pipeline
 
-Four additional skills run independently of the pipeline. One is user-invoked,
-two run when their conditions arise, and one runs when the user asks for an
-explanation.
+Five additional skills run independently of the pipeline. They handle stack
+setup, project knowledge, visual explanation, final human judgment, and periodic
+cleanup.
 
 - **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Audit the
   technologies that define a project's stack and install each vendor's official
@@ -105,6 +105,9 @@ explanation.
 - **[explain-visually](./skills/explain-visually/SKILL.md)**: Render explanations
   with the best available tool. Use one sentence instead when one sentence fully
   answers the question.
+- **[human-review](./skills/human-review/SKILL.md)**: Turn a completed, substantial
+  or consequential repository change into a minimal visual handoff. Show the
+  whole outcome, then route only commitments that still need human judgment.
 - **[compact-decisions](./skills/compact-decisions/SKILL.md)**: Periodically clean
   up decision files, the glossary, shipped specs, and agent instructions after
   work accumulates. Shorten the documents without changing confirmed decisions.
