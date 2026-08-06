@@ -19,6 +19,10 @@
   mechanically checkable review. It is not named after its HTML output or a
   technical layer because the capability is deciding whether consequential
   commitments should be accepted.
+- `implement` is a deliberate one-word exception to verb-object grammar: the
+  object is the selected requirements, spec, or task set and changes on every
+  invocation. It names the complete responsibility without exposing task,
+  agent, or orchestrator mechanics.
 
 ## Boundaries
 

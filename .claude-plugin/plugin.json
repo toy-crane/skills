@@ -1,7 +1,7 @@
 {
   "name": "toycrane-skills",
-  "version": "0.31.0",
-  "description": "Skills for product discovery, shaping, prototyping, task orchestration, human review, project knowledge, and test-first implementation.",
+  "version": "0.32.1",
+  "description": "Skills for product discovery, shaping, prototyping, task splitting, continuous implementation, human review, project knowledge, and test-first development.",
   "author": {
     "name": "toy-crane",
     "url": "https://github.com/toy-crane"
@@ -19,10 +19,10 @@
     "compact-decisions",
     "explain-visually",
     "human-review",
+    "implement",
     "review",
     "planning",
-    "run-tasks",
-    "task-orchestration",
+    "continuous-implementation",
     "tdd",
     "testing",
     "productivity"
@@ -34,8 +34,8 @@
     "./skills/discover-opportunity",
     "./skills/explain-visually",
     "./skills/human-review",
+    "./skills/implement",
     "./skills/project-knowledge",
-    "./skills/run-tasks",
     "./skills/split-into-tasks",
     "./skills/tdd",
     "./skills/shape-idea"

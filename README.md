@@ -3,8 +3,9 @@
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
 A composable, model-agnostic set of skills for product discovery, shaping,
-prototyping, task splitting and orchestration, human review, project knowledge,
-and test-first implementation. Install selected skills or the complete plugin.
+prototyping, task splitting, continuous implementation, human review, project
+knowledge, and test-first development. Install selected skills or the complete
+plugin.
 
 ## Install
 
@@ -50,10 +51,10 @@ flowchart LR
     SI --> SPEC[/spec.md/]
     BP --> SPEC
     SPEC --> ST["split-into-tasks<br/>(multiple deliverables)"]
-    ST --> RT["run-tasks<br/>(fresh sequential workers)"]
-    RT --> DONE["verified and reviewed"]
-    SPEC --> TDD[tdd]
-    TDD --> DONE
+    SPEC --> IM["implement<br/>(one implementation owner)"]
+    ST --> IM
+    IM --> DONE["verified and independently reviewed"]
+    TDD[tdd] -. "optional test-first loop" .-> IM
 ```
 
 Invoke `discover-opportunity` when no problem or direction is known. It runs only
@@ -65,11 +66,12 @@ The discovery handoff remains in the conversation rather than a separate file.
 `docs/specs/<slug>/spec.md`. `build-prototype` can start from the current
 conversation alone; when a whole interface is approved, it creates or updates
 the spec and preserves `prototype.html` beside it. Use `split-into-tasks` only
-when the spec contains outcomes that should be implemented and reviewed
-separately, then use `run-tasks` to execute that approved set sequentially with
-fresh workers, Git checkpoints, and local reviews. Otherwise implement directly
-from the spec. Implementation planning is just in time, and `tdd` provides the
-implementation loop.
+when the spec contains outcomes that should be delivered separately. It also
+marks the few intermediate reviews justified by material or downstream risk.
+Then use `implement` for either the spec or its approved tasks: one implementation
+context owns the related changes and repairs, while a fresh reviewer checks
+selected boundaries and the final cumulative result. Implementation planning is
+just in time, and `tdd` can provide the test-first loop.
 
 - **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Find
   side-project directions from agreed personal traces and relevant current
@@ -85,11 +87,13 @@ implementation loop.
   approved prototype beside the spec.
 - **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split an existing
   spec into the fewest approved, independently deliverable vertical tasks with
-  explicit blockers, acceptance criteria, and minimal execution state.
+  explicit blockers, acceptance criteria, focused verification, minimal state,
+  and only risk-justified intermediate review checkpoints.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
-- **[run-tasks](./skills/run-tasks/SKILL.md)**: Execute an approved task set under
-  one restartable orchestrator. Runs one fresh write-capable worker at a time,
-  verifies and locally reviews each task, then reviews the cumulative diff.
+- **[implement](./skills/implement/SKILL.md)**: Implement an approved spec or
+  task set in one continuous write-capable context. Keep repairs with that
+  implementation owner, honor selected independent review checkpoints, and
+  finish with full verification and a fresh cumulative review.
 - **[tdd](./skills/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from

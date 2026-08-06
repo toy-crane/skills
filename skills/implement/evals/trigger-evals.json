@@ -1,0 +1,34 @@
+[
+  {
+    "query": "docs/specs/billing/spec.md와 승인된 task들을 같은 구현 컨텍스트에서 순서대로 끝까지 구현하고 검증해줘.",
+    "should_trigger": true
+  },
+  {
+    "query": "방금 확정한 요구사항을 구현해줘. 중간 리뷰 지점이 있으면 지키고 마지막 전체 리뷰까지 완료해.",
+    "should_trigger": true
+  },
+  {
+    "query": "Task 03 진행 중 세션이 끊겼어. task 파일과 Git 상태를 기준으로 남은 구현을 이어서 끝내줘.",
+    "should_trigger": true
+  },
+  {
+    "query": "모든 task 구현은 끝났고 최종 통합 검증과 리뷰만 남았어. 마무리해줘.",
+    "should_trigger": true
+  },
+  {
+    "query": "docs/specs/checkout/spec.md를 보고 여러 task로 나눌지 먼저 제안해줘.",
+    "should_trigger": false
+  },
+  {
+    "query": "아이디어가 아직 모호해. 어떤 제품을 만들지 요구사항부터 같이 정하자.",
+    "should_trigger": false
+  },
+  {
+    "query": "현재 브랜치 diff를 코드 리뷰만 해줘. 수정은 하지 마.",
+    "should_trigger": false
+  },
+  {
+    "query": "서로 독립적인 500개 파일 변환을 여러 agent와 worktree로 병렬 처리해줘.",
+    "should_trigger": false
+  }
+]
