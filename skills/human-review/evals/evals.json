@@ -1,0 +1,77 @@
+{
+  "skill_name": "human-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/human-review Todo 앱에 반복 일정, 완료 애니메이션, 로컬 저장을 추가했어. 변경 파일이 너무 많아서 diff는 못 보겠고 실제 결과로 최종 검토하고 싶어. 팀 공유 기능과 서버 동기화는 이번 범위에서 뺐어.",
+      "expected_output": "The response produces a minimal local visual handoff. Its first screen gives a plain-language whole-change summary including excluded scope, routes no more than three consequential product questions, and opens each question on the rendered Todo behavior before explanation or evidence.",
+      "files": [],
+      "expectations": [
+        "The first screen uses three to five plain-language summary lines and explicitly states that team sharing and server sync did not change.",
+        "It does not display review-time estimates, severity labels, scores, confidence, or file, line, and test counts.",
+        "It shows the actual Todo result or a truthful captured replay before asking the reviewer to accept a consequence.",
+        "Commands, checks, and implementation details stay behind one quiet evidence path.",
+        "It provides a direct link to the temporary artifact and does not add that artifact to the product repository."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/human-review 주문 생성 API 응답에 fulfillmentStatus를 추가했고 nullable한 내부 메모 컬럼도 하나 추가했어. 외부 파트너가 API 응답을 그대로 저장하고 있어서 최종 판단이 필요해. 마이그레이션과 롤백은 staging에서 실행해뒀어.",
+      "expected_output": "The review routes the public response commitment to the human and presents real before-and-after request and response values. It inspects the schema work but does not elevate the harmless nullable internal column merely because it is a database change.",
+      "files": [],
+      "expectations": [
+        "It selects questions by consequential commitment rather than by API and database file categories.",
+        "It shows concrete before-and-after request and response values before explaining the contract risk.",
+        "It shows representative migrated data and the observed rollback result in evidence when making migration claims.",
+        "It does not ask for human judgment on the nullable internal column unless repository evidence reveals another consequence."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/human-review 관리자, 매니저, 일반 멤버의 문서 내보내기 권한을 바꾼 작업을 검토해줘. 관리자만 전체 워크스페이스를 내보낼 수 있고 매니저는 자기 팀만, 일반 멤버는 내보낼 수 없게 구현했어.",
+      "expected_output": "The review treats the permission boundary as a human-owned commitment and opens the question on an observed principal-by-action access table before asking whether the boundary is acceptable.",
+      "files": [],
+      "expectations": [
+        "It shows each principal against the relevant export actions and observed allow or deny result.",
+        "It does not reduce the result to a prose claim or a list of changed authorization files.",
+        "It distinguishes direct access-test evidence from any inferred policy intent.",
+        "It asks one plain-language decision about the resulting access boundary."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/human-review 결제 계산 모듈 내부를 크게 리팩터링했지만 golden test와 production replay에서 입출력이 같고 외부 동작이나 운영 방식은 바뀌지 않았어. 사람이 따로 결정할 게 있는지 보여줘.",
+      "expected_output": "The handoff summarizes the refactor and verified behavioral equivalence, then presents a truthful zero-question state instead of inventing a human decision solely because the diff is large.",
+      "files": [],
+      "expectations": [
+        "It says that no unresolved product judgment remains when repository evidence supports equivalence.",
+        "It keeps the replay and golden-test evidence available on demand.",
+        "It does not turn code size, complexity, or model uncertainty into a human review card."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/human-review 비밀번호 재설정 흐름을 완성했다고 전달받았는데 실제 이메일 발송 환경에 접근할 수 없고 운영용 만료 링크도 시험하지 못했어. 지금 확인 가능한 결과만으로 리뷰 화면을 만들어줘.",
+      "expected_output": "The response does not convert the prior completion claim into proof. It marks production email delivery and expiry behavior as unverified, shows only directly observed results, and routes any consequential unresolved intent without implying successful completion.",
+      "files": [],
+      "expectations": [
+        "It treats the AI-authored completion statement as an unverified claim.",
+        "It clearly separates directly observed local behavior from unavailable production evidence.",
+        "It does not fabricate a screenshot, delivery result, or passing end-to-end test.",
+        "It states the missing evidence in the summary when it materially limits the outcome."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "/human-review 이번 변경에는 결제 실패 후 계정 잠금, 공개 이벤트 이름 변경, 관리자 대량 삭제, 데이터 보존 기간 변경, 복구 절차 변경이 함께 들어갔어. 모두 제품 오너 판단이 필요한데 한 화면에서 볼 수 있게 해줘.",
+      "expected_output": "The first review set contains at most three independent questions and explicitly says that another set remains. It prioritizes the current questions by consequence and does not silently omit the rest or compress unrelated decisions into one card.",
+      "files": [],
+      "expectations": [
+        "It presents no more than three review questions at once.",
+        "It clearly tells the reviewer that additional unresolved questions remain.",
+        "Each card asks one independent decision rather than bundling multiple commitments.",
+        "The ordering is based on cost of error, reversibility, and limits of automated verification."
+      ]
+    }
+  ]
+}
