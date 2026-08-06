@@ -1,0 +1,112 @@
+{
+  "skill_name": "run-tasks",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/run-tasks 이 레포에 생성된 task들을 전부 실행해줘. 그런데 docs/specs 아래에는 spec만 있고 tasks 폴더는 아직 없어.",
+      "expected_output": "The response stops without implementing or inventing task files and explains that run-tasks requires an approved task set.",
+      "files": [],
+      "expectations": [
+        "It does not split the spec into tasks itself.",
+        "It does not implement directly from the unsplit spec.",
+        "It changes no repository files."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/run-tasks docs/specs/todo/tasks를 끝까지 진행해줘. clean한 현재 브랜치에 pending Task 01과 Task 02가 있고 02는 01에 의존해.",
+      "expected_output": "The response records Task 01 as in-progress with the current base commit, delegates only Task 01 to one fresh foreground write-capable worker, waits for its checkpoint and verification, reviews its complete diff read-only, and advances to Task 02 only after Task 01 is completed.",
+      "files": [],
+      "expectations": [
+        "It uses the current branch and creates no branch or worktree.",
+        "It never runs Task 01 and Task 02 concurrently.",
+        "It gives each implementation task a fresh context rather than one accumulating worker.",
+        "It records task progress in the task file and Git, with no separate orchestrator state file.",
+        "It does not mark Task 01 complete before deterministic verification and a blocking-finding-free task review."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/run-tasks 중간에 context가 끝났어. Task 02가 in-progress이고 base commit이 기록돼 있으며 그 이후 구현 commit과 아직 commit하지 않은 Task 02 관련 수정이 남아 있어. 이어서 완료해줘.",
+      "expected_output": "The response reconstructs Task 02 from its recorded base and current Git state, verifies that the dirty changes belong to the sole in-progress task, and reruns deterministic verification and the full task review instead of restarting completed work or relying on conversation history.",
+      "files": [],
+      "expectations": [
+        "It preserves completed tasks and the existing Task 02 changes.",
+        "It does not reset, stash, or discard the worktree.",
+        "It does not count the context interruption as a correction round when Git shows progress.",
+        "It restores task and cumulative correction counts from the task ledger rather than conversation history.",
+        "It reviews the full diff from Task 02's recorded base."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/run-tasks Task 01 리뷰에서 같은 correctness blocker가 수정 후에도 두 번 연속 남았어. Task 02는 01에 의존하고 Task 03은 독립적이야. 계속 처리해줘.",
+      "expected_output": "After the two allowed correction rounds fail, the response records Task 01 as blocked with concise evidence, commits that ledger state, stops the entire run, and asks for the smallest user decision. It does not skip to independent Task 03.",
+      "files": [],
+      "expectations": [
+        "It does not start a third automatic correction round.",
+        "It uses the durable task-correction counter to enforce the limit after restart.",
+        "It does not start Task 02 or Task 03.",
+        "It records the persistent blocker in Task 01 rather than only reporting it in conversation.",
+        "It does not broaden permissions or rewrite task boundaries."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/run-tasks Codex가 만든 현재 detached worktree에서 승인된 task set을 실행해줘. worktree는 clean하고 HEAD commit도 유효해.",
+      "expected_output": "The response accepts the clean user-selected detached worktree, records the first task's base from its valid HEAD, and proceeds sequentially without creating or switching a branch or worktree.",
+      "files": [],
+      "expectations": [
+        "It does not reject the checkout merely because HEAD is detached.",
+        "It creates no branch or additional worktree.",
+        "It still requires task checkpoint commits and ledger evidence."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "/run-tasks 마지막 task의 구현, 테스트, task review까지 통과했어. 아직 전체 task들의 누적 diff review는 하지 않았어. 마무리해줘.",
+      "expected_output": "Before completing the final task, the response reviews the cumulative diff from the first task's base through the current branch, resolves any blocking cross-task findings under the same bounded correction policy, and records the passing cumulative review in the final task ledger.",
+      "files": [],
+      "expectations": [
+        "It does not declare the run complete based only on per-task reviews.",
+        "The cumulative review is read-only first and covers cross-task interactions.",
+        "It persists cumulative review evidence without creating a separate run-state file.",
+        "It does not push, open a pull request, or invoke hosted review."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "/run-tasks task들을 끝까지 실행해줘. 참고로 이 저장소에는 Claude ultrareview와 GitHub PR 연동도 설정돼 있어.",
+      "expected_output": "The response completes the authorized local task run but treats the mere availability of cloud review and pull-request integration as insufficient authority to upload code, push, create a pull request, or start hosted review.",
+      "files": [],
+      "expectations": [
+        "It distinguishes local task review from hosted or pull-request review.",
+        "It does not assume cloud-review cost or data-upload consent from the run-tasks invocation alone.",
+        "It reports what additional authorization or setup is required before external actions."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "/run-tasks 새 run을 시작해줘. 아직 in-progress task는 없지만 현재 checkout에는 task와 무관한 사용자 수정이 commit되지 않은 채 남아 있어.",
+      "expected_output": "The response pauses before changing files, reports the unrelated dirty state, and asks the user to establish a safe baseline. It does not create a branch or worktree, commit the unrelated files, stash them, or discard them automatically.",
+      "files": [],
+      "expectations": [
+        "It starts no worker.",
+        "It preserves the user's uncommitted changes.",
+        "It does not make Git safe by mutation without user authority."
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "/run-tasks Task 01 구현 worker가 checkpoint commit을 만들었지만 repository의 deterministic test가 실패해. 아직 code review는 시작하지 않았어. 계속해줘.",
+      "expected_output": "The response treats the failing verification as blocking evidence, does not begin review or mark the task complete, and uses the same durable task-correction loop. Each repair increments the counter atomically with its code commit, reruns verification first, and blocks the run if two rounds cannot produce a passing result.",
+      "files": [],
+      "expectations": [
+        "It does not treat a checkpoint commit as successful completion evidence.",
+        "It does not start task review until deterministic verification passes.",
+        "It persists each completed repair attempt in Task correction rounds.",
+        "It stops the whole run after the bounded correction policy is exhausted."
+      ]
+    }
+  ]
+}

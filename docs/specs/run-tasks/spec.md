@@ -29,9 +29,10 @@ integration work that this workflow does not need.
 - Use each task file as its execution ledger and Git as the source of truth for
   code. A task begins by recording `in-progress` and its base commit. It reaches
   `completed` only after recording the final code commit plus concise
-  verification and review evidence. Existing approved task files that lack the
-  execution fields may be initialized without changing their outcomes,
-  blockers, or acceptance criteria.
+  verification and review evidence. Separate task-review and cumulative-review
+  correction counters make the two-round limits recoverable after interruption.
+  Existing approved task files that lack the execution fields may be initialized
+  without changing their outcomes, blockers, or acceptance criteria.
 - Implement and deterministically verify the task, then establish a checkpoint
   commit that scopes its full diff. Review that diff with the harness's native
   local code-review capability when available; otherwise use a fresh read-only
@@ -52,7 +53,9 @@ integration work that this workflow does not need.
 - Treat conversation history and transient phase markers as disposable. On
   restart, find the `in-progress` task, reconstruct its scope from the recorded
   base and current Git state, and rerun deterministic verification and review
-  before deciding what remains.
+  before deciding what remains. Restore correction limits from the task ledger;
+  each completed repair increments its corresponding counter in the same commit
+  as its code changes.
 - Resume an interrupted context or harness with a fresh worker. An interruption
   does not consume a correction round when the task ledger or Git state shows
   forward progress.

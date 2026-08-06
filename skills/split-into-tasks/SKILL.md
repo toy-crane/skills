@@ -57,14 +57,37 @@ Each task file contains:
 - title
 - independently deliverable, end-to-end behavior from the user's perspective
 - blocking tasks and why each one gates completion
-- status
+- status initialized to `pending`; later execution may change it only to
+  `in-progress`, `completed`, or `blocked`
 - outcome-level acceptance-criteria checkboxes for observable completed behavior
 - constraints specific to that task's delivery or coordination
+- an execution ledger initialized with blank base commit, final code commit,
+  verification, task review, cumulative review, and blocker fields plus zeroed
+  task and cumulative correction counters
 
 Record constraints shared by multiple tasks in `spec.md` and constraints that
 apply to one task in that task file. Describe observable behavior and settled
 boundaries at a level that remains valid as the code evolves. Use an approved
 prototype as the authority for the intended experience.
+
+Use this shape for mutable execution state without adding an orchestration file:
+
+```md
+## Status
+
+pending
+
+## Execution
+
+- Base commit: —
+- Final code commit: —
+- Verification: —
+- Task review: —
+- Task correction rounds: 0
+- Cumulative review: —
+- Cumulative correction rounds: 0
+- Blocker: —
+```
 
 ## Revisit a breakdown
 

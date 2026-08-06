@@ -3,8 +3,8 @@
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
 A composable, model-agnostic set of skills for product discovery, shaping,
-prototyping, task splitting, human review, project knowledge, and test-first
-implementation. Install selected skills or the complete plugin.
+prototyping, task splitting and orchestration, human review, project knowledge,
+and test-first implementation. Install selected skills or the complete plugin.
 
 ## Install
 
@@ -41,7 +41,7 @@ claude plugin install toycrane-skills@toycrane
 
 ## The pipeline
 
-Five skills cover discovery through implementation.
+Six skills cover discovery through implementation.
 
 ```mermaid
 flowchart LR
@@ -50,8 +50,10 @@ flowchart LR
     SI --> SPEC[/spec.md/]
     BP --> SPEC
     SPEC --> ST["split-into-tasks<br/>(multiple deliverables)"]
+    ST --> RT["run-tasks<br/>(fresh sequential workers)"]
+    RT --> DONE["verified and reviewed"]
     SPEC --> TDD[tdd]
-    ST --> TDD
+    TDD --> DONE
 ```
 
 Invoke `discover-opportunity` when no problem or direction is known. It runs only
@@ -64,8 +66,10 @@ The discovery handoff remains in the conversation rather than a separate file.
 conversation alone; when a whole interface is approved, it creates or updates
 the spec and preserves `prototype.html` beside it. Use `split-into-tasks` only
 when the spec contains outcomes that should be implemented and reviewed
-separately; otherwise implement directly from the spec. Implementation planning
-is just in time, and `tdd` provides the implementation loop.
+separately, then use `run-tasks` to execute that approved set sequentially with
+fresh workers, Git checkpoints, and local reviews. Otherwise implement directly
+from the spec. Implementation planning is just in time, and `tdd` provides the
+implementation loop.
 
 - **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Find
   side-project directions from agreed personal traces and relevant current
@@ -81,8 +85,11 @@ is just in time, and `tdd` provides the implementation loop.
   approved prototype beside the spec.
 - **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split an existing
   spec into the fewest approved, independently deliverable vertical tasks with
-  explicit blockers and acceptance criteria. Run each task in a fresh session.
+  explicit blockers, acceptance criteria, and a minimal execution ledger.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
+- **[run-tasks](./skills/run-tasks/SKILL.md)**: Execute an approved task set under
+  one restartable orchestrator. Runs one fresh write-capable worker at a time,
+  verifies and locally reviews each task, then reviews the cumulative diff.
 - **[tdd](./skills/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from
