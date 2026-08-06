@@ -30,6 +30,10 @@
   task records its in-progress status and base commit. Completion records the
   final code commit and concise verification and review evidence before marking
   the task complete.
+- Context or harness interruption resumes the same task in a fresh worker from
+  its ledger and Git state. Verification or review blockers receive at most two
+  automatic correction rounds. If a blocker persists or no progress is made,
+  mark the task blocked and pause the whole run rather than skipping ahead.
 - When shaping settles on a framework or hosted service, install the vendor's
   official agent context in its recommended form. `add-stack-context` is
   model-invoked to audit and install the same context during agent setup, after
@@ -60,6 +64,9 @@
   resume the in-progress task from its recorded base and current Git state, then
   rerun deterministic verification and review rather than trusting an
   interrupted phase marker.
+- Pause immediately for unexpected Git state, an invalidated task graph, or
+  authority the user has not granted. Do not let retry policy expand permission
+  or silently rewrite approved task boundaries.
 - Work-unit product constraints belong in `spec.md`; constraints that expire
   with one task belong in that task file. A settled constraint that later work
   should reuse belongs in a decision contract when it passes the project
@@ -121,6 +128,10 @@ when every worker context and the orchestrator conversation have been replaced.
   verification boundary.
 - A separate orchestrator state file — it duplicates task progress and can drift
   from both the approved task handoff and Git.
+- Unlimited repair loops — they turn a persistent blocker into unbounded cost
+  without adding new evidence.
+- Skipping a blocked task — later tasks would inherit an unverified linear state
+  and make the final cumulative review ambiguous.
 - Fine-grained tickets or horizontal layer tasks — they become stale and produce
   changes too broad to verify end to end.
 - Depending on agents to discover vendor context on their own — official
