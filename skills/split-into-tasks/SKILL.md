@@ -62,50 +62,18 @@ Each task file contains:
   `in-progress`, `completed`, or `blocked`
 - outcome-level acceptance-criteria checkboxes for observable completed behavior
 - constraints specific to that task's delivery or coordination
-- a task-local execution ledger initialized with blank base commit, task
-  checkpoint commit, verification, task review, and blocker fields plus a
-  zeroed task correction counter
-- on the highest-numbered terminal task only, a run-completion ledger with a
-  pending cumulative status, blank cumulative base, candidate, and reviewed
-  commits, verification, review, and blocker fields, plus a zeroed correction
-  counter
+- mutable execution state copied from the
+  [task ledger template](./templates/task-ledger.md)
 
 Record constraints shared by multiple tasks in `spec.md` and constraints that
 apply to one task in that task file. Describe observable behavior and settled
 boundaries at a level that remains valid as the code evolves. Use an approved
 prototype as the authority for the intended experience.
 
-Use this shape for mutable execution state without adding an orchestration file:
-
-```md
-## Status
-
-pending
-
-## Execution
-
-- Base commit: —
-- Task checkpoint commit: —
-- Verification: —
-- Task review: —
-- Task correction rounds: 0
-- Blocker: —
-```
-
-Append this run-level gate only to the terminal task:
-
-```md
-## Run completion
-
-- Cumulative status: pending
-- Cumulative base commit: —
-- Cumulative candidate commit: —
-- Cumulative reviewed commit: —
-- Cumulative verification: —
-- Cumulative review: —
-- Cumulative correction rounds: 0
-- Cumulative blocker: —
-```
+Copy the [task ledger template](./templates/task-ledger.md) without changing its
+field names. Keep `## Status` and `## Execution` in every task. Keep
+`## Run completion` only in the highest-numbered terminal task; remove that
+section from every other task. Do not add a separate orchestration file.
 
 ## Revisit a breakdown
 
