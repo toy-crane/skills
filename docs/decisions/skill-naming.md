@@ -15,6 +15,10 @@
 - `explain-visually` is the deliberate exception to verb-object grammar: the
   object changes on every invocation, while visual rendering is the capability
   the skill adds.
+- `human-review` names the human judgment that remains after AI handles
+  mechanically checkable review. It is not named after its HTML output or a
+  technical layer because the capability is deciding whether consequential
+  commitments should be accepted.
 
 ## Boundaries
 
@@ -48,3 +52,5 @@ repository.
 - `knowledge-stewardship` — it describes the AI's caretaker role accurately but
   is longer and more abstract than the project artifacts people need to find.
 - `memory-layer` — memory already names CLAUDE.md and harness-managed memory.
+- `show-results` for human review — it centers presentation rather than the
+  scarce human judgment the skill protects.

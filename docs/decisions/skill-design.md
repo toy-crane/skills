@@ -17,6 +17,13 @@
   planning, but not for lookup or execution of settled work.
 - Evaluate suspected counter-defaults against realistic prompts. When wording is
   revised after seeing a failure, test the revision on a new held-out control.
+- `human-review` routes human attention by the commitment a change introduces,
+  not by file type or technical layer. Human review is warranted when a new
+  product behavior, access boundary, data transformation, external contract, or
+  recovery posture would be costly if wrong, hard to reverse, or hard to verify
+  automatically. AI handles mechanically checkable defects and presents a
+  concise change summary, zero to three human questions, the actual result, and
+  evidence only on demand.
 
 ## Boundaries
 
@@ -32,6 +39,12 @@ Skill context competes with the user's task, repository context, and other
 instructions. Procedures the model already performs reduce adaptability and add
 tokens without changing behavior. The durable value is the counter-default: a
 constraint tied to an observed failure or project-specific truth.
+
+AI output can grow faster than human review capacity. Prioritizing API, database,
+UI, or another layer categorically misses both harmless changes in a sensitive
+layer and consequential commitments elsewhere. The remaining human value is to
+validate intent, supply project context, and accept or reject risks that automated
+checks cannot decide.
 
 ## Reconsider when
 
@@ -50,6 +63,9 @@ constraint tied to an observed failure or project-specific truth.
   current skill.
 - Compressing instructions into aphorisms — short text with floating referents
   can lose executable meaning even when its argument is correct.
+- Exhaustive diff summaries, review-time estimates, severity codes, and
+  layer-based review queues for `human-review` — they spend the limited attention
+  the skill exists to protect without identifying the decision a human owns.
 
 ## Evidence worth preserving
 
