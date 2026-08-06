@@ -12,6 +12,36 @@
 - A spec with multiple outcomes that should be implemented and reviewed
   separately is split by `split-into-tasks` into the fewest independently
   deliverable vertical tasks with explicit blockers.
+- Approved tasks execute sequentially under one restartable orchestrator. Each
+  task starts with a fresh implementation context while every task shares the
+  current user-selected checkout or worktree and its linear Git state. The
+  orchestrator does not create task-level worktrees; isolating the whole run in
+  a worktree remains a user choice.
+- A task is complete only after its implementation and deterministic
+  verification finish and a harness-native local review of the task's full diff
+  reports no blocking correctness, security, regression, or specification
+  findings. The review starts read-only; findings return to the implementation
+  worker for correction.
+- After all tasks complete, review the cumulative diff from the orchestration
+  start point through an exact end commit. The terminal task carries this
+  distinct run-completion gate, so a cumulative blocker does not rewrite the
+  last task's own completed result. Hosted or pull-request review remains
+  optional and begins only after the user authorizes the corresponding push or
+  pull request.
+- Task files hold durable execution state and Git is the source of truth for
+  code state; the orchestrator keeps no separate run-state file. Starting a
+  task records its in-progress status and base commit. Completion records the
+  exact task checkpoint commit and concise verification and review evidence
+  before marking the task complete. The terminal task separately records the
+  cumulative base, current candidate and reviewed commits, verification,
+  review, correction count, and blocker.
+- Context or harness interruption resumes the same task in a fresh worker from
+  its recorded execution state and Git state. Verification or review blockers
+  receive at most two automatic correction rounds. Failure evidence is committed
+  before repair dispatch, and the repair counter advances atomically with its
+  code commit. If a blocker persists or no progress is made, mark the
+  corresponding task gate or cumulative gate blocked and pause the whole run
+  rather than skipping ahead.
 - When shaping settles on a framework or hosted service, install the vendor's
   official agent context in its recommended form. `add-stack-context` is
   model-invoked to audit and install the same context during agent setup, after
@@ -31,6 +61,27 @@
   not a fine-grained to-do list.
 - `split-into-tasks` ends when the approved task handoff is current. Subsequent
   execution consumes that handoff through the repository's normal workflow.
+- Only one write-capable task worker runs at a time. Task workers inherit prior
+  completed changes through the shared checkout rather than through transcript
+  history or task-by-task branch integration.
+- Harness-specific review commands are adapters around the same review gate.
+  When a harness has no native review mode, use a fresh read-only reviewer with
+  the same diff scope and blocking criteria. Review supplements rather than
+  replaces tests, branch protection, or human approval.
+- Conversation history and transient phase progress are disposable. On restart,
+  resume the in-progress task from its recorded base and current Git state.
+  Continue implementation when its checkpoint is incomplete; otherwise rerun
+  deterministic verification and review rather than trusting an interrupted
+  phase marker. A completed-only set remains unfinished while its terminal
+  cumulative gate has not passed.
+- Dirty state is not attributable merely because it matches the current task;
+  require the user to confirm ownership before a resumed worker absorbs it.
+- Review and repair operate on exact commit anchors. A returned checkpoint must
+  descend on the same first-parent line from the dispatch state, and the
+  orchestrator reruns verification instead of treating worker output as proof.
+- Pause immediately for unexpected Git state, an invalidated task graph, or
+  authority the user has not granted. Do not let retry policy expand permission
+  or silently rewrite approved task boundaries.
 - Work-unit product constraints belong in `spec.md`; constraints that expire
   with one task belong in that task file. A settled constraint that later work
   should reuse belongs in a decision contract when it passes the project
@@ -45,6 +96,16 @@ evidence, while shaping converges on a chosen direction. Plans derived at
 execution time age better than stored implementation predictions. Session
 duration is not a stable task boundary, so the durable unit is an independently
 deliverable outcome rather than a predicted amount of implementation work.
+Fresh task contexts bound conversational context growth, while a shared
+sequential checkout lets task N build directly on task N-1 without repeated
+cherry-pick or merge work. Task-level review catches local defects before they
+compound; cumulative review catches cross-task interactions that no isolated
+task review can see. With no concurrent writers, mandatory task-level worktrees
+add integration overhead without resolving an active collision, so checkout
+isolation stays under user control.
+Keeping progress in the existing task handoff avoids a second status model that
+can drift. Commit anchors make review and restart scope reconstructable even
+when every worker context and the orchestrator conversation have been replaced.
 
 ## Reconsider when
 
@@ -54,6 +115,12 @@ deliverable outcome rather than a predicted amount of implementation work.
   are executed.
 - External-dependency workaround failures are repeatedly observed outside
   shape-idea, justifying another standalone carrier for the check-first rule.
+- Sequential execution becomes the dominant bottleneck and the user chooses to
+  permit concurrency.
+- Per-task review cost or noise regularly outweighs the defects it catches.
+- Real runs show shared-checkout collisions despite the single-writer rule.
+- An external scheduler requires a separate machine-readable run record, or the
+  recorded task state cannot reconstruct interrupted runs reliably.
 
 ## Still-rejected alternatives
 
@@ -67,6 +134,19 @@ deliverable outcome rather than a predicted amount of implementation work.
 - Session duration as the task boundary — agent sessions can sustain long-running
   work, and sizing against a predicted session fragments one coherent outcome
   into incomplete review points.
+- Task-level worktrees — without parallel writers, they create repeated branch
+  integration work and obscure the linear state later tasks must inherit.
+- Automatic worktree creation — it overrides the user's checkout choice even
+  when execution does not require filesystem isolation.
+- Final-only review — local defects can compound across later tasks.
+- Review after every edit — it adds cost and context noise without a stable
+  verification boundary.
+- A separate orchestrator state file — it duplicates task progress and can drift
+  from both the approved task handoff and Git.
+- Unlimited repair loops — they turn a persistent blocker into unbounded cost
+  without adding new evidence.
+- Skipping a blocked task — later tasks would inherit an unverified linear state
+  and make the final cumulative review ambiguous.
 - Fine-grained tickets or horizontal layer tasks — they become stale and produce
   changes too broad to verify end to end.
 - Depending on agents to discover vendor context on their own — official
