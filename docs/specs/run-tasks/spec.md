@@ -26,7 +26,7 @@ integration work that this workflow does not need.
   instructions, the approved specification and decisions, its task file, the
   current code, and prior completed commits. Do not depend on earlier worker or
   orchestrator conversation history.
-- Use each task file as its execution ledger and Git as the source of truth for
+- Use each task file to hold execution state and Git as the source of truth for
   code. A task begins by recording `in-progress` and its base commit. It reaches
   `completed` only after recording the exact task checkpoint commit plus concise
   verification and review evidence. The highest-numbered terminal task carries
@@ -45,10 +45,10 @@ integration work that this workflow does not need.
   the harness's native local code-review capability when available, or a fresh
   read-only reviewer with the same scope and blocking criteria otherwise.
 - Treat correctness, security, regression, and specification findings as
-  blocking. Persist exact failure evidence in the ledger before returning it to
-  a write-capable implementation worker, rerun the relevant verification, and
-  review the complete task diff again. Style-only findings do not block
-  completion.
+  blocking. Persist exact failure evidence in the execution state before
+  returning it to a write-capable implementation worker, rerun the relevant
+  verification, and review the complete task diff again. Style-only findings do
+  not block completion.
 - After every task-local gate is complete, review the cumulative diff from the
   first task's base commit through an exact end commit. Resolve blocking
   cross-task findings under the same correction and verification rules before
@@ -65,7 +65,7 @@ integration work that this workflow does not need.
   deterministic verification and review before deciding what remains. If every
   task is complete but the terminal cumulative gate is not passed, that task set
   remains unfinished and resumes at the run-level gate. Restore correction
-  limits from the task ledger; each completed repair increments its
+  limits from the task execution state; each completed repair increments its
   corresponding counter in the same commit as its code changes.
 - Resume an interrupted context or harness with a fresh worker. An interruption
   before a clean repair commit atomically increments its counter with code does
@@ -96,8 +96,9 @@ integration work that this workflow does not need.
   approval.
 - The orchestrator may update execution status and evidence, but it may not
   silently rewrite approved task outcomes, blockers, or acceptance criteria.
-- The orchestrator owns ledger transitions. A repair worker may mutate only its
-  selected correction counter, atomically with the corresponding code repair.
+- The orchestrator owns execution-state transitions. A repair worker may mutate
+  only its selected correction counter, atomically with the corresponding code
+  repair.
 
 ## Assumptions
 
@@ -119,5 +120,5 @@ None.
 - Native review facilities may expose different severity labels or diff-scoping
   controls. The behavioral gate must remain consistent even when an adapter
   needs a fresh read-only reviewer instead.
-- Repository-specific hooks may reject the checkpoint or ledger commits. Such a
+- Repository-specific hooks may reject checkpoint or state commits. Such a
   rejection must pause the run rather than bypassing the repository policy.

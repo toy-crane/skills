@@ -28,7 +28,7 @@
   last task's own completed result. Hosted or pull-request review remains
   optional and begins only after the user authorizes the corresponding push or
   pull request.
-- Task files are the durable execution ledger and Git is the source of truth for
+- Task files hold durable execution state and Git is the source of truth for
   code state; the orchestrator keeps no separate run-state file. Starting a
   task records its in-progress status and base commit. Completion records the
   exact task checkpoint commit and concise verification and review evidence
@@ -36,11 +36,12 @@
   cumulative base, current candidate and reviewed commits, verification,
   review, correction count, and blocker.
 - Context or harness interruption resumes the same task in a fresh worker from
-  its ledger and Git state. Verification or review blockers receive at most two
-  automatic correction rounds. Failure evidence is committed before repair
-  dispatch, and the repair counter advances atomically with its code commit. If
-  a blocker persists or no progress is made, mark the corresponding task gate
-  or cumulative gate blocked and pause the whole run rather than skipping ahead.
+  its recorded execution state and Git state. Verification or review blockers
+  receive at most two automatic correction rounds. Failure evidence is committed
+  before repair dispatch, and the repair counter advances atomically with its
+  code commit. If a blocker persists or no progress is made, mark the
+  corresponding task gate or cumulative gate blocked and pause the whole run
+  rather than skipping ahead.
 - When shaping settles on a framework or hosted service, install the vendor's
   official agent context in its recommended form. `add-stack-context` is
   model-invoked to audit and install the same context during agent setup, after
@@ -119,7 +120,7 @@ when every worker context and the orchestrator conversation have been replaced.
 - Per-task review cost or noise regularly outweighs the defects it catches.
 - Real runs show shared-checkout collisions despite the single-writer rule.
 - An external scheduler requires a separate machine-readable run record, or the
-  task ledger cannot reconstruct interrupted runs reliably.
+  recorded task state cannot reconstruct interrupted runs reliably.
 
 ## Still-rejected alternatives
 

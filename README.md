@@ -85,7 +85,7 @@ implementation loop.
   approved prototype beside the spec.
 - **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split an existing
   spec into the fewest approved, independently deliverable vertical tasks with
-  explicit blockers, acceptance criteria, and a minimal execution ledger.
+  explicit blockers, acceptance criteria, and minimal execution state.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[run-tasks](./skills/run-tasks/SKILL.md)**: Execute an approved task set under
   one restartable orchestrator. Runs one fresh write-capable worker at a time,

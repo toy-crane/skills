@@ -23,7 +23,7 @@ restart knows where to continue.
 
 ## Use exact durable boundaries
 
-The task's `Base commit` is its original code start. The latest ledger-only
+The task's `Base commit` is its original code start. The latest state-only
 commit that changes the task from `pending` or `blocked` to `in-progress` is
 the dispatch anchor for that attempt. `Task checkpoint commit` is the latest
 code boundary the orchestrator has validated and recorded. Find these states
@@ -42,8 +42,8 @@ candidate, the round remains consumed; validate and adopt or block it without
 decrementing the counter.
 
 Before dispatching any repair, the orchestrator records the exact failed
-verification or blocking review evidence in its existing ledger field, commits
-that ledger-only transition, and captures the resulting `HEAD` as the repair
+verification or blocking review evidence in its existing state field, commits
+that state-only transition, and captures the resulting `HEAD` as the repair
 dispatch anchor. A code commit after an existing task checkpoint or cumulative
 candidate is never ordinary implementation unless a durable
 `resolved implementation` marker explicitly authorizes that continuation.
@@ -58,7 +58,7 @@ generic candidate cases:
    runtime blocker without changing the approved outcome, dependency graph, or
    task boundary. Preserve the original base and correction count, replace the
    evidence with `resolved <stage> — <resolution>`, set the task or cumulative
-   gate to `in-progress`, and commit that ledger-only transition. If a legacy
+   gate to `in-progress`, and commit that state-only transition. If a legacy
    blocker has no stage, infer one only from unambiguous durable evidence;
    otherwise pause. If the contract changed, pause for a revised task set.
 3. `in-progress` with a `resolved implementation` blocker: inspect from the
@@ -84,7 +84,7 @@ generic candidate cases:
    first-parent ancestor and every intervening change belongs to the task.
    Record it as the task checkpoint, then rerun authoritative verification and
    review. Pause when attribution or topology is ambiguous.
-7. `in-progress` with a current task checkpoint and only later ledger-only
+7. `in-progress` with a current task checkpoint and only later state-only
    commits: rerun authoritative verification and full task review at the
    checkpoint, then close the task if both pass. A `resolved verification` or
    `resolved task-review` marker follows this case rather than dispatching an
@@ -116,11 +116,11 @@ authority, or user-input blocker, first inspect its Git result:
 - If it made no code commit, record the runtime blocker from the existing
   dispatch anchor.
 - If it left dirty, divergent, unrelated, or ambiguously owned state, pause and
-  ask for the smallest recovery decision; do not absorb it into a ledger commit.
+  ask for the smallest recovery decision; do not absorb it into a state commit.
 
 For a valid clean state, set the task to `blocked`, record concise `Blocker`
-evidence prefixed with `implementation —`, commit the ledger, and stop the
-entire run without spending a correction round or selecting another task.
+evidence prefixed with `implementation —`, commit the blocked state, and stop
+the entire run without spending a correction round or selecting another task.
 
 ## Apply one bounded correction loop
 
@@ -133,7 +133,7 @@ cumulative counter:
 2. When blocking evidence remains and the counter is already two, record the
    appropriate blocked state and stop.
 3. Otherwise persist the exact failed verification or blocking review evidence
-   in its existing ledger field, commit that ledger-only transition, and capture
+   in its existing state field, commit that state-only transition, and capture
    its `HEAD` as the repair dispatch anchor. Then start one fresh write-capable
    repair worker with the applicable authority bundle, current code, exact
    evidence and range, and current count. Require it to fix only that evidence,
@@ -155,7 +155,7 @@ than skipping ahead or retrying without a new basis. Prefix the evidence with
 the failing `verification`, `task-review`, `cumulative-verification`, or
 `cumulative-review` stage.
 
-## Migrate a legacy ledger
+## Migrate legacy execution state
 
 Never fabricate a commit anchor. Migrate only with exact durable evidence:
 

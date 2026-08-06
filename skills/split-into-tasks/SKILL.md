@@ -63,14 +63,14 @@ Each task file contains:
 - outcome-level acceptance-criteria checkboxes for observable completed behavior
 - constraints specific to that task's delivery or coordination
 - mutable execution state copied from the
-  [task ledger template](./templates/task-ledger.md)
+  [task state template](./templates/task-state.md)
 
 Record constraints shared by multiple tasks in `spec.md` and constraints that
 apply to one task in that task file. Describe observable behavior and settled
 boundaries at a level that remains valid as the code evolves. Use an approved
 prototype as the authority for the intended experience.
 
-Copy the [task ledger template](./templates/task-ledger.md) without changing its
+Copy the [task state template](./templates/task-state.md) without changing its
 field names. Keep `## Status` and `## Execution` in every task. Keep
 `## Run completion` only in the highest-numbered terminal task; remove that
 section from every other task. Do not add a separate orchestration file.

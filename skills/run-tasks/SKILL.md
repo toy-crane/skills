@@ -44,15 +44,16 @@ receive the exact diff range and review evidence relevant to their role.
 
 Require a resolvable Git `HEAD` and a state that supports explicit local
 commits. For a new run, require a clean worktree. On resume, continue a clean
-state that agrees with the ledger. If tracked or untracked changes remain, do
-not infer their owner from task relevance alone: continue only after the user
-explicitly confirms that they are task-owned, otherwise pause without stashing,
-committing, or discarding them. A detached checkout chosen by the user is valid.
+state that agrees with the recorded execution state. If tracked or untracked
+changes remain, do not infer their owner from task relevance alone: continue
+only after the user explicitly confirms that they are task-owned, otherwise
+pause without stashing, committing, or discarding them. A detached checkout
+chosen by the user is valid.
 
 Require the harness to support fresh subagents. Do not silently fall back to
 implementing every task in the orchestrator context.
 
-## Maintain the durable ledger
+## Maintain durable execution state
 
 Use these task status transitions:
 
@@ -100,18 +101,18 @@ task with legacy or missing execution evidence, read
 [`references/recovery.md`](references/recovery.md) and apply its migration
 rules without changing the approved contract. Do not create another run-state
 file. The orchestrator owns task status, commit anchors, verification and review
-evidence, blockers, and acceptance checkboxes. The only delegated ledger
-mutation is an atomic correction-counter increment in the repair commit defined
-by the recovery reference.
+evidence, blockers, and acceptance checkboxes. The only delegated
+execution-state mutation is an atomic correction-counter increment in the
+repair commit defined by the recovery reference.
 
 At task start, record `in-progress` and the full current commit SHA as its base,
-then commit that ledger transition before dispatch. Capture the resulting exact
+then commit that state transition before dispatch. Capture the resulting exact
 `HEAD` as the expected worker start. After accepting a worker or repair result,
-record its exact final commit as `Task checkpoint commit` in a ledger commit.
-The checkpoint is the code boundary; later ledger-only commits do not expand
+record its exact final commit as `Task checkpoint commit` in a state-only commit.
+The checkpoint is the code boundary; later state-only commits do not expand
 the task review range. At task completion, record verification commands and
 results, the task review result, observable acceptance criteria, clear any
-resolved runtime blocker, and record `completed` in one ledger commit.
+resolved runtime blocker, and record `completed` in one state-only commit.
 
 ## Run one task at a time
 
@@ -175,7 +176,7 @@ blocking findings remain. A local foreground reviewer is an allowed fallback;
 hosted or pull-request review is an external action under the authority boundary.
 
 Route blocking findings through the bounded correction loop. When verification
-and review pass, close the task ledger before selecting the next task.
+and review pass, close the task gate before selecting the next task.
 
 ## Finish the whole run
 
@@ -202,7 +203,7 @@ Task checkpoint commits remain historical task-gate anchors, while the final
 cumulative anchor represents the integrated result. After all verification and
 blocking findings pass, copy the exact `Cumulative candidate commit` to
 `Cumulative reviewed commit`, persist the verification and review evidence, set
-`Cumulative status` to `passed`, and commit the final ledger update.
+`Cumulative status` to `passed`, and commit the final state update.
 
 A completed-only set whose cumulative status is absent, pending, in-progress,
 or blocked remains unfinished. Resume or perform that gate instead of declaring
@@ -221,7 +222,7 @@ Pause immediately when:
   divergent, or an unrecorded commit cannot be attributed safely;
 - dirty state lacks the user's explicit confirmation of task ownership;
 - a specification change invalidates an outcome, blocker, or task boundary;
-- a repository hook or policy rejects a required checkpoint or ledger commit;
+- a repository hook or policy rejects a required checkpoint or state commit;
 - continuing requires user input, external authority, or destructive recovery.
 
 State the evidence and the smallest user decision needed. Retry policy never

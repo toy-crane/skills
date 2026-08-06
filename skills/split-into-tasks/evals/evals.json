@@ -51,7 +51,7 @@
     {
       "id": 5,
       "prompt": "/split-into-tasks 방금 제안한 세 task와 blocker를 승인해. task 파일을 작성해줘.",
-      "expected_output": "The response writes one task file per approved deliverable in dependency order. Each file carries complete behavior, blocker reasons, pending status, outcome-level acceptance checkboxes, task-specific constraints, and the minimal blank execution ledger. It ends after publishing the approved task definitions without beginning implementation.",
+      "expected_output": "The response writes one task file per approved deliverable in dependency order. Each file carries complete behavior, blocker reasons, pending status, outcome-level acceptance checkboxes, task-specific constraints, and the minimal blank execution state. It ends after publishing the approved task definitions without beginning implementation.",
       "files": [],
       "expectations": [
         "It writes only the approved tasks and preserves their approved boundaries.",
