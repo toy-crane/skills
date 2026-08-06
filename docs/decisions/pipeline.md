@@ -25,6 +25,11 @@
 - After all tasks complete, review the cumulative diff from the orchestration
   start point. Hosted or pull-request review remains optional and begins only
   after the user authorizes the corresponding push or pull request.
+- Task files are the durable execution ledger and Git is the source of truth for
+  code state; the orchestrator keeps no separate run-state file. Starting a
+  task records its in-progress status and base commit. Completion records the
+  final code commit and concise verification and review evidence before marking
+  the task complete.
 - When shaping settles on a framework or hosted service, install the vendor's
   official agent context in its recommended form. `add-stack-context` is
   model-invoked to audit and install the same context during agent setup, after
@@ -51,6 +56,10 @@
   When a harness has no native review mode, use a fresh read-only reviewer with
   the same diff scope and blocking criteria. Review supplements rather than
   replaces tests, branch protection, or human approval.
+- Conversation history and transient phase progress are disposable. On restart,
+  resume the in-progress task from its recorded base and current Git state, then
+  rerun deterministic verification and review rather than trusting an
+  interrupted phase marker.
 - Work-unit product constraints belong in `spec.md`; constraints that expire
   with one task belong in that task file. A settled constraint that later work
   should reuse belongs in a decision contract when it passes the project
@@ -72,6 +81,9 @@ compound; cumulative review catches cross-task interactions that no isolated
 task review can see. With no concurrent writers, mandatory task-level worktrees
 add integration overhead without resolving an active collision, so checkout
 isolation stays under user control.
+Keeping progress in the existing task handoff avoids a second status model that
+can drift. Commit anchors make review and restart scope reconstructable even
+when every worker context and the orchestrator conversation have been replaced.
 
 ## Reconsider when
 
@@ -85,6 +97,8 @@ isolation stays under user control.
   permit concurrency.
 - Per-task review cost or noise regularly outweighs the defects it catches.
 - Real runs show shared-checkout collisions despite the single-writer rule.
+- An external scheduler requires a separate machine-readable run record, or the
+  task ledger cannot reconstruct interrupted runs reliably.
 
 ## Still-rejected alternatives
 
@@ -105,6 +119,8 @@ isolation stays under user control.
 - Final-only review — local defects can compound across later tasks.
 - Review after every edit — it adds cost and context noise without a stable
   verification boundary.
+- A separate orchestrator state file — it duplicates task progress and can drift
+  from both the approved task handoff and Git.
 - Fine-grained tickets or horizontal layer tasks — they become stale and produce
   changes too broad to verify end to end.
 - Depending on agents to discover vendor context on their own — official
