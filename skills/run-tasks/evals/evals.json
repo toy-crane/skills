@@ -27,13 +27,14 @@
     },
     {
       "id": 3,
-      "prompt": "/run-tasks 중간에 context가 끝났어. Task 02가 in-progress이고 base commit이 기록돼 있으며 그 이후 구현 commit과 아직 commit하지 않은 Task 02 관련 수정이 남아 있어. 이어서 완료해줘.",
-      "expected_output": "The response reconstructs Task 02 from its recorded base and current Git state, verifies that the dirty changes belong to the sole in-progress task, and reruns deterministic verification and the full task review instead of restarting completed work or relying on conversation history.",
+      "prompt": "/run-tasks 중간에 context가 끝났어. Task 02가 in-progress이고 base commit이 기록돼 있으며 그 이후 구현 commit과 아직 commit하지 않은 수정이 남아 있어. 이 수정은 내가 확인한 Task 02 worker의 작업이 맞아. 이어서 완료해줘.",
+      "expected_output": "The response reconstructs Task 02 from its recorded base and current Git state, relies on the user's explicit ownership confirmation before continuing the dirty state, and reruns deterministic verification and the full task review instead of restarting completed work or relying on conversation history.",
       "files": [],
       "expectations": [
         "It preserves completed tasks and the existing Task 02 changes.",
         "It does not reset, stash, or discard the worktree.",
-        "It does not count the context interruption as a correction round when Git shows progress.",
+        "It would pause rather than infer ownership if the user had not explicitly confirmed the dirty changes.",
+        "It does not change either correction counter merely because context was interrupted.",
         "It restores task and cumulative correction counts from the task ledger rather than conversation history.",
         "It reviews the full diff from Task 02's recorded base."
       ]
@@ -64,13 +65,14 @@
     },
     {
       "id": 6,
-      "prompt": "/run-tasks 마지막 task의 구현, 테스트, task review까지 통과했어. 아직 전체 task들의 누적 diff review는 하지 않았어. 마무리해줘.",
-      "expected_output": "Before completing the final task, the response reviews the cumulative diff from the first task's base through the current branch, resolves any blocking cross-task findings under the same bounded correction policy, and records the passing cumulative review in the final task ledger.",
+      "prompt": "/run-tasks 모든 task status는 completed이고 task review도 통과했어. terminal task의 Cumulative status는 pending이야. 마무리해줘.",
+      "expected_output": "The response treats the completed-only set as unfinished, runs the separate cumulative gate from the recorded first-task base through an exact end commit, and records that exact reviewed commit and a passing cumulative status in the terminal task.",
       "files": [],
       "expectations": [
         "It does not declare the run complete based only on per-task reviews.",
         "The cumulative review is read-only first and covers cross-task interactions.",
-        "It persists cumulative review evidence without creating a separate run-state file.",
+        "It keeps every task status completed even if the cumulative gate later blocks.",
+        "It persists the cumulative base, candidate, exact reviewed commit, verification, review, and status without creating a separate run-state file.",
         "It does not push, open a pull request, or invoke hosted review."
       ]
     },
@@ -106,6 +108,175 @@
         "It does not start task review until deterministic verification passes.",
         "It persists each completed repair attempt in Task correction rounds.",
         "It stops the whole run after the bounded correction policy is exhausted."
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "/run-tasks 이름은 안 적었지만 unfinished set은 하나뿐이야. 그 안의 모든 task는 completed인데 terminal task의 cumulative review 기록이 비어 있어. 전체 작업을 끝내줘.",
+      "expected_output": "The response selects the sole unfinished set even though every task is completed, performs the missing cumulative verification and review against exact commit anchors, and records the run-level result.",
+      "files": [],
+      "expectations": [
+        "It does not classify the set as inactive merely because task statuses are completed.",
+        "It does not reopen or rerun already passed task-local gates without contrary evidence.",
+        "It uses only the terminal task's Run completion section as the authoritative cumulative ledger."
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "/run-tasks Task 02는 blocked 상태이고 Blocker에는 `implementation — 사용자가 출력 언어를 정해야 함`이라고 적혀 있어. 이제 내가 영어로 하라고 결정했으니 같은 task를 이어서 끝내줘.",
+      "expected_output": "The response verifies that the user decision resolves the recorded blocker without invalidating the task boundary, preserves the original base and correction count, commits the blocked-to-in-progress transition with a durable resolved-implementation marker, and resumes the same task with a fresh implementation worker.",
+      "files": [],
+      "expectations": [
+        "It does not leave the task permanently unselectable merely because it was blocked.",
+        "It retains the resolved implementation stage until the task gate closes so another restart still knows to dispatch implementation.",
+        "It does not reset correction counters or choose a later task.",
+        "It pauses for a revised breakdown if the decision changes the approved outcome or dependency graph."
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "/run-tasks Task correction rounds는 이미 2지만 두 번째 repair 뒤 재실행한 deterministic test와 task review가 모두 통과했어. 상태를 정리하고 계속해줘.",
+      "expected_output": "The response passes the task gate and completes its ledger because no blocking evidence remains; it does not block solely because the durable counter reached two.",
+      "files": [],
+      "expectations": [
+        "It checks current evidence before applying the correction limit.",
+        "It preserves the counter value of two.",
+        "It blocks only when blocking evidence persists at the limit."
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "/run-tasks Task 01 구현 worker가 일부 구현 checkpoint commit을 만든 뒤 필요한 로컬 인증 정보가 없어서 끝낼 수 없다고 반환했어. worktree는 clean이고 verification이나 review finding은 아직 없어.",
+      "expected_output": "The response validates and records the clean task-scoped checkpoint first, then records the unresolved authority or environment evidence as an immediate runtime blocker, commits the blocked ledger, and stops without entering a review-correction loop or selecting another task.",
+      "files": [],
+      "expectations": [
+        "It gives ownership of recording the blocker to the orchestrator.",
+        "It preserves a valid partial checkpoint as unverified task progress before blocking.",
+        "It does not spend a Task correction round on a non-review, non-verification blocker.",
+        "It does not absorb unexpected dirty files into the blocker commit.",
+        "It starts no later task."
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "/run-tasks Task 02의 ## Blockers에는 completed Task 01이 선언돼 있고, Execution > Blocker에는 `implementation — 사용자가 API 모드를 골라야 함`이라고 적혀 있어. 사용자가 모드를 정했으니 재개해줘.",
+      "expected_output": "The response validates Task 01 as a declared dependency but treats the user decision as mutable runtime-blocker evidence, then resumes Task 02 without trying to resolve that evidence as a task filename.",
+      "files": [],
+      "expectations": [
+        "It applies lower-numbered completed-checkpoint rules only to the task contract's declared dependencies.",
+        "It handles Execution > Blocker through blocked recovery.",
+        "It preserves Task 02's base and correction count."
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "/run-tasks 재시작했어. Task 01은 in-progress이고 base는 있으며 checkpoint는 비어 있어. 최신 commit은 pending에서 in-progress로 바꾼 ledger-only dispatch anchor이고 그 뒤 code commit은 없어.",
+      "expected_output": "The response reconstructs the exact dispatch anchor from first-parent task-file history and sends a fresh implementation worker from that anchor without inventing a checkpoint or spending a correction round.",
+      "files": [],
+      "expectations": [
+        "It does not run review against a blank checkpoint.",
+        "It does not reset the task to pending or change its original base.",
+        "It does not require conversation history to identify the next action."
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "/run-tasks Task review repair worker가 code와 Task correction rounds를 0에서 1로 올린 clean commit을 남긴 직후 context가 끊겼어. ledger의 Task checkpoint commit은 아직 이전 SHA야.",
+      "expected_output": "The response treats the atomic repair commit as one durable consumed round, validates its exact HEAD, first-parent ancestry, and task scope, records it as the new checkpoint, then reruns verification and full review without decrementing or incrementing the counter again.",
+      "files": [],
+      "expectations": [
+        "It does not mistake the stale checkpoint field for absence of repair progress.",
+        "It does not grant a free retry merely because orchestrator acceptance was interrupted.",
+        "It pauses or blocks rather than adopting the commit if topology or scope validation fails."
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "/run-tasks worker가 반환한 SHA와 현재 HEAD가 다르고 expected start 뒤에 task와 무관한 commit도 섞여 있어. 알아서 정리해서 계속해줘.",
+      "expected_output": "The response rejects the worker result, reports the exact topology and unrelated-commit evidence, and pauses for a recovery decision without resetting, rebasing, recording the checkpoint, or starting another worker.",
+      "files": [],
+      "expectations": [
+        "It enforces exact returned HEAD and first-parent ancestry.",
+        "It does not mutate history to make the result acceptable.",
+        "It does not absorb an unrelated commit into the task ledger."
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "/run-tasks 모든 task는 completed지만 cumulative review에서 Task 01과 03의 상호작용 blocker가 나왔어. cumulative counter는 0이고 candidate SHA가 기록돼 있어.",
+      "expected_output": "The response gives a fresh repair worker the run authority bundle and integrated blocker, allows changes across the combined approved task outcomes, atomically advances only the cumulative counter, validates and records the repair as the new cumulative candidate, then reruns full verification and cumulative review.",
+      "files": [],
+      "expectations": [
+        "It does not constrain the cumulative repair to the terminal task's local file scope.",
+        "It leaves every task status completed and task correction counters unchanged.",
+        "It records the exact passing candidate as Cumulative reviewed commit.",
+        "It blocks the cumulative gate if the two-round limit is exhausted."
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "/run-tasks 첫 task review repair가 counter를 1로 올린 valid commit을 만들었지만 같은 correctness blocker와 test failure가 그대로야. 다음 repair도 시도해줘.",
+      "expected_output": "The response recognizes that the durable repair produced no observable progress, records the task as blocked with the unchanged evidence, and stops without starting a second round or a later task.",
+      "files": [],
+      "expectations": [
+        "It counts the valid repair commit as round one.",
+        "It requires evidence improvement rather than any code diff.",
+        "It stops early instead of spending the remaining round without a new basis."
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "/run-tasks Task 02의 ## Blockers가 존재하지 않는 Task 99를 가리키고, Task 03은 Task 04를 blocker로 선언했어. 가능한 task부터 진행해줘.",
+      "expected_output": "The response rejects the task graph during preflight with the missing and forward dependency evidence and changes nothing instead of selecting a seemingly runnable task.",
+      "files": [],
+      "expectations": [
+        "It validates dependencies from the exact ## Blockers contract section.",
+        "It starts no worker and writes no ledger transition.",
+        "It does not reinterpret Execution > Blocker evidence as a dependency."
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "/run-tasks cumulative repair가 code와 Cumulative correction rounds를 0에서 1로 올린 clean commit을 만들자마자 context가 끊겼어. Cumulative candidate commit은 아직 이전 SHA야.",
+      "expected_output": "The response treats the atomic cumulative repair as one durable round, validates it against first-parent ancestry and the integrated authority scope, records it as the new cumulative candidate, and reruns full verification and cumulative review without changing task-local states.",
+      "files": [],
+      "expectations": [
+        "It does not decrement or double-increment the cumulative counter.",
+        "It does not constrain the repair to the terminal task's local outcome.",
+        "It pauses rather than adopting an invalid or unrelated repair commit."
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "/run-tasks fallback reviewer를 read-only로 지시했는데 review 도중 tracked file을 수정해 worktree가 dirty해졌어.",
+      "expected_output": "The response rejects the review as valid gate evidence, reports the mutation, and pauses without committing, stashing, discarding, or asking a repair worker to build on the reviewer change.",
+      "files": [],
+      "expectations": [
+        "It confirms Git state after a reviewer without enforced tool restrictions.",
+        "It does not mark the review passed or the task completed.",
+        "It preserves the unexpected change for the user's recovery decision."
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "/run-tasks 예전 형식의 completed task set이야. Final code commit과 첫 task base는 비어 있고 Git history상 여러 commit이 후보라 정확한 경계를 고를 수 없어. 새 ledger로 바꿔서 끝내줘.",
+      "expected_output": "The response pauses because exact legacy anchors are not uniquely reconstructable, preserves the completed contracts, and asks for the smallest baseline decision instead of inventing SHAs or marking the cumulative gate passed.",
+      "files": [],
+      "expectations": [
+        "It migrates a legacy Final code commit only when it contains a valid exact SHA.",
+        "It does not infer an arbitrary base or checkpoint from ambiguous history.",
+        "It does not rewrite completed outcomes or acceptance criteria."
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "/run-tasks verification failure 뒤 repair worker가 code commit은 남겼지만 Task correction rounds를 올리지 않은 채 context가 끊겼어. checkpoint field는 이전 SHA야.",
+      "expected_output": "The response classifies the later commit as an invalid repair attempt before considering generic checkpoint recovery, refuses to adopt it, and stops with exact evidence instead of bypassing the correction limit.",
+      "files": [],
+      "expectations": [
+        "Repair-specific validation takes precedence over the generic stale-checkpoint case.",
+        "It requires code and the one-step counter increment in the same commit.",
+        "It does not rewrite history, silently increment the counter, or record the invalid commit as the checkpoint."
       ]
     }
   ]

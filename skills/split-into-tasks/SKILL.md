@@ -56,14 +56,19 @@ Each task file contains:
 
 - title
 - independently deliverable, end-to-end behavior from the user's perspective
-- blocking tasks and why each one gates completion
+- a `## Blockers` section naming each blocking task and why it gates
+  completion; write `None.` when there are no declared dependencies
 - status initialized to `pending`; later execution may change it only to
   `in-progress`, `completed`, or `blocked`
 - outcome-level acceptance-criteria checkboxes for observable completed behavior
 - constraints specific to that task's delivery or coordination
-- an execution ledger initialized with blank base commit, final code commit,
-  verification, task review, cumulative review, and blocker fields plus zeroed
-  task and cumulative correction counters
+- a task-local execution ledger initialized with blank base commit, task
+  checkpoint commit, verification, task review, and blocker fields plus a
+  zeroed task correction counter
+- on the highest-numbered terminal task only, a run-completion ledger with a
+  pending cumulative status, blank cumulative base, candidate, and reviewed
+  commits, verification, review, and blocker fields, plus a zeroed correction
+  counter
 
 Record constraints shared by multiple tasks in `spec.md` and constraints that
 apply to one task in that task file. Describe observable behavior and settled
@@ -80,13 +85,26 @@ pending
 ## Execution
 
 - Base commit: —
-- Final code commit: —
+- Task checkpoint commit: —
 - Verification: —
 - Task review: —
 - Task correction rounds: 0
+- Blocker: —
+```
+
+Append this run-level gate only to the terminal task:
+
+```md
+## Run completion
+
+- Cumulative status: pending
+- Cumulative base commit: —
+- Cumulative candidate commit: —
+- Cumulative reviewed commit: —
+- Cumulative verification: —
 - Cumulative review: —
 - Cumulative correction rounds: 0
-- Blocker: —
+- Cumulative blocker: —
 ```
 
 ## Revisit a breakdown

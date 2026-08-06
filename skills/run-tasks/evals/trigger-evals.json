@@ -16,6 +16,18 @@
     "should_trigger": true
   },
   {
+    "query": "모든 task는 completed인데 마지막 cumulative review만 비어 있어. task set 실행을 마무리해줘.",
+    "should_trigger": true
+  },
+  {
+    "query": "Task 02가 내 결정을 기다리며 blocked됐어. 결정을 내렸으니 그 task set을 이어서 완료해줘.",
+    "should_trigger": true
+  },
+  {
+    "query": "어느 것인지는 안 정했지만 생성된 task set 중 하나를 실행해줘.",
+    "should_trigger": true
+  },
+  {
     "query": "docs/specs/checkout/spec.md를 보고 여러 task로 나눌지 먼저 제안해줘.",
     "should_trigger": false
   },

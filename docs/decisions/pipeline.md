@@ -23,17 +23,24 @@
   findings. The review starts read-only; findings return to the implementation
   worker for correction.
 - After all tasks complete, review the cumulative diff from the orchestration
-  start point. Hosted or pull-request review remains optional and begins only
-  after the user authorizes the corresponding push or pull request.
+  start point through an exact end commit. The terminal task carries this
+  distinct run-completion gate, so a cumulative blocker does not rewrite the
+  last task's own completed result. Hosted or pull-request review remains
+  optional and begins only after the user authorizes the corresponding push or
+  pull request.
 - Task files are the durable execution ledger and Git is the source of truth for
   code state; the orchestrator keeps no separate run-state file. Starting a
   task records its in-progress status and base commit. Completion records the
-  final code commit and concise verification and review evidence before marking
-  the task complete.
+  exact task checkpoint commit and concise verification and review evidence
+  before marking the task complete. The terminal task separately records the
+  cumulative base, current candidate and reviewed commits, verification,
+  review, correction count, and blocker.
 - Context or harness interruption resumes the same task in a fresh worker from
   its ledger and Git state. Verification or review blockers receive at most two
-  automatic correction rounds. If a blocker persists or no progress is made,
-  mark the task blocked and pause the whole run rather than skipping ahead.
+  automatic correction rounds. Failure evidence is committed before repair
+  dispatch, and the repair counter advances atomically with its code commit. If
+  a blocker persists or no progress is made, mark the corresponding task gate
+  or cumulative gate blocked and pause the whole run rather than skipping ahead.
 - When shaping settles on a framework or hosted service, install the vendor's
   official agent context in its recommended form. `add-stack-context` is
   model-invoked to audit and install the same context during agent setup, after
@@ -61,9 +68,16 @@
   the same diff scope and blocking criteria. Review supplements rather than
   replaces tests, branch protection, or human approval.
 - Conversation history and transient phase progress are disposable. On restart,
-  resume the in-progress task from its recorded base and current Git state, then
-  rerun deterministic verification and review rather than trusting an
-  interrupted phase marker.
+  resume the in-progress task from its recorded base and current Git state.
+  Continue implementation when its checkpoint is incomplete; otherwise rerun
+  deterministic verification and review rather than trusting an interrupted
+  phase marker. A completed-only set remains unfinished while its terminal
+  cumulative gate has not passed.
+- Dirty state is not attributable merely because it matches the current task;
+  require the user to confirm ownership before a resumed worker absorbs it.
+- Review and repair operate on exact commit anchors. A returned checkpoint must
+  descend on the same first-parent line from the dispatch state, and the
+  orchestrator reruns verification instead of treating worker output as proof.
 - Pause immediately for unexpected Git state, an invalidated task graph, or
   authority the user has not granted. Do not let retry policy expand permission
   or silently rewrite approved task boundaries.
