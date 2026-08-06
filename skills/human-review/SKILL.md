@@ -9,102 +9,66 @@ Protect human attention. Let automated review handle mechanically checkable
 correctness; ask the human to accept or reject the consequential promises the
 change introduces.
 
-## Establish the result
+## Establish trustworthy coverage
 
 Read the request, repository instructions, current diff or named change, and any
 relevant specs or project decisions. Inspect the actual product and rerun the
-smallest checks needed to support each claim. Treat an AI-authored summary as a
-claim, never as proof.
+smallest checks needed to support each claim. Treat prior summaries as claims,
+never as proof. Review the completed work without fixing or broadening it.
 
-Review the completed work without fixing or broadening it. Mark missing evidence
-as unverified instead of converting it into a completion claim.
+Before compressing, account for every changed product behavior, access or data
+boundary, external contract, and failure or recovery path. Give each one a
+disposition: summary, human question, mechanical issue, or unverified. Keep this
+coverage note behind the evidence path, but surface any release blocker or
+material unverified limit in the overview. This check exists because compression
+can otherwise make an omitted change invisible.
+
+Use results observed from the named change in a real runnable environment. Keep
+the change reference, route or command, and environment with the evidence. Never
+redraw an intended UI or manufacture representative output and label it observed;
+when the result cannot be captured safely, mark it unverified.
+
+Redact secrets and personal data without hiding the behavior under review. Never
+rerun a destructive production action merely to create evidence.
 
 ## Find the human judgment
 
-Reason from commitments, not file types. A commitment is a new product behavior,
-access boundary, data transformation, external contract, or failure and recovery
-posture.
+Reason from commitments, not files or technical layers. Create a human question
+only when the answer is unresolved and would change the implementation, or when
+an owner must explicitly accept a consequence that is costly if wrong, difficult
+to reverse, or not decidable by automated evidence.
 
-Build the human queue in this order:
+Demonstrate commitments already settled by the request or current project
+decisions without asking for approval again, unless their observed consequence
+still requires explicit risk acceptance. Keep routine defects, style, and
+internal refactors with demonstrated equivalence out of the human queue. Report
+confirmed defects as mechanical issues and expose blockers in the overview; do
+not turn them into approval questions.
 
-1. Extract every commitment introduced by the completed change.
-2. Remove commitments already settled by the request, a current spec, or a
-   project decision. Demonstrate their result without asking for approval again,
-   unless an owner still needs to accept the observed permission, money,
-   data-loss, external-contract, irreversible-action, or recovery consequence.
-3. Remove commitments whose intended answer and behavior are established by
-   direct automated evidence and require no separate risk acceptance.
-4. Keep an unresolved commitment only when a different human answer would change
-   the implementation, or an owner must explicitly accept a permission, money,
-   data-loss, external-contract, irreversible-action, or recovery consequence.
-5. Order the remainder by cost of error, difficulty of reversal, then lack of
-   direct evidence. Show at most the first three.
-
-Always inspect permissions and data exposure, destructive migrations, money,
-public APIs and events, irreversible user actions, and rollback or recovery. Do
-not route a harmless database change merely because it is a schema change, or
-hide a consequential UI behavior merely because it is not one.
-
-Do not expose secrets or personal data in the artifact. Redact representative
-values without hiding the behavior under review. Never rerun a destructive
-production action merely to create review evidence; use an existing safe result
-or mark it unverified.
-
-Keep routine defects, style, internal refactors with demonstrated equivalence,
-and other mechanically settled findings out of the human queue. Do not use model
-confidence as evidence. Present zero to three independent questions at once; if
-more remain, say that another set remains rather than silently dropping them.
+Present zero to three independent questions, ordered by cost of error,
+reversibility, and limits of direct evidence. If more remain, name the remaining
+commitments instead of hiding them behind an anonymous count. Do not use model
+confidence as evidence.
 
 ## Build the review surface
 
 Copy [assets/review.html](./assets/review.html) to a temporary location outside
-the repository and replace its example content. Leave product source unchanged
-and do not commit the review artifact. Keep it free of network dependencies;
-bundle local media or place it beside the temporary HTML when needed.
-
-The first screen contains only:
-
-- Three to five plain-language lines covering the whole outcome, the main
-  changed behaviors or boundaries, the observed failure or recovery behavior or
-  a material unverified limit, and material scope that stayed out. Include
-  important changes even when they do not become human questions. Do not invent
-  excluded scope when none is established.
-- The current set of human questions, phrased in the user's product language.
-- A quiet note when additional unresolved questions remain beyond the current
-  set.
-- One quiet path to the checks and source evidence.
-
-Do not show review-time estimates, severity codes, scores, model confidence,
-file counts, line counts, or test counts. Do not expose internal terms when a
-plain product sentence works.
-
-Translate the template labels and decision controls into the user's language.
-Give duplicated review screens unique element IDs. Remove unused patterns,
-screens, and placeholders; when no question remains, remove all review screens
-and show the truthful zero-question state on the overview.
-
-Open each question on the actual result before its explanation:
-
-- UI behavior: a rendered before/after state or short replay.
-- API or event contract: real request and response values before and after.
-- Data change: representative rows before and after plus the tested recovery
-  result.
-- Permission change: a principal-by-action access table.
-- Operational change: the failure, detection, and recovery trace.
-
-Ask one decision in that view. Put why it was routed, commands, tests, sources,
-and raw output behind a disclosure. Distinguish direct evidence from inference.
+the repository and follow the presentation contract embedded there. Leave
+product source unchanged, keep the artifact free of network dependencies, and do
+not commit it.
 
 Render the finished artifact in a browser. Exercise every route, disclosure,
-comparison or replay, decision control, and relevant narrow viewport before
-presenting it. Return a direct link and one preview image when the host supports
-them.
+comparison or replay, and relevant narrow viewport before presenting it. Return
+a direct link and one preview image when the host supports them. If local-file
+navigation is blocked, serve the temporary directory on loopback or use an
+available headless browser; if no browser path works, report the surface as
+an unverified draft. Browser verification is a completion gate: do not call the
+review complete or ready until it passes.
 
 ## Keep ownership human
 
-Present the surface and begin with the first unresolved question. When none
-remains, stay on the overview and point to the evidence that closed the queue.
-Do not treat silence, navigation, a local button selection, or an AI
-recommendation as approval. When the user decides in the conversation, state the
-choice plainly and return requested product changes to the calling session; the
-temporary surface is not a project decision record.
+Open on the overview, then focus the conversation on the first unresolved
+question. When none remains, say why the evidence closed the queue. Do not treat
+silence, navigation, or an AI recommendation as approval. Record a human choice
+only after the user states it in the conversation. The temporary surface is not
+a project decision record.

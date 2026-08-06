@@ -3,18 +3,25 @@
 
   1. Copy this file to a temporary directory outside the repository.
   2. Set the document language. Replace every bracketed placeholder, example
-     value, label, and decision control with the reviewer's product language.
-  3. Keep the overview to 3-5 summary lines and 0-3 review questions.
+     value, and label with the reviewer's product language. Confirm none remain,
+     then remove data-template="true" from <body>.
+  3. Keep the overview to 3-5 summary lines and 0-3 review questions. Name any
+     additional commitments in the quiet remaining-items line.
   4. Duplicate the review screen only for another independent question and give
      every duplicated id and aria reference a unique value. With zero questions,
      remove every review screen and show the overview's zero-question state.
-  5. Put the observed result before the reason or implementation evidence.
-  6. Copy the required result pattern from the inert templates near the end,
+  5. Remove the optional excluded-scope row when none is established.
+  6. Put the actual observed result before the decision or implementation
+     evidence. Use a capture or output produced from the named change; never draw
+     a mock result. State Unverified when no safe observation exists.
+  7. Copy the required result pattern from the inert templates near the end,
      then remove all unused patterns. Keep evidence behind <details>.
-  7. Do not add estimates, severity, scores, confidence, or file/test/line counts.
-  8. Redact secrets and personal data. Never invent or destructively reproduce
+  8. Keep change ref, route or command, and environment with each observation.
+     Include the complete coverage disposition in the evidence screen.
+  9. Do not add estimates, severity, scores, confidence, or file/test/line counts.
+  10. Redact secrets and personal data. Never invent or destructively reproduce
      missing evidence; label it Unverified.
-  9. Keep the artifact local and dependency-free. Preserve the hash navigation.
+  11. Keep the artifact local and dependency-free. Preserve the hash navigation.
 -->
 <!doctype html>
 <html lang="en">
@@ -79,6 +86,18 @@
 
       .screen[hidden] {
         display: none;
+      }
+
+      .template-warning {
+        position: sticky;
+        z-index: 10;
+        top: 0;
+        padding: 12px 18px;
+        background: #9b2c2c;
+        color: white;
+        text-align: center;
+        font-size: 0.88rem;
+        font-weight: 720;
       }
 
       .eyebrow {
@@ -269,43 +288,26 @@
         color: var(--accent);
       }
 
-      .mock-product {
-        min-height: 170px;
-        padding: 18px;
+      .capture {
+        margin: 0;
+      }
+
+      .capture img,
+      .capture video {
+        display: block;
+        width: 100%;
+        min-height: 160px;
         border: 1px solid var(--line);
         border-radius: 12px;
-        background: white;
+        background: #f3f6f4;
+        object-fit: contain;
       }
 
-      .mock-row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid #edf0ee;
-      }
-
-      .mock-row:last-child {
-        border-bottom: 0;
-      }
-
-      .dot {
-        width: 12px;
-        height: 12px;
-        flex: 0 0 auto;
-        border: 1.5px solid #9aa49f;
-        border-radius: 50%;
-      }
-
-      .mock-row.done {
+      .capture figcaption,
+      .observation-source {
+        margin: 10px 0 0;
         color: var(--muted);
-        text-decoration: line-through;
-      }
-
-      .mock-row.done .dot {
-        border-color: var(--accent);
-        background: var(--accent);
-        box-shadow: inset 0 0 0 3px white;
+        font-size: 0.78rem;
       }
 
       .decision {
@@ -321,34 +323,11 @@
         font-weight: 660;
       }
 
-      .choices {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 9px;
-      }
-
-      .choice {
-        min-height: 44px;
-        padding: 9px 15px;
-        border: 1px solid #cbbd97;
-        border-radius: 999px;
-        background: white;
-        color: var(--ink);
-        cursor: pointer;
-      }
-
-      .choice[aria-pressed="true"] {
-        border-color: var(--accent);
-        background: var(--accent);
-        color: white;
-      }
-
-      .choice-status {
-        min-height: 24px;
-        margin: 14px 0 0;
+      .reply {
+        margin: 0;
         color: var(--muted);
-        font-size: 0.86rem;
-        font-weight: 500;
+        font-size: 0.88rem !important;
+        font-weight: 520 !important;
       }
 
       details {
@@ -470,7 +449,8 @@
       }
 
       .verified,
-      .unverified {
+      .unverified,
+      .blocked {
         flex: 0 0 auto;
         font-size: 0.76rem;
         font-weight: 720;
@@ -482,6 +462,10 @@
 
       .unverified {
         color: #8a5b00;
+      }
+
+      .blocked {
+        color: #9b2c2c;
       }
 
       @media (max-width: 640px) {
@@ -527,7 +511,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-template="true">
     <main class="shell">
       <section class="screen" id="overview" data-screen>
         <p class="eyebrow">Human review</p>
@@ -539,8 +523,10 @@
         <ul class="summary" aria-label="Change summary">
           <li><strong>Now</strong><span>[The main behavior that was added or changed.]</span></li>
           <li><strong>Also</strong><span>[A second material behavior or boundary.]</span></li>
-          <li><strong>When it fails</strong><span>[The observed failure or recovery behavior.]</span></li>
+          <li><strong>Limits</strong><span>[A release blocker or important unverified limit. Remove when none exists and add another material outcome.]</span></li>
+          <!-- Optional. Remove when excluded scope was not established:
           <li><strong>Not changed</strong><span>[The material scope intentionally left out.]</span></li>
+          -->
         </ul>
 
         <h2>What needs your judgment</h2>
@@ -555,7 +541,7 @@
           </a>
         </div>
         <!-- Show only when more than three unresolved questions exist:
-        <p class="remaining">[Additional decisions remain for the next review set.]</p>
+        <p class="remaining">[More to review: name each remaining commitment.]</p>
         -->
         <!-- Zero-question state:
         <p class="empty">No unresolved product judgment remains in this change.</p>
@@ -572,33 +558,29 @@
 
         <div class="result">
           <p class="result-label">Observed result</p>
-          <!-- Choose the result pattern required by the change. This example is UI before/after. -->
+          <!-- Replace with an inert result pattern from below. Never recreate the intended UI here. -->
           <div class="comparison">
             <article class="state">
               <span class="state-name">Before</span>
-              <div class="mock-product" aria-label="Previous product state">
-                <div class="mock-row"><span class="dot"></span><span>[Previous result]</span></div>
-                <div class="mock-row"><span class="dot"></span><span>[Previous result]</span></div>
-              </div>
+              <figure class="capture">
+                <img src="[Actual before capture path]" alt="[Observed previous product state]" />
+                <figcaption>[Captured from the previous change reference and route.]</figcaption>
+              </figure>
             </article>
             <article class="state">
               <span class="state-name">After</span>
-              <div class="mock-product" aria-label="New product state">
-                <div class="mock-row done"><span class="dot"></span><span>[New result]</span></div>
-                <div class="mock-row"><span class="dot"></span><span>[New result]</span></div>
-              </div>
+              <figure class="capture">
+                <img src="[Actual after capture path]" alt="[Observed new product state]" />
+                <figcaption>[Captured from the named change and route.]</figcaption>
+              </figure>
             </article>
           </div>
+          <p class="observation-source">[Change ref · route or command · environment]</p>
         </div>
 
         <section class="decision" aria-labelledby="review-1-decision">
           <p id="review-1-decision">[Ask the reviewer to accept or change one consequence.]</p>
-          <div class="choices" role="group" aria-label="Decision choices">
-            <button class="choice" type="button" data-choice="Accept" aria-pressed="false">Accept</button>
-            <button class="choice" type="button" data-choice="Change" aria-pressed="false">Change it</button>
-            <button class="choice" type="button" data-choice="Discuss" aria-pressed="false">Discuss</button>
-          </div>
-          <p class="choice-status" aria-live="polite"></p>
+          <p class="reply">[Reply in the conversation: accept, change, or discuss.]</p>
         </section>
 
         <details>
@@ -626,6 +608,24 @@
         <div class="evidence-list">
           <article class="evidence-row">
             <header>
+              <h2>Coverage</h2>
+              <span class="verified">Accounted for</span>
+            </header>
+            <p>[Every changed commitment has a disposition. Keep the detail complete even when the overview is short.]</p>
+            <details>
+              <summary>Changed commitments and disposition</summary>
+              <div class="detail-body table-wrap">
+                <table>
+                  <thead><tr><th>Changed commitment</th><th>Disposition</th><th>Where shown</th></tr></thead>
+                  <tbody>
+                    <tr><td>[Changed behavior or boundary]</td><td>[Summary, human question, mechanical issue, or unverified]</td><td>[Visible location]</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </article>
+          <article class="evidence-row">
+            <header>
               <h2>[Verified product behavior]</h2>
               <span class="verified">Observed</span>
             </header>
@@ -642,6 +642,12 @@
             </header>
             <p>[Say exactly what is missing. Do not imply completion.]</p>
           </article>
+          <!-- Optional mechanical blocker row. Remove when none exists:
+          <article class="evidence-row">
+            <header><h2>[Confirmed mechanical issue]</h2><span class="blocked">Blocks release</span></header>
+            <p>[Observed defect and affected outcome. This is not a human approval question.]</p>
+          </article>
+          -->
         </div>
       </section>
 
@@ -664,6 +670,7 @@
 }</pre>
           </article>
         </div>
+        <p class="observation-source">[Change ref · exact request command or test · environment]</p>
       </template>
 
       <template id="result-data-comparison">
@@ -683,6 +690,7 @@
             </tbody>
           </table>
         </div>
+        <p class="observation-source">[Change ref · migration or query command · safe environment]</p>
       </template>
 
       <template id="result-access-matrix">
@@ -698,6 +706,7 @@
             </tbody>
           </table>
         </div>
+        <p class="observation-source">[Change ref · access test or route · environment]</p>
       </template>
 
       <template id="result-recovery-trace">
@@ -707,6 +716,7 @@
           <li><strong>Detection</strong><span>[Observed signal and when it appeared]</span></li>
           <li><strong>Recovery</strong><span>[Observed recovery result or Unverified]</span></li>
         </ol>
+        <p class="observation-source">[Change ref · failure injection or existing incident trace · safe environment]</p>
       </template>
     </main>
 
@@ -723,17 +733,12 @@
         window.scrollTo({ top: 0, behavior: "instant" });
       }
 
-      document.querySelectorAll(".decision").forEach((decision) => {
-        const status = decision.querySelector(".choice-status");
-        decision.querySelectorAll(".choice").forEach((button) => {
-          button.addEventListener("click", () => {
-            decision.querySelectorAll(".choice").forEach((candidate) => {
-              candidate.setAttribute("aria-pressed", String(candidate === button));
-            });
-            status.textContent = `Local selection only: ${button.dataset.choice}. Confirm it in the conversation.`;
-          });
-        });
-      });
+      if (document.body.dataset.template === "true") {
+        const warning = document.createElement("div");
+        warning.className = "template-warning";
+        warning.textContent = "Template incomplete — replace every placeholder and remove data-template before presenting.";
+        document.body.prepend(warning);
+      }
 
       window.addEventListener("hashchange", showScreen);
       showScreen();
