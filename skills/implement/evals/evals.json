@@ -17,11 +17,12 @@
     {
       "id": 2,
       "prompt": "/implement docs/specs/todo-platform/tasks의 승인된 Task 01부터 04까지 실행해줘. Task 03에만 누적 권한 경계를 확인하는 Review checkpoint가 선언돼 있어.",
-      "expected_output": "One implementation context completes the tasks in dependency order, reviews the cumulative diff at Task 03, fixes any blocking finding in that same context, and finishes with full verification and a fresh cumulative final review.",
+      "expected_output": "One implementation context completes the tasks in dependency order, records finished task status as completed, reviews the cumulative diff at Task 03, fixes any blocking finding in that same context, and finishes with full verification and a fresh cumulative final review.",
       "files": [],
       "expectations": [
         "It does not replace the implementation context at ordinary task boundaries.",
         "It uses focused deterministic checks to complete each vertical task.",
+        "It marks finished task files completed and records their verification evidence.",
         "It runs the declared Task 03 independent review but does not invent reviews for Tasks 01, 02, or 04.",
         "It returns review findings to the existing implementation context rather than spawning a repair worker.",
         "It runs one independent final review after complete integrated verification."

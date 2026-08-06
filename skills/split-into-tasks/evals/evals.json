@@ -51,7 +51,7 @@
     {
       "id": 5,
       "prompt": "/split-into-tasks 방금 제안한 세 task와 blocker를 승인해. task 파일을 작성해줘.",
-      "expected_output": "The response writes one task file per approved deliverable in dependency order. Each file carries complete behavior, blocker reasons, pending status, outcome-level acceptance checkboxes, focused verification, any approved risk-based review checkpoint, and minimal execution state. It ends without beginning implementation.",
+      "expected_output": "The response writes one task file per approved deliverable in dependency order using templates/task.md. Each file carries complete behavior, blocker reasons, pending status, outcome-level acceptance checkboxes, focused verification, any approved risk-based review checkpoint, and minimal execution state. It ends without beginning implementation.",
       "files": [],
       "expectations": [
         "It writes only the approved tasks and preserves their approved boundaries.",
@@ -60,6 +60,7 @@
         "Acceptance criteria verify observable completed behavior instead of naming files, classes, hooks, or implementation steps.",
         "It references an approved prototype when relevant rather than copying its implementation.",
         "It numbers blockers before dependents.",
+        "It uses the task template and preserves pending, in-progress, completed, and blocked as the status vocabulary.",
         "It initializes only status, verification, and blocker execution state, without commit anchors, correction counters, or a terminal run-completion section.",
         "It includes only review checkpoints approved in the proposed breakdown and does not add a final-review field to task files.",
         "It ends after publishing the approved task files."
@@ -113,6 +114,18 @@
         "It does not prescribe a fresh implementation or repair context.",
         "It does not add another intermediate review without separate material risk.",
         "It waits for approval before writing files."
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "/split-into-tasks 승인한 billing webhook task들을 작성해줘. `(provider, event_id)` 멱등성 키와 30일 상태 보존은 모든 task가 공유하는 확정 제약이고, replay 직전 확인은 운영 UI task만의 제약이야. 그 외 동작은 아직 정하지 않았어.",
+      "expected_output": "The response records the shared settled constraints in spec.md, keeps replay confirmation in only the relevant task, publishes the approved tasks from the template, and does not invent behavior for any unsettled policy.",
+      "files": [],
+      "expectations": [
+        "It writes the idempotency identity and retention rule to spec.md rather than duplicating them as task-only decisions.",
+        "It keeps the replay confirmation constraint in only the operator UI task.",
+        "It does not invent backfill, retry limits, retention exceptions, or recovery behavior that the user did not settle.",
+        "It ends after updating the spec and task handoff without beginning implementation."
       ]
     }
   ]

@@ -1,6 +1,6 @@
 {
   "name": "toycrane-skills",
-  "version": "0.32.0",
+  "version": "0.32.1",
   "description": "Skills for product discovery, shaping, prototyping, task splitting, continuous implementation, human review, project knowledge, and test-first development.",
   "author": {
     "name": "toy-crane",
