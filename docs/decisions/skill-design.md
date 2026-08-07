@@ -102,10 +102,13 @@ checks cannot decide.
   completion gate: an unchecked surface remains a draft. A fresh isolated
   control found an installed headless browser, verified overview, evidence,
   disclosures and a narrow viewport, and only then reported completion.
-- A current-versus-pruned workflow eval reduced `implement` from 78 to 29 lines
-  and `split-into-tasks` from 102 to 38 while preserving task boundaries,
-  selected and final reviews, meaningful commits, full verification, and safe
-  interruption handling. The first split draft failed to update shared spec
-  constraints and invented an unsettled audit policy; one narrow constraint and
-  a fresh webhook control corrected both. A separate stock-reservation control
-  caught and fixed the pre-existing `complete` versus `completed` state drift.
+- An earlier workflow-pruning eval reduced `implement` from 78 to 29 lines and
+  `split-into-tasks` from 102 to 38 while preserving task boundaries, selected
+  and final reviews, meaningful commits, full verification, and safe
+  interruption handling. A later review removed the remaining implementation
+  context and universal reviewer mechanics because no observed default failure
+  justified prescribing them. The first split draft failed to update shared
+  spec constraints and invented an unsettled audit policy; one narrow constraint
+  and a fresh webhook control corrected both. A separate stock-reservation
+  control caught and fixed the pre-existing `complete` versus `completed` state
+  drift.

@@ -3,66 +3,66 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "/implement docs/specs/todo/spec.md의 하나로 이어진 Todo 경험을 구현하고 검증해줘. task 파일은 없어.",
-      "expected_output": "The response implements the coherent spec in the current write-capable context, verifies the integrated behavior, obtains one independent final review, and does not invent task files or fresh implementation workers.",
+      "prompt": "/implement docs/specs/todo/를 구현하고 검증해줘. 이 폴더에는 task 파일이 없어.",
+      "expected_output": "The response implements spec.md directly, verifies the complete behavior, and finishes with the current harness's native review process without inventing task files.",
       "files": [],
       "expectations": [
-        "It treats the unsplit spec as a valid implementation handoff.",
-        "It keeps implementation and review-finding repairs in the current write-capable context.",
+        "It treats the provided spec folder as the complete implementation handoff.",
+        "It implements spec.md directly because no approved task files exist.",
         "It runs the repository's complete required verification before finishing.",
-        "It obtains an independent read-only final review over the whole implementation diff.",
+        "It uses the current harness's native review process on the whole implementation diff.",
         "It does not push or perform another remote write without separate authorization."
       ]
     },
     {
       "id": 2,
-      "prompt": "/implement docs/specs/todo-platform/tasks의 승인된 Task 01부터 04까지 실행해줘. Task 03에만 누적 권한 경계를 확인하는 Review checkpoint가 선언돼 있어.",
-      "expected_output": "One implementation context completes the tasks in dependency order, records finished task status as completed, reviews the cumulative diff at Task 03, fixes any blocking finding in that same context, and finishes with full verification and a fresh cumulative final review.",
+      "prompt": "/implement docs/specs/todo-platform/를 끝까지 구현해줘. 폴더 안에 승인된 Task 01부터 04까지 있고 Task 03에만 Review checkpoint가 선언돼 있어.",
+      "expected_output": "The response implements the approved tasks sequentially in dependency order, records completed status and verification evidence, follows the declared Task 03 contract, and finishes with complete verification and the harness's native final review process.",
       "files": [],
       "expectations": [
-        "It does not replace the implementation context at ordinary task boundaries.",
-        "It uses focused deterministic checks to complete each vertical task.",
+        "It chooses the approved task files instead of implementing the spec as an unsplit unit.",
+        "It completes the tasks sequentially in dependency order.",
         "It marks finished task files completed and records their verification evidence.",
-        "It runs the declared Task 03 independent review but does not invent reviews for Tasks 01, 02, or 04.",
-        "It returns review findings to the existing implementation context rather than spawning a repair worker.",
-        "It runs one independent final review after complete integrated verification."
+        "It follows the declared Task 03 review checkpoint without inventing reviews for Tasks 01, 02, or 04.",
+        "It runs complete integrated verification before the harness-native final review."
       ]
     },
     {
       "id": 3,
-      "prompt": "/implement 세션이 중단됐어. Task 01과 02는 completed이고 의미 있는 checkpoint commit이 있어. Task 03은 in-progress이며 현재 diff가 남아 있는데 그 변경의 소유권은 확실하지 않아. 계속해줘.",
-      "expected_output": "The response reconstructs completed progress from task files and Git but pauses before absorbing the ambiguous dirty changes, asking only for confirmation of their ownership.",
+      "prompt": "/implement docs/specs/billing/ 작업을 재개해줘. Task 01과 02는 completed이고 Task 03은 in-progress인데 현재 diff의 소유권은 확실하지 않아.",
+      "expected_output": "The response reconstructs completed progress from the spec folder and Git but pauses before absorbing the ambiguous dirty changes, asking only for confirmation of their ownership.",
       "files": [],
       "expectations": [
-        "It trusts task files, Git history, the current diff, and test evidence over a prior conversational summary.",
-        "It does not restart completed tasks in new implementation workers.",
+        "It trusts the spec folder, Git history, the current diff, and test evidence over a prior conversational summary.",
+        "It preserves completed tasks instead of restarting them.",
         "It does not commit, discard, stash, or absorb dirty changes whose ownership is ambiguous.",
         "It asks for the smallest decision needed to resume."
       ]
     },
     {
       "id": 4,
-      "prompt": "/implement Task 02의 중간 리뷰에서 권한 우회 blocker가 발견됐어. 구현과 테스트는 지금 컨텍스트에서 했고 reviewer는 read-only 상태로 기다리고 있어. 수정해서 계속해줘.",
-      "expected_output": "The current implementation context fixes the finding, reruns affected checks, asks the same read-only reviewer to verify it, and continues without creating a separate repair worker or state-only review commit.",
+      "prompt": "/implement docs/specs/auth/의 구현과 전체 검증은 끝났어. 현재 harness가 제공하는 review 프로세스로 최종 검토하고 마무리해줘.",
+      "expected_output": "The response uses the current harness's native review process for the entire implementation diff, fixes blocking findings, reruns affected verification, and repeats that review process until the final gate passes.",
       "files": [],
       "expectations": [
-        "It performs the repair in the current implementation context.",
-        "It reruns deterministic checks affected by the repair.",
-        "It reuses the same reviewer when possible.",
-        "It does not create a state-only review or correction-counter commit."
+        "It reviews the entire implementation diff rather than one task in isolation.",
+        "It uses the active harness's native review process instead of imposing a universal reviewer topology.",
+        "It treats correctness, security, regression, and specification findings as blocking.",
+        "It reruns affected verification after repairs.",
+        "It does not report completion until the final harness review passes."
       ]
     },
     {
       "id": 5,
-      "prompt": "/implement 세 task 모두 completed이고 중간 checkpoint도 통과했어. 최종 리뷰에서 Task 01과 03의 상호작용 회귀가 발견됐어.",
-      "expected_output": "The same implementation context may change code from any task to fix the integrated blocker, reruns affected and complete verification, and obtains a passing final re-review before reporting completion.",
+      "prompt": "/implement docs/specs/inventory/의 task는 모두 completed야. 최종 harness review에서 Task 01과 03의 상호작용 회귀가 발견됐어.",
+      "expected_output": "The response fixes the integrated blocker without changing the approved outcomes, reruns complete verification, and repeats the harness-native final review before reporting completion.",
       "files": [],
       "expectations": [
-        "It treats the cumulative interaction finding as blocking.",
+        "It treats the cross-task interaction finding as blocking.",
         "It does not reopen or rewrite the approved task outcomes.",
-        "It repairs the integrated behavior in the current implementation context.",
+        "It repairs the integrated behavior covered by the spec folder.",
         "It reruns the full required verification after the repair.",
-        "It does not report completion until the independent final re-review passes."
+        "It does not report completion until the harness-native final review passes."
       ]
     }
   ]
