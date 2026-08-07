@@ -1,4 +1,4 @@
 interface:
   display_name: "Implement"
-  short_description: "Implement approved work in one continuous context"
+  short_description: "Implement approved work through verification and review"
   default_prompt: "Use $implement to implement this approved spec or task set through verification and independent review."
