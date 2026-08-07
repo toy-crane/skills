@@ -23,12 +23,13 @@
   concise verification or blocker evidence. When repository policy calls for
   commits, code, tests, and the task update form one meaningful checkpoint.
 - A task's declared intermediate review checkpoint remains part of that task's
-  contract. The active harness uses its native review process for the stated
-  cumulative scope and risk before substantial dependent work continues.
+  contract. The active harness uses its automated code-review process for the
+  stated cumulative scope and risk before substantial dependent work continues.
 - After every outcome is implemented, rerun the complete deterministic
-  verification and use the active harness's native review process on the entire
-  implementation diff. This final gate applies to split and unsplit specs and
-  covers cross-task interactions and omitted requirements.
+  verification and use the active harness's automated code-review process on
+  the entire implementation diff against the selected spec and acceptance
+  criteria. This final gate applies to split and unsplit specs and covers
+  cross-task interactions and omitted requirements.
 - Context or harness interruption resumes from the spec folder, task status,
   Git history, current diff, and test results. Preserve completed outcomes and
   request user confirmation before absorbing dirty state of uncertain
@@ -61,9 +62,9 @@
   material defect through dependent work, or when deterministic checks cannot
   adequately settle a security, data, permission, migration, recovery, or
   external-contract risk. The existence of a task alone is not sufficient.
-- Harness-native review is authoritative for reviewer topology and mechanics.
-  `implement` requires the review outcome without prescribing one universal
-  process.
+- The active harness is authoritative for reviewer topology and mechanics.
+  `implement` requires an automated code-review outcome without prescribing one
+  universal process.
 - Conversation history is useful while available but is not durable evidence.
   After a real interruption, repository artifacts determine what remains.
 - Preserve unrelated changes and confirm ownership when dirty-state ownership
@@ -93,8 +94,8 @@ paths.
 
 Task files carry exceptional intermediate review checkpoints, so the execution
 skill does not need to restate their procedure. Complete verification proves
-known behavior; the harness's native final review adds its own independent
-signal without forcing every host through the same reviewer topology.
+known behavior; the harness's automated final code review adds its own signal
+without forcing every host through the same reviewer topology.
 
 Minimal task state and meaningful code checkpoints preserve useful recovery
 evidence without turning Git and task files into a second orchestration state
@@ -107,8 +108,9 @@ machine.
 - Selected intermediate reviews regularly cost more than the defects or
   avoided rework they produce, or material defects repeatedly appear before an
   undeclared checkpoint.
-- Harness-native review processes cannot reliably cover the complete diff or
-  report blocking findings consistently enough for the shared completion gate.
+- Available automated code-review processes cannot reliably cover the complete
+  diff or report blocking findings consistently enough for the shared
+  completion gate.
 - The minimal task state cannot reconstruct real interrupted runs safely.
 - Sequential implementation becomes the dominant bottleneck and the user
   chooses a parallel execution model for genuinely independent work.
