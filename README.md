@@ -3,7 +3,7 @@
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
 A composable, model-agnostic set of skills for product discovery, shaping,
-prototyping, task splitting, continuous implementation, human review, project
+prototyping, task splitting, implementation, human review, project
 knowledge, and test-first development. Install selected skills or the complete
 plugin.
 
@@ -48,12 +48,12 @@ Six skills cover discovery through implementation.
 flowchart LR
     DO["discover-opportunity<br/>(no direction yet)"] --> SI["shape-idea<br/>(problem named,<br/>direction rough)"]
     SI --> BP["build-prototype<br/>(judge it by using it)"]
-    SI --> SPEC[/spec.md/]
+    SI --> SPEC[/spec folder/]
     BP --> SPEC
     SPEC --> ST["split-into-tasks<br/>(multiple deliverables)"]
-    SPEC --> IM["implement<br/>(one implementation owner)"]
+    SPEC --> IM["implement<br/>(spec folder)"]
     ST --> IM
-    IM --> DONE["verified and independently reviewed"]
+    IM --> DONE["verified and reviewed"]
     TDD[tdd] -. "optional test-first loop" .-> IM
 ```
 
@@ -68,10 +68,37 @@ conversation alone; when a whole interface is approved, it creates or updates
 the spec and preserves `prototype.html` beside it. Use `split-into-tasks` only
 when the spec contains outcomes that should be delivered separately. It also
 marks the few intermediate reviews justified by material or downstream risk.
-Then use `implement` for either the spec or its approved tasks: one implementation
-context owns the related changes and repairs, while a fresh reviewer checks
-selected boundaries and the final cumulative result. Implementation planning is
-just in time, and `tdd` can provide the test-first loop.
+Then pass the spec folder to `implement`. It runs approved tasks sequentially
+when they exist and otherwise implements `spec.md` directly. After complete
+verification, the current harness's native review process checks the integrated
+result. Implementation planning is just in time, and `tdd` can provide the
+test-first loop.
+
+Pass the folder itself, not an individual spec or task file.
+
+Claude Code:
+
+```text
+/implement docs/specs/checkout/
+```
+
+Codex:
+
+```text
+$implement docs/specs/checkout/
+```
+
+The handoff lives at one stable path:
+
+```text
+docs/specs/checkout/
+├── spec.md
+├── prototype.html      # optional
+└── tasks/              # optional approved task files
+```
+
+Invoke the same folder again after an interruption. `implement` reconstructs
+progress from the folder, Git, the current diff, and verification results.
 
 - **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Find
   side-project directions from agreed personal traces and relevant current
@@ -90,10 +117,10 @@ just in time, and `tdd` can provide the test-first loop.
   explicit blockers, acceptance criteria, focused verification, minimal state,
   and only risk-justified intermediate review checkpoints.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
-- **[implement](./skills/implement/SKILL.md)**: Implement an approved spec or
-  task set in one continuous write-capable context. Keep repairs with that
-  implementation owner, honor selected independent review checkpoints, and
-  finish with full verification and a fresh cumulative review.
+- **[implement](./skills/implement/SKILL.md)**: Implement an approved spec
+  folder, using its tasks sequentially when present and its spec directly when
+  absent, then finish with full verification and the current harness's native
+  review process.
 - **[tdd](./skills/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from

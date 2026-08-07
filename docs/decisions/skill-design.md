@@ -2,8 +2,11 @@
 
 ## Decisions
 
-- A published skill states its goal, constraints, and completion criteria, then
-  leaves situational method to the model.
+- A published skill states its goal, inputs, actions, and completion criteria in
+  positive terms, then leaves situational method to the model.
+- Use prohibitions only when they protect a real authority or safety boundary or
+  prevent a repeated observed failure. Express ordinary constraints as the
+  behavior the agent should produce.
 - A fixed procedure must name a repeated, observed failure it prevents. Remove
   the procedure when improved models handle that failure without instruction.
 - Point at real artifacts instead of paraphrasing them. Keep detailed material
@@ -39,6 +42,7 @@
 
 - Instructions may constrain outcomes and safety without prescribing a fixed
   sequence.
+- Prefer executable positive direction over lists of forbidden actions.
 - UI metadata must continue to match the skill after a substantial edit.
 - Eval outputs are disposable; stable prompts and assertions may remain so later
   pruning can rerun the experiment.
@@ -49,6 +53,10 @@ Skill context competes with the user's task, repository context, and other
 instructions. Procedures the model already performs reduce adaptability and add
 tokens without changing behavior. The durable value is the counter-default: a
 constraint tied to an observed failure or project-specific truth.
+
+Positive direction keeps attention on the result the agent must produce.
+Unnecessary prohibitions narrow useful judgment, duplicate harness policy, and
+make a skill brittle across capable models.
 
 AI output can grow faster than human review capacity. Prioritizing API, database,
 UI, or another layer categorically misses both harmless changes in a sensitive
@@ -102,10 +110,13 @@ checks cannot decide.
   completion gate: an unchecked surface remains a draft. A fresh isolated
   control found an installed headless browser, verified overview, evidence,
   disclosures and a narrow viewport, and only then reported completion.
-- A current-versus-pruned workflow eval reduced `implement` from 78 to 29 lines
-  and `split-into-tasks` from 102 to 38 while preserving task boundaries,
-  selected and final reviews, meaningful commits, full verification, and safe
-  interruption handling. The first split draft failed to update shared spec
-  constraints and invented an unsettled audit policy; one narrow constraint and
-  a fresh webhook control corrected both. A separate stock-reservation control
-  caught and fixed the pre-existing `complete` versus `completed` state drift.
+- An earlier workflow-pruning eval reduced `implement` from 78 to 29 lines and
+  `split-into-tasks` from 102 to 38 while preserving task boundaries, selected
+  and final reviews, meaningful commits, full verification, and safe
+  interruption handling. A later review removed the remaining implementation
+  context and universal reviewer mechanics because no observed default failure
+  justified prescribing them. The first split draft failed to update shared
+  spec constraints and invented an unsettled audit policy; one narrow constraint
+  and a fresh webhook control corrected both. A separate stock-reservation
+  control caught and fixed the pre-existing `complete` versus `completed` state
+  drift.

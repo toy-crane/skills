@@ -39,7 +39,7 @@ A point where the user does not understand the system: a level, a mechanism, why
 _Avoid_: Confusion, knowledge gap
 
 **Task**:
-A delivery-sized unit cut from a spec: a complete, independently deliverable and verifiable path through every layer it touches, separated only when it can stand on its own. Work that becomes meaningful only when completed together remains one task. Tasks whose genuine blockers are all done form the frontier the implementation owner may continue through. A task boundary is not automatically a context or review boundary. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
+A delivery-sized unit cut from a spec: a complete, independently deliverable and verifiable path through every layer it touches, separated only when it can stand on its own. Work that becomes meaningful only when completed together remains one task. Tasks whose genuine blockers are all done form the frontier implementation may continue through. A task boundary is not automatically a context or review boundary. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
 _Avoid_: Ticket, slice, subtask, to-do
 
 **Decision index**:
