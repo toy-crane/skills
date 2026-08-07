@@ -48,11 +48,10 @@
   only at outcomes that can stand on their own. Work that becomes meaningful
   only when completed together remains one task. A task is not a fine-grained
   implementation to-do list.
-- `split-into-tasks` ends when the approved task handoff is current. It does not
-  begin implementation.
-- `implement` follows the selected folder's existing handoff. It does not
-  invent a task breakdown or silently rewrite approved outcomes, blockers, or
-  acceptance criteria.
+- `split-into-tasks` ends when the approved task handoff is current;
+  implementation begins through `implement`.
+- `implement` follows the selected folder's existing handoff while preserving
+  its approved outcomes, blockers, and acceptance criteria.
 - The standard task workflow is sequential. Parallel bulk migrations or
   explicitly independent queues require a separately chosen execution model
   rather than implicit task fan-out.
@@ -62,17 +61,15 @@
   external-contract risk. The existence of a task alone is not sufficient.
 - Harness-native review is authoritative for reviewer topology and mechanics.
   `implement` requires the review outcome without prescribing one universal
-  process. Hosted or pull-request review begins only after the user authorizes
-  the corresponding remote action.
+  process.
 - Conversation history is useful while available but is not durable evidence.
   After a real interruption, repository artifacts determine what remains.
-- Dirty state is not attributable merely because it matches the active task.
-  Preserve unrelated changes and require user confirmation when ownership or
-  overlap cannot be established safely.
+- Preserve unrelated changes and confirm ownership when dirty-state ownership
+  or overlap cannot be established safely.
 - Pause when a specification change invalidates an outcome, blocker, or task
   boundary; the same blocker persists without evidence of progress; or
-  continuing needs authority the user has not granted. Do not let retries
-  expand permission or silently rewrite approved work.
+  continuing needs authority the user has not granted. Keep retries within the
+  approved authority and work boundaries.
 - Work-unit product constraints belong in `spec.md`; constraints that expire
   with one task belong in that task file. A settled constraint that later work
   should reuse belongs in a decision contract when it passes the project

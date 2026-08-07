@@ -4,14 +4,13 @@
     {
       "id": 1,
       "prompt": "/implement docs/specs/todo/를 구현하고 검증해줘. 이 폴더에는 task 파일이 없어.",
-      "expected_output": "The response implements spec.md directly, verifies the complete behavior, and finishes with the current harness's native review process without inventing task files.",
+      "expected_output": "The response implements spec.md directly, verifies the complete behavior, and finishes with the current harness's native review process.",
       "files": [],
       "expectations": [
         "It treats the provided spec folder as the complete implementation handoff.",
         "It implements spec.md directly because no approved task files exist.",
         "It runs the repository's complete required verification before finishing.",
-        "It uses the current harness's native review process on the whole implementation diff.",
-        "It does not push or perform another remote write without separate authorization."
+        "It uses the current harness's native review process on the whole implementation diff."
       ]
     },
     {
@@ -20,10 +19,10 @@
       "expected_output": "The response implements the approved tasks sequentially in dependency order, records completed status and verification evidence, follows the declared Task 03 contract, and finishes with complete verification and the harness's native final review process.",
       "files": [],
       "expectations": [
-        "It chooses the approved task files instead of implementing the spec as an unsplit unit.",
+        "It selects the approved task files as the active implementation handoff.",
         "It completes the tasks sequentially in dependency order.",
         "It marks finished task files completed and records their verification evidence.",
-        "It follows the declared Task 03 review checkpoint without inventing reviews for Tasks 01, 02, or 04.",
+        "Task 03 is the sole intermediate review checkpoint it runs.",
         "It runs complete integrated verification before the harness-native final review."
       ]
     },
@@ -34,9 +33,9 @@
       "files": [],
       "expectations": [
         "It trusts the spec folder, Git history, the current diff, and test evidence over a prior conversational summary.",
-        "It preserves completed tasks instead of restarting them.",
-        "It does not commit, discard, stash, or absorb dirty changes whose ownership is ambiguous.",
-        "It asks for the smallest decision needed to resume."
+        "It preserves completed tasks and resumes the remaining work.",
+        "It confirms ownership before incorporating the ambiguous dirty changes.",
+        "It preserves the existing work while asking for the smallest decision needed to resume."
       ]
     },
     {
@@ -45,24 +44,24 @@
       "expected_output": "The response uses the current harness's native review process for the entire implementation diff, fixes blocking findings, reruns affected verification, and repeats that review process until the final gate passes.",
       "files": [],
       "expectations": [
-        "It reviews the entire implementation diff rather than one task in isolation.",
-        "It uses the active harness's native review process instead of imposing a universal reviewer topology.",
+        "It reviews the entire implementation diff.",
+        "It delegates reviewer topology and mechanics to the active harness's native review process.",
         "It treats correctness, security, regression, and specification findings as blocking.",
         "It reruns affected verification after repairs.",
-        "It does not report completion until the final harness review passes."
+        "It reports completion only after the final harness review passes."
       ]
     },
     {
       "id": 5,
       "prompt": "/implement docs/specs/inventory/의 task는 모두 completed야. 최종 harness review에서 Task 01과 03의 상호작용 회귀가 발견됐어.",
-      "expected_output": "The response fixes the integrated blocker without changing the approved outcomes, reruns complete verification, and repeats the harness-native final review before reporting completion.",
+      "expected_output": "The response fixes the integrated blocker while preserving the approved outcomes, reruns complete verification, and repeats the harness-native final review before reporting completion.",
       "files": [],
       "expectations": [
         "It treats the cross-task interaction finding as blocking.",
-        "It does not reopen or rewrite the approved task outcomes.",
+        "It preserves the approved task outcomes.",
         "It repairs the integrated behavior covered by the spec folder.",
         "It reruns the full required verification after the repair.",
-        "It does not report completion until the harness-native final review passes."
+        "It reports completion only after the harness-native final review passes."
       ]
     }
   ]
