@@ -54,7 +54,7 @@ flowchart LR
     SPEC --> IM["implement<br/>(spec folder)"]
     ST --> IM
     IM --> DONE["verified and reviewed"]
-    TDD[tdd] -. "optional test-first loop" .-> IM
+    IM -. "uses at pre-agreed public seams" .-> TDD[tdd]
 ```
 
 Invoke `discover-opportunity` when no problem or direction is known. It runs only
@@ -71,8 +71,8 @@ marks the few intermediate reviews justified by material or downstream risk.
 Then pass the spec folder to `implement`. It runs approved tasks sequentially
 when they exist and otherwise implements `spec.md` directly. After complete
 verification, the current harness's native review process checks the integrated
-result. Implementation planning is just in time, and `tdd` can provide the
-test-first loop.
+result. Implementation planning is just in time, and `implement` uses `tdd`
+where behavior can be verified through pre-agreed public seams.
 
 Pass the folder itself, not an individual spec or task file.
 
@@ -119,8 +119,8 @@ progress from the folder, Git, the current diff, and verification results.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[implement](./skills/implement/SKILL.md)**: Implement an approved spec
   folder, using its tasks sequentially when present and its spec directly when
-  absent, then finish with full verification and the current harness's native
-  review process.
+  absent, using `tdd` at pre-agreed public seams, then finish with full
+  verification and the current harness's native review process.
 - **[tdd](./skills/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from

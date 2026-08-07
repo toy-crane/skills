@@ -16,6 +16,8 @@
 - `implement` receives one selected `docs/specs/<slug>/` folder. When approved
   task files exist, it implements them sequentially in dependency order;
   otherwise it implements `spec.md` directly.
+- `implement` uses `tdd` where behavior can be verified through a pre-agreed
+  public seam.
 - Each outcome is complete after its acceptance criteria and focused
   deterministic verification pass. Task files hold only durable status plus
   concise verification or blocker evidence. When repository policy calls for

@@ -9,6 +9,9 @@ Treat the selected spec folder as the complete settled handoff. If approved
 task files exist under `tasks/`, implement them sequentially in dependency
 order. Otherwise implement `spec.md` directly.
 
+Use the `tdd` skill where behavior can be verified through a pre-agreed public
+seam.
+
 After an actual interruption, reconstruct progress from the spec folder, Git,
 diff, and tests, then continue the remaining work. Confirm ownership before
 incorporating ambiguous dirty changes.
