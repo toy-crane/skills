@@ -70,9 +70,10 @@ when the spec contains outcomes that should be delivered separately. It also
 marks the few intermediate reviews justified by material or downstream risk.
 Then pass the spec folder to `implement`. It runs approved tasks sequentially
 when they exist and otherwise implements `spec.md` directly. After complete
-verification, the current harness's native review process checks the integrated
-result. Implementation planning is just in time, and `implement` uses `tdd`
-where behavior can be verified through pre-agreed public seams.
+verification, the current harness's automated code-review process checks the
+integrated result against the selected spec and acceptance criteria.
+Implementation planning is just in time, and `implement` uses `tdd` where
+behavior can be verified through pre-agreed public seams.
 
 Pass the folder itself, not an individual spec or task file.
 
@@ -120,7 +121,7 @@ progress from the folder, Git, the current diff, and verification results.
 - **[implement](./skills/implement/SKILL.md)**: Implement an approved spec
   folder, using its tasks sequentially when present and its spec directly when
   absent, using `tdd` at pre-agreed public seams, then finish with full
-  verification and the current harness's native review process.
+  verification and the current harness's automated code-review process.
 - **[tdd](./skills/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from
