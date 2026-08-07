@@ -63,6 +63,17 @@
         "It reruns the full required verification after the repair.",
         "It reports completion only after the harness-native final review passes."
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "/implement docs/specs/checkout/를 구현해줘. 승인된 spec에 Checkout API가 public test seam으로 합의돼 있어.",
+      "expected_output": "The response implements the approved spec through the tdd skill at the pre-agreed Checkout API seam, then completes verification and the harness-native final review.",
+      "files": [],
+      "expectations": [
+        "It uses the tdd skill because the behavior has a pre-agreed public seam.",
+        "It uses the approved Checkout API seam without inventing an implementation-only test boundary.",
+        "It still completes the required verification and harness-native final review."
+      ]
     }
   ]
 }
