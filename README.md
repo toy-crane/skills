@@ -74,6 +74,32 @@ verification, the current harness's native review process checks the integrated
 result. Implementation planning is just in time, and `tdd` can provide the
 test-first loop.
 
+Pass the folder itself, not an individual spec or task file.
+
+Claude Code:
+
+```text
+/implement docs/specs/checkout/
+```
+
+Codex:
+
+```text
+$implement docs/specs/checkout/
+```
+
+The handoff lives at one stable path:
+
+```text
+docs/specs/checkout/
+├── spec.md
+├── prototype.html      # optional
+└── tasks/              # optional approved task files
+```
+
+Invoke the same folder again after an interruption. `implement` reconstructs
+progress from the folder, Git, the current diff, and verification results.
+
 - **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Find
   side-project directions from agreed personal traces and relevant current
   change. Runs only when explicitly invoked and hands the chosen direction to
