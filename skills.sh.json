@@ -1,0 +1,40 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Product development",
+      "description": "Skills for finding, shaping, implementing, and maintaining the context behind product work.",
+      "skills": [
+        "discover-opportunity",
+        "shape-idea",
+        "build-prototype",
+        "split-into-tasks",
+        "implement",
+        "tdd",
+        "add-stack-context",
+        "project-knowledge",
+        "compact-decisions"
+      ]
+    },
+    {
+      "title": "Git delivery",
+      "description": "Skills for safely recording, synchronizing, publishing, and merging repository changes.",
+      "skills": [
+        "commit",
+        "pull",
+        "push",
+        "pr",
+        "merge"
+      ]
+    },
+    {
+      "title": "Review and explanation",
+      "description": "Skills for making complex ideas and completed work easier to understand and judge.",
+      "skills": [
+        "explain-visually",
+        "human-review"
+      ]
+    }
+  ]
+}
