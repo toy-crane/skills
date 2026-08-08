@@ -4,8 +4,8 @@
 
 A composable, model-agnostic set of skills for product discovery, shaping,
 prototyping, task splitting, implementation, human review, project
-knowledge, and test-first development. Install selected skills or the complete
-plugin.
+knowledge, test-first development, and safe Git delivery. Install selected
+skills or the complete plugin.
 
 ## Install
 
@@ -126,6 +126,40 @@ progress from the folder, Git, the current diff, and verification results.
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
+
+## Git delivery
+
+Five standalone skills cover the repository handoff from a local change to
+merged `main`. Invoke them directly with `/commit`, `/pull`, `/push`, `/pr`, or
+`/merge` in Claude Code and `$commit`, `$pull`, `$push`, `$pr`, or `$merge` in
+Codex.
+
+```mermaid
+flowchart LR
+    C["commit<br/>record in-scope changes"] --> P["push<br/>publish existing commits"]
+    P --> PR["pr<br/>open ready-for-review PR"]
+    PR --> M["merge<br/>verify merge and clean up"]
+    L["pull<br/>rebase onto origin/main"] -. "synchronize when needed" .-> C
+    L -. "synchronize when needed" .-> P
+```
+
+Each skill is independently installable and owns its whole advertised outcome.
+`push` deliberately leaves dirty changes local. `pr` may perform the necessary
+commit, synchronization, and publication, but stops before merge. `merge`
+continues through verified remote merge and cleans up only resources owned by
+the merged worktree.
+
+- **[commit](./skills/commit/SKILL.md)**: Record only the current request's
+  changes as logical Conventional Commits while preserving unrelated work.
+- **[pull](./skills/pull/SKILL.md)**: Rebase the current checkout onto the fetched
+  `origin/main` without treating a dirty tree as permission to modify local work.
+- **[push](./skills/push/SKILL.md)**: Publish existing commits on a named branch,
+  reconciling remote state and using lease protection for intentional rewrites.
+- **[pr](./skills/pr/SKILL.md)**: Turn the current change into a ready-for-review
+  GitHub pull request and return its URL without merging it.
+- **[merge](./skills/merge/SKILL.md)**: Carry a change through verified pull
+  request merge, choose squash or rebase by commit meaning, then safely clean up
+  the merged worktree and its owned development server.
 
 ## Outside the pipeline
 
