@@ -134,6 +134,11 @@ merged base branch. Invoke them directly with `/commit`, `/pull`, `/push`,
 `/pr`, or `/merge` in Claude Code and `$commit`, `$pull`, `$push`, `$pr`, or
 `$merge` in Codex.
 
+When Codex exposes the managed plugin namespace, or a user-level skill with the
+same short name is also installed, use `$toycrane-skills:commit`,
+`$toycrane-skills:pull`, `$toycrane-skills:push`, `$toycrane-skills:pr`, or
+`$toycrane-skills:merge` to select this bundle unambiguously.
+
 ```mermaid
 flowchart LR
     C["commit<br/>record in-scope changes"] --> P["push<br/>publish existing commits"]
