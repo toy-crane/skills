@@ -27,9 +27,13 @@
   skills perform their necessary local Git work directly rather than assuming
   that a separately installed skill supplied missing instructions.
 - Deterministic Git helpers earn their fixed procedure only where ownership is
-  unsafe to infer. The merge helper identifies development-server processes by
-  the linked worktree's normalized branch route and stops only those processes;
-  host-specific worktree UI commands remain outside the published contract.
+  unsafe to infer. The merge helper stops only active Portless route processes
+  whose operating-system working directory is inside the linked worktree, and
+  verifies their exit; host-specific worktree UI commands remain outside the
+  published contract.
+- Pull request bases come from the user's request or the remote's advertised
+  default branch. Git delivery skills do not assume that `main` exists when the
+  repository uses `master`, `trunk`, or another default.
 - A push publishes existing commits and leaves dirty changes local. A pull
   preserves dirty work rather than silently committing, stashing, or discarding
   it. PR and merge requests authorize the in-scope commits needed to complete
@@ -134,10 +138,13 @@ checks cannot decide.
   and a fresh webhook control corrected both. A separate stock-reservation
   control caught and fixed the pre-existing `complete` versus `completed` state
   drift.
-- The imported Git skill bodies were reduced from 464 to 134 lines while
+- The imported Git skill bodies were reduced from 464 to 137 lines while
   retaining authority, preservation, remote-state, and completion contracts.
-  A 112-prompt Claude routing suite produced no false-positive failure; its
-  stable training and held-out runs still missed euphemistic requests, so the
-  descriptions were not expanded into synonym catalogs. Direct invocation is
-  the reliable route for those cases. The worktree server helper passed five
-  isolated ownership and no-op cases, including sibling-route preservation.
+  The first routing runner incorrectly converted failed Claude invocations into
+  empty selections, so those scores were discarded. After invalid runs became
+  explicit failures, a fresh one-pass suite scored 81 of 112 prompts with zero
+  invalid invocations: all 56 negative prompts avoided false activation, while
+  only 25 of 56 positive prompts activated implicitly. Descriptions therefore
+  remain concise and direct invocation is the reliable route. The worktree
+  server helper passed seven isolated ownership and failure cases, then
+  preserved a live Portless process owned by another repository worktree.

@@ -66,6 +66,17 @@
         "It preserves a recoverable reference to the local commits.",
         "It reaches a state based on fetched origin/main without losing work."
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "이 저장소의 remote default branch는 origin/trunk야. 브랜치 이름을 따로 지정하지 않았으니 기본 브랜치 최신 변경에 맞춰줘.",
+      "expected_output": "The response resolves origin/trunk as the advertised remote default and rebases onto it.",
+      "files": [],
+      "expectations": [
+        "It resolves the remote default branch rather than assuming main.",
+        "It fetches and rebases onto origin/trunk.",
+        "It reports the resolved remote and base branch."
+      ]
     }
   ]
 }
