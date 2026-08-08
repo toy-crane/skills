@@ -20,6 +20,20 @@
   planning, but not for lookup or execution of settled work.
 - Evaluate suspected counter-defaults against realistic prompts. When wording is
   revised after seeing a failure, test the revision on a new held-out control.
+- Git delivery skills state the requested repository outcome, the authority the
+  request grants, the state that must be preserved, and the evidence required
+  for completion. They leave ordinary Git command selection to the model.
+- `commit`, `pull`, `push`, `pr`, and `merge` each stand alone. The broader
+  skills perform their necessary local Git work directly rather than assuming
+  that a separately installed skill supplied missing instructions.
+- Deterministic Git helpers earn their fixed procedure only where ownership is
+  unsafe to infer. The merge helper identifies development-server processes by
+  the linked worktree's normalized branch route and stops only those processes;
+  host-specific worktree UI commands remain outside the published contract.
+- A push publishes existing commits and leaves dirty changes local. A pull
+  preserves dirty work rather than silently committing, stashing, or discarding
+  it. PR and merge requests authorize the in-scope commits needed to complete
+  their larger outcomes.
 - `human-review` routes human attention by the commitment a change introduces,
   not by file type or technical layer. Human review is warranted when a new
   product behavior, access boundary, data transformation, external contract, or
@@ -120,3 +134,10 @@ checks cannot decide.
   and a fresh webhook control corrected both. A separate stock-reservation
   control caught and fixed the pre-existing `complete` versus `completed` state
   drift.
+- The imported Git skill bodies were reduced from 464 to 134 lines while
+  retaining authority, preservation, remote-state, and completion contracts.
+  A 112-prompt Claude routing suite produced no false-positive failure; its
+  stable training and held-out runs still missed euphemistic requests, so the
+  descriptions were not expanded into synonym catalogs. Direct invocation is
+  the reliable route for those cases. The worktree server helper passed five
+  isolated ownership and no-op cases, including sibling-route preservation.
