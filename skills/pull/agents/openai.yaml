@@ -1,4 +1,4 @@
 interface:
-  display_name: "Pull Main"
-  short_description: "Rebase the current branch onto latest main"
-  default_prompt: "Use $pull to rebase the current branch onto the latest origin/main without losing local work."
+  display_name: "Pull Base Branch"
+  short_description: "Rebase onto the requested or default base"
+  default_prompt: "Use $pull to rebase the current checkout onto its latest remote base branch without losing local work."

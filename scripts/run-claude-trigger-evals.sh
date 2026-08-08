@@ -58,14 +58,50 @@ run_trigger_case() {
     task_claude_args+=(--model "$TASK_CLAUDE_MODEL")
   fi
 
-  task_stream=$(cd "$task_eval_root" && \
-    claude "${task_claude_args[@]}" 2>/dev/null || true)
-  task_selected=$(printf '%s\n' "$task_stream" | jq -r '
+  task_case_dir=$(mktemp -d "$task_eval_root/case.XXXXXX")
+  task_stdout="$task_case_dir/stdout.jsonl"
+  task_stderr="$task_case_dir/stderr.txt"
+  set +e
+  (cd "$task_eval_root" && claude "${task_claude_args[@]}") \
+    >"$task_stdout" 2>"$task_stderr"
+  task_status=$?
+  set -e
+
+  task_stream_valid=true
+  if ! jq -e . "$task_stdout" >/dev/null 2>&1; then
+    task_stream_valid=false
+  fi
+  task_result_subtype=$(jq -r '
+    select(.type == "result") | .subtype // "unknown"
+  ' "$task_stdout" 2>/dev/null | tail -n 1)
+  task_result_is_error=$(jq -r '
+    select(.type == "result") | (.is_error // false)
+  ' "$task_stdout" 2>/dev/null | tail -n 1)
+  task_assistant_error=$(jq -r '
+    select(.type == "assistant" and .error != null) | .error
+  ' "$task_stdout" 2>/dev/null | tail -n 1)
+  task_selected=$(jq -r '
     select(.type == "assistant")
     | .message.content[]?
     | select(.type == "tool_use" and .name == "Skill")
     | .input.skill
-  ' | head -n 1)
+  ' "$task_stdout" 2>/dev/null | head -n 1)
+  task_error=$(tr '\n' ' ' < "$task_stderr" | cut -c1-600)
+  if [ -z "$task_error" ] && [ -n "$task_assistant_error" ]; then
+    task_error="$task_assistant_error"
+  fi
+
+  task_valid=false
+  if [ "$task_stream_valid" = true ] \
+    && [ -z "$task_assistant_error" ] \
+    && { { [ "$task_status" -eq 0 ] \
+        && [ "$task_result_subtype" = success ] \
+        && [ "$task_result_is_error" != true ]; } \
+      || [ "$task_result_subtype" = error_max_turns ]; }; then
+    task_valid=true
+  elif [ -z "$task_error" ]; then
+    task_error="claude exited $task_status with result subtype ${task_result_subtype:-missing}"
+  fi
 
   jq -nc \
     --arg skill "$task_skill" \
@@ -73,8 +109,15 @@ run_trigger_case() {
     --argjson should_trigger "$task_should_trigger" \
     --argjson run "$task_run" \
     --arg selected "$task_selected" \
+    --argjson valid "$task_valid" \
+    --argjson exit_status "$task_status" \
+    --arg result_subtype "${task_result_subtype:-missing}" \
+    --arg result_is_error "${task_result_is_error:-missing}" \
+    --arg error "$task_error" \
     '{skill: $skill, query: $query, should_trigger: $should_trigger,
-      run: $run, selected: $selected}'
+      run: $run, selected: $selected, valid: $valid,
+      exit_status: $exit_status, result_subtype: $result_subtype,
+      result_is_error: $result_is_error, error: $error}'
 }
 export -f run_trigger_case
 export task_eval_root
@@ -89,13 +132,15 @@ export task_eval_root
 } | xargs -P "$task_workers" -n 4 bash -c 'run_trigger_case "$@"' _ \
   > "$task_results"
 
-jq -s '
+task_summary=$(jq -s '
   group_by([.skill, .query])
   | map(
       . as $runs
       | ($runs[0].skill) as $skill
       | ($runs[0].should_trigger) as $should_trigger
-      | ([ $runs[] | select(.selected == $skill) ] | length) as $matches
+      | ([ $runs[] | select(.valid) ]) as $valid_runs
+      | ([ $runs[] | select(.valid | not) ]) as $invalid_runs
+      | ([ $valid_runs[] | select(.selected == $skill) ] | length) as $matches
       | ($runs | length) as $run_count
       | {
           skill: $skill,
@@ -103,19 +148,29 @@ jq -s '
           should_trigger: $should_trigger,
           matches: $matches,
           runs: $run_count,
-          selections: [ $runs[].selected ],
-          pass: (if $should_trigger
+          valid_runs: ($valid_runs | length),
+          invalid_runs: ($invalid_runs | length),
+          selections: [ $valid_runs[].selected ],
+          infrastructure_errors: [
+            $invalid_runs[]
+            | {run, exit_status, result_subtype, result_is_error, error}
+          ],
+          pass: (if ($invalid_runs | length) > 0
+            then null
+            elif $should_trigger
             then ($matches * 2 >= $run_count)
             else ($matches * 2 < $run_count)
-          end)
+            end)
         }
     )
   | . as $cases
   | {
       overall: {
         total: ($cases | length),
-        passed: ([ $cases[] | select(.pass) ] | length),
-        failed: ([ $cases[] | select(.pass | not) ] | length)
+        scored: ([ $cases[] | select(.pass != null) ] | length),
+        passed: ([ $cases[] | select(.pass == true) ] | length),
+        failed: ([ $cases[] | select(.pass == false) ] | length),
+        invalid: ([ $cases[] | select(.pass == null) ] | length)
       },
       by_skill: [
         $cases
@@ -123,10 +178,19 @@ jq -s '
         | {
             skill: .[0].skill,
             total: length,
-            passed: ([ .[] | select(.pass) ] | length),
-            failed: ([ .[] | select(.pass | not) ] | length)
+            scored: ([ .[] | select(.pass != null) ] | length),
+            passed: ([ .[] | select(.pass == true) ] | length),
+            failed: ([ .[] | select(.pass == false) ] | length),
+            invalid: ([ .[] | select(.pass == null) ] | length)
           }
       ],
-      failures: [ $cases[] | select(.pass | not) ]
+      failures: [ $cases[] | select(.pass == false) ],
+      invalid: [ $cases[] | select(.pass == null) ]
     }
-' "$task_results"
+' "$task_results")
+
+printf '%s\n' "$task_summary"
+if [ "$(printf '%s\n' "$task_summary" | jq -r '.overall.invalid')" -ne 0 ]; then
+  printf 'Trigger eval is invalid because one or more Claude invocations failed.\n' >&2
+  exit 2
+fi

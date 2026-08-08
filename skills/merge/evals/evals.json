@@ -66,7 +66,7 @@
         "It verifies the remote MERGED state first.",
         "It uses the bundled helper when applicable from the worktree being removed.",
         "It preserves the other worktree's development server and files.",
-        "It updates canonical main after cleanup."
+        "It updates the pull request's canonical base after cleanup."
       ]
     },
     {
@@ -83,12 +83,23 @@
     {
       "id": 8,
       "prompt": "일반 checkout에서 현재 변경을 PR로 만들고 merge해줘. linked worktree는 없어.",
-      "expected_output": "The response completes the verified merge and updates the normal main checkout without worktree-specific operations.",
+      "expected_output": "The response completes the verified merge and updates the normal base checkout without worktree-specific operations.",
       "files": [],
       "expectations": [
         "It completes the self-contained commit, PR, and merge responsibilities.",
         "It recognizes that no linked worktree cleanup is needed.",
-        "It updates main to the verified remote result."
+        "It updates the resolved base to the verified remote result."
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "이 프로젝트의 GitHub default branch는 trunk야. 현재 변경을 PR로 합치고 worktree를 정리해줘.",
+      "expected_output": "The response resolves trunk as the base, verifies the merge there, and updates its canonical checkout.",
+      "files": [],
+      "expectations": [
+        "It resolves trunk from remote metadata rather than assuming main.",
+        "It creates or reuses and merges a pull request whose base is trunk.",
+        "It updates the canonical trunk checkout after verified merge."
       ]
     }
   ]

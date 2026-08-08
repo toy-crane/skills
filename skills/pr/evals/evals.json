@@ -9,7 +9,7 @@
       "expectations": [
         "It preserves the detached work by creating a suitable branch.",
         "It commits only the search feature as logical Conventional Commits.",
-        "It bases the branch on fetched origin/main without losing the change.",
+        "It bases the branch on the fetched advertised remote default without losing the change.",
         "It creates a ready-for-review PR and reports its URL."
       ]
     },
@@ -66,6 +66,17 @@
         "It creates the PR in ready-for-review state.",
         "Its title and body describe the actual outcome and validation.",
         "It does not merge the PR."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "기본 브랜치가 master인 저장소야. base를 따로 말하지 않았으니 현재 변경을 리뷰 가능한 PR로 올려줘.",
+      "expected_output": "The response resolves master as the remote default and opens the pull request against it.",
+      "files": [],
+      "expectations": [
+        "It resolves the advertised remote default instead of assuming main.",
+        "It bases the change and pull request on master.",
+        "It reports master as the pull request base."
       ]
     }
   ]
