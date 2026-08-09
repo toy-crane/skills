@@ -61,9 +61,10 @@ shell simulates those widths inside a wider browser window.
 
 Render and inspect the artifact before presenting it. Exercise every screen,
 declared state, interaction entry and reset path, and relevant viewport in a
-browser. Present the artifact and correctable screen draft, walk the user through
-the surface screen by screen, and ask what to change. Do not close an open review
-with a completion handoff.
+browser. Run the finished HTML using a method supported by the current harness
+and share an address the user can open. Present the artifact and correctable
+screen draft, walk the user through the surface screen by screen, and ask what
+to change. Do not close an open review with a completion handoff.
 
 For an unresolved detail, render two or three variants that differ only on that
 question. Hold content, data, surrounding layout, behavior, and every confirmed

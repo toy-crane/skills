@@ -61,6 +61,10 @@
 - Browser verification completes the temporary review surface, not the product
   change. Human choices become resolved only through an explicit conversational
   response; the temporary surface is not a canonical project decision record.
+- `build-prototype` and `human-review` use the same host-independent HTML
+  handoff: run the finished HTML using a method supported by the current harness
+  and share an address the user can open. This user-delivery contract is separate
+  from browser verification and each skill carries it directly.
 
 ## Boundaries
 
@@ -143,6 +147,11 @@ checks cannot decide.
   questions plus two named deferred commitments. The account control passed
   browser verification; the five-question control correctly remained an
   unverified draft when browser verification did not finish.
+- Baseline `build-prototype` and `human-review` controls created and sometimes
+  browser-verified their temporary HTML while still returning only a file path,
+  offering to run it later, or never reaching a usable link. Isolated post-build
+  controls showed that a single host-independent outcome sentence makes both
+  harnesses run the HTML and return an address.
 - An earlier workflow-pruning eval reduced `implement` from 78 to 29 lines and
   `split-into-tasks` from 102 to 38 while preserving task boundaries, selected
   and final reviews, meaningful commits, full verification, and safe

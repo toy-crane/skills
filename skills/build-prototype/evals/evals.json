@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "/build-prototype 북마크한 아티클을 모아 매주 다이제스트로 보내주는 웹앱을 만들려고 해. 화면부터 보면서 정하고 싶어.",
-      "expected_output": "The response uses the current request and conversation as sufficient context without requiring or searching for a pre-existing spec. It proposes a screen inventory as a correctable draft, then builds one temporary self-contained HTML file grown from the shell template (a screen selector, the selected screen's representative state selector, and a viewport cycle) with every proposed screen finished the first time it is shown, and walks the user through the surface asking for reactions. It does not create a durable spec folder before approval. This project has no design system, so it builds on the shell's minimal palette and treats that as the finished look. It does not scaffold the production app.",
+      "expected_output": "The response uses the current request and conversation as sufficient context without requiring or searching for a pre-existing spec. It proposes a screen inventory as a correctable draft, then builds one temporary self-contained HTML file grown from the shell template (a screen selector, the selected screen's representative state selector, and a viewport cycle) with every proposed screen finished the first time it is shown, and walks the user through the surface asking for reactions. It runs the finished HTML using a method supported by the current harness and shares an address the user can open. It does not create a durable spec folder before approval. This project has no design system, so it builds on the shell's minimal palette and treats that as the finished look. It does not scaffold the production app.",
       "files": [],
       "expectations": [
         "It proposes the screen inventory as a draft to correct instead of asking the user to enumerate screens.",
@@ -15,6 +15,7 @@
         "Screens carry realistic dummy data and their edge states from the first render, with no lorem ipsum and no staged fidelity.",
         "It treats the current request and conversation as sufficient context and neither requires nor searches for a pre-existing work-unit spec before building.",
         "It keeps the working prototype temporary and does not create or populate docs/specs before every screen is approved or explicitly deferred.",
+        "It runs the finished HTML using a method supported by the current harness and shares an address the user can open; a bare temporary file path is not the completed handoff.",
         "It walks the user through the whole surface and requests reactions rather than approval of a plan.",
         "It does not write project-stack or production code."
       ]
