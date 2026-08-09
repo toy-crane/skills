@@ -185,8 +185,9 @@ cleanup.
   with the best available tool. Use one sentence instead when one sentence fully
   answers the question.
 - **[human-review](./skills/human-review/SKILL.md)**: Turn a completed, substantial
-  or consequential repository change into a minimal visual handoff. Show the
-  whole outcome, then route only commitments that still need human judgment.
+  or consequential repository change into a minimal visual handoff when the user
+  asks to inspect actual outcomes and judge unresolved commitments. Show the
+  whole outcome, then focus one review set on at most three active questions.
 - **[compact-decisions](./skills/compact-decisions/SKILL.md)**: Periodically clean
   up decision files, the glossary, shipped specs, and agent instructions after
   work accumulates. Shorten the documents without changing confirmed decisions.
