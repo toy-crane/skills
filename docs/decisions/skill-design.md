@@ -39,22 +39,28 @@
   it. PR and merge requests authorize the in-scope commits needed to complete
   their larger outcomes.
 - `human-review` routes human attention by the commitment a change introduces,
-  not by file type or technical layer. Human review is warranted when a new
-  product behavior, access boundary, data transformation, external contract, or
-  recovery posture would be costly if wrong, hard to reverse, or hard to verify
-  automatically. AI handles mechanically checkable defects and presents a
-  concise change summary, zero to three human questions, the actual result, and
-  evidence only on demand.
+  not by file type or technical layer. It activates when the user explicitly
+  asks to inspect actual outcomes and judge unresolved commitments or material
+  consequences; completion, size, or consequence alone does not trigger an
+  automatic handoff. AI handles mechanically checkable defects and presents a
+  concise change summary, zero to three active human questions, the actual
+  result, and evidence only on demand.
 - Before `human-review` compresses a change, it accounts for every changed
-  commitment as summary, human question, mechanical issue, or unverified. The
-  complete disposition stays behind the evidence path; release blockers and
-  material unknowns remain visible in the overview. This fixed coverage check
-  prevents compression from making an omitted change invisible.
+  commitment with a review disposition of summary, human question, or mechanical
+  issue and an evidence status of observed, inferred, or unverified. Material
+  implementation choices and consequences left open by the governing request or
+  decisions remain unresolved. The complete coverage stays behind the evidence
+  path; release blockers and material unknowns remain visible in the overview.
+  This fixed check prevents compression from making an omitted change invisible.
 - A result labeled observed must come from the named change in a real runnable
   environment and retain its change reference, route or command, and environment.
-  A mock or intended UI cannot stand in for the product result. When more than
-  three human questions remain, the current surface names the deferred
-  commitments instead of hiding them behind an anonymous count.
+  A mock or intended UI cannot stand in for the product result. Missing evidence
+  alone does not become a human question. When more than three human questions
+  remain, the current surface names every deferred commitment and brings them
+  forward as earlier questions are resolved.
+- Browser verification completes the temporary review surface, not the product
+  change. Human choices become resolved only through an explicit conversational
+  response; the temporary surface is not a canonical project decision record.
 
 ## Boundaries
 
@@ -128,6 +134,15 @@ checks cannot decide.
   completion gate: an unchecked surface remains a draft. A fresh isolated
   control found an installed headless browser, verified overview, evidence,
   disclosures and a narrow viewport, and only then reported completion.
+- A later section-by-section `human-review` audit separated review disposition
+  from evidence status, treated specification silence as unresolved, and defined
+  three questions as the active set rather than the total scope. Fresh controls
+  kept a text-only summary out of the visual workflow, separated two newly
+  introduced account-deactivation policies from a mechanical blocker and
+  unverified production evidence, and presented five decisions as three active
+  questions plus two named deferred commitments. The account control passed
+  browser verification; the five-question control correctly remained an
+  unverified draft when browser verification did not finish.
 - An earlier workflow-pruning eval reduced `implement` from 78 to 29 lines and
   `split-into-tasks` from 102 to 38 while preserving task boundaries, selected
   and final reviews, meaningful commits, full verification, and safe
