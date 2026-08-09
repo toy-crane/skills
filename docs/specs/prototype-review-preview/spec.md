@@ -1,78 +1,53 @@
-# Prototype review preview
+# HTML review preview
 
 ## Confirmed behavior
 
-When a working prototype is presented or re-presented for review, make it
-available through a local preview route supported by the current harness and
-share the exact address the user can open.
+`build-prototype` and `human-review` use the same delivery contract after they
+finish and verify their HTML artifact:
 
-The preview is part of the open review, not a separate delivery step. Verify
-that the address responds before describing it as live, and keep it reachable
-while the review remains open when the harness lifecycle permits. If the
-harness cannot keep a user-accessible preview available, state that limitation
-and present the best artifact path it supports instead.
+> Run the finished HTML using a method supported by the current harness and
+> share an address the user can open.
 
-The published instruction describes this observable result without naming a
-platform, command, runtime, port, or server implementation. The harness chooses
-the mechanism from its current capabilities and permissions.
+The instruction stays at this outcome level. It names no platform, command,
+runtime, port, server implementation, persistence mechanism, or deployment
+policy. The current harness chooses how to satisfy it from its available
+capabilities and permissions.
+
+Browser verification and user delivery remain separate obligations. Existing
+browser-verification gates stay intact; the new sentence ensures that a
+verified artifact is also presented in a form the user can open.
 
 ## Rationale
 
-An exact review address lets the user inspect the artifact immediately instead
-of locating and opening a temporary file. Leaving the mechanism to the harness
-keeps the skill portable across local agents and environments with native
-preview support.
+A temporary file path does not consistently produce a usable handoff across
+harnesses. The shared sentence directs the agent to make the HTML runnable and
+provide the usable result without prescribing a mechanism that may not exist in
+another host.
 
-The preview remains local review infrastructure. Persistence does not authorize
-publishing the prototype, creating a hosted project, or deploying it to an
-external service.
+## Acceptance criteria
 
-## Assumptions
-
-- Reuse a still-live preview after prototype updates when it continues to serve
-  the working artifact.
-- A harness may expose a local preview through its own user-facing address; the
-  shared contract is reachability, not the address shape.
-- Process identifiers and stop commands are useful when naturally available,
-  but are not part of the cross-harness contract.
-
-## Off-limits
-
-- Do not prescribe a platform-specific preview technology in the published
-  skill.
-- Do not create an external deployment or publicly hosted artifact without
-  separate user authority.
-- Do not turn preview infrastructure into production code or a preserved
-  work-unit artifact.
+- `build-prototype` runs the finished prototype HTML and shares an address the
+  user can open when presenting the surface for review.
+- `human-review` runs the finished review HTML and shares an address the user
+  can open after its browser-verification gate passes.
+- Both skills carry the requirement directly so either remains independently
+  installable.
+- Stable eval expectations reject a bare temporary file path as the completed
+  handoff and require the runnable address.
+- UI metadata still describes both skills accurately.
 
 ## Validation evidence
 
-- A local Codex forward run selected an available server mechanism, browser-
-  verified the generated prototype, and returned a live HTTP address. Its child
-  process ended with the non-interactive harness, so a claim that every preview
-  survives the final response would be false.
-- A full Claude Code run created the prototype but did not reach the preview
-  handoff before the bounded run was stopped. An isolated post-build control
-  selected an available mechanism, verified HTTP 200, returned the exact
-  address, and left the preview reachable after the command exited.
-- A Codex control requiring persistence after the response began selecting an
-  external deployment path. It was stopped before a deployment succeeded. This
-  observed failure requires the explicit local-only and no-publishing boundary.
+- Baseline Codex and Claude Code runs could create and inspect the temporary
+  HTML while still failing to leave a usable review handoff: one returned only
+  a file path, one offered to start a server later, and one completed browser
+  verification without reaching a runnable-address handoff.
+- Isolated post-build controls showed that both harnesses can choose an
+  available mechanism, verify its address, and report it when the outcome is
+  requested directly.
 
-## Deferred points
+## Remaining risk
 
-- Native cloud or remote harnesses were not exercised. Their user-facing URL
-  bridging remains to be verified without weakening the local-only and
-  no-publishing boundary.
-- Interactive Codex persistence across later review turns was not directly
-  reproduced by the non-interactive CLI control.
-
-## Remaining risks
-
-- A harness may verify an address from inside its environment even though the
-  user cannot open it. Implementation must treat user reachability as the goal
-  and disclose when only an internal address is available.
-- Overly strong persistence wording may encourage an agent to create external
-  infrastructure; overly weak wording may leave a preview alive only during
-  the startup command. The local review lifecycle and honest-fallback language
-  must remain together.
+A harness can report an address that is reachable only from inside its own
+environment. Forward tests must judge whether the returned address is actually
+usable from the review context, not merely whether an internal request succeeds.
