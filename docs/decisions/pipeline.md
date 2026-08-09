@@ -65,6 +65,11 @@
 - The active harness is authoritative for reviewer topology and mechanics.
   `implement` requires an automated code-review outcome without prescribing one
   universal process.
+- A harness-specific review command may be named only when the active
+  installation confirms it for that reviewer. Such guidance remains
+  conditional and must preserve the portable completion contract: pass
+  automated review or hand off an exact user-invocable command while leaving
+  the gate outstanding.
 - Conversation history is useful while available but is not durable evidence.
   After a real interruption, repository artifacts determine what remains.
 - Preserve unrelated changes and confirm ownership when dirty-state ownership
@@ -162,3 +167,7 @@ machine.
   measured large gains from version-matched official context and also showed
   that agents frequently failed to invoke an installed skill without an
   explicit routing instruction.
+- Claude Code 2.1.226 exposed `/review` as an alias for `code-review`. A live
+  invocation entered the automated review process; a forced Skill permission
+  denial then handed `/review` to the user and kept the completion gate open.
+  This supports conditional alias guidance, not a cross-version assumption.
