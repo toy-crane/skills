@@ -52,6 +52,7 @@
       "expectations": [
         "It renders two or three variants differing only on the contested treatment.",
         "Confirmed screens, content, data, surrounding layout, and behavior stay fixed across the variants.",
+        "The variants remain disposable comparisons outside the product screen and state selectors; the canonical prototype keeps one version of the home screen.",
         "It requests the user's reaction as the answer instead of arguing the choice in prose.",
         "It folds the chosen variant back into the single prototype file."
       ]
@@ -153,6 +154,20 @@
         "Restocking from the declared out-of-stock condition synchronizes the selector back to Default.",
         "The cumulative entry and recovery paths are browser-verified.",
         "The response presents the artifact and correctable screen draft, then asks what the user wants changed instead of treating the open review as complete."
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "/build-prototype 기존 결제수단 등록은 카드 정보 입력 → 등록 완료 두 화면이야. 결제수단 선택 → 결제 정보 입력 → 등록 완료 흐름으로 바꾸고, 계좌이체도 선택할 수 있게 할 거야. 기존 디자인은 유지하고 카드 승인 실패와 재시도까지 포함한 새 흐름 전체를 프로토타입으로 만들어줘. 바뀐 점도 알려줘.",
+      "expected_output": "The response uses the existing payment flow as design evidence and builds one canonical prototype of the proposed product surface. The screen selector names product destinations such as 결제수단 선택, 결제 정보 입력, and 등록 완료 without baseline, current/proposed, variant, or step metadata. Review notes and the requested change summary stay in the conversation rather than inside product pixels.",
+      "files": [],
+      "expectations": [
+        "It does not duplicate the existing payment flow as current, before, or baseline screens because the user asked to review the proposed flow.",
+        "Every visible element inside the product surface is plausible end-user UI; the requested change summary and review guidance stay in the conversation.",
+        "The screen selector names product destinations by role without current, proposed, new, before, after, variant, numbered-step, index, or progress labels.",
+        "The proposed flow covers payment-method selection, payment-information entry, completion, card-decline handling, and retry behavior.",
+        "Payment-method choices and retry remain working product interactions rather than review-state presets; a forced card-decline condition may be a preset.",
+        "The prototype keeps exactly the screen, selected-screen state, and viewport review controls and remains open for user feedback."
       ]
     }
   ]

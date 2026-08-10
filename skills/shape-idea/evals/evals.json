@@ -192,6 +192,7 @@
         "Every visible element inside the product screen is plausible end-user UI; review notes, change summaries, rationale, and instructions remain outside the prototype.",
         "The screen selector identifies product destinations by role and does not use current, proposed, new, before, after, numbered-step, index, or progress labels.",
         "The proposed flow contains the login-method, email-address, and verification-code product screens with the established code-screen design and relevant interactions.",
+        "Address change, six-digit paste, and other one-click changes remain product interactions rather than review-state presets.",
         "The response keeps the review open for reactions to the proposed product surface."
       ]
     }

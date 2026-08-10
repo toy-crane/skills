@@ -23,10 +23,12 @@
 - When a proposed decision depends on information only the user can know, state
   that information and ask whether it applies. Check conditions the agent can
   verify instead of pushing them back to the user.
-- Ground visible and interactive decisions in the current surface. Use a
-  runnable candidate when available; otherwise render a sufficient substitute.
-  Verify only the states needed for a trustworthy comparison before the user
-  judges one unresolved experiential decision.
+- Ground visible and interactive decisions in the current surface, treating it
+  as evidence rather than an automatic comparison option. Show the baseline
+  only when the unresolved choice depends on comparing it with the candidate.
+  Use a runnable candidate when available; otherwise render a sufficient
+  substitute. Verify only the states needed for a trustworthy comparison before
+  the user judges one unresolved experiential decision.
 - Durable project writes are limited to the spec folder, glossary, current
   decision contracts, and installed vendor agent context. Do not edit product
   source during shaping.
