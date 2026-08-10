@@ -30,6 +30,11 @@
   the entire implementation diff against the selected spec and acceptance
   criteria. This final gate applies to split and unsplit specs and covers
   cross-task interactions and omitted requirements.
+- After the final gate passes, `implement` runs the actual product when the
+  repository exposes it through a user-reviewable local server, verifies the
+  changed routes and essential states, and shares a reachable address while
+  keeping the current checkout's server available until review finishes or
+  later delivery cleanup.
 - Context or harness interruption resumes from the spec folder, task status,
   Git history, current diff, and test results. Preserve completed outcomes and
   request user confirmation before absorbing dirty state of uncertain
@@ -65,6 +70,11 @@
 - The active harness is authoritative for reviewer topology and mechanics.
   `implement` requires an automated code-review outcome without prescribing one
   universal process.
+- The runnable handoff applies only to an actual product result exposed by a
+  repository-supported local server. Preserve other checkouts and unrelated
+  processes, and report an exact launch command and blocker when the environment
+  cannot provide a reachable address. Server access is evidence delivery, not
+  human approval or an automatic `human-review` invocation.
 - A harness-specific review command may be named only when the active
   installation confirms it for that reviewer. Such guidance remains
   conditional and must preserve the portable completion contract: pass
@@ -102,6 +112,11 @@ skill does not need to restate their procedure. Complete verification proves
 known behavior; the harness's automated final code review adds its own signal
 without forcing every host through the same reviewer topology.
 
+The runnable handoff lets the user inspect the verified implementation without
+turning server mechanics into a separate pipeline phase. Keeping the outcome in
+`implement` also preserves standalone installation while leaving
+`human-review` focused on unresolved human judgment.
+
 Minimal task state and meaningful code checkpoints preserve useful recovery
 evidence without turning Git and task files into a second orchestration state
 machine.
@@ -133,6 +148,10 @@ machine.
   outcomes prematurely.
 - Separate `implement-spec` and `implement-tasks` entry points — the spec folder
   already contains the information needed to choose the implementation path.
+- A `run-server` pipeline skill — it exposes a technical mechanism and would
+  make `implement` depend on another installed skill; reconsider a standalone
+  preview workflow only after repeated independent user requests establish a
+  separate outcome.
 - Review after every task or edit — it adds fixed cost without requiring a
   material risk boundary.
 - Forbidding every intermediate review — a late permission, migration, or

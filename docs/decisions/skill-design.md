@@ -65,6 +65,13 @@
   handoff: run the finished HTML using a method supported by the current harness
   and share an address the user can open. This user-delivery contract is separate
   from browser verification and each skill carries it directly.
+- `implement` owns the runnable product handoff after its acceptance criteria
+  and automated review gate pass. When the repository exposes the actual result
+  through a user-reviewable local server, run and verify the changed routes and
+  states, share an address, and keep the current checkout's server available
+  until review finishes or later delivery cleanup, without disrupting another
+  checkout or unrelated process. This access is not `human-review` and does not
+  imply human approval.
 
 ## Boundaries
 
@@ -107,6 +114,10 @@ checks cannot decide.
   their context cost from observed behavior.
 - Relying on another installed skill — skills.sh users may possess only the
   current skill.
+- A `run-server` skill as an `implement` dependency — it names a technical
+  mechanism rather than the handoff outcome and breaks standalone installation;
+  reconsider a separately invokable preview skill only if users repeatedly need
+  the same lifecycle outside implementation.
 - Compressing instructions into aphorisms — short text with floating referents
   can lose executable meaning even when its argument is correct.
 - Exhaustive diff summaries, review-time estimates, severity codes, and
