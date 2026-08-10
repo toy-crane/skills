@@ -53,7 +53,7 @@ flowchart LR
     SPEC --> ST["split-into-tasks<br/>(multiple deliverables)"]
     SPEC --> IM["implement<br/>(spec folder)"]
     ST --> IM
-    IM --> DONE["verified and reviewed"]
+    IM --> DONE["verified, reviewed,<br/>and runnable when available"]
     IM -. "uses at pre-agreed public seams" .-> TDD[tdd]
 ```
 
@@ -71,7 +71,10 @@ marks the few intermediate reviews justified by material or downstream risk.
 Then pass the spec folder to `implement`. It runs approved tasks sequentially
 when they exist and otherwise implements `spec.md` directly. After complete
 verification, the current harness's automated code-review process checks the
-integrated result against the selected spec and acceptance criteria.
+integrated result against the selected spec and acceptance criteria. When the
+repository exposes the result through a user-reviewable local server,
+`implement` verifies the changed surface and shares an address while leaving
+that server available until the user finishes review or later delivery cleanup.
 Implementation planning is just in time, and `implement` uses `tdd` where
 behavior can be verified through pre-agreed public seams.
 
@@ -121,7 +124,8 @@ progress from the folder, Git, the current diff, and verification results.
 - **[implement](./skills/implement/SKILL.md)**: Implement an approved spec
   folder, using its tasks sequentially when present and its spec directly when
   absent, using `tdd` at pre-agreed public seams, then finish with full
-  verification and the current harness's automated code-review process.
+  verification, the current harness's automated code-review process, and a
+  verified runnable product address when the repository provides one.
 - **[tdd](./skills/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from
