@@ -6,7 +6,10 @@
   design tokens, realistic dummy data, relevant edge states, and the pinned
   review shell.
 - Keep the review shell to a screen selector, the selected screen's state
-  selector, and the viewport cycle. Show screen names without counts or indexes;
+  selector, and the viewport cycle. Keep product pixels limited to UI an end
+  user could see; review notes, rationale, and change summaries stay in the
+  conversation. Each selector option names one product destination or distinct
+  surface without current/proposed labels, variants, steps, counts, or indexes;
   screen order is not product progress.
 - Treat states as representative direct-entry presets. Supply `Default`
   automatically and add only important multi-step results, forced data or error
@@ -20,13 +23,16 @@
   one. Do not require or search for a spec before building.
 - Inspect the existing product first and render in its design system from the
   first screen. Copy its tokens and component names; when no system exists, use
-  the shell's minimal palette as the finished style.
+  the shell's minimal palette as the finished style. Treat the existing surface
+  as evidence and include it in the review only when the user is choosing
+  between the baseline and candidate.
 - Treat confirmed component relationships as fixed constraints. An overlay,
   drawer, or modal remains attached to its source screen unless the user is
   explicitly reconsidering that relationship.
 - Propose the screen inventory as a correctable draft and begin building without
   an approval gate. For a contested detail, render variants that change only
-  that detail and fold the user's choice back into the single prototype.
+  that detail outside the product screen and state selectors, then fold the
+  user's choice back into the single canonical prototype.
 - Keep real APIs, production routing, latency, frameworks, and network
   dependencies out of the prototype.
 - At approval, reuse an identified work-unit folder or derive a kebab-case slug
@@ -97,8 +103,9 @@ prototype provide the durable handoff after the visual work settles.
   learn a meta-model instead of navigating screens and representative states.
 - Project-stack components or a real API — wiring cost and production behavior
   distract from alignment and break self-containment.
-- In-prototype review badges, stamps, and change tracking — they duplicate the
-  reviewing medium and create chrome that needs explanation.
+- In-prototype notes, baseline or variant screens, review badges, stamps, and
+  change tracking — they mix product and review semantics, duplicate the
+  reviewing medium, and create chrome that needs explanation.
 
 ## Evidence worth preserving
 
@@ -127,3 +134,8 @@ prototype provide the durable handoff after the visual work settles.
   where repeated removals crossed into a declared empty condition, then closed
   the open review without asking what to change. Explicit cumulative boundary
   checks and an open-review response contract target those observed failures.
+- A structure refactor moved the interaction-versus-preset distinction into the
+  template alone. Login and payment forward tests then promoted six-digit paste
+  and payment-method choice into review presets. Restoring one concise rule in
+  the skill body made both held-out runs pass while leaving screen names,
+  product pixels, and review chrome owned by the template contract.
