@@ -133,14 +133,17 @@ states that evidence boundary directly.
 
 - A second high-effort Turborepo run captured the already-running native Chat
   screen without taking ownership of another worktree's Metro or simulator
-  session. A fresh verifier reproduced missing edit, regenerate, copy, and
+  session. One fresh verifier reproduced missing edit, regenerate, copy, and
   sign-out recovery behavior; its second check caught an event-target lifetime
-  bug in the first sign-out repair. After correction, 12 screen-state
-  coordinates passed at all three shell viewports, and affected Chat and
-  Settings coordinates passed again. The run shows why broader discovery needs
-  independent reproduction, and why `high` must explicitly request a reviewer
-  subagent instead of assuming that a generic fresh-context instruction will
-  open one.
+  bug in the first sign-out repair. A separate reviewer then found lost sent
+  text, transient and scroll state leaking between presets, the missing Stop
+  control, nondeterministic regenerated content, a sparse top-anchored chat,
+  mismatched reference geometry, and an orphaned final syllable. After those
+  corrections, that reviewer passed every finding and all 12 screen-state
+  coordinates at the three shell viewports. The run shows why broader discovery
+  needs independent reproduction, and why `high` must explicitly request a
+  reviewer subagent instead of assuming that a generic fresh-context instruction
+  will open one.
 - A held-constant forward test on the existing Turborepo mobile template ran
   the same five-screen request with only `effort` changed. Both results found
   and repaired layout issues during browser review. The `high` run additionally
