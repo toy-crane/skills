@@ -123,6 +123,18 @@ prototype outcome.
 
 ## Evidence worth preserving
 
+- A held-constant forward test on the existing Turborepo mobile template ran
+  the same five-screen request with only `effort` changed. Both results found
+  and repaired layout issues during browser review. The `high` run additionally
+  inspected installed HeroUI defaults, matched the real accent role, covered
+  chat editing and sign-out failure states, and checked every screen for
+  horizontal overflow at all three shell viewports. This supports an added
+  convergence pass without weakening `standard`.
+- Neither effort run launched the native app because the evaluation could not
+  establish safe ownership of the shared Metro and simulator sessions. Both
+  remained browser approximations, and `high` reported native pixel equivalence
+  as unverified. The argument increases inspection depth but cannot replace an
+  actual runnable reference when platform-pixel fidelity is the question.
 - Removing the gray pass knowingly accepts that polished styling can make a bad
   hierarchy feel correct. If that failure appears in implementation reviews,
   restore a targeted guard instead of recreating the old two-pass workflow by
