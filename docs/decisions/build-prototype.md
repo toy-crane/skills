@@ -2,6 +2,21 @@
 
 ## Decisions
 
+- Accept `effort=standard` and `effort=high`, with `standard` as the recommended
+  default. Hold one base completion gate fixed across both values: finished
+  visual quality, complete requested screen and relevant-state coverage,
+  working intended interactions and reset paths, browser exercise at every
+  relevant viewport, correction of every reproduced defect found during that
+  inspection, and a runnable address for the user. `standard` is complete when
+  that gate passes. `high` passes the same gate, then broadens mismatch discovery
+  across same-coordinate reference fidelity and layout or interaction
+  robustness, independently reproduces material candidates when the host
+  supports subagents, corrects only the verified set, and rechecks surfaces that
+  share the changed token, component, or shell behavior. Delegate the audit to
+  one fresh reviewer subagent at high model effort and supply the raw reference
+  plus candidate artifact without the builder's findings. Report when reviewer
+  independence or model effort is unavailable. Without an inspectable reference
+  it strengthens layout robustness but does not claim visual equivalence.
 - Build every screen of the surface in one self-contained HTML file with shared
   design tokens, realistic dummy data, relevant edge states, and the pinned
   review shell.
@@ -70,6 +85,17 @@ product, which a generic wireframe cannot. Conversation-first input lets direct
 requests and `shape-idea` handoffs use the same workflow; the approved spec and
 prototype provide the durable handoff after the visual work settles.
 
+The effort argument spends the extra visual comparison and verification work
+only when close matching matters. Defining the common completion gate before
+the effort branches keeps `standard` from becoming a relative quality downgrade
+merely because `high` exists. Broad candidate discovery catches subtle
+differences, while independent reproduction prevents the wider search from
+turning every suspicion into a correction. Observable comparison, verification,
+and convergence criteria make `high` meaningful; a generic request to think
+harder would not define a different prototype outcome. The text argument alone
+cannot guarantee that every host changes its model-level effort, so the skill
+states that evidence boundary directly.
+
 ## Reconsider when
 
 - Approved prototypes repeatedly reveal structural faults only during
@@ -83,6 +109,8 @@ prototype provide the durable handoff after the visual work settles.
 
 ## Still-rejected alternatives
 
+- A `low` effort value — every prototype must be finished-looking when first
+  presented, so a low-fidelity option would weaken the base contract.
 - Skeleton-then-fill staging — it doubles the render and hides whether a screen
   belongs in the existing product.
 - A mandatory approval stop on the prose screen inventory — it gates a visual
@@ -109,6 +137,38 @@ prototype provide the durable handoff after the visual work settles.
 
 ## Evidence worth preserving
 
+- A fresh `standard` control run after fixing the shared gate produced all three
+  requested screens, exercised them at 390, 768, and full width, and tested the
+  requested interaction and reset paths. Its browser pass found and corrected
+  missing state synchronization, a clipped mobile confirmation sheet, and two
+  bottom-navigation layout defects before presenting the runnable prototype.
+  This supports defining `standard` by a fixed completion gate instead of by
+  comparison with `high`.
+- A second high-effort Turborepo run captured the already-running native Chat
+  screen without taking ownership of another worktree's Metro or simulator
+  session. One fresh verifier reproduced missing edit, regenerate, copy, and
+  sign-out recovery behavior; its second check caught an event-target lifetime
+  bug in the first sign-out repair. A separate reviewer then found lost sent
+  text, transient and scroll state leaking between presets, the missing Stop
+  control, nondeterministic regenerated content, a sparse top-anchored chat,
+  mismatched reference geometry, and an orphaned final syllable. After those
+  corrections, that reviewer passed every finding and all 12 screen-state
+  coordinates at the three shell viewports. The run shows why broader discovery
+  needs independent reproduction, and why `high` must explicitly request a
+  reviewer subagent instead of assuming that a generic fresh-context instruction
+  will open one.
+- A held-constant forward test on the existing Turborepo mobile template ran
+  the same five-screen request with only `effort` changed. Both results found
+  and repaired layout issues during browser review. The `high` run additionally
+  inspected installed HeroUI defaults, matched the real accent role, covered
+  chat editing and sign-out failure states, and checked every screen for
+  horizontal overflow at all three shell viewports. This supports an added
+  convergence pass without weakening `standard`.
+- Neither effort run launched the native app because the evaluation could not
+  establish safe ownership of the shared Metro and simulator sessions. Both
+  remained browser approximations, and `high` reported native pixel equivalence
+  as unverified. The argument increases inspection depth but cannot replace an
+  actual runnable reference when platform-pixel fidelity is the question.
 - Removing the gray pass knowingly accepts that polished styling can make a bad
   hierarchy feel correct. If that failure appears in implementation reviews,
   restore a targeted guard instead of recreating the old two-pass workflow by
