@@ -2,6 +2,13 @@
 
 ## Decisions
 
+- Accept `effort=standard` and `effort=high`, with `standard` as the recommended
+  default. Both produce a finished-looking prototype and complete the same
+  screen, state, interaction, and viewport coverage. `high` adds same-viewport
+  comparison against an inspectable product or reference, layout stress with
+  awkward realistic content, and repeated correction until no material visual
+  mismatch remains. Without an inspectable reference it strengthens layout
+  robustness but does not claim visual equivalence.
 - Build every screen of the surface in one self-contained HTML file with shared
   design tokens, realistic dummy data, relevant edge states, and the pinned
   review shell.
@@ -70,6 +77,11 @@ product, which a generic wireframe cannot. Conversation-first input lets direct
 requests and `shape-idea` handoffs use the same workflow; the approved spec and
 prototype provide the durable handoff after the visual work settles.
 
+The effort argument spends the extra visual comparison loop only when close
+matching matters. Observable comparison and convergence criteria make `high`
+meaningful; a generic request to think harder would not define a different
+prototype outcome.
+
 ## Reconsider when
 
 - Approved prototypes repeatedly reveal structural faults only during
@@ -83,6 +95,8 @@ prototype provide the durable handoff after the visual work settles.
 
 ## Still-rejected alternatives
 
+- A `low` effort value — every prototype must be finished-looking when first
+  presented, so a low-fidelity option would weaken the base contract.
 - Skeleton-then-fill staging — it doubles the render and hides whether a screen
   belongs in the existing product.
 - A mandatory approval stop on the prose screen inventory — it gates a visual

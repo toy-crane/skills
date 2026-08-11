@@ -8,6 +8,25 @@ description: Build a self-contained dummy-data HTML prototype covering every scr
 Build a disposable but finished-looking model of the whole surface so the user
 can settle structure, relationships, and behavior before implementation.
 
+## Set the effort
+
+Accept `effort=standard` or `effort=high`. Recommend and use `standard` when the
+argument is omitted.
+
+- `standard` follows the full build and browser-review contract below and fixes
+  issues found during that inspection.
+- `high` is for close visual matching to an inspectable current product or
+  reference. Render the reference and prototype at the same relevant viewports;
+  compare typography, spacing, alignment, wrapping, overflow, and asset
+  treatment; stress the layout with realistic long or awkward content; then
+  revise and re-render until no material mismatch remains. If no reference can
+  be inspected, report that visual equivalence is unverified and use the extra
+  pass only to strengthen layout robustness.
+
+Both values produce a finished-looking prototype and complete the coverage
+below. `high` tightens visual convergence; it does not turn `standard` into a
+low-fidelity draft.
+
 ## Ground the prototype
 
 Use the request and conversation as scope. When present, read `GLOSSARY.md`,
