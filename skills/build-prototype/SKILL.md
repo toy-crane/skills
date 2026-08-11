@@ -13,22 +13,26 @@ can settle structure, relationships, and behavior before implementation.
 Accept `effort=standard` or `effort=high`. Recommend and use `standard` when the
 argument is omitted.
 
-- `standard` follows the full build and browser-review contract below and fixes
-  issues found during that inspection.
-- `high` is for close visual matching to an inspectable current product or
-  reference. Broaden the search for mismatches, independently reproduce each
-  material candidate, correct verified mismatches, and recheck affected screens
-  until none remain. When the host supports subagents, delegate the audit to one
-  fresh reviewer subagent at high model effort and give it the reference and
-  candidate artifact without the builder's findings. Otherwise separate the
-  build and verification passes and report that reviewer independence or model
-  effort was unavailable. If no reference can be inspected, report that visual
-  equivalence is unverified and use the extra pass only to strengthen layout
-  robustness.
+Pass one base completion gate at either effort: produce a finished-looking
+surface, cover every requested screen and relevant state, make intended
+interactions and reset paths work, exercise every relevant viewport in a
+browser, correct every reproduced defect found during that inspection, and
+share an address the user can open. Hold this gate fixed at `standard`.
 
-Both values produce a finished-looking prototype and complete the coverage
-below. `high` tightens visual convergence; it does not turn `standard` into a
-low-fidelity draft.
+- `standard` uses the base gate as its complete result.
+- `high` passes the same base gate, then adds close visual matching to an
+  inspectable current product or reference. Broaden the search for mismatches,
+  independently reproduce each material candidate, correct verified mismatches,
+  and recheck affected screens until none remain. When the host supports
+  subagents, delegate the audit to one fresh reviewer subagent at high model
+  effort and give it the reference and candidate artifact without the builder's
+  findings. Otherwise separate the build and verification passes and report
+  that reviewer independence or model effort was unavailable. If no reference
+  can be inspected, report that visual equivalence is unverified and use the
+  extra pass only to strengthen layout robustness.
+
+The selected effort changes additional reference verification, not prototype
+completeness, interaction correctness, browser coverage, or visual finish.
 
 ## Ground the prototype
 

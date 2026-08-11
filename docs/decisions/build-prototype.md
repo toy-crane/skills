@@ -3,9 +3,13 @@
 ## Decisions
 
 - Accept `effort=standard` and `effort=high`, with `standard` as the recommended
-  default. Both produce a finished-looking prototype and complete the same
-  screen, state, interaction, and viewport coverage. `high` broadens mismatch
-  discovery across same-coordinate reference fidelity and layout or interaction
+  default. Hold one base completion gate fixed across both values: finished
+  visual quality, complete requested screen and relevant-state coverage,
+  working intended interactions and reset paths, browser exercise at every
+  relevant viewport, correction of every reproduced defect found during that
+  inspection, and a runnable address for the user. `standard` is complete when
+  that gate passes. `high` passes the same gate, then broadens mismatch discovery
+  across same-coordinate reference fidelity and layout or interaction
   robustness, independently reproduces material candidates when the host
   supports subagents, corrects only the verified set, and rechecks surfaces that
   share the changed token, component, or shell behavior. Delegate the audit to
@@ -82,7 +86,9 @@ requests and `shape-idea` handoffs use the same workflow; the approved spec and
 prototype provide the durable handoff after the visual work settles.
 
 The effort argument spends the extra visual comparison and verification work
-only when close matching matters. Broad candidate discovery catches subtle
+only when close matching matters. Defining the common completion gate before
+the effort branches keeps `standard` from becoming a relative quality downgrade
+merely because `high` exists. Broad candidate discovery catches subtle
 differences, while independent reproduction prevents the wider search from
 turning every suspicion into a correction. Observable comparison, verification,
 and convergence criteria make `high` meaningful; a generic request to think
@@ -131,6 +137,13 @@ states that evidence boundary directly.
 
 ## Evidence worth preserving
 
+- A fresh `standard` control run after fixing the shared gate produced all three
+  requested screens, exercised them at 390, 768, and full width, and tested the
+  requested interaction and reset paths. Its browser pass found and corrected
+  missing state synchronization, a clipped mobile confirmation sheet, and two
+  bottom-navigation layout defects before presenting the runnable prototype.
+  This supports defining `standard` by a fixed completion gate instead of by
+  comparison with `high`.
 - A second high-effort Turborepo run captured the already-running native Chat
   screen without taking ownership of another worktree's Metro or simulator
   session. One fresh verifier reproduced missing edit, regenerate, copy, and
