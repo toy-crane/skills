@@ -193,7 +193,7 @@
         "It renders the inspectable reference and prototype at the same relevant viewports.",
         "It searches broadly through separate reference-fidelity and layout-and-interaction-robustness lenses.",
         "Each material candidate names its exact screen, state, viewport, observed evidence, and reproduction path.",
-        "It uses a fresh review context at high model effort when the host supports it; otherwise it reports the missing reviewer independence or model effort.",
+        "When the host supports subagents, it delegates the audit to one fresh reviewer subagent at high model effort and supplies the raw reference and candidate artifact without leaking the builder's findings; otherwise it reports the missing reviewer independence or model effort.",
         "It discards candidates that do not reproduce and fixes the verified set rather than treating every visual suspicion as a defect.",
         "After a fix it rechecks the affected coordinate and other screens or states sharing the changed token, component, or shell behavior.",
         "It reports audited coverage and any unverified coordinates or fidelity claims while retaining the full screen, state, interaction, and viewport coverage.",

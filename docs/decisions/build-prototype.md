@@ -7,12 +7,12 @@
   screen, state, interaction, and viewport coverage. `high` broadens mismatch
   discovery across same-coordinate reference fidelity and layout or interaction
   robustness, independently reproduces material candidates when the host
-  supports a fresh review context, corrects only the verified set, and rechecks
-  surfaces that share the changed token, component, or shell behavior. It uses
-  high model effort for the isolated reviewer when the host can supply it and
-  reports when reviewer independence or model effort is unavailable. Without
-  an inspectable reference it strengthens layout robustness but does not claim
-  visual equivalence.
+  supports subagents, corrects only the verified set, and rechecks surfaces that
+  share the changed token, component, or shell behavior. Delegate the audit to
+  one fresh reviewer subagent at high model effort and supply the raw reference
+  plus candidate artifact without the builder's findings. Report when reviewer
+  independence or model effort is unavailable. Without an inspectable reference
+  it strengthens layout robustness but does not claim visual equivalence.
 - Build every screen of the surface in one self-contained HTML file with shared
   design tokens, realistic dummy data, relevant edge states, and the pinned
   review shell.
@@ -131,6 +131,16 @@ states that evidence boundary directly.
 
 ## Evidence worth preserving
 
+- A second high-effort Turborepo run captured the already-running native Chat
+  screen without taking ownership of another worktree's Metro or simulator
+  session. A fresh verifier reproduced missing edit, regenerate, copy, and
+  sign-out recovery behavior; its second check caught an event-target lifetime
+  bug in the first sign-out repair. After correction, 12 screen-state
+  coordinates passed at all three shell viewports, and affected Chat and
+  Settings coordinates passed again. The run shows why broader discovery needs
+  independent reproduction, and why `high` must explicitly request a reviewer
+  subagent instead of assuming that a generic fresh-context instruction will
+  open one.
 - A held-constant forward test on the existing Turborepo mobile template ran
   the same five-screen request with only `effort` changed. Both results found
   and repaired layout issues during browser review. The `high` run additionally
