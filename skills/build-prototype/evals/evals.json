@@ -186,14 +186,17 @@
     {
       "id": 14,
       "prompt": "/build-prototype effort=high 기존 모바일 앱의 홈, 저장됨, 활동, 채팅, 설정 화면을 실제 화면과 최대한 같게 만들어줘. 긴 이름이나 설명에서도 배열이 깨지지 않는지 자세히 봐줘.",
-      "expected_output": "The response uses the inspectable current app as the reference and performs the full prototype contract plus a high-effort visual convergence loop. It renders the product and prototype at matching relevant viewports, compares typography, spacing, alignment, wrapping, overflow, and asset treatment, stresses realistic long or awkward content, and revises and re-renders until no material mismatch remains. If it cannot inspect the reference, it states that equivalence is unverified rather than fabricating a high-fidelity claim.",
+      "expected_output": "The response uses the inspectable current app as the reference and performs the full prototype contract plus a high-effort visual convergence loop. It broadens mismatch discovery across reference fidelity and layout robustness, gives each material candidate an exact screen, state, viewport, evidence, and reproduction path, independently reproduces candidates when the host supports a fresh review context, fixes only verified mismatches, and rechecks affected and shared surfaces. If it cannot inspect the reference or obtain independent or high-model-effort review, it states the unavailable evidence rather than fabricating a high-fidelity claim.",
       "files": [],
       "expectations": [
         "It treats effort=high as an additional visual convergence contract, not merely a request to think harder.",
         "It renders the inspectable reference and prototype at the same relevant viewports.",
-        "It compares typography, spacing, alignment, wrapping, overflow, and asset treatment.",
-        "It tests realistic long or awkward content that can expose layout breakage.",
-        "It revises and re-renders until no material visual mismatch remains while retaining the full screen, state, interaction, and viewport coverage.",
+        "It searches broadly through separate reference-fidelity and layout-and-interaction-robustness lenses.",
+        "Each material candidate names its exact screen, state, viewport, observed evidence, and reproduction path.",
+        "It uses a fresh review context at high model effort when the host supports it; otherwise it reports the missing reviewer independence or model effort.",
+        "It discards candidates that do not reproduce and fixes the verified set rather than treating every visual suspicion as a defect.",
+        "After a fix it rechecks the affected coordinate and other screens or states sharing the changed token, component, or shell behavior.",
+        "It reports audited coverage and any unverified coordinates or fidelity claims while retaining the full screen, state, interaction, and viewport coverage.",
         "If the reference cannot be inspected, it reports visual equivalence as unverified and limits the extra claim to stronger layout robustness."
       ]
     }

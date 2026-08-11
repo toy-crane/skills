@@ -16,12 +16,13 @@ argument is omitted.
 - `standard` follows the full build and browser-review contract below and fixes
   issues found during that inspection.
 - `high` is for close visual matching to an inspectable current product or
-  reference. Render the reference and prototype at the same relevant viewports;
-  compare typography, spacing, alignment, wrapping, overflow, and asset
-  treatment; stress the layout with realistic long or awkward content; then
-  revise and re-render until no material mismatch remains. If no reference can
-  be inspected, report that visual equivalence is unverified and use the extra
-  pass only to strengthen layout robustness.
+  reference. Broaden the search for mismatches, independently reproduce each
+  material candidate, correct verified mismatches, and recheck affected screens
+  until none remain. Use a fresh review context at high model effort when the
+  host supports it; otherwise separate the build and verification passes and
+  report that reviewer independence or model effort was unavailable. If no
+  reference can be inspected, report that visual equivalence is unverified and
+  use the extra pass only to strengthen layout robustness.
 
 Both values produce a finished-looking prototype and complete the coverage
 below. `high` tightens visual convergence; it does not turn `standard` into a
@@ -81,6 +82,17 @@ review guidance in the conversation, outside the product pixels. Present the
 artifact and correctable screen draft, walk through the surface screen by
 screen, and ask what to change. Do not close an open review with a completion
 handoff.
+
+For `high`, audit through two independent lenses. Compare the reference and
+prototype at matching screen, state, and viewport coordinates for typography,
+spacing, alignment, wrapping, overflow, and asset treatment. Separately stress
+layout and interaction recovery with realistic long or awkward content. Give
+each material mismatch candidate its exact coordinate, observed evidence, and
+reproduction path. Reproduce candidates in a fresh review context when one is
+available, discard those that do not reproduce, and correct the verified set.
+After a correction, re-render its coordinate and the other screens or states
+that share the changed token, component, or shell behavior. Report the audited
+coverage and any unverified coordinates or fidelity claims in the conversation.
 
 For an unresolved detail, render two or three variants that differ only on that
 question. Hold content, data, surrounding layout, behavior, and every confirmed

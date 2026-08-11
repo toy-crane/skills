@@ -4,11 +4,15 @@
 
 - Accept `effort=standard` and `effort=high`, with `standard` as the recommended
   default. Both produce a finished-looking prototype and complete the same
-  screen, state, interaction, and viewport coverage. `high` adds same-viewport
-  comparison against an inspectable product or reference, layout stress with
-  awkward realistic content, and repeated correction until no material visual
-  mismatch remains. Without an inspectable reference it strengthens layout
-  robustness but does not claim visual equivalence.
+  screen, state, interaction, and viewport coverage. `high` broadens mismatch
+  discovery across same-coordinate reference fidelity and layout or interaction
+  robustness, independently reproduces material candidates when the host
+  supports a fresh review context, corrects only the verified set, and rechecks
+  surfaces that share the changed token, component, or shell behavior. It uses
+  high model effort for the isolated reviewer when the host can supply it and
+  reports when reviewer independence or model effort is unavailable. Without
+  an inspectable reference it strengthens layout robustness but does not claim
+  visual equivalence.
 - Build every screen of the surface in one self-contained HTML file with shared
   design tokens, realistic dummy data, relevant edge states, and the pinned
   review shell.
@@ -77,10 +81,14 @@ product, which a generic wireframe cannot. Conversation-first input lets direct
 requests and `shape-idea` handoffs use the same workflow; the approved spec and
 prototype provide the durable handoff after the visual work settles.
 
-The effort argument spends the extra visual comparison loop only when close
-matching matters. Observable comparison and convergence criteria make `high`
-meaningful; a generic request to think harder would not define a different
-prototype outcome.
+The effort argument spends the extra visual comparison and verification work
+only when close matching matters. Broad candidate discovery catches subtle
+differences, while independent reproduction prevents the wider search from
+turning every suspicion into a correction. Observable comparison, verification,
+and convergence criteria make `high` meaningful; a generic request to think
+harder would not define a different prototype outcome. The text argument alone
+cannot guarantee that every host changes its model-level effort, so the skill
+states that evidence boundary directly.
 
 ## Reconsider when
 
