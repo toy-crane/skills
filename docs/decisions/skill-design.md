@@ -14,6 +14,10 @@
 - Every published skill is self-sufficient because skills may be installed one
   at a time. Restate a required constraint inline instead of assuming another
   skill's text is available.
+- An orchestration skill may use an available specialized skill whose trigger
+  matches the current surface, while retaining the outcome itself when that
+  specialist is absent. `implement` applies this to runtime verification rather
+  than depending on a generic verification dispatcher.
 - Put trigger conditions in frontmatter descriptions. `project-knowledge`
   triggers when project terms are being clarified or choices that may constrain
   future work are being considered or settled in any session, including
@@ -118,6 +122,9 @@ checks cannot decide.
   mechanism rather than the handoff outcome and breaks standalone installation;
   reconsider a separately invokable preview skill only if users repeatedly need
   the same lifecycle outside implementation.
+- A generic verification skill as an `implement` dependency — framework skills
+  own their distinct runtime loops, while `implement` already owns selection and
+  the completion gate.
 - Compressing instructions into aphorisms — short text with floating referents
   can lose executable meaning even when its argument is correct.
 - Exhaustive diff summaries, review-time estimates, severity codes, and

@@ -60,6 +60,7 @@ flowchart LR
     ST --> IM
     IM --> DONE["verified, reviewed,<br/>and runnable when available"]
     IM -. "uses at pre-agreed public seams" .-> TDD[tdd]
+    IM -. "uses for affected surfaces" .-> RV["matching runtime-verification skill"]
 ```
 
 Invoke `discover-opportunity` when no problem or direction is known. It runs only
@@ -81,7 +82,10 @@ repository exposes the result through a user-reviewable local server,
 `implement` verifies the changed surface and shares an address while leaving
 that server available until the user finishes review or later delivery cleanup.
 Implementation planning is just in time, and `implement` uses `tdd` where
-behavior can be verified through pre-agreed public seams.
+behavior can be verified through pre-agreed public seams. For an affected
+product surface, it also uses an available matching runtime-verification skill,
+or verifies the changed behavior through the repository's supported runtime
+when none is available.
 
 Pass the folder itself, not an individual spec or task file.
 
@@ -128,9 +132,10 @@ progress from the folder, Git, the current diff, and verification results.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[implement](./skills/workflow/implement/SKILL.md)**: Implement an approved spec
   folder, using its tasks sequentially when present and its spec directly when
-  absent, using `tdd` at pre-agreed public seams, then finish with full
-  verification, the current harness's automated code-review process, and a
-  verified runnable product address when the repository provides one.
+  absent, using `tdd` at pre-agreed public seams and matching runtime-verification
+  skills for affected product surfaces, then finish with full verification, the
+  current harness's automated code-review process, and a verified runnable
+  product address when the repository provides one.
 - **[tdd](./skills/workflow/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from
@@ -176,11 +181,12 @@ the merged worktree.
   request merge, choose squash or rebase by commit meaning, then safely clean up
   the merged worktree and its owned development server.
 
-## Outside the pipeline
+## Supporting workflows
 
-Six additional skills run independently of the pipeline. They handle stack
-setup, Expo runtime verification, project knowledge, visual explanation, final
-human judgment, and periodic cleanup.
+Six additional skills can run independently. They handle stack setup, Expo
+runtime verification, project knowledge, visual explanation, final human
+judgment, and periodic cleanup. `implement` also uses a matching runtime-
+verification skill when one is available for an affected product surface.
 
 - **[add-stack-context](./skills/workflow/add-stack-context/SKILL.md)**: Audit the
   technologies that define a project's stack and install each vendor's official

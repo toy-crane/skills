@@ -18,6 +18,10 @@
   otherwise it implements `spec.md` directly.
 - `implement` uses `tdd` where behavior can be verified through a pre-agreed
   public seam.
+- For each affected product surface, `implement` uses an available matching
+  runtime-verification skill. When none is available, it verifies the changed
+  behavior through the repository's supported runtime. Behavior not verified in
+  the running product remains incomplete; static checks do not replace it.
 - Each outcome is complete after its acceptance criteria and focused
   deterministic verification pass. Task files hold only durable status plus
   concise verification or blocker evidence. When repository policy calls for
@@ -117,6 +121,11 @@ turning server mechanics into a separate pipeline phase. Keeping the outcome in
 `implement` also preserves standalone installation while leaving
 `human-review` focused on unresolved human judgment.
 
+Specialized runtime-verification skills own framework-specific observation
+loops, while `implement` owns their selection and the completion gate. A generic
+dispatcher would duplicate that orchestration without adding a separate user
+outcome.
+
 Minimal task state and meaningful code checkpoints preserve useful recovery
 evidence without turning Git and task files into a second orchestration state
 machine.
@@ -152,6 +161,9 @@ machine.
   make `implement` depend on another installed skill; reconsider a standalone
   preview workflow only after repeated independent user requests establish a
   separate outcome.
+- A generic runtime-verification dispatcher — matching framework skills already
+  own their observation loops, while `implement` owns the implementation
+  completion gate and remains usable when none is installed.
 - Review after every task or edit — it adds fixed cost without requiring a
   material risk boundary.
 - Forbidding every intermediate review — a late permission, migration, or
