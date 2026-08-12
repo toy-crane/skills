@@ -27,7 +27,9 @@ task_results="$task_eval_root/results.jsonl"
 : > "$task_cases"
 
 for task_skill in "${task_skills[@]}"; do
-  task_skill_path="$task_repo_root/skills/$task_skill"
+  task_skill_link="$task_repo_root/.claude/skills/$task_skill"
+  test -d "$task_skill_link"
+  task_skill_path=$(cd "$task_skill_link" && pwd -P)
   task_eval_path="$task_skill_path/evals/$task_eval_filename"
   test -f "$task_skill_path/SKILL.md"
   test -f "$task_eval_path"

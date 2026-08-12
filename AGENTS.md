@@ -6,10 +6,12 @@ toy-crane's agent skills, distributed two ways: copy-in via **skills.sh**
 
 ## The published set is `skills/`
 
-`skills/<name>/SKILL.md` is what ships. Each published skill must also appear in
+`skills/<group>/<name>/SKILL.md` is what ships. Use the settled `git`, `workflow`,
+or `expo` group from [skill-layout](docs/decisions/skill-layout.md). Each
+published skill must also appear in
 `.claude-plugin/plugin.json`'s `skills` array: the plugin ships exactly that
 array, while skills.sh discovers everything under `skills/`. Adding a skill =
-create `skills/<name>/`, add its `./skills/<name>` path to `plugin.json`,
+create `skills/<group>/<name>/`, add its complete path to `plugin.json`,
 symlink it into both `.agents/skills/` and `.claude/skills/`, then link it from
 the README. Run
 `claude plugin validate . --strict` after touching either `.claude-plugin/`
@@ -18,8 +20,9 @@ manifest.
 ## Published skills are invokable in-repo
 
 Neither Codex nor Claude Code reads a bare `skills/` directory, so each
-published skill is symlinked as `.agents/skills/<name> -> ../../skills/<name>`
-for Codex and `.claude/skills/<name> -> ../../skills/<name>` for Claude Code.
+published skill is symlinked as
+`.agents/skills/<name> -> ../../skills/<group>/<name>` for Codex and
+`.claude/skills/<name> -> ../../skills/<group>/<name>` for Claude Code.
 The symlinks are committed so they reach every clone and worktree; edits under
 `skills/` apply in place with no copy to drift. skills.sh scans both agent
 directories too but dedupes by skill name, so the extra paths add nothing to

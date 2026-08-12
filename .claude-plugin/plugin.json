@@ -1,6 +1,6 @@
 {
   "name": "toycrane-skills",
-  "version": "0.34.0",
+  "version": "0.35.0",
   "description": "Skills for product discovery, shaping, implementation, runtime verification, review, project knowledge, test-first development, and safe Git delivery.",
   "author": {
     "name": "toy-crane",
@@ -36,22 +36,22 @@
     "productivity"
   ],
   "skills": [
-    "./skills/add-stack-context",
-    "./skills/build-prototype",
-    "./skills/compact-decisions",
-    "./skills/commit",
-    "./skills/discover-opportunity",
-    "./skills/explain-visually",
-    "./skills/expo-dev-loop",
-    "./skills/human-review",
-    "./skills/implement",
-    "./skills/merge",
-    "./skills/pr",
-    "./skills/project-knowledge",
-    "./skills/pull",
-    "./skills/push",
-    "./skills/split-into-tasks",
-    "./skills/tdd",
-    "./skills/shape-idea"
+    "./skills/git/commit",
+    "./skills/git/pull",
+    "./skills/git/push",
+    "./skills/git/pr",
+    "./skills/git/merge",
+    "./skills/workflow/add-stack-context",
+    "./skills/workflow/build-prototype",
+    "./skills/workflow/compact-decisions",
+    "./skills/workflow/discover-opportunity",
+    "./skills/workflow/explain-visually",
+    "./skills/workflow/human-review",
+    "./skills/workflow/implement",
+    "./skills/workflow/project-knowledge",
+    "./skills/workflow/shape-idea",
+    "./skills/workflow/split-into-tasks",
+    "./skills/workflow/tdd",
+    "./skills/expo/expo-dev-loop"
   ]
 }
