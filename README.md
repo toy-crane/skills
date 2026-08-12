@@ -3,9 +3,9 @@
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
 A composable, model-agnostic set of skills for product discovery, shaping,
-prototyping, task splitting, implementation, human review, project
-knowledge, test-first development, and safe Git delivery. Install selected
-skills or the complete plugin.
+prototyping, task splitting, implementation, runtime verification, human
+review, project knowledge, test-first development, and safe Git delivery.
+Install selected skills or the complete plugin.
 
 ## Install
 
@@ -173,14 +173,17 @@ the merged worktree.
 
 ## Outside the pipeline
 
-Five additional skills run independently of the pipeline. They handle stack
-setup, project knowledge, visual explanation, final human judgment, and periodic
-cleanup.
+Six additional skills run independently of the pipeline. They handle stack
+setup, Expo runtime verification, project knowledge, visual explanation, final
+human judgment, and periodic cleanup.
 
 - **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Audit the
   technologies that define a project's stack and install each vendor's official
   agent context in its recommended form. Runs during agent setup, after stack
   changes, or on entering an unaudited project.
+- **[expo-dev-loop](./skills/expo-dev-loop/SKILL.md)**: Verify Expo and React
+  Native changes in a running app with `agent-device`, selecting Metro reload or
+  native rebuild from the actual change and completing only with device evidence.
 - **[project-knowledge](./skills/project-knowledge/SKILL.md)**: Maintain project
   terms and settled decisions that future work should reuse whenever they are
   taking shape, including while a plan weighs alternatives. Does not run for

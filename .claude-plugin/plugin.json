@@ -1,7 +1,7 @@
 {
   "name": "toycrane-skills",
-  "version": "0.33.6",
-  "description": "Skills for product discovery, shaping, implementation, review, project knowledge, test-first development, and safe Git delivery.",
+  "version": "0.34.0",
+  "description": "Skills for product discovery, shaping, implementation, runtime verification, review, project knowledge, test-first development, and safe Git delivery.",
   "author": {
     "name": "toy-crane",
     "url": "https://github.com/toy-crane"
@@ -19,6 +19,8 @@
     "project-knowledge",
     "compact-decisions",
     "explain-visually",
+    "expo",
+    "agent-device",
     "human-review",
     "implement",
     "merge",
@@ -30,6 +32,7 @@
     "spec-implementation",
     "tdd",
     "testing",
+    "runtime-verification",
     "productivity"
   ],
   "skills": [
@@ -39,6 +42,7 @@
     "./skills/commit",
     "./skills/discover-opportunity",
     "./skills/explain-visually",
+    "./skills/expo-dev-loop",
     "./skills/human-review",
     "./skills/implement",
     "./skills/merge",
