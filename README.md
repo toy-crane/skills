@@ -21,6 +21,11 @@ npx skills@latest add toy-crane/skills
 
 Choose the skills and coding agents to install.
 
+If an existing copy was installed before the source catalog moved into the
+`git`, `workflow`, and `expo` groups, run the add command once more instead of
+relying on `skills update`. The CLI tracks the exact upstream skill path, while
+the reinstallation keeps the same skill names and refreshes that path.
+
 ### Claude Code plugin (managed bundle)
 
 Installs the complete set as a read-only bundle. Updates arrive with new plugin
@@ -104,29 +109,29 @@ docs/specs/checkout/
 Invoke the same folder again after an interruption. `implement` reconstructs
 progress from the folder, Git, the current diff, and verification results.
 
-- **[discover-opportunity](./skills/discover-opportunity/SKILL.md)**: Find
+- **[discover-opportunity](./skills/workflow/discover-opportunity/SKILL.md)**: Find
   side-project directions from agreed personal traces and relevant current
   change. Runs only when explicitly invoked and hands the chosen direction to
   `shape-idea` without creating a document.
-- **[shape-idea](./skills/shape-idea/SKILL.md)**: Clarify a chosen problem and
+- **[shape-idea](./skills/workflow/shape-idea/SKILL.md)**: Clarify a chosen problem and
   direction through correctable drafts, project evidence, and rendered UI
   variants. Maintains project terms, records only settled decisions that future
   work should reuse, then writes an implementation-ready spec.
-- **[build-prototype](./skills/build-prototype/SKILL.md)**: Build every screen in
+- **[build-prototype](./skills/workflow/build-prototype/SKILL.md)**: Build every screen in
   one dummy-data HTML file using the project's design system, or the shell's
   minimal style when none exists. Review the rendered screens and preserve the
   approved prototype beside the spec.
-- **[split-into-tasks](./skills/split-into-tasks/SKILL.md)**: Split an existing
+- **[split-into-tasks](./skills/workflow/split-into-tasks/SKILL.md)**: Split an existing
   spec into the fewest approved, independently deliverable vertical tasks with
   explicit blockers, acceptance criteria, focused verification, minimal state,
   and only risk-justified intermediate review checkpoints.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
-- **[implement](./skills/implement/SKILL.md)**: Implement an approved spec
+- **[implement](./skills/workflow/implement/SKILL.md)**: Implement an approved spec
   folder, using its tasks sequentially when present and its spec directly when
   absent, using `tdd` at pre-agreed public seams, then finish with full
   verification, the current harness's automated code-review process, and a
   verified runnable product address when the repository provides one.
-- **[tdd](./skills/tdd/SKILL.md)**: Implement one red → green slice at a time at
+- **[tdd](./skills/workflow/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
@@ -158,16 +163,16 @@ commit, synchronization, and publication, but stops before merge. `merge`
 continues through verified remote merge and cleans up only resources owned by
 the merged worktree.
 
-- **[commit](./skills/commit/SKILL.md)**: Record only the current request's
+- **[commit](./skills/git/commit/SKILL.md)**: Record only the current request's
   changes as logical Conventional Commits while preserving unrelated work.
-- **[pull](./skills/pull/SKILL.md)**: Rebase the current checkout onto the fetched
+- **[pull](./skills/git/pull/SKILL.md)**: Rebase the current checkout onto the fetched
   requested base, or remote default, without treating a dirty tree as permission
   to modify local work.
-- **[push](./skills/push/SKILL.md)**: Publish existing commits on a named branch,
+- **[push](./skills/git/push/SKILL.md)**: Publish existing commits on a named branch,
   reconciling remote state and using lease protection for intentional rewrites.
-- **[pr](./skills/pr/SKILL.md)**: Turn the current change into a ready-for-review
+- **[pr](./skills/git/pr/SKILL.md)**: Turn the current change into a ready-for-review
   GitHub pull request and return its URL without merging it.
-- **[merge](./skills/merge/SKILL.md)**: Carry a change through verified pull
+- **[merge](./skills/git/merge/SKILL.md)**: Carry a change through verified pull
   request merge, choose squash or rebase by commit meaning, then safely clean up
   the merged worktree and its owned development server.
 
@@ -177,25 +182,25 @@ Six additional skills run independently of the pipeline. They handle stack
 setup, Expo runtime verification, project knowledge, visual explanation, final
 human judgment, and periodic cleanup.
 
-- **[add-stack-context](./skills/add-stack-context/SKILL.md)**: Audit the
+- **[add-stack-context](./skills/workflow/add-stack-context/SKILL.md)**: Audit the
   technologies that define a project's stack and install each vendor's official
   agent context in its recommended form. Runs during agent setup, after stack
   changes, or on entering an unaudited project.
-- **[expo-dev-loop](./skills/expo-dev-loop/SKILL.md)**: Verify Expo and React
+- **[expo-dev-loop](./skills/expo/expo-dev-loop/SKILL.md)**: Verify Expo and React
   Native changes in a running app with `agent-device`, selecting Metro reload or
   native rebuild from the actual change and completing only with device evidence.
-- **[project-knowledge](./skills/project-knowledge/SKILL.md)**: Maintain project
+- **[project-knowledge](./skills/workflow/project-knowledge/SKILL.md)**: Maintain project
   terms and settled decisions that future work should reuse whenever they are
   taking shape, including while a plan weighs alternatives. Does not run for
   lookup, routine implementation details, or execution of settled decisions.
-- **[explain-visually](./skills/explain-visually/SKILL.md)**: Render explanations
+- **[explain-visually](./skills/workflow/explain-visually/SKILL.md)**: Render explanations
   with the best available tool. Use one sentence instead when one sentence fully
   answers the question.
-- **[human-review](./skills/human-review/SKILL.md)**: Turn a completed, substantial
+- **[human-review](./skills/workflow/human-review/SKILL.md)**: Turn a completed, substantial
   or consequential repository change into a minimal visual handoff when the user
   asks to inspect actual outcomes and judge unresolved commitments. Show the
   whole outcome, then focus one review set on at most three active questions.
-- **[compact-decisions](./skills/compact-decisions/SKILL.md)**: Periodically clean
+- **[compact-decisions](./skills/workflow/compact-decisions/SKILL.md)**: Periodically clean
   up decision files, the glossary, shipped specs, and agent instructions after
   work accumulates. Shorten the documents without changing confirmed decisions.
 
