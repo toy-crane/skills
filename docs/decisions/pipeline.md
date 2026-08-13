@@ -51,6 +51,13 @@
 - Before building a workaround for an external dependency, `shape-idea` checks
   official documentation, issue trackers, and release notes. If no answer
   applies, the spec records what was checked and why it fell short.
+- When execution applies a workaround whose root cause stays open, or observes
+  an out-of-scope defect with evidence, it records a follow-up at the moment of
+  discovery through `project-knowledge`, and writes the item directly when that
+  skill is absent. `implement` and each runtime-verification skill carry this
+  routing; `project-knowledge` owns the criteria and format. A recorded
+  follow-up is a valid `shape-idea` input or a direct fix seed for a later
+  session.
 
 ## Boundaries
 
@@ -85,7 +92,8 @@
   automated review or hand off an exact user-invocable command while leaving
   the gate outstanding.
 - Conversation history is useful while available but is not durable evidence.
-  After a real interruption, repository artifacts determine what remains.
+  After a real interruption, repository artifacts determine what remains. A
+  discovery reported only in the closing message is therefore not preserved.
 - Preserve unrelated changes and confirm ownership when dirty-state ownership
   or overlap cannot be established safely.
 - Pause when a specification change invalidates an outcome, blocker, or task
@@ -145,6 +153,8 @@ machine.
   chooses a parallel execution model for genuinely independent work.
 - Vendor workaround failures are repeatedly observed outside `shape-idea`,
   justifying another standalone carrier for the check-first rule.
+- Recorded follow-ups accumulate unresolved in real repositories, justifying a
+  pruning pass rather than only per-item deletion.
 
 ## Still-rejected alternatives
 
@@ -164,6 +174,12 @@ machine.
 - A generic runtime-verification dispatcher — matching framework skills already
   own their observation loops, while `implement` owns the implementation
   completion gate and remains usable when none is installed.
+- A dedicated follow-up recording skill — it names a mechanism rather than a
+  user outcome and would add another installable dependency, while
+  `project-knowledge` already owns durable project memory.
+- Relying on the `project-knowledge` trigger description alone to fire during
+  execution — installed context goes unused without explicit routing, the same
+  effect measured for vendor agent context.
 - Review after every task or edit — it adds fixed cost without requiring a
   material risk boundary.
 - Forbidding every intermediate review — a late permission, migration, or

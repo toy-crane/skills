@@ -14,6 +14,11 @@
   `prototype.html` when a surface was approved, and `tasks/` when work was split.
   Preserve any qualifying project decision, then delete the folder when the
   work ships.
+- `docs/follow-ups/<slug>.md` carries one open item a session discovered but did
+  not resolve: a temporary workaround whose root cause stays open, or an
+  out-of-scope defect observed with evidence. One file per item, written at the
+  moment of discovery, deleted when the work ships or the item is promoted into
+  a spec folder.
 - `AGENTS.md` or `CLAUDE.md` carries repository mechanics and the route to the
   decision index, not a cache of decision content.
 - Git history is the only archive. Do not create an archive folder or keep
@@ -33,6 +38,10 @@ intentional.
   decision the code implies.
 - Feature-local decisions remain in the work-unit spec. Promote only decisions
   that have settled and that later work should reuse.
+- A follow-up records an open question, not a settled decision, so it does not
+  enter the glossary or a decision contract until its outcome settles on its own
+  terms. Work that closed inside the session, a guess without evidence, and a
+  defect fixed in the current change are not follow-ups.
 - A term or decision counts as preserved only after its target file is updated.
 - Every subject file appears exactly once in the index, and every index entry
   resolves to one subject file.
@@ -68,6 +77,16 @@ read path; Git retains recoverability without spending context on chronology.
   exposes obsolete claims to the model.
 - Flat `docs/specs/<slug>.md` files — related prototypes and task files would
   require a later address migration.
+- A hosted issue tracker as the follow-up carrier — it survives worktree
+  deletion but adds a remote dependency to a record the repository can hold
+  itself; reconsider if follow-ups routinely need assignment or cross-repository
+  visibility.
+- A single `docs/follow-ups.md` backlog list — parallel worktree sessions
+  appending to one file collide on merge, the same failure that sequential
+  record numbers produced.
+- Harness task chips or session to-do state — they do not survive an
+  application restart and exist in only one of the agent harnesses this
+  repository targets.
 
 ## Evidence worth preserving
 
@@ -83,3 +102,12 @@ read path; Git retains recoverability without spending context on chronology.
 - Sequential record numbers collided in parallel branches twice. Subject
   filenames remove the counter and make same-subject edits collide on the file
   that actually carries authority.
+- Held-constant forward runs on a fixture whose committed generated file had
+  drifted from its generator: all three baseline runs diagnosed the drift
+  correctly and reported it only in their closing message, leaving nothing on
+  disk. All five runs carrying the capture rule wrote one
+  `docs/follow-ups/<slug>.md` with symptom, evidence, suspected cause, what was
+  tried, and a next step, and none wrote a decision contract for the suspected
+  cause. A fresh session given only that file reproduced the symptom, fixed the
+  root cause, added a drift check, deleted the item, and surfaced enforcement as
+  the remaining human judgment.
