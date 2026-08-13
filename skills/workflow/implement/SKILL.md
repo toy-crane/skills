@@ -18,6 +18,13 @@ supported runtime. If the changed behavior cannot be verified in the running
 product, leave verification incomplete. Builds, type checks, and tests do not
 replace this runtime check.
 
+When a workaround leaves its root cause open, or you observe an out-of-scope
+defect with evidence, record it at the moment of discovery through the
+`project-knowledge` skill. If that skill is unavailable, write the symptom,
+observed evidence, suspected cause, what was tried, and a proposed next step to
+`docs/follow-ups/<slug>.md` yourself. Reporting it only in conversation loses
+it.
+
 After an actual interruption, reconstruct progress from repository state, not
 remembered conversation, then continue the remaining work. Confirm ownership
 before incorporating ambiguous dirty changes.
