@@ -19,9 +19,14 @@
   specialist is absent. `implement` applies this to runtime verification rather
   than depending on a generic verification dispatcher.
 - Put trigger conditions in frontmatter descriptions. `project-knowledge`
-  triggers when project terms are being clarified or choices that may constrain
-  future work are being considered or settled in any session, including
-  planning, but not for lookup or execution of settled work.
+  triggers when project terms are being clarified, when choices that may
+  constrain future work are being considered or settled in any session including
+  planning, or when a session applies a temporary workaround whose root cause
+  stays open or observes an out-of-scope defect with evidence, but not for
+  lookup or execution of settled work.
+- `project-knowledge` owns the follow-up criteria, format, and lifecycle.
+  Execution skills carry only a routing sentence to it plus a compressed inline
+  fallback, so a standalone install still records the item.
 - Evaluate suspected counter-defaults against realistic prompts. When wording is
   revised after seeing a failure, test the revision on a new held-out control.
 - Git delivery skills state the requested repository outcome, the authority the
@@ -136,6 +141,10 @@ checks cannot decide.
 - A trigger eval showed the phase-based `project-knowledge` description missing
   all plan-mode decision queries; activity-based wording improved routing while
   remaining imperfect, so trigger prompts stay in the repository.
+- Adding the discovery-time clause to that description scored 29 of 29 on a
+  shuffled blind routing run, with the original 21 prompts unchanged and all
+  eight new discovery and noise prompts correct. Two of the new prompts were
+  held out of the wording work.
 - An explain-visually pruning eval found most form-selection instructions inert
   but retained the over-rendering brake. Later renderer testing required fresh
   held-out controls because each revised clause fitted the prompt that produced

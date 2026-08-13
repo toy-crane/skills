@@ -42,6 +42,10 @@ _Avoid_: Confusion, knowledge gap
 A delivery-sized unit cut from a spec: a complete, independently deliverable and verifiable path through every layer it touches, separated only when it can stand on its own. Work that becomes meaningful only when completed together remains one task. Tasks whose genuine blockers are all done form the frontier implementation may continue through. A task boundary is not automatically a context or review boundary. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
 _Avoid_: Ticket, slice, subtask, to-do
 
+**Follow-up**:
+An open item a session discovered but did not resolve, kept in `docs/follow-ups/<slug>.md`: a temporary workaround whose root cause stays open, or an out-of-scope defect observed with evidence. Carries symptom, observed evidence, suspected cause, what was tried, and a proposed next step, so a later session can act without the original conversation. Distinct from a spec's deferred points, which are decisions postponed during shaping, and from human-review's deferred commitments, which are unresolved questions inside one review.
+_Avoid_: Backlog item, ticket, TODO
+
 **Decision index**:
 The router at `docs/decisions/README.md`, one line per durable subject, saying when to read each current decision contract without restating its decision. Readers open the index and only the subjects relevant to their work.
 _Avoid_: Standing-position summary, ADR list
