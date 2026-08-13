@@ -111,3 +111,13 @@ read path; Git retains recoverability without spending context on chronology.
   cause. A fresh session given only that file reproduced the symptom, fixed the
   root cause, added a drift check, deleted the item, and surfaced enforcement as
   the remaining human judgment.
+- A greenfield control on a real Next.js build produced no follow-ups in any of
+  five runs, two carrying the old skill text and three the new. Blind judges
+  scored the seventeen discoveries those runs reported in prose: three
+  qualified, eleven were correctly excluded, and two were boundary calls. The
+  criteria therefore sort discoveries correctly while the routing did not fire.
+  Two runs, asked directly, reported that the rule did not surface at the moment
+  of discovery and that they read "out-of-scope defect" as covering pre-existing
+  or environmental problems rather than unfixed defects in code they had just
+  written. Capture is demonstrated for pre-existing and environmental defects,
+  not for self-authored gaps in new work.
