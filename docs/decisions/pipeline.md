@@ -12,10 +12,14 @@
 - A spec with multiple outcomes that should be delivered separately is split by
   `split-into-tasks` into the fewest independently usable vertical tasks with
   explicit blockers. The split also declares only the intermediate review
-  checkpoints justified by downstream or material risk.
+  checkpoints justified by downstream or material risk. Together the tasks are
+  the work unit's shallow roadmap: they preserve outcomes, acceptance criteria,
+  blockers, and task-specific constraints without predicting file-level
+  implementation work.
 - `implement` receives one selected `docs/specs/<slug>/` folder. When approved
   task files exist, it implements them sequentially in dependency order;
-  otherwise it implements `spec.md` directly.
+  otherwise it implements `spec.md` directly. It derives the active outcome's
+  implementation approach just in time from the current repository state.
 - `implement` uses `tdd` where behavior can be verified through a pre-agreed
   public seam.
 - For each affected product surface, `implement` uses an available matching
@@ -23,9 +27,21 @@
   behavior through the repository's supported runtime. Behavior not verified in
   the running product remains incomplete; static checks do not replace it.
 - Each outcome is complete after its acceptance criteria and focused
-  deterministic verification pass. Task files hold only durable status plus
-  concise verification or blocker evidence. When repository policy calls for
-  commits, code, tests, and the task update form one meaningful checkpoint.
+  deterministic verification pass, followed by reconciliation of the observed
+  behavior with the spec and every unfinished task. Task files hold only durable
+  status plus concise verification, blocker, or revision evidence. When
+  repository policy calls for commits, code, tests, and the task update form one
+  meaningful checkpoint.
+- During reconciliation, `implement` may update technical assumptions,
+  unfinished task boundaries and order, blockers, task-specific constraints,
+  verification, and acceptance wording while preserving the approved observable
+  product contract. A proposed change to a user-approved outcome, scope,
+  observable acceptance criterion, off-limits area, or other product constraint
+  pauses implementation for a shaping decision.
+- A previously completed outcome whose acceptance criteria no longer pass is
+  not current completion evidence. Preserve its task and prior evidence, return
+  it to a non-completed state, and repair or block it before dependent work or
+  final completion continues.
 - A task's declared intermediate review checkpoint remains part of that task's
   contract. The active harness uses its automated code-review process for the
   stated cumulative scope and risk before substantial dependent work continues.
@@ -43,6 +59,9 @@
   Git history, current diff, and test results. Preserve completed outcomes and
   request user confirmation before absorbing dirty state of uncertain
   ownership.
+- Before beginning another outcome, `implement` reloads the current handoff and
+  repository evidence. The same context may continue, but remembered
+  conversation alone cannot supply the next task's plan or current truth.
 - When shaping settles on a framework or hosted service, install the vendor's
   official agent context in its recommended form. `add-stack-context` is
   model-invoked to audit and install the same context during agent setup, after
@@ -66,11 +85,13 @@
 - Tasks are vertical, independently deliverable and verifiable, and separated
   only at outcomes that can stand on their own. Work that becomes meaningful
   only when completed together remains one task. A task is not a fine-grained
-  implementation to-do list.
+  implementation to-do list or a predicted file, function, code-structure, or
+  session plan.
 - `split-into-tasks` ends when the approved task handoff is current;
   implementation begins through `implement`.
 - `implement` follows the selected folder's existing handoff while preserving
-  its approved outcomes, blockers, and acceptance criteria.
+  its approved product contract. Verified discoveries may revise unfinished
+  task structure without silently changing that contract.
 - The standard task workflow is sequential. Parallel bulk migrations or
   explicitly independent queues require a separately chosen execution model
   rather than implicit task fan-out.
@@ -94,12 +115,16 @@
 - Conversation history is useful while available but is not durable evidence.
   After a real interruption, repository artifacts determine what remains. A
   discovery reported only in the closing message is therefore not preserved.
+- Reconciliation is an outcome-completion responsibility inside `implement`,
+  not a separate installed skill or a substitute for risk-selected or final
+  automated code review.
 - Preserve unrelated changes and confirm ownership when dirty-state ownership
   or overlap cannot be established safely.
-- Pause when a specification change invalidates an outcome, blocker, or task
-  boundary; the same blocker persists without evidence of progress; or
-  continuing needs authority the user has not granted. Keep retries within the
-  approved authority and work boundaries.
+- Pause when a proposed product-contract change invalidates an outcome,
+  acceptance criterion, off-limits area, or other approved constraint; the same
+  blocker persists without evidence of progress; or continuing needs authority
+  the user has not granted. Keep retries and unfinished-task reconciliation
+  within the approved authority and work boundaries.
 - Work-unit product constraints belong in `spec.md`; constraints that expire
   with one task belong in that task file. A settled constraint that later work
   should reuse belongs in a decision contract when it passes the project
@@ -113,6 +138,15 @@ Discovery and shaping move in opposite directions: discovery broadens from
 evidence, while shaping converges on a chosen direction. Plans derived at
 execution time age better than stored implementation predictions. Delivery
 outcomes, rather than predicted session duration, remain the durable task unit.
+
+The complete shallow task set keeps scope and dependencies visible without
+freezing technical predictions. Planning only the active outcome lets current
+code and earlier verified discoveries inform the implementation path.
+
+Focused reconciliation closes the flow-back path that verification alone does
+not: it makes observed implementation facts update unfinished work before stale
+assumptions compound downstream, while preserving user authority over product
+outcomes and acceptance.
 
 The spec folder is the stable implementation address. It already says whether
 the work remains one coherent spec or has approved tasks, so `implement` needs
@@ -149,6 +183,10 @@ machine.
   diff or report blocking findings consistently enough for the shared
   completion gate.
 - The minimal task state cannot reconstruct real interrupted runs safely.
+- Outcome reconciliation repeatedly misses downstream contract changes or its
+  reread and task-revision cost exceeds the rework it prevents.
+- AI-authored unfinished-task revisions repeatedly change practical product
+  behavior without surfacing a shaping decision.
 - Sequential implementation becomes the dominant bottleneck and the user
   chooses a parallel execution model for genuinely independent work.
 - Vendor workaround failures are repeatedly observed outside `shape-idea`,
@@ -163,6 +201,12 @@ machine.
 - Durable `plan.md` and a plan-writing skill — implementation predictions age,
   while decision-level corrections already have homes in specs, tasks, project
   decisions, or repository instructions.
+- A separate roadmap, execution ledger, or run-state file — the spec and shallow
+  task set already carry the authoritative contract and current work frontier;
+  duplicating them creates another artifact that can drift.
+- A separately invoked reconciliation or convergence skill — alignment is part
+  of outcome completion and becomes optional if correctness depends on another
+  installed skill or user invocation.
 - Session duration as the task boundary — predicted limits fragment coherent
   outcomes prematurely.
 - Separate `implement-spec` and `implement-tasks` entry points — the spec folder
@@ -206,6 +250,13 @@ machine.
   fresh-worker protocol was still incomplete after 57m49s with 23 commits and
   at least 15 child-agent invocations. This supports removing fixed
   orchestration overhead, not prescribing a replacement context topology.
+- Seven inspected Codex and Claude implementation sessions across four
+  repositories showed repeated flow-back failures: verified implementation
+  changed downstream contracts, completed code diverged from its final spec, a
+  late security review invalidated an earlier completion path, and an initially
+  reported performance win failed after product and operational constraints
+  were applied. These cases support reconciliation at verified outcome
+  boundaries rather than relying on final review or session memory alone.
 - In that Todo eval, a risk-selected intermediate review and the final review
   found distinct blocking security issues; a final-review-only variant finished
   in similar time. This supports declaring intermediate review only where risk
