@@ -12,11 +12,10 @@
   decisions. Consumers read the index and only the relevant subject files.
 - A standalone workflow skill creates and maintains one permanent, current
   app-level context document for a from-scratch application. The document
-  persists across work units and preserves why the app exists, who it serves,
-  its app-wide outcome, core loop, product boundaries, experience principles,
-  settled constraints, and material unknowns so later shaping does not restart
-  from a blank product premise. `shape-idea` reads it when present but neither
-  requires nor creates it.
+  persists across work units so later shaping does not restart from a blank
+  product premise. `shape-idea` reads it when present but neither requires nor
+  creates it. Its product-only content contract lives in
+  [app-context](app-context.md).
 - `docs/specs/<slug>/` carries one unit of work: `spec.md` as the anchor,
   `prototype.html` when a surface was approved, and `tasks/` when work was split.
   Preserve any qualifying project decision, then delete the folder when the
@@ -45,10 +44,8 @@ intentional.
   decision the code implies.
 - Feature-local decisions remain in the work-unit spec. Promote only decisions
   that have settled and that later work should reuse.
-- The app-level context does not carry individual screens, feature
-  requirements, implementation plans, or work-unit acceptance criteria. Those
-  remain in the relevant spec; repository mechanics remain in `AGENTS.md` or
-  `CLAUDE.md`, and reusable terms and trade-offs retain their existing homes.
+- The app-level context does not replace the existing owners for work-unit
+  specs, repository mechanics, reusable terms, or settled trade-offs.
 - A follow-up records an open question, not a settled decision, so it does not
   enter the glossary or a decision contract until its outcome settles on its own
   terms. Work that closed inside the session, a guess without evidence, and a
