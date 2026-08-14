@@ -10,6 +10,11 @@
   alternatives reflect a real trade-off.
 - `docs/decisions/README.md` indexes subjects without duplicating their
   decisions. Consumers read the index and only the relevant subject files.
+- A from-scratch application keeps one permanent, current app-level context
+  document across work units. It preserves why the app exists, who it serves,
+  its app-wide outcome, core loop, product boundaries, experience principles,
+  settled constraints, and material unknowns so later shaping does not restart
+  from a blank product premise.
 - `docs/specs/<slug>/` carries one unit of work: `spec.md` as the anchor,
   `prototype.html` when a surface was approved, and `tasks/` when work was split.
   Preserve any qualifying project decision, then delete the folder when the
@@ -38,6 +43,10 @@ intentional.
   decision the code implies.
 - Feature-local decisions remain in the work-unit spec. Promote only decisions
   that have settled and that later work should reuse.
+- The app-level context does not carry individual screens, feature
+  requirements, implementation plans, or work-unit acceptance criteria. Those
+  remain in the relevant spec; repository mechanics remain in `AGENTS.md` or
+  `CLAUDE.md`, and reusable terms and trade-offs retain their existing homes.
 - A follow-up records an open question, not a settled decision, so it does not
   enter the glossary or a decision contract until its outcome settles on its own
   terms. Work that closed inside the session, a guess without evidence, and a
@@ -57,12 +66,19 @@ present from history. Before this model, 27 records plus their index occupied
 subject contracts keep the authority and anti-repetition payload in the normal
 read path; Git retains recoverability without spending context on chronology.
 
+A one-time kickoff prompt disappears with the session, while copying the whole
+app premise into every work-unit spec makes those specs drift. One current
+app-level context keeps the product premise available across later shaping
+without turning it into feature scope or implementation prediction.
+
 ## Reconsider when
 
 - Explicit delegation repeatedly produces project decisions the user later
   overturns.
 - Stable in-tree provenance becomes a compliance or audit requirement that Git
   history cannot satisfy.
+- The app-level context repeatedly drifts from settled decisions or fails to
+  improve later shaping enough to justify another permanent read surface.
 - Subject contracts grow large enough that targeted reads routinely load
   unrelated decisions.
 - Git history proves too difficult to recover when a removed detail is genuinely
