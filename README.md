@@ -158,7 +158,8 @@ new session or a closing-message handoff is not required for correctness.
 - **[implement](./skills/workflow/implement/SKILL.md)**: Implement an approved spec
   folder one outcome at a time. Reload repository evidence before each outcome,
   reconcile verified behavior with the product contract and unfinished tasks,
-  reopen invalidated work, and stop only when a product decision must change.
+  reopen invalidated work, and return to shaping when a product decision must
+  change.
   Then finish with full verification, automated code review, and a verified
   runnable product address when the repository provides one.
 - **[tdd](./skills/workflow/tdd/SKILL.md)**: Implement one red → green slice at a time at
