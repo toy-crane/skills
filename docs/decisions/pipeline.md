@@ -153,7 +153,8 @@
   needs a product decision or material trade-off returns to `shape-idea`; the
   sweep does not invent intent to keep automation moving. A different defect
   discovered by a worker is returned to the coordinator for serialized
-  follow-up recording before that disposable worker is cleaned up.
+  follow-up recording, commit, and durable follow-up-only pull-request handoff
+  before that disposable worker is cleaned up.
 - Reconciliation is an outcome-completion responsibility inside `implement`,
   not a separate installed skill or a substitute for risk-selected or final
   automated code review.

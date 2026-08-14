@@ -32,7 +32,7 @@ validate_follow_up() {
   local path=$1
   local field
   for field in 'Symptom' 'Observed evidence' 'Suspected cause' 'What was tried' 'Proposed next step'; do
-    grep -Eq "^\\*\\*${field}\\*\\*: .+" "$path" || return 1
+    grep -Eq "^\\*\\*${field}\\*\\*:[[:space:]]*[^[:space:]]" "$path" || return 1
   done
 }
 
@@ -397,7 +397,7 @@ resolve_attempt() {
 
   local field
   for field in 'Symptom' 'Observed evidence' 'Suspected cause' 'What was tried' 'Proposed next step'; do
-    grep -Eq "^\\*\\*${field}\\*\\*: .+" \
+    grep -Eq "^\\*\\*${field}\\*\\*:[[:space:]]*[^[:space:]]" \
       < <(git -C "$repo_root" show "$base_sha:$relative") \
       || die "follow-up on $remote/$default_branch is missing: $field"
   done
@@ -1168,13 +1168,14 @@ mark_attempt() {
   [[ -n "$follow_up" ]] || die 'mark requires --follow-up'
   [[ -n "$base_sha" ]] || die 'mark requires --base-sha'
   [[ -n "$owner" ]] || die 'mark requires --owner'
-  [[ -n "$detail" ]] \
+  [[ "$detail" =~ [^[:space:]] ]] \
     || die 'mark requires --detail with decisive evidence or the next useful condition'
   validate_owner "$owner"
   case "$outcome" in
     not-reproduced|needs-shaping|blocked) ;;
     pull-request)
-      [[ -n "$detail" ]] || die 'pull-request outcome requires --detail with the pull request URL'
+      [[ "$detail" =~ [^[:space:]] ]] \
+        || die 'pull-request outcome requires --detail with the pull request URL'
       ;;
     *) die 'mark outcome must be pull-request, not-reproduced, needs-shaping, or blocked' ;;
   esac

@@ -137,7 +137,10 @@ selected item and return the new symptom, observed evidence, suspected cause,
 what was tried, and proposed next step to the coordinator. Do not leave the only
 record in the disposable worker. The coordinator serializes these records in
 its own checkout through `project-knowledge` when available, or writes the same
-five fields to `docs/follow-ups/<symptom>.md`, before cleaning up the worker.
+five fields to `docs/follow-ups/<symptom>.md`. Before cleaning up the worker,
+commit that record and publish a dedicated ready-for-review follow-up-record PR;
+do not mix it into the selected item's resolution PR. A local coordinator change
+or closing-message copy is not a durable handoff.
 
 ### Confirm authority to fix
 
@@ -202,11 +205,13 @@ After the worker returns:
   publication and an existing pull request. Record a found pull request with
   `mark`; if a branch was published without one, finish or explicitly block that
   publication rather than discarding its identity. Only when no publication
-  occurred, use `cleanup` first for its bound or preparing worktree, then
-  `recover` with the exact attempt key and owner. Recovery refuses live
-  worktrees, published branches, and terminal outcomes. A preparing target is
-  removed only when its checkout is clean and still detached at the base or its
-  exact prepare-owned branch can be deleted with a head compare-and-swap.
+  occurred, use `cleanup` first when its recorded bound or preparing worktree
+  exists, then `recover` with the exact attempt key and owner. If preparation
+  stopped after persisting the target but before creating its path, skip cleanup
+  and recover the missing target directly. Recovery refuses live worktrees,
+  published branches, and terminal outcomes. A preparing target is removed only
+  when its checkout is clean and still detached at the base or its exact
+  prepare-owned branch can be deleted with a head compare-and-swap.
 
 Return one compact sweep report using only `pull-request`, `not-reproduced`,
 `needs-shaping`, `blocked`, `invalid-follow-up`, and `skipped-unchanged`. Link

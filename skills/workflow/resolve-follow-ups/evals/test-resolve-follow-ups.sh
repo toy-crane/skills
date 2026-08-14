@@ -80,7 +80,14 @@ test_list_limits_candidates_and_reports_invalid_items() {
   commit_at "$repo" '2026-01-03T00:00:00Z' 'docs: record third follow-up'
   write_follow_up "$repo/docs/follow-ups/fourth.md" 'Fourth symptom'
   commit_at "$repo" '2026-01-04T00:00:00Z' 'docs: record fourth follow-up'
-  printf '# Missing required fields\n' >"$repo/docs/follow-ups/invalid.md"
+  printf '%s\n' \
+    '# Empty required fields' \
+    '**Symptom**:   ' \
+    '**Observed evidence**:   ' \
+    '**Suspected cause**:   ' \
+    '**What was tried**:   ' \
+    '**Proposed next step**:   ' \
+    >"$repo/docs/follow-ups/invalid.md"
   commit_at "$repo" '2026-01-05T00:00:00Z' 'docs: record invalid follow-up'
   git -C "$repo" push -qu origin main
   local remote_sha
@@ -97,6 +104,11 @@ test_list_limits_candidates_and_reports_invalid_items() {
   local expected_all=$'candidate\tdocs/follow-ups/first.md\ncandidate\tdocs/follow-ups/second.md\ncandidate\tdocs/follow-ups/third.md\ncandidate\tdocs/follow-ups/fourth.md\ninvalid-follow-up\tdocs/follow-ups/invalid.md'
   assert_eq "$expected_all" "$all_items" \
     'list should fetch the ordered remote backlog so a stale coordinator does not miss newer candidates'
+  if "$DISPATCHER" identity \
+    --repo "$coordinator" \
+    --follow-up docs/follow-ups/invalid.md >/dev/null 2>&1; then
+    fail 'identity should reject whitespace-only required follow-up fields'
+  fi
   local remote_only_identity
   remote_only_identity=$(
     "$DISPATCHER" identity \
@@ -220,6 +232,15 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
     --owner "$owner" \
     --outcome not-reproduced >/dev/null 2>&1; then
     fail 'mark should require decisive evidence for a non-PR terminal outcome'
+  fi
+  if "$DISPATCHER" mark \
+    --repo "$repo" \
+    --follow-up docs/follow-ups/first.md \
+    --base-sha "$base_sha" \
+    --owner "$owner" \
+    --outcome blocked \
+    --detail '   ' >/dev/null 2>&1; then
+    fail 'mark should reject whitespace-only terminal evidence'
   fi
 
   local recorded
