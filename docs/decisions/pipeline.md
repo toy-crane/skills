@@ -2,11 +2,16 @@
 
 ## Decisions
 
-- `discover-opportunity` is an explicit blank-page phase before shaping. It
-  finds possible directions from user-approved traces and relevant external
-  change; it does not choose an MVP or detailed product behavior.
-- `shape-idea` starts from a concrete problem and broad direction, closes or
-  defers material decisions, and writes the implementation-ready spec.
+- A standalone workflow skill owns creating and maintaining the permanent
+  app-level context for a from-scratch application. It is the greenfield entry
+  point before work-unit shaping and does not produce a work-unit spec.
+- `discover-opportunity` is not part of the pipeline. The greenfield entry point
+  leaves a durable current artifact instead of handing a chosen direction to
+  shaping through conversation alone.
+- `shape-idea` remains independent. It starts from a concrete problem and broad
+  direction, reads app-level context when one exists, closes or defers material
+  work-unit decisions, and writes the implementation-ready spec. Missing
+  app-level context neither blocks shaping nor makes `shape-idea` create it.
 - Every spec-producing path writes the same stable product contract:
   user-visible outcomes, approved scope, observable acceptance criteria,
   settled constraints and rationale, assumptions, off-limits areas and reasons,
@@ -123,8 +128,10 @@
 
 ## Boundaries
 
-- Discovery reads personal traces only with the user's agreement and normally
-  hands off through conversation rather than a new artifact.
+- The standalone greenfield skill owns app-level context, while `shape-idea`
+  owns work-unit shaping. Neither skill makes the other's artifact a required
+  input, and the app-level context does not absorb work-unit scope or acceptance
+  criteria.
 - Tasks are vertical, independently deliverable and verifiable, and separated
   only at outcomes that can stand on their own. Work that becomes meaningful
   only when completed together remains one task. A task is not a fine-grained
@@ -183,10 +190,13 @@
 
 ## Why
 
-Discovery and shaping move in opposite directions: discovery broadens from
-evidence, while shaping converges on a chosen direction. Plans derived at
-execution time age better than stored implementation predictions. Delivery
-outcomes, rather than predicted session duration, remain the durable task unit.
+App-level context and work-unit shaping operate at different lifetimes. A
+from-scratch app needs one current premise that survives across features, while
+each shaping session must still converge on one implementation-ready work unit.
+Keeping their skills independent lets either be installed and invoked alone and
+prevents app identity from becoming feature scope. Plans derived at execution
+time age better than stored implementation predictions. Delivery outcomes,
+rather than predicted session duration, remain the durable task unit.
 
 The complete shallow task set keeps scope and dependencies visible without
 freezing technical predictions. Planning only the active outcome lets current
@@ -256,8 +266,12 @@ state keep automation reviewable without turning follow-up files into a queue.
 
 ## Still-rejected alternatives
 
-- Combining blank-page discovery with `shape-idea` — convergence turns the
-  first plausible direction into a premature spec.
+- Keeping `discover-opportunity` as a separate conversational entry point — its
+  handoff disappears with the session and does not provide the durable app
+  premise the greenfield workflow needs.
+- Making `shape-idea` create or own app-level context — it couples a permanent
+  app artifact to a work-unit shaping lifecycle and makes independent use
+  ambiguous.
 - Durable `plan.md` and a plan-writing skill — implementation predictions age,
   while decision-level corrections already have homes in specs, tasks, project
   decisions, or repository instructions.
