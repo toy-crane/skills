@@ -17,6 +17,12 @@
   - material assumptions and unknowns
 - Keep the document current as the product premise changes. State unsupported
   beliefs as assumptions or unknowns instead of turning them into product facts.
+- `define-product` owns deliberate product-definition work: it creates the file
+  and revises its product meaning with the user. `maintain-project-context` may
+  periodically remove duplication, reconcile wording with already-settled
+  product decisions, and surface stale or conflicting claims, but it must not
+  infer new product intent from code, shipped work, or silence.
+- `shape-idea` reads `PRODUCT.md` when it exists but does not create or edit it.
 
 ## Boundaries
 
@@ -28,6 +34,9 @@
   screen designs belong in their existing project or work-unit artifacts.
 - App-wide capabilities describe stable product boundaries rather than a
   catalog of planned features.
+- A maintenance pass may edit the file without reopening product definition
+  only when the resulting meaning is already explicit in authoritative project
+  context. Ambiguous changes return to the user or `define-product`.
 
 ## Why
 

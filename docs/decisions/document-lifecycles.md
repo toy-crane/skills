@@ -10,11 +10,11 @@
   alternatives reflect a real trade-off.
 - `docs/decisions/README.md` indexes subjects without duplicating their
   decisions. Consumers read the index and only the relevant subject files.
-- `define-product` creates and maintains root `PRODUCT.md` as the one permanent,
-  current app-level context document for a from-scratch application. The
-  document persists across work units so later shaping does not restart from a
-  blank product premise. `shape-idea` reads it when present but neither requires
-  nor creates it. Its product-only content contract lives in
+- `define-product` creates root `PRODUCT.md` and owns deliberate changes to its
+  product meaning for a from-scratch application. The document is permanent and
+  current across work units so later shaping does not restart from a blank
+  product premise. `shape-idea` reads it when present but neither requires,
+  creates, nor edits it. Its product-only content contract lives in
   [app-context](app-context.md).
 - `docs/specs/<slug>/` carries one unit of work: `spec.md` as the anchor,
   `prototype.html` when a surface was approved, and `tasks/` when work was split.
@@ -27,6 +27,11 @@
   a spec folder.
 - `AGENTS.md` or `CLAUDE.md` carries repository mechanics and the route to the
   decision index, not a cache of decision content.
+- `maintain-project-context` is the periodic hygiene pass across permanent
+  product context, the glossary, decision contracts, shipped spec folders, and
+  always-loaded repository guidance. It may apply meaning already settled by an
+  authoritative source, but it leaves ambiguous conflicts unchanged and asks
+  for the missing decision.
 - Git history is the only archive. Do not create an archive folder or keep
   superseded decision files in the active tree.
 
@@ -46,6 +51,8 @@ intentional.
   that have settled and that later work should reuse.
 - The app-level context does not replace the existing owners for work-unit
   specs, repository mechanics, reusable terms, or settled trade-offs.
+- Periodic maintenance does not become the semantic owner of any artifact it
+  reconciles. It preserves the lifecycle and decision authority of each source.
 - A follow-up records an open question, not a settled decision, so it does not
   enter the glossary or a decision contract until its outcome settles on its own
   terms. Work that closed inside the session, a guess without evidence, and a

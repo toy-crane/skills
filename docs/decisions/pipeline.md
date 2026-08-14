@@ -2,12 +2,12 @@
 
 ## Decisions
 
-- `define-product` owns creating and maintaining the permanent app-level
-  context for a from-scratch application. It is the greenfield entry point
-  before work-unit shaping and does not produce a work-unit spec. Its input
-  includes at least a rough app direction or problem the user already wants to
-  pursue; it converges that seed rather than discovering opportunities from a
-  blank page.
+- `define-product` owns creating the permanent app-level context for a
+  from-scratch application and making deliberate changes to its product meaning
+  with the user. It is the greenfield entry point before work-unit shaping and
+  does not produce a work-unit spec. Its input includes at least a rough app
+  direction or problem the user already wants to pursue; it converges that seed
+  rather than discovering opportunities from a blank page.
 - `discover-opportunity` is not part of the pipeline. The greenfield entry point
   leaves a durable current artifact instead of handing a chosen direction to
   shaping through conversation alone.
@@ -15,6 +15,11 @@
   direction, reads app-level context when one exists, closes or defers material
   work-unit decisions, and writes the implementation-ready spec. Missing
   app-level context neither blocks shaping nor makes `shape-idea` create it.
+- `maintain-project-context` periodically reconciles the durable context left by
+  the workflow, including `PRODUCT.md`. It can reflect already-settled meaning
+  and remove stale or duplicated wording without becoming a pipeline gate or a
+  product decision-maker. A material ambiguity is returned to the user or
+  `define-product` rather than inferred from implementation.
 - Every spec-producing path writes the same stable product contract:
   user-visible outcomes, approved scope, observable acceptance criteria,
   settled constraints and rationale, assumptions, off-limits areas and reasons,
@@ -131,9 +136,11 @@
 
 ## Boundaries
 
-- `define-product` owns app-level context, while `shape-idea` owns work-unit
-  shaping. Neither skill makes the other's artifact a required input, and the
-  app-level context does not absorb work-unit scope or acceptance criteria.
+- `define-product` owns deliberate app-level product definition, while
+  `shape-idea` owns work-unit shaping and `maintain-project-context` owns
+  periodic cross-artifact hygiene. None makes another's artifact a required
+  input, and the app-level context does not absorb work-unit scope or acceptance
+  criteria.
 - A user with no app direction is outside the greenfield skill's input
   contract. The pipeline does not mine personal traces or invent candidate
   opportunities to manufacture that missing seed.
