@@ -1500,10 +1500,16 @@ deinitialize_worker_submodules() {
   local shadow_root
   shadow_root=$(mktemp -d "$(attempts_dir_for "$repo_root")/.cleanup-shadow.XXXXXX")
   local shadow_git_dir="$shadow_root/.git"
+  local ref_format
+  ref_format=$(git -C "$repo_root" config --get extensions.refStorage || true)
 
   if ! (
     set -e
-    git init -q "$shadow_root"
+    local init_args=(-q)
+    if [[ -n "$ref_format" ]]; then
+      init_args+=(--ref-format="$ref_format")
+    fi
+    git init "${init_args[@]}" "$shadow_root"
     cp "$common_dir/config" "$shadow_git_dir/config"
     git --git-dir="$shadow_git_dir" config core.worktree "$worker_root"
     ln -s "$submodule_git_dir" "$shadow_git_dir/modules"

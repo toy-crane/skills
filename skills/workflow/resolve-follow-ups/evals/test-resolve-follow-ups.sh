@@ -659,6 +659,60 @@ EOF
   rm -rf "$sandbox"
 }
 
+test_reftable_submodule_cleanup_uses_matching_shadow_metadata() {
+  if ! git init -h 2>&1 | grep -q -- '--ref-format'; then
+    return 0
+  fi
+
+  local sandbox
+  sandbox=$(mktemp -d)
+  local repo="$sandbox/repo"
+  local submodule_repo="$sandbox/submodule-repo"
+  local remote="$sandbox/remote.git"
+  local worker="$sandbox/worker"
+  mkdir -p "$repo/docs/follow-ups" "$submodule_repo"
+  git -C "$repo" init -q --ref-format=reftable
+  git -C "$repo" config user.email eval@example.com
+  git -C "$repo" config user.name 'Resolve Follow-ups Eval'
+  git -C "$submodule_repo" init -q
+  git -C "$submodule_repo" config user.email eval@example.com
+  git -C "$submodule_repo" config user.name 'Resolve Follow-ups Eval'
+  printf 'submodule fixture\n' >"$submodule_repo/fixture.txt"
+  git -C "$submodule_repo" add fixture.txt
+  git -C "$submodule_repo" commit -qm 'test: add submodule fixture'
+  write_follow_up "$repo/docs/follow-ups/first.md" 'Reftable cleanup symptom'
+  git -C "$repo" -c protocol.file.allow=always submodule add -q \
+    "$submodule_repo" fixture-submodule
+  git -C "$repo" add .
+  git -C "$repo" commit -qm 'test: record reftable cleanup fixture'
+  git -C "$repo" branch -M main
+  git init -q --bare "$remote"
+  git -C "$remote" symbolic-ref HEAD refs/heads/main
+  git -C "$repo" remote add origin "$remote"
+  git -C "$repo" push -qu origin main
+
+  local prepared prep_status prep_path prep_branch prep_base attempt_key owner
+  prepared=$(
+    "$DISPATCHER" prepare \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/first.md \
+      --worktree "$worker" \
+      --branch codex/reftable-cleanup
+  )
+  IFS=$'\t' read -r \
+    prep_status prep_path prep_branch prep_base attempt_key owner <<<"$prepared"
+  git -C "$worker" -c protocol.file.allow=always submodule update --init -q
+  "$DISPATCHER" cleanup \
+    --repo "$repo" \
+    --worktree "$worker" \
+    --attempt-key "$attempt_key" \
+    --owner "$owner" >/dev/null
+  [[ ! -e "$worker" ]] \
+    || fail 'submodule cleanup should support a reftable-backed superproject'
+
+  rm -rf "$sandbox"
+}
+
 test_cleanup_requires_exact_attempt_ownership() {
   local sandbox
   sandbox=$(mktemp -d)
@@ -1499,6 +1553,7 @@ test_list_limits_candidates_and_reports_invalid_items
 test_attempt_claims_are_atomic_and_terminal_state_is_immutable
 test_merge_restored_follow_up_starts_a_new_lifetime
 test_cleanup_preserves_a_racing_untracked_write
+test_reftable_submodule_cleanup_uses_matching_shadow_metadata
 test_cleanup_requires_exact_attempt_ownership
 test_coordination_failures_remain_owned_and_recoverable
 test_rewritten_history_ignores_pruned_non_pr_attempts
