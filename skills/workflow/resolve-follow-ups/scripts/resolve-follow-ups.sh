@@ -354,6 +354,20 @@ find_suppressing_attempt() {
     if [[ -f "$outcome_file" ]]; then
       outcome=$(sed -n '1p' "$outcome_file")
       if [[ "$outcome" != pull-request && "$claimed_base" != "$base_sha" ]]; then
+        local cleanup_coordinates=''
+        if [[ -f "$(state_dir_for "$repo_root" "$attempt_key")/binding" ]]; then
+          cleanup_coordinates="$(state_dir_for "$repo_root" "$attempt_key")/binding"
+        elif [[ -f "$(state_dir_for "$repo_root" "$attempt_key")/target" ]]; then
+          cleanup_coordinates="$(state_dir_for "$repo_root" "$attempt_key")/target"
+        fi
+        if [[ -n "$cleanup_coordinates" ]]; then
+          local outstanding_worktree
+          outstanding_worktree=$(sed -n '1p' "$cleanup_coordinates")
+          if [[ -e "$outstanding_worktree" || -L "$outstanding_worktree" ]]; then
+            print_attempt_state "$repo_root" "$relative" "$claimed_base" "$attempt_key"
+            return 0
+          fi
+        fi
         continue
       fi
     fi
@@ -670,6 +684,11 @@ write_target() {
   local owner=$3
   local worktree=$4
   local branch=$5
+  local target_mode=$6
+  case "$target_mode" in
+    bind|prepare) ;;
+    *) die 'worktree target mode must be bind or prepare' ;;
+  esac
   local claim_file
   claim_file=$(claim_file_for "$repo_root" "$attempt_key")
   assert_claim_owner "$claim_file" "$owner"
@@ -681,7 +700,7 @@ write_target() {
   attempts_dir=$(attempts_dir_for "$repo_root")
   local temp_file
   temp_file=$(mktemp "$attempts_dir/.target.XXXXXX")
-  printf '%s\n%s\n' "$worktree" "$branch" >"$temp_file"
+  printf '%s\n%s\n%s\n' "$worktree" "$branch" "$target_mode" >"$temp_file"
   if ln "$temp_file" "$target_file" 2>/dev/null; then
     rm "$temp_file"
     return 0
@@ -692,6 +711,99 @@ write_target() {
   fi
   rm "$temp_file"
   return 1
+}
+
+worktree_reservation_ref_for() {
+  local repo_root=$1
+  local worktree=$2
+  local coordinate_key
+  coordinate_key=$(printf '%s\n' "$worktree" | git -C "$repo_root" hash-object --stdin)
+  printf 'refs/resolve-follow-ups/worktrees/%s\n' "$coordinate_key"
+}
+
+worktree_reservation_oid() {
+  local repo_root=$1
+  local attempt_key=$2
+  local owner=$3
+  local worktree=$4
+  local write=${5-false}
+  local hash_args=(hash-object --stdin)
+  if [[ "$write" == true ]]; then
+    hash_args=(hash-object -w --stdin)
+  fi
+  printf '%s\n%s\n%s\n' "$attempt_key" "$owner" "$worktree" \
+    | git -C "$repo_root" "${hash_args[@]}"
+}
+
+WORKTREE_RESERVATION_CREATED=false
+
+reserve_worktree() {
+  local repo_root=$1
+  local attempt_key=$2
+  local owner=$3
+  local worktree=$4
+  local reservation_ref
+  reservation_ref=$(worktree_reservation_ref_for "$repo_root" "$worktree")
+  local reservation_oid
+  reservation_oid=$(worktree_reservation_oid \
+    "$repo_root" "$attempt_key" "$owner" "$worktree" true)
+  local zero_oid
+  zero_oid=$(zero_oid_for "$reservation_oid")
+  WORKTREE_RESERVATION_CREATED=false
+
+  local reservation_attempt=0
+  while true; do
+    reservation_attempt=$((reservation_attempt + 1))
+    if [[ "$reservation_attempt" -gt 20 ]]; then
+      die "cannot reserve worker coordinate after bounded retries: $worktree"
+    fi
+    local current_oid
+    current_oid=$(git -C "$repo_root" rev-parse --verify "$reservation_ref" 2>/dev/null || true)
+    if [[ -z "$current_oid" ]]; then
+      if git -C "$repo_root" update-ref \
+        "$reservation_ref" "$reservation_oid" "$zero_oid" 2>/dev/null; then
+        WORKTREE_RESERVATION_CREATED=true
+        return 0
+      fi
+      continue
+    fi
+    if [[ "$current_oid" == "$reservation_oid" ]]; then
+      return 0
+    fi
+
+    local reserved_record reserved_key reserved_claim
+    reserved_record=$(git -C "$repo_root" cat-file blob "$current_oid" 2>/dev/null) \
+      || die "cannot inspect worker coordinate reservation: $worktree"
+    reserved_key=$(sed -n '1p' <<<"$reserved_record")
+    if [[ ! "$reserved_key" =~ ^[0-9a-f]{40,64}$ ]]; then
+      die "worker coordinate reservation is malformed: $worktree"
+    fi
+    reserved_claim=$(claim_file_for "$repo_root" "$reserved_key")
+    if [[ -f "$reserved_claim" ]]; then
+      return 1
+    fi
+    git -C "$repo_root" update-ref -d \
+      "$reservation_ref" "$current_oid" 2>/dev/null || true
+  done
+}
+
+release_worktree_reservation() {
+  local repo_root=$1
+  local attempt_key=$2
+  local owner=$3
+  local worktree=$4
+  local reservation_ref
+  reservation_ref=$(worktree_reservation_ref_for "$repo_root" "$worktree")
+  local expected_oid current_oid
+  expected_oid=$(worktree_reservation_oid \
+    "$repo_root" "$attempt_key" "$owner" "$worktree")
+  current_oid=$(git -C "$repo_root" rev-parse --verify "$reservation_ref" 2>/dev/null || true)
+  [[ -n "$current_oid" ]] || return 0
+  [[ "$current_oid" == "$expected_oid" ]] \
+    || die "worker coordinate belongs to another attempt: $worktree"
+  git -C "$repo_root" update-ref -d \
+    "$reservation_ref" "$expected_oid" 2>/dev/null \
+    || die "worker coordinate changed before release: $worktree"
 }
 
 write_outcome() {
@@ -766,6 +878,8 @@ fail_after_worktree_creation() {
         die "$detail; the worktree was removed but owned branch $branch changed during cleanup; attempt-key $attempt_key owner $owner can be recovered after branch reconciliation"
       fi
     fi
+    release_worktree_reservation \
+      "$repo_root" "$attempt_key" "$owner" "$worktree"
     rm "$(state_dir_for "$repo_root" "$attempt_key")/target"
     release_claim "$repo_root" "$attempt_key" "$owner"
     die "$detail; the unbound worktree was removed and the claim was released"
@@ -822,6 +936,8 @@ bind_worker() {
   validate_owner "$owner"
   git check-ref-format --branch "$branch" >/dev/null 2>&1 \
     || die "invalid branch name: $branch"
+  [[ "$branch" != '(detached)' ]] \
+    || die 'bind branch cannot use the internal detached-worktree marker'
 
   local repo_root
   repo_root=$(repo_root_for "$repo")
@@ -850,8 +966,24 @@ bind_worker() {
     || die 'bind cannot inspect the worker worktree'
   [[ -z "$worker_status" ]] || die 'bind requires a clean worker worktree'
 
-  write_binding "$repo_root" "$attempt_key" "$owner" "$worker_root" "$branch" \
-    || die 'attempt is already bound to a different worker'
+  write_target \
+    "$repo_root" "$attempt_key" "$owner" "$worker_root" "$branch" bind \
+    || die 'attempt already has a different worker target'
+  if ! reserve_worktree "$repo_root" "$attempt_key" "$owner" "$worker_root"; then
+    rm "$(state_dir_for "$repo_root" "$attempt_key")/target"
+    die "worker worktree is already reserved by another attempt: $worker_root"
+  fi
+  local reservation_created=$WORKTREE_RESERVATION_CREATED
+  if ! write_binding "$repo_root" "$attempt_key" "$owner" "$worker_root" "$branch"; then
+    if [[ "$reservation_created" == true ]]; then
+      release_worktree_reservation "$repo_root" "$attempt_key" "$owner" "$worker_root"
+    fi
+    [[ ! -e "$(state_dir_for "$repo_root" "$attempt_key")/target" ]] \
+      || rm "$(state_dir_for "$repo_root" "$attempt_key")/target"
+    die 'attempt is already bound to a different worker'
+  fi
+  [[ ! -e "$(state_dir_for "$repo_root" "$attempt_key")/target" ]] \
+    || rm "$(state_dir_for "$repo_root" "$attempt_key")/target"
   printf 'bound\t%s\t%s\t%s\n' "$attempt_key" "$worker_root" "$branch"
 }
 
@@ -885,6 +1017,8 @@ prepare_worker() {
   [[ -n "$branch" ]] || die 'prepare requires --branch'
   git check-ref-format --branch "$branch" >/dev/null 2>&1 \
     || die "invalid branch name: $branch"
+  [[ "$branch" != '(detached)' ]] \
+    || die 'prepare branch cannot use the internal detached-worktree marker'
   [[ "$worktree" != *$'\t'* && "$worktree" != *$'\n'* ]] \
     || die 'worktree path cannot contain a tab or newline'
   [[ ! -e "$worktree" ]] || die "worktree path already exists: $worktree"
@@ -922,12 +1056,18 @@ prepare_worker() {
     release_claim "$repo_root" "$attempt_key" "$owner"
     die "branch already exists: $branch"
   fi
-  write_target "$repo_root" "$attempt_key" "$owner" "$worktree" "$branch" \
+  write_target "$repo_root" "$attempt_key" "$owner" "$worktree" "$branch" prepare \
     || die "attempt-key $attempt_key owner $owner already has a different worktree target"
+  if ! reserve_worktree "$repo_root" "$attempt_key" "$owner" "$worktree"; then
+    rm "$(state_dir_for "$repo_root" "$attempt_key")/target"
+    release_claim "$repo_root" "$attempt_key" "$owner"
+    die "worker worktree is already reserved by another attempt: $worktree"
+  fi
   if ! git -C "$repo_root" worktree add -q --detach "$worktree" "$base_sha"; then
     if [[ ! -e "$worktree" ]] \
       && ! git -C "$repo_root" worktree list --porcelain \
         | grep -Fqx "worktree $worktree"; then
+      release_worktree_reservation "$repo_root" "$attempt_key" "$owner" "$worktree"
       rm "$(state_dir_for "$repo_root" "$attempt_key")/target"
       release_claim "$repo_root" "$attempt_key" "$owner"
       die "failed to create worker worktree: $worktree; no partial checkout was registered"
@@ -1120,7 +1260,9 @@ recover_attempt() {
     coordination_file=$binding_file
   elif [[ -f "$target_file" ]]; then
     coordination_file=$target_file
-    preparing=true
+    if [[ "$(sed -n '3p' "$target_file")" == prepare ]]; then
+      preparing=true
+    fi
   fi
   if [[ -n "$coordination_file" ]]; then
     local bound_worktree bound_branch published_head
@@ -1149,6 +1291,8 @@ recover_attempt() {
       release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
       die "recover refuses local preparation branch $bound_branch; reconcile it before releasing the claim"
     fi
+    release_worktree_reservation \
+      "$repo_root" "$attempt_key" "$owner" "$bound_worktree"
     rm "$coordination_file"
     if [[ "$coordination_file" == "$binding_file" && -f "$target_file" ]]; then
       rm "$target_file"
@@ -1255,6 +1399,11 @@ clear_attempt() {
   local content_ref
   content_ref=$(content_ref_at_base "$repo_root" "$relative" "$base_sha")
   git -C "$repo_root" update-ref -d "$content_ref" "$base_sha" 2>/dev/null || true
+  if [[ -n "$cleanup_coordinates" ]]; then
+    release_worktree_reservation \
+      "$repo_root" "$attempt_key" \
+      "$(claim_field "$claim_file" 1)" "$(sed -n '1p' "$cleanup_coordinates")"
+  fi
   rm "$state_dir/outcome"
   [[ ! -e "$state_dir/binding" ]] || rm "$state_dir/binding"
   [[ ! -e "$state_dir/target" ]] || rm "$state_dir/target"
@@ -1317,12 +1466,16 @@ cleanup_worker() {
   local binding_file="$state_dir/binding"
   local target_file="$state_dir/target"
   local coordination_file=''
+  local targeting=false
   local preparing=false
   if [[ -f "$binding_file" ]]; then
     coordination_file=$binding_file
   elif [[ -f "$target_file" ]]; then
     coordination_file=$target_file
-    preparing=true
+    targeting=true
+    if [[ "$(sed -n '3p' "$target_file")" == prepare ]]; then
+      preparing=true
+    fi
   else
     die 'attempt has no bound or preparing worker worktree'
   fi
@@ -1392,7 +1545,9 @@ cleanup_worker() {
     git -C "$repo_root" update-ref -d "refs/heads/$branch" "$head" 2>/dev/null \
       || die "preparing worker branch changed during cleanup: $branch"
   fi
-  if [[ "$preparing" == true ]]; then
+  release_worktree_reservation \
+    "$repo_root" "$attempt_key" "$owner" "$worker_root"
+  if [[ "$targeting" == true ]]; then
     rm "$target_file"
   fi
   printf 'cleaned\t%s\t%s\t%s\n' "$requested_worktree" "$branch" "$head"

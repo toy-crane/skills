@@ -100,16 +100,17 @@
   finding a settled deterministic success condition; it never merges its pull
   request.
 - Attempt state is disposable local coordination data keyed by follow-up content
-  and base commit. Atomic owner claims prevent duplicate workers, terminal
-  results retain decisive evidence, and an interrupted non-terminal claim is
-  recovered only after the adapter proves its worker ended and cleans up its
+  and base commit. Atomic owner claims prevent duplicate workers, repository-wide
+  coordinate reservations prevent two attempts from sharing one worktree, and
+  terminal results retain decisive evidence. An interrupted non-terminal claim
+  is recovered only after the adapter proves its worker ended and cleans up its
   exact bound worktree. Prepare persists the canonical worktree target before
   checkout creation, and terminal identity retains owner and cleanup coordinates,
   so either interruption window remains recoverable. Active claims and pull-
   request outcomes continue to suppress unchanged content across unrelated base
-  advancement; non-PR outcomes become retryable when the base changes. A
-  published branch is reconciled with its pull request before any interrupted
-  claim can be recovered.
+  advancement; non-PR outcomes become retryable when the base changes, but only
+  after any surviving terminal worktree is reconciled. A published branch is
+  reconciled with its pull request before any interrupted claim can be recovered.
 
 ## Boundaries
 

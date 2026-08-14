@@ -255,6 +255,16 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
     fail 'clear should reject a non-PR terminal outcome while its worker still exists'
   fi
 
+  printf 'unrelated retry base\n' >"$publisher/retry-base.txt"
+  git -C "$publisher" add retry-base.txt
+  GIT_AUTHOR_DATE='2026-01-03T00:00:00Z' GIT_COMMITTER_DATE='2026-01-03T00:00:00Z' \
+    git -C "$publisher" commit -qm 'test: advance base after non-reproduction'
+  git -C "$publisher" push -qu origin main
+  local pending_cleanup
+  pending_cleanup=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
+  assert_eq "$skipped" "$pending_cleanup" \
+    'a base advance should keep exposing terminal cleanup ownership while its worktree exists'
+
   "$DISPATCHER" cleanup \
     --repo "$repo" \
     --worktree "$worker" \
@@ -266,12 +276,6 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
     --base-sha "$base_sha" >/dev/null 2>&1; then
     fail 'clear should not erase not-reproduced suppression from an unchanged attempt'
   fi
-
-  printf 'unrelated retry base\n' >"$publisher/retry-base.txt"
-  git -C "$publisher" add retry-base.txt
-  GIT_AUTHOR_DATE='2026-01-03T00:00:00Z' GIT_COMMITTER_DATE='2026-01-03T00:00:00Z' \
-    git -C "$publisher" commit -qm 'test: advance base after non-reproduction'
-  git -C "$publisher" push -qu origin main
   local retry_identity
   retry_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
   local retry_status retry_path retry_base retry_key
@@ -564,6 +568,13 @@ test_cleanup_requires_exact_attempt_ownership() {
 
   local blocked_parent="$sandbox/blocked-parent"
   mkdir -p "$blocked_parent"
+  if "$DISPATCHER" prepare \
+    --repo "$repo" \
+    --follow-up docs/follow-ups/third.md \
+    --worktree "$sandbox/detached-marker-worker" \
+    --branch '(detached)' >/dev/null 2>&1; then
+    fail 'prepare should reserve the detached-worktree marker for internal state only'
+  fi
   chmod 500 "$blocked_parent"
   if "$DISPATCHER" prepare \
     --repo "$repo" \
@@ -964,6 +975,8 @@ test_coordination_failures_remain_owned_and_recoverable() {
   write_follow_up "$repo/docs/follow-ups/first.md" 'First coordination symptom'
   write_follow_up "$repo/docs/follow-ups/second.md" 'Second coordination symptom'
   write_follow_up "$repo/docs/follow-ups/third.md" 'Third coordination symptom'
+  write_follow_up "$repo/docs/follow-ups/fourth.md" 'Fourth coordination symptom'
+  write_follow_up "$repo/docs/follow-ups/fifth.md" 'Fifth coordination symptom'
   commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record coordination follow-ups'
   git -C "$repo" branch -M main
   git init -q --bare "$remote"
@@ -972,6 +985,61 @@ test_coordination_failures_remain_owned_and_recoverable() {
   git -C "$repo" push -qu origin main
   local base_sha
   base_sha=$(git -C "$repo" rev-parse HEAD)
+
+  local shared_worker="$sandbox/shared-worker"
+  local fourth_identity fifth_identity fourth_key fifth_key
+  fourth_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/fourth.md)
+  fifth_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/fifth.md)
+  IFS=$'\t' read -r _ _ _ fourth_key <<<"$fourth_identity"
+  IFS=$'\t' read -r _ _ _ fifth_key <<<"$fifth_identity"
+  local fourth_claim fifth_claim fourth_owner fifth_owner
+  fourth_claim=$(
+    "$DISPATCHER" claim \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/fourth.md \
+      --base-sha "$base_sha"
+  )
+  fifth_claim=$(
+    "$DISPATCHER" claim \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/fifth.md \
+      --base-sha "$base_sha"
+  )
+  IFS=$'\t' read -r _ _ fourth_owner <<<"$fourth_claim"
+  IFS=$'\t' read -r _ _ fifth_owner <<<"$fifth_claim"
+  git -C "$repo" worktree add -q -b codex/shared-worker "$shared_worker" "$base_sha"
+  "$DISPATCHER" bind \
+    --repo "$repo" \
+    --attempt-key "$fourth_key" \
+    --owner "$fourth_owner" \
+    --worktree "$shared_worker" \
+    --branch codex/shared-worker >/dev/null
+  if "$DISPATCHER" bind \
+    --repo "$repo" \
+    --attempt-key "$fifth_key" \
+    --owner "$fifth_owner" \
+    --worktree "$shared_worker" \
+    --branch codex/shared-worker >/dev/null 2>&1; then
+    fail 'two attempt owners should never bind the same canonical worktree'
+  fi
+  local fifth_after_conflict
+  fifth_after_conflict=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/fifth.md)
+  assert_eq $'skipped-unchanged\tdocs/follow-ups/fifth.md\t'"$base_sha"$'\t'"$fifth_key"$'\tclaimed\t'"$fifth_owner" \
+    "$fifth_after_conflict" \
+    'a rejected shared-worktree bind should leave the losing claim unbound and recoverable'
+  "$DISPATCHER" cleanup \
+    --repo "$repo" \
+    --worktree "$shared_worker" \
+    --attempt-key "$fourth_key" \
+    --owner "$fourth_owner" >/dev/null
+  "$DISPATCHER" recover \
+    --repo "$repo" \
+    --attempt-key "$fourth_key" \
+    --owner "$fourth_owner" >/dev/null
+  "$DISPATCHER" recover \
+    --repo "$repo" \
+    --attempt-key "$fifth_key" \
+    --owner "$fifth_owner" >/dev/null
 
   git -C "$repo" update-ref refs/resolve-follow-ups/content "$base_sha"
   local reservation_output

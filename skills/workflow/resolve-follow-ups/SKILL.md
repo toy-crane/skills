@@ -50,7 +50,8 @@ attempt suppression, and cleanup.
      until the follow-up content or remote default-branch SHA changes. Terminal
      identity output retains `owner <owner> [<worktree> <branch>]`; if that
      worktree still exists after its worker ended, use those exact coordinates
-     for `cleanup` before any later recovery or clear.
+     for `cleanup` before starting the base-change retry. A base advance does not
+     hide an outstanding terminal worktree.
    - When the result carries `pull-request` and a URL, check that pull request.
      Keep it skipped while open. After an unmerged close, run `clear` for that
      exact base identity before retrying. A merged pull request should remove
@@ -67,7 +68,9 @@ attempt suppression, and cleanup.
 Give every worker only its follow-up path, verified base SHA, attempt identity,
 owner token, branch, worktree, and the worker contract below. The owner token is
 required when binding the checkout, recording the outcome, and cleaning up, so
-one worker cannot overwrite or remove another worker's attempt.
+one worker cannot overwrite or remove another worker's attempt. The dispatcher
+also reserves each canonical worktree path repository-wide; never bypass a
+reservation failure by reusing another attempt's checkout.
 
 ### Claude Routine
 
