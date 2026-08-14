@@ -27,11 +27,11 @@ The full-surface build: every screen a feature needs in one self-contained HTML 
 _Avoid_: Mockup, wireframe, demo
 
 **Spec**:
-The durable handoff document a shape-idea or build-prototype session writes as it ends: confirmed decisions, assumptions, off-limits areas, deferred points, and remaining risks, addressed to a later implementation session. Decisions are the deliverable; visuals are disposable, except an approved prototype, preserved beside the spec as its visual half.
+The durable product contract a shape-idea or build-prototype session writes for later implementation: user-visible outcomes, approved scope, observable acceptance criteria, settled constraints and rationale, assumptions, off-limits areas and reasons, deferred points, and remaining risks. It records behavior rather than predicted implementation. Visuals are disposable except an approved prototype, preserved beside the spec as its visual half.
 _Avoid_: Alignment brief, summary
 
 **Spec folder**:
-The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor, prototype.html when a surface was approved, tasks/ when the work was cut for multi-session execution. Lives per unit and retires wholesale when the work ships.
+The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor, prototype.html when a surface was approved, tasks/ when the work was cut into multiple delivery outcomes. Lives per unit and retires wholesale when the work ships.
 _Avoid_: Dossier, issue folder
 
 **Comprehension gap**:
@@ -39,7 +39,7 @@ A point where the user does not understand the system: a level, a mechanism, why
 _Avoid_: Confusion, knowledge gap
 
 **Task**:
-A delivery-sized unit cut from a spec: a complete, independently deliverable and verifiable path through every layer it touches, separated only when it can stand on its own. Work that becomes meaningful only when completed together remains one task. Tasks whose genuine blockers are all done form the frontier implementation may continue through. A task boundary is not automatically a context or review boundary. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
+A delivery-sized unit cut from a spec: a complete, independently deliverable and verifiable path through every layer it touches, separated only when it can stand on its own. Work that becomes meaningful only when completed together remains one task. Together the non-superseded tasks are the work unit's shallow roadmap; implementation plans only the active outcome in detail and may revise active unfinished tasks after verified discoveries while preserving the approved product contract. A task retained as `superseded` after an approved replacement is inactive recovery history, not current work or completion proof. Tasks whose genuine blockers are all done form the frontier implementation may continue through. A task boundary always carries focused verification and reconciliation, but is not automatically a context or automated-review boundary. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
 _Avoid_: Ticket, slice, subtask, to-do
 
 **Follow-up**:
