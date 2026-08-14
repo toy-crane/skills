@@ -7,17 +7,23 @@ description: Implement or resume settled work from a selected spec folder. Use w
 
 ## Load the current handoff
 
-Treat `spec.md` as the approved product contract and approved task files, when
-present, as its current shallow delivery map. Work sequentially from the current
-unblocked frontier; when no task files exist, implement `spec.md` directly.
+Treat `spec.md` as the approved product contract. Non-superseded approved task
+files, when present, form its current shallow delivery map: `pending`,
+`in-progress`, and `blocked` tasks are active unfinished work, while `completed`
+tasks are current proof. A `superseded` task is inactive recovery history;
+exclude it from the frontier, blockers, reconciliation, and completion gates,
+but inspect it when current evidence implicates its prior implementation. If an
+active task still names superseded history as a blocker, reconcile that stale
+reference before continuing. Work sequentially from the current unblocked
+frontier; when no task files exist, implement `spec.md` directly.
 
 Before each outcome, and again after an interruption, reconstruct current truth
-from the spec, every unfinished task, any completed task implicated by current
-evidence, relevant project decisions, code, Git state and current diff, and
-verification evidence. Repository evidence outranks remembered conversation;
-rerun verification that predates the relevant code. Preserve completed outcomes
-whose current evidence still passes, and confirm ownership before absorbing
-ambiguous dirty changes.
+from the spec, every active unfinished task, any completed or superseded task
+implicated by current evidence, relevant project decisions, code, Git state and
+current diff, and verification evidence. Repository evidence outranks
+remembered conversation; rerun verification that predates the relevant code.
+Preserve completed outcomes whose current evidence still passes, and confirm
+ownership before absorbing ambiguous dirty changes.
 
 Derive only the active outcome's technical approach just in time. A task
 boundary requires this reload; it does not by itself require a new session,
@@ -37,17 +43,17 @@ type checks, and tests do not replace runtime evidence.
 
 Complete the outcome and its acceptance criteria with focused verification.
 Before marking it complete or starting dependent work, reconcile the observed
-behavior with the product contract and every unfinished task. This gate also
-applies when implementing `spec.md` without task files.
+behavior with the product contract and every active unfinished task. This gate
+also applies when implementing `spec.md` without task files.
 
 For a verified discovery that preserves the product contract:
 
 - Correct the active outcome's disposable technical approach and any recorded
   technical assumption.
-- Persist actual downstream effects in affected unfinished task boundaries,
-  order, blockers, task-specific constraints, verification, or observably
-  equivalent task-acceptance wording. Record concise revision evidence and
-  preserve unaffected task contracts.
+- Persist actual downstream effects in affected active unfinished task
+  boundaries, order, blockers, task-specific constraints, verification, or
+  observably equivalent task-acceptance wording. Record concise revision
+  evidence and preserve unaffected task contracts.
 
 When tasks exist, record current status and whichever verification, blocker, or
 revision evidence applies. Where commits are expected, commit code, tests, and
@@ -56,12 +62,13 @@ intermediate review checkpoints; reconciliation adds no review checkpoint.
 
 ## Preserve authority and durable discoveries
 
-Implementation authority covers the technical path and unfinished task map only
-while the approved product contract stays intact. When a discovery would change
-an approved outcome, scope, observable spec acceptance criterion, off-limits
-area, or other product constraint, preserve the current artifacts and evidence,
-leave the affected outcome and its dependents blocked, and stop before absorbing
-the change. Present the exact decision for the user to settle through shaping.
+Implementation authority covers the technical path and active unfinished task
+map only while the approved product contract stays intact. When a discovery
+would change an approved outcome, scope, observable spec acceptance criterion,
+off-limits area, or other product constraint, preserve the current artifacts
+and evidence, leave the affected outcome and its dependents blocked, and stop
+before absorbing the change. Present the exact decision for the user to settle
+through shaping.
 
 If later code, integration, verification, or review invalidates a completed
 task, preserve its prior evidence and return it to `in-progress` or `blocked`.

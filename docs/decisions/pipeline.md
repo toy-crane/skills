@@ -21,9 +21,9 @@
   `split-into-tasks` into the fewest independently usable vertical tasks with
   explicit blockers. The split also declares only the intermediate review
   checkpoints justified by downstream or material risk. Together the tasks are
-  the work unit's shallow roadmap: they preserve outcomes, acceptance criteria,
-  blockers, and task-specific constraints without predicting file-level
-  implementation work.
+  the work unit's shallow roadmap: non-superseded tasks preserve current
+  outcomes, acceptance criteria, blockers, and task-specific constraints
+  without predicting file-level implementation work.
 - `implement` receives one selected `docs/specs/<slug>/` folder. When approved
   task files exist, it implements them sequentially in dependency order;
   otherwise it implements `spec.md` directly. It derives the active outcome's
@@ -36,21 +36,28 @@
   the running product remains incomplete; static checks do not replace it.
 - Each outcome is complete after its acceptance criteria and focused
   deterministic verification pass, followed by reconciliation of the observed
-  behavior with the spec and every unfinished task. Task files hold only durable
-  status plus concise verification, blocker, or revision evidence. When
-  repository policy calls for commits, code, tests, and the task update form one
-  meaningful checkpoint.
+  behavior with the spec and every active unfinished task. Task files hold only
+  durable status plus concise verification, blocker, or revision evidence. When
+  repository policy calls for commits, code, tests, and the task update form
+  one meaningful checkpoint.
 - During reconciliation, `implement` may update technical assumptions,
-  unfinished task boundaries and order, blockers, task-specific constraints,
-  verification, and acceptance wording while preserving the approved observable
-  product contract. A proposed change to a user-approved outcome, scope,
-  observable acceptance criterion, off-limits area, or other product constraint
-  preserves current artifacts and evidence, blocks affected and dependent work,
-  and pauses implementation for a shaping decision.
+  active unfinished task boundaries and order, blockers, task-specific
+  constraints, verification, and acceptance wording while preserving the
+  approved observable product contract. A proposed change to a user-approved
+  outcome, scope, observable acceptance criterion, off-limits area, or other
+  product constraint preserves current artifacts and evidence, blocks affected
+  and dependent work, and pauses implementation for a shaping decision.
 - A previously completed outcome whose acceptance criteria no longer pass is
   not current completion evidence. Preserve its task and prior evidence, return
   it to a non-completed state, and repair or block it before dependent work or
   final completion continues.
+- When an approved breakdown replaces a task with recorded completion history,
+  move every still-required obligation and blocker reference to the replacement,
+  mark the retained task `superseded`, and preserve its evidence in place.
+  Superseded tasks are inactive history outside the frontier, blockers,
+  reconciliation, and completion gates; inspect them only when current evidence
+  implicates their prior implementation. Never retain or archive a superseded
+  task that has no completion history.
 - A task's declared intermediate review checkpoint remains part of that task's
   contract. The active harness uses its automated code-review process for the
   stated cumulative scope and risk before substantial dependent work continues.

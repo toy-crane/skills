@@ -61,7 +61,7 @@ flowchart LR
     IM --> ONE["build one outcome"]
     ONE --> CHECK["check real behavior"]
     CHECK --> MATCH{"still matches the spec<br/>and remaining tasks?"}
-    MATCH -- "technical facts changed" --> UPDATE["update unfinished tasks"]
+    MATCH -- "technical facts changed" --> UPDATE["update active tasks"]
     UPDATE --> ONE
     MATCH -- "product promise changed" --> SI
     MATCH -- "yes" --> MORE{"more outcomes?"}
@@ -93,15 +93,18 @@ code structure, or a step-by-step implementation sequence. It marks only the
 few intermediate reviews justified by material or downstream risk.
 
 Then pass the spec folder to `implement`. Before each outcome, it reloads the
-current spec, unfinished tasks, any completed task implicated by current
-evidence, code, Git state, and verification evidence, then plans only that
-outcome in detail. After focused verification, it checks the observed result
-against the product contract and every unfinished task. It may update technical
-assumptions and affected unfinished tasks when the approved product behavior
-stays the same. If an approved outcome, observable acceptance criterion, scope,
-or other product constraint must change, it stops and returns that exact
-decision to shaping. A task marked `completed` is reopened if later evidence
-shows its criteria no longer pass.
+current spec, active unfinished tasks, and any completed or superseded task
+implicated by current evidence, plus code, Git state, and verification evidence,
+then plans only that outcome in detail. After focused verification, it checks
+the observed result against the product contract and every active unfinished
+task. It may update technical assumptions and affected active tasks when the
+approved product behavior stays the same. If an approved outcome, observable
+acceptance criterion, scope, or other product constraint must change, it stops
+and returns that exact decision to shaping. A task marked `completed` is
+reopened if later evidence shows its criteria no longer pass. When an approved
+breakdown replaces historically completed work, its still-required obligations
+move to the replacement; the old task remains only as inactive `superseded`
+evidence and cannot block or re-enter the delivery frontier.
 
 After every outcome passes that check, the current harness's automated
 code-review process checks the integrated result against the selected spec and
@@ -162,9 +165,9 @@ new session or a closing-message handoff is not required for correctness.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[implement](./skills/workflow/implement/SKILL.md)**: Implement an approved spec
   folder one outcome at a time. Reload repository evidence before each outcome,
-  reconcile verified behavior with the product contract and unfinished tasks,
-  reopen invalidated work, and return to shaping when a product decision must
-  change.
+  reconcile verified behavior with the product contract and active unfinished
+  tasks, ignore superseded history unless current evidence implicates it, reopen
+  invalidated work, and return to shaping when a product decision must change.
   Then finish with full verification, automated code review, and a verified
   runnable product address when the repository provides one.
 - **[tdd](./skills/workflow/tdd/SKILL.md)**: Implement one red → green slice at a time at

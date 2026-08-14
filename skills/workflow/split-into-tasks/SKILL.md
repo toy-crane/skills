@@ -50,9 +50,11 @@ task-specific constraints in task files. Do not invent unsettled behavior.
 Write each approved task to
 `docs/specs/<slug>/tasks/<NN>-<slug>.md` using
 [`templates/task.md`](templates/task.md), with blockers before dependents.
-When this skill revises a breakdown, preserve any task with recorded completion
-evidence, even if its current status later returned to `in-progress` or
-`blocked`; its prior evidence is durable recovery history. For an approved
-revision, remove superseded tasks that have never completed rather than
-retaining active variants or creating an archive. End after writing the current
-task handoff, before implementation.
+For an approved revision, remove replaced tasks that have never recorded
+completion. Preserve a task with recorded completion history even if it later
+returned to `in-progress` or `blocked`; after its still-required obligations and
+blocker references move to the approved replacement, set it to `superseded` and
+append revision evidence naming the replacement and reason. A `superseded` task
+is terminal for that approved breakdown and is inactive recovery history, not
+part of the current delivery map. Do not create an archive. End after writing
+the current task handoff, before implementation.

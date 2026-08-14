@@ -26,9 +26,13 @@
 
 ## Status
 
-<!-- Current values: `pending`, `in-progress`, `completed`, or `blocked`.
+<!-- Current values: `pending`, `in-progress`, `completed`, `blocked`, or
+`superseded`.
 `completed` is valid only while all acceptance criteria and focused
-verification pass. -->
+verification pass. Use `superseded` only after an approved replacement of a
+task with recorded completion history. Preserve its Execution evidence and name
+the replacement and reason under Revision; it is then terminal for that approved
+breakdown and outside the current delivery map. -->
 pending
 
 ## Execution
