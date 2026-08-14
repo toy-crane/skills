@@ -178,19 +178,71 @@ zero_oid_for() {
   printf '%*s' "${#oid}" '' | tr ' ' 0
 }
 
-claim_guard_for() {
-  local claim_file=$1
-  printf '%s.guard\n' "$claim_file"
+claim_guard_ref_for() {
+  local attempt_key=$1
+  validate_attempt_key "$attempt_key"
+  printf 'refs/resolve-follow-ups/guards/%s\n' "$attempt_key"
 }
 
+CLAIM_GUARD_OID=''
+
 acquire_claim_guard() {
-  local claim_file=$1
-  ln "$claim_file" "$(claim_guard_for "$claim_file")" 2>/dev/null
+  local repo_root=$1
+  local attempt_key=$2
+  local guard_ref
+  guard_ref=$(claim_guard_ref_for "$attempt_key")
+  local process_started
+  process_started=$(ps -p "$$" -o lstart= 2>/dev/null | sed -n '1p')
+  [[ -n "$process_started" ]] || die 'cannot read dispatcher process identity for attempt guard'
+  local guard_oid
+  guard_oid=$(
+    printf '%s\n%s\n%s.%s.%s\n' \
+      "$$" "$process_started" "$$" "$RANDOM" "$RANDOM" \
+      | git -C "$repo_root" hash-object -w --stdin
+  )
+  local zero_oid
+  zero_oid=$(zero_oid_for "$guard_oid")
+
+  local guard_attempt=0
+  while true; do
+    guard_attempt=$((guard_attempt + 1))
+    if [[ "$guard_attempt" -gt 20 ]]; then
+      die "cannot acquire attempt guard after bounded retries: $attempt_key"
+    fi
+    local current_oid
+    current_oid=$(git -C "$repo_root" rev-parse --verify "$guard_ref" 2>/dev/null || true)
+    if [[ -z "$current_oid" ]]; then
+      if git -C "$repo_root" update-ref "$guard_ref" "$guard_oid" "$zero_oid" 2>/dev/null; then
+        CLAIM_GUARD_OID=$guard_oid
+        return 0
+      fi
+      continue
+    fi
+
+    local guard_record guard_pid guard_started
+    guard_record=$(git -C "$repo_root" cat-file blob "$current_oid" 2>/dev/null) \
+      || die "cannot inspect attempt guard: $attempt_key"
+    guard_pid=$(sed -n '1p' <<<"$guard_record")
+    guard_started=$(sed -n '2p' <<<"$guard_record")
+    if [[ "$guard_pid" =~ ^[0-9]+$ ]] && kill -0 "$guard_pid" 2>/dev/null; then
+      local current_started
+      current_started=$(ps -p "$guard_pid" -o lstart= 2>/dev/null | sed -n '1p')
+      if [[ -z "$guard_started" || -z "$current_started" || "$current_started" == "$guard_started" ]]; then
+        return 1
+      fi
+    fi
+    git -C "$repo_root" update-ref -d "$guard_ref" "$current_oid" 2>/dev/null || true
+  done
 }
 
 release_claim_guard() {
-  local claim_file=$1
-  rm "$(claim_guard_for "$claim_file")"
+  local repo_root=$1
+  local attempt_key=$2
+  local guard_oid=$3
+  local guard_ref
+  guard_ref=$(claim_guard_ref_for "$attempt_key")
+  git -C "$repo_root" update-ref -d "$guard_ref" "$guard_oid" 2>/dev/null \
+    || die "attempt guard changed before release: $attempt_key"
 }
 
 claim_field() {
@@ -274,9 +326,6 @@ find_suppressing_attempt() {
     claimed_base=$(claim_field "$claim_file" 2)
     claimed_relative=$(claim_field "$claim_file" 3)
     [[ "$claimed_relative" == "$relative" ]] || continue
-    claimed_blob=$(git -C "$repo_root" rev-parse "$claimed_base:$relative" 2>/dev/null) \
-      || die "cannot verify existing follow-up claim: ${claim_file##*/}"
-    [[ "$claimed_blob" == "$current_blob" ]] || continue
     attempt_key=${claim_file##*/}
     attempt_key=${attempt_key%.claim}
     outcome_file="$(state_dir_for "$repo_root" "$attempt_key")/outcome"
@@ -286,6 +335,9 @@ find_suppressing_attempt() {
         continue
       fi
     fi
+    claimed_blob=$(git -C "$repo_root" rev-parse "$claimed_base:$relative" 2>/dev/null) \
+      || die "cannot verify existing follow-up claim: ${claim_file##*/}"
+    [[ "$claimed_blob" == "$current_blob" ]] || continue
     print_attempt_state "$repo_root" "$relative" "$claimed_base" "$attempt_key"
     return 0
   done
@@ -608,22 +660,23 @@ write_outcome() {
   local temp_file
   temp_file=$(mktemp "$attempts_dir/.outcome.XXXXXX")
   printf '%s\n%s\n' "$outcome" "$detail" >"$temp_file"
-  if ! acquire_claim_guard "$claim_file"; then
+  if ! acquire_claim_guard "$repo_root" "$attempt_key"; then
     rm "$temp_file"
     return 1
   fi
+  local guard_oid=$CLAIM_GUARD_OID
   if ln "$temp_file" "$outcome_file" 2>/dev/null; then
     rm "$temp_file"
-    release_claim_guard "$claim_file"
+    release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
     return 0
   fi
   if cmp -s "$temp_file" "$outcome_file"; then
     rm "$temp_file"
-    release_claim_guard "$claim_file"
+    release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
     return 0
   fi
   rm "$temp_file"
-  release_claim_guard "$claim_file"
+  release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
   return 1
 }
 
@@ -851,7 +904,8 @@ prepare_worker() {
     if [[ "$switched_branch" != "$branch" || "$actual_sha" != "$base_sha" ]]; then
       fail_after_worktree_creation \
         "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
-      "failed to create worker branch: $branch"
+        "failed to create worker branch: $branch" \
+        "$owned_branch" "$actual_sha"
     fi
   fi
   local verified_branch
@@ -992,10 +1046,11 @@ recover_attempt() {
   state_dir=$(state_dir_for "$repo_root" "$attempt_key")
   [[ ! -e "$state_dir/outcome" ]] \
     || die 'recover refuses an attempt with a terminal outcome; use clear after its review condition changes'
-  acquire_claim_guard "$claim_file" \
+  acquire_claim_guard "$repo_root" "$attempt_key" \
     || die 'attempt state is already being updated by another process'
+  local guard_oid=$CLAIM_GUARD_OID
   if [[ -e "$state_dir/outcome" ]]; then
-    release_claim_guard "$claim_file"
+    release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
     die 'recover refuses an attempt that reached a terminal outcome during recovery'
   fi
 
@@ -1005,18 +1060,18 @@ recover_attempt() {
     bound_worktree=$(sed -n '1p' "$binding_file")
     bound_branch=$(sed -n '2p' "$binding_file")
     if [[ -e "$bound_worktree" || -L "$bound_worktree" ]]; then
-      release_claim_guard "$claim_file"
+      release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
       die "recover requires the bound worker worktree to be cleaned up first: $bound_worktree"
     fi
     if ! published_head=$(
       git -C "$repo_root" ls-remote "$remote" "refs/heads/$bound_branch" 2>/dev/null \
         | awk 'NR == 1 { print $1 }'
     ); then
-      release_claim_guard "$claim_file"
+      release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
       die "recover cannot inspect the bound worker branch on remote: $remote"
     fi
     if [[ -n "$published_head" ]]; then
-      release_claim_guard "$claim_file"
+      release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
       die "recover refuses published branch $bound_branch; inspect it for a pull request and mark the terminal result"
     fi
     rm "$binding_file"
@@ -1028,15 +1083,15 @@ recover_attempt() {
   git -C "$repo_root" update-ref -d "$content_ref" "$base_sha" 2>/dev/null || true
   if [[ -d "$state_dir" ]]; then
     if ! rmdir "$state_dir" 2>/dev/null; then
-      release_claim_guard "$claim_file"
+      release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
       die 'attempt state contains unexpected files'
     fi
   elif [[ -e "$state_dir" ]]; then
-    release_claim_guard "$claim_file"
+    release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
     die 'attempt state path is not a directory'
   fi
   rm "$claim_file"
-  release_claim_guard "$claim_file"
+  release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
   printf 'recovered\t%s\n' "$attempt_key"
 }
 
@@ -1091,17 +1146,18 @@ clear_attempt() {
       || die 'clear requires the bound worker worktree to be removed first'
   fi
 
-  acquire_claim_guard "$claim_file" \
+  acquire_claim_guard "$repo_root" "$attempt_key" \
     || die 'attempt state is already being updated by another process'
+  local guard_oid=$CLAIM_GUARD_OID
   if [[ ! -f "$state_dir/outcome" || "$(sed -n '1p' "$state_dir/outcome")" != pull-request ]]; then
-    release_claim_guard "$claim_file"
+    release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
     die 'pull-request outcome changed during clear'
   fi
   if [[ -f "$state_dir/binding" ]]; then
     local guarded_worktree
     guarded_worktree=$(sed -n '1p' "$state_dir/binding")
     if [[ -e "$guarded_worktree" || -L "$guarded_worktree" ]]; then
-      release_claim_guard "$claim_file"
+      release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
       die 'clear requires the bound worker worktree to remain removed'
     fi
   fi
@@ -1112,11 +1168,11 @@ clear_attempt() {
   rm "$state_dir/outcome"
   [[ ! -e "$state_dir/binding" ]] || rm "$state_dir/binding"
   if ! rmdir "$state_dir" 2>/dev/null; then
-    release_claim_guard "$claim_file"
+    release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
     die 'attempt state contains unexpected files'
   fi
   rm "$claim_file"
-  release_claim_guard "$claim_file"
+  release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
   printf 'cleared\t%s\n' "$attempt_key"
 }
 

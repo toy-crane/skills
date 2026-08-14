@@ -391,10 +391,18 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
   IFS=$'\t' read -r post_clear_status post_clear_key post_clear_owner <<<"$post_clear_claim"
   assert_eq 'claimed' "$post_clear_status" \
     'a fresh claim should survive after concurrent clear teardown finishes'
+  local stale_guard
+  stale_guard=$(printf '999999999\nstale-test-guard\n' | git -C "$repo" hash-object -w --stdin)
+  git -C "$repo" update-ref \
+    "refs/resolve-follow-ups/guards/$post_clear_key" "$stale_guard"
   "$DISPATCHER" recover \
     --repo "$repo" \
     --attempt-key "$post_clear_key" \
     --owner "$post_clear_owner" >/dev/null
+  if git -C "$repo" show-ref --verify --quiet \
+    "refs/resolve-follow-ups/guards/$post_clear_key"; then
+    fail 'recovery should reclaim a guard whose creating process no longer exists'
+  fi
 
   printf '\nAdditional current evidence.\n' >>"$publisher/docs/follow-ups/first.md"
   git -C "$publisher" add docs/follow-ups/first.md
@@ -711,6 +719,41 @@ EOF
   [[ "$third_identity" == $'eligible\tdocs/follow-ups/third.md\t'* ]] \
     || fail 'a safely removed post-switch mismatch should release its claim'
 
+  local failed_switch_count="$sandbox/failed-switch-count"
+  cat >"$hooks/post-checkout" <<EOF
+#!/usr/bin/env bash
+count=0
+if [[ -f "$failed_switch_count" ]]; then
+  count=\$(sed -n '1p' "$failed_switch_count")
+fi
+count=\$((count + 1))
+printf '%s\n' "\$count" >"$failed_switch_count"
+if [[ "\$count" -eq 2 ]]; then
+  git -c user.email=eval@example.com -c user.name='Resolve Follow-ups Eval' \\
+    commit --allow-empty -qm 'test: fail after mutating switched branch'
+  exit 1
+fi
+EOF
+  chmod +x "$hooks/post-checkout"
+  git -C "$repo" config core.hooksPath "$hooks"
+  local failed_switch_worker="$sandbox/failed-switch-worker"
+  if "$DISPATCHER" prepare \
+    --repo "$repo" \
+    --follow-up docs/follow-ups/third.md \
+    --worktree "$failed_switch_worker" \
+    --branch codex/failed-switch >/dev/null 2>&1; then
+    fail 'prepare should stop when branch setup changes HEAD and reports failure'
+  fi
+  git -C "$repo" config --unset core.hooksPath
+  [[ ! -e "$failed_switch_worker" ]] \
+    || fail 'failed branch setup should remove its clean unbound worktree'
+  if git -C "$repo" show-ref --verify --quiet refs/heads/codex/failed-switch; then
+    fail 'failed branch setup should delete the branch created by prepare with a head CAS'
+  fi
+  third_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/third.md)
+  [[ "$third_identity" == $'eligible\tdocs/follow-ups/third.md\t'* ]] \
+    || fail 'failed branch setup should release its claim after safe cleanup'
+
   cat >"$hooks/post-checkout" <<'EOF'
 #!/usr/bin/env bash
 git -c user.email=eval@example.com -c user.name='Resolve Follow-ups Eval' \
@@ -817,6 +860,99 @@ EOF
   rm -rf "$sandbox"
 }
 
+test_rewritten_history_ignores_pruned_non_pr_attempts() {
+  local sandbox
+  sandbox=$(mktemp -d)
+  local repo="$sandbox/repo"
+  local remote="$sandbox/remote.git"
+  local publisher="$sandbox/publisher"
+  mkdir -p "$repo"
+  new_repo "$repo"
+  write_follow_up "$repo/docs/follow-ups/first.md" 'Rewritten-history symptom'
+  commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record rewrite follow-up'
+  git -C "$repo" branch -M main
+  git init -q --bare "$remote"
+  git -C "$remote" symbolic-ref HEAD refs/heads/main
+  git -C "$repo" remote add origin "$remote"
+  git -C "$repo" push -qu origin main
+  local old_base
+  old_base=$(git -C "$repo" rev-parse HEAD)
+
+  local old_identity old_path old_key old_claim old_owner
+  old_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
+  IFS=$'\t' read -r _ old_path _ old_key <<<"$old_identity"
+  old_claim=$(
+    "$DISPATCHER" claim \
+      --repo "$repo" \
+      --follow-up "$old_path" \
+      --base-sha "$old_base"
+  )
+  IFS=$'\t' read -r _ _ old_owner <<<"$old_claim"
+  "$DISPATCHER" mark \
+    --repo "$repo" \
+    --follow-up "$old_path" \
+    --base-sha "$old_base" \
+    --owner "$old_owner" \
+    --outcome not-reproduced \
+    --detail 'old base did not reproduce' >/dev/null
+
+  git clone -q "$remote" "$publisher"
+  git -C "$publisher" config user.email eval@example.com
+  git -C "$publisher" config user.name 'Resolve Follow-ups Eval'
+  git -C "$publisher" checkout -q --orphan rewritten
+  git -C "$publisher" rm -qr --cached .
+  printf '1\n' >"$publisher/rewrite-generation.txt"
+  git -C "$publisher" add .
+  git -C "$publisher" commit -qm 'test: rewrite default branch'
+  local new_base new_blob new_key nonce
+  for nonce in $(seq 1 100); do
+    printf '%s\n' "$nonce" >"$publisher/rewrite-generation.txt"
+    git -C "$publisher" add rewrite-generation.txt
+    git -C "$publisher" commit -q --amend --no-edit
+    new_base=$(git -C "$publisher" rev-parse HEAD)
+    new_blob=$(git -C "$publisher" rev-parse "$new_base:$old_path")
+    new_key=$(printf '%s\n%s\n%s\n' "$old_path" "$new_base" "$new_blob" \
+      | git -C "$publisher" hash-object --stdin)
+    [[ "$old_key" < "$new_key" ]] && break
+  done
+  [[ "$old_key" < "$new_key" ]] \
+    || fail 'rewrite fixture could not order the stale claim before the current claim'
+  git -C "$publisher" branch -M main
+  git -C "$publisher" push -qf origin main
+
+  local new_identity new_path new_claim new_owner
+  new_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
+  IFS=$'\t' read -r _ new_path new_base new_key <<<"$new_identity"
+  new_claim=$(
+    "$DISPATCHER" claim \
+      --repo "$repo" \
+      --follow-up "$new_path" \
+      --base-sha "$new_base"
+  )
+  IFS=$'\t' read -r _ _ new_owner <<<"$new_claim"
+  "$DISPATCHER" mark \
+    --repo "$repo" \
+    --follow-up "$new_path" \
+    --base-sha "$new_base" \
+    --owner "$new_owner" \
+    --outcome not-reproduced \
+    --detail 'rewritten base did not reproduce' >/dev/null
+
+  git -C "$repo" update-ref refs/heads/main "$new_base"
+  git -C "$repo" reflog expire --expire=now --expire-unreachable=now --all
+  git -C "$repo" gc --prune=now --quiet
+  if git -C "$repo" cat-file -e "$old_base^{commit}" 2>/dev/null; then
+    fail 'rewrite fixture should prune the stale attempt base before identity lookup'
+  fi
+  local current_identity
+  current_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
+  assert_eq $'skipped-unchanged\t'"$new_path"$'\t'"$new_base"$'\t'"$new_key"$'\tnot-reproduced\trewritten base did not reproduce' \
+    "$current_identity" \
+    'identity should ignore an obsolete non-PR claim whose rewritten base was pruned'
+
+  rm -rf "$sandbox"
+}
+
 test_coordination_failures_remain_owned_and_recoverable() {
   local sandbox
   sandbox=$(mktemp -d)
@@ -909,4 +1045,5 @@ test_list_limits_candidates_and_reports_invalid_items
 test_attempt_claims_are_atomic_and_terminal_state_is_immutable
 test_cleanup_requires_exact_attempt_ownership
 test_coordination_failures_remain_owned_and_recoverable
+test_rewritten_history_ignores_pruned_non_pr_attempts
 printf 'PASS: resolve-follow-ups dispatcher\n'
