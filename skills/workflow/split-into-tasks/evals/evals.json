@@ -51,7 +51,7 @@
     {
       "id": 5,
       "prompt": "/split-into-tasks 방금 제안한 세 task와 blocker를 승인해. task 파일을 작성해줘.",
-      "expected_output": "The response writes one task file per approved deliverable in dependency order using templates/task.md. Each file carries complete behavior, blocker reasons, pending status, outcome-level acceptance checkboxes, focused verification, any approved risk-based review checkpoint, and minimal execution state. It ends without beginning implementation.",
+      "expected_output": "The response writes one task file per approved deliverable in dependency order using templates/task.md. Each file carries complete behavior, blocker reasons, pending status, outcome-level acceptance checkboxes, focused verification, any approved risk-based review checkpoint, and minimal execution evidence fields. It ends without beginning implementation.",
       "files": [],
       "expectations": [
         "It writes only the approved tasks and preserves their approved boundaries.",
@@ -61,7 +61,7 @@
         "It references an approved prototype when relevant rather than copying its implementation.",
         "It numbers blockers before dependents.",
         "It uses the task template and preserves pending, in-progress, completed, and blocked as the status vocabulary.",
-        "It initializes only status, verification, and blocker execution state, without commit anchors, correction counters, or a terminal run-completion section.",
+        "It initializes only status plus verification, blocker, and revision evidence, without commit anchors, correction counters, or a terminal run-completion section.",
         "It includes only review checkpoints approved in the proposed breakdown and does not add a final-review field to task files.",
         "It ends after publishing the approved task files."
       ]

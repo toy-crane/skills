@@ -12,11 +12,13 @@ Read the spec, current code, relevant project decisions, glossary, and approved
 prototype. Treat missing implementation as work to do and conflicting sources
 as decisions to resolve. Keep one coherent deliverable as the spec itself.
 
-Draft the fewest **tracer-bullet** tasks. Each task must deliver a complete,
-independently usable and verifiable path through every layer it touches. Put
-preparation in the first task that makes it useful, and declare only blockers
-that genuinely prevent a dependent outcome. Size tasks by delivered outcomes,
-not predicted context length or technical layers.
+Draft the complete shallow task set using the fewest **tracer-bullet** tasks.
+Each task must deliver a complete, independently usable and verifiable path
+through every layer it touches. Put preparation in the first task that makes it
+useful, and declare only blockers that genuinely prevent a dependent outcome.
+Size tasks by delivered outcomes, not predicted context length or technical
+layers. Cover every spec outcome, but do not predict files, functions, code
+structure, or a step-by-step implementation sequence inside an outcome.
 
 Add an intermediate review checkpoint only when a material error could compound
 through substantial dependent work, or when automated checks cannot adequately
@@ -34,5 +36,7 @@ task-specific constraints in task files. Do not invent unsettled behavior.
 Publish each approved task to
 `docs/specs/<slug>/tasks/<NN>-<slug>.md` using
 [`templates/task.md`](templates/task.md), with blockers before dependents.
-Preserve completed tasks when revising; after approval, replace superseded
-unfinished tasks. End after publishing the task handoff.
+When this skill revises a breakdown, preserve any task with recorded completion
+evidence, even if its current status later returned to `in-progress` or
+`blocked`. After approval, replace only superseded tasks that have never
+completed. End after publishing the task handoff.

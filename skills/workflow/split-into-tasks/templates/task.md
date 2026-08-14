@@ -26,10 +26,13 @@
 
 ## Status
 
-<!-- Later values: `in-progress`, `completed`, or `blocked`. -->
+<!-- Current values: `pending`, `in-progress`, `completed`, or `blocked`.
+`completed` is valid only while every acceptance criterion passes. -->
 pending
 
 ## Execution
 
+<!-- Append concise evidence and preserve earlier entries when status changes. -->
 - Verification: —
 - Blocker: —
+- Revision: —
