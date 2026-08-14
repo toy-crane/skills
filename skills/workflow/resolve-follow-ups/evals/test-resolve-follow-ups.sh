@@ -61,6 +61,7 @@ test_list_limits_candidates_and_reports_invalid_items() {
   local repo="$sandbox/repo"
   local remote="$sandbox/remote.git"
   local coordinator="$sandbox/coordinator"
+  local shallow="$sandbox/shallow"
   mkdir -p "$repo"
   new_repo "$repo"
 
@@ -104,6 +105,27 @@ test_list_limits_candidates_and_reports_invalid_items() {
   )
   [[ "$remote_only_identity" == $'eligible\tdocs/follow-ups/third.md\t'"$remote_sha"$'\t'* ]] \
     || fail 'a remotely listed follow-up should remain actionable when it is absent from the stale checkout'
+
+  git -C "$repo" rm -q docs/follow-ups/second.md
+  commit_at "$repo" '2026-01-06T00:00:00Z' 'docs: retire second follow-up'
+  write_follow_up "$repo/docs/follow-ups/second.md" 'Second symptom returned'
+  commit_at "$repo" '2026-01-07T00:00:00Z' 'docs: record recurring second follow-up'
+  git -C "$repo" push -qu origin main
+  local recreated
+  recreated=$("$DISPATCHER" list --repo "$coordinator")
+  local expected_recreated=$'candidate\tdocs/follow-ups/first.md\ncandidate\tdocs/follow-ups/third.md\ncandidate\tdocs/follow-ups/fourth.md\ncandidate\tdocs/follow-ups/second.md\ninvalid-follow-up\tdocs/follow-ups/invalid.md'
+  assert_eq "$expected_recreated" "$recreated" \
+    'a re-created follow-up should use the latest addition that begins its current lifetime'
+
+  git clone -q --depth 1 "file://$remote" "$shallow"
+  assert_eq 'true' "$(git -C "$shallow" rev-parse --is-shallow-repository)" \
+    'the shallow-history fixture should begin as a shallow clone'
+  local shallow_items
+  shallow_items=$("$DISPATCHER" list --repo "$shallow")
+  assert_eq "$expected_recreated" "$shallow_items" \
+    'list should restore enough history to preserve discovery order in a shallow clone'
+  assert_eq 'false' "$(git -C "$shallow" rev-parse --is-shallow-repository)" \
+    'list should unshallow the coordinator before computing discovery time'
   rm -rf "$sandbox"
 }
 
@@ -230,7 +252,7 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
     --repo "$repo" \
     --follow-up docs/follow-ups/first.md \
     --base-sha "$base_sha" >/dev/null 2>&1; then
-    fail 'clear should preserve ownership while the bound worktree still exists'
+    fail 'clear should reject a non-PR terminal outcome while its worker still exists'
   fi
 
   "$DISPATCHER" cleanup \
@@ -238,15 +260,26 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
     --worktree "$worker" \
     --attempt-key "$attempt_key" \
     --owner "$owner" >/dev/null
-  local cleared
-  cleared=$(
-    "$DISPATCHER" clear \
-      --repo "$repo" \
-      --follow-up docs/follow-ups/first.md \
-      --base-sha "$base_sha"
-  )
-  assert_eq $'cleared\t'"$attempt_key" "$cleared" \
-    'clear should remove only the exact terminal attempt selected for retry'
+  if "$DISPATCHER" clear \
+    --repo "$repo" \
+    --follow-up docs/follow-ups/first.md \
+    --base-sha "$base_sha" >/dev/null 2>&1; then
+    fail 'clear should not erase not-reproduced suppression from an unchanged attempt'
+  fi
+
+  printf 'unrelated retry base\n' >"$publisher/retry-base.txt"
+  git -C "$publisher" add retry-base.txt
+  GIT_AUTHOR_DATE='2026-01-03T00:00:00Z' GIT_COMMITTER_DATE='2026-01-03T00:00:00Z' \
+    git -C "$publisher" commit -qm 'test: advance base after non-reproduction'
+  git -C "$publisher" push -qu origin main
+  local retry_identity
+  retry_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
+  local retry_status retry_path retry_base retry_key
+  IFS=$'\t' read -r retry_status retry_path retry_base retry_key <<<"$retry_identity"
+  assert_eq 'eligible' "$retry_status" \
+    'a non-PR terminal outcome should become eligible only after the remote base changes'
+  base_sha=$retry_base
+  attempt_key=$retry_key
 
   local claim_one="$sandbox/claim-one"
   local claim_two="$sandbox/claim-two"
@@ -299,6 +332,16 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
     --attempt-key "$attempt_key" \
     --owner "$second_owner" >/dev/null
 
+  printf 'unrelated active base\n' >"$publisher/active-base.txt"
+  git -C "$publisher" add active-base.txt
+  GIT_AUTHOR_DATE='2026-01-04T00:00:00Z' GIT_COMMITTER_DATE='2026-01-04T00:00:00Z' \
+    git -C "$publisher" commit -qm 'test: advance base while attempt is active'
+  git -C "$publisher" push -qu origin main
+  local active_after_advance
+  active_after_advance=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
+  assert_eq $'skipped-unchanged\tdocs/follow-ups/first.md\t'"$base_sha"$'\t'"$attempt_key"$'\tclaimed\t'"$second_owner"$'\t'"$native_root"$'\tcodex/native-first' "$active_after_advance" \
+    'an unchanged active attempt should remain suppressed when unrelated work advances the base'
+
   local pull_request_url='https://github.com/example/repo/pull/123'
   "$DISPATCHER" mark \
     --repo "$repo" \
@@ -310,15 +353,20 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
   local skipped_pr
   skipped_pr=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
   assert_eq $'skipped-unchanged\tdocs/follow-ups/first.md\t'"$base_sha"$'\t'"$attempt_key"$'\tpull-request\t'"$pull_request_url" "$skipped_pr" \
-    'identity should expose the existing pull request instead of starting a duplicate worker'
-  "$DISPATCHER" clear \
-    --repo "$repo" \
-    --follow-up docs/follow-ups/first.md \
-    --base-sha "$base_sha" >/dev/null
+    'an unchanged pull request should remain suppressed across remote base advancement'
+  local cleared
+  cleared=$(
+    "$DISPATCHER" clear \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/first.md \
+      --base-sha "$base_sha"
+  )
+  assert_eq $'cleared\t'"$attempt_key" "$cleared" \
+    'clear should remove only the exact pull-request attempt selected after an unmerged close'
 
   printf '\nAdditional current evidence.\n' >>"$publisher/docs/follow-ups/first.md"
   git -C "$publisher" add docs/follow-ups/first.md
-  GIT_AUTHOR_DATE='2026-01-03T00:00:00Z' GIT_COMMITTER_DATE='2026-01-03T00:00:00Z' \
+  GIT_AUTHOR_DATE='2026-01-05T00:00:00Z' GIT_COMMITTER_DATE='2026-01-05T00:00:00Z' \
     git -C "$publisher" commit -qm 'docs: add current reproduction evidence'
   git -C "$publisher" push -qu origin main
   local changed_sha
@@ -358,6 +406,7 @@ test_cleanup_requires_exact_attempt_ownership() {
   write_follow_up "$repo/docs/follow-ups/third.md" 'Third symptom'
   write_follow_up "$repo/docs/follow-ups/fourth.md" 'Fourth symptom'
   write_follow_up "$repo/docs/follow-ups/fifth.md" 'Fifth symptom'
+  write_follow_up "$repo/docs/follow-ups/sixth.md" 'Sixth symptom'
   commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record cleanup follow-ups'
   git -C "$repo" branch -M main
   git init -q --bare "$remote"
@@ -516,10 +565,12 @@ EOF
     --worktree "$dirty_worker" \
     --attempt-key "$dirty_key" \
     --owner "$dirty_owner" >/dev/null
-  "$DISPATCHER" clear \
+  if "$DISPATCHER" clear \
     --repo "$repo" \
     --follow-up "$dirty_path" \
-    --base-sha "$dirty_base" >/dev/null
+    --base-sha "$dirty_base" >/dev/null 2>&1; then
+    fail 'clear should preserve a blocked result until the follow-up content or base changes'
+  fi
 
   local fifth_identity
   fifth_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/fifth.md)
@@ -661,6 +712,54 @@ EOF
   [[ ! -e "$first_worker" ]] || fail 'successful cleanup should remove the owned worktree'
   assert_eq "$first_head" "$(git -C "$repo" rev-parse refs/heads/codex/fix-first)" \
     'cleanup should retain the local branch instead of racing another checkout to delete it'
+
+  if "$DISPATCHER" recover \
+    --repo "$repo" \
+    --attempt-key "$key1" \
+    --owner "$owner1" >/dev/null 2>&1; then
+    fail 'recover should refuse a published worker branch before its pull request is reconciled'
+  fi
+  "$DISPATCHER" mark \
+    --repo "$repo" \
+    --follow-up docs/follow-ups/first.md \
+    --base-sha "$base1" \
+    --owner "$owner1" \
+    --outcome pull-request \
+    --detail 'https://github.com/example/repo/pull/456' >/dev/null
+
+  local corrupt_count="$sandbox/corrupt-post-checkout-count"
+  cat >"$hooks/post-checkout" <<EOF
+#!/usr/bin/env bash
+count=0
+if [[ -f "$corrupt_count" ]]; then
+  count=\$(sed -n '1p' "$corrupt_count")
+fi
+count=\$((count + 1))
+printf '%s\n' "\$count" >"$corrupt_count"
+if [[ "\$count" -eq 2 ]]; then
+  printf 'corrupt index' >"\$(git rev-parse --git-path index)"
+fi
+EOF
+  chmod +x "$hooks/post-checkout"
+  git -C "$repo" config core.hooksPath "$hooks"
+  local corrupt_worker="$sandbox/corrupt-worker"
+  local corrupt_output
+  if corrupt_output=$(
+    "$DISPATCHER" prepare \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/sixth.md \
+      --worktree "$corrupt_worker" \
+      --branch codex/corrupt-status 2>&1
+  ); then
+    fail 'prepare should reject a worker whose clean status cannot be inspected'
+  fi
+  git -C "$repo" config --unset core.hooksPath
+  [[ "$corrupt_output" == *'cannot inspect worker worktree after branch setup'* ]] \
+    || fail 'status inspection failure should be an explicit preparation blocker'
+  local corrupt_identity
+  corrupt_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/sixth.md)
+  [[ "$corrupt_identity" == $'skipped-unchanged\tdocs/follow-ups/sixth.md\t'*$'\tblocked\tcannot inspect worker worktree after branch setup' ]] \
+    || fail 'an unverifiable worker should never be reported as prepared'
 
   rm -rf "$sandbox"
 }

@@ -103,7 +103,10 @@
   and base commit. Atomic owner claims prevent duplicate workers, terminal
   results retain decisive evidence, and an interrupted non-terminal claim is
   recovered only after the adapter proves its worker ended and cleans up its
-  exact bound worktree.
+  exact bound worktree. Active claims and pull-request outcomes continue to
+  suppress unchanged content across unrelated base advancement; non-PR outcomes
+  become retryable when the base changes. A published branch is reconciled with
+  its pull request before any interrupted claim can be recovered.
 
 ## Boundaries
 

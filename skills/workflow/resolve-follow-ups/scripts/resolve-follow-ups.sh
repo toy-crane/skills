@@ -15,7 +15,7 @@ Usage:
   resolve-follow-ups.sh bind --repo PATH --attempt-key KEY --owner TOKEN --worktree PATH --branch NAME
   resolve-follow-ups.sh prepare --repo PATH --follow-up PATH --worktree PATH --branch NAME [--remote NAME]
   resolve-follow-ups.sh mark --repo PATH --follow-up PATH --base-sha SHA --owner TOKEN --outcome OUTCOME --detail TEXT
-  resolve-follow-ups.sh recover --repo PATH --attempt-key KEY --owner TOKEN
+  resolve-follow-ups.sh recover --repo PATH --attempt-key KEY --owner TOKEN [--remote NAME]
   resolve-follow-ups.sh clear --repo PATH --follow-up PATH --base-sha SHA
   resolve-follow-ups.sh cleanup --repo PATH --worktree PATH --attempt-key KEY --owner TOKEN [--remote NAME]
 EOF
@@ -90,7 +90,12 @@ remote_base() {
   local remote=$2
   local default_branch
   default_branch=$(remote_default_branch "$repo_root" "$remote")
-  git -C "$repo_root" fetch --prune "$remote" "+refs/heads/$default_branch:refs/remotes/$remote/$default_branch" >/dev/null
+  local fetch_args=(--prune)
+  if [[ "$(git -C "$repo_root" rev-parse --is-shallow-repository)" == true ]]; then
+    fetch_args+=(--unshallow)
+  fi
+  git -C "$repo_root" fetch "${fetch_args[@]}" "$remote" \
+    "+refs/heads/$default_branch:refs/remotes/$remote/$default_branch" >/dev/null
   local base_sha
   base_sha=$(git -C "$repo_root" rev-parse "refs/remotes/$remote/$default_branch^{commit}")
   printf '%s\t%s\n' "$default_branch" "$base_sha"
@@ -147,6 +152,30 @@ state_dir_for() {
   local attempt_key=$2
   validate_attempt_key "$attempt_key"
   printf '%s/%s\n' "$(attempts_dir_for "$repo_root")" "$attempt_key"
+}
+
+content_key_at_base() {
+  local repo_root=$1
+  local relative=$2
+  local base_sha=$3
+  local blob_sha
+  blob_sha=$(git -C "$repo_root" rev-parse "$base_sha:$relative" 2>/dev/null) \
+    || die "cannot resolve follow-up content at base SHA: $relative"
+  printf '%s\n%s\n' "$relative" "$blob_sha" \
+    | git -C "$repo_root" hash-object --stdin
+}
+
+content_ref_at_base() {
+  local repo_root=$1
+  local relative=$2
+  local base_sha=$3
+  printf 'refs/resolve-follow-ups/content/%s\n' \
+    "$(content_key_at_base "$repo_root" "$relative" "$base_sha")"
+}
+
+zero_oid_for() {
+  local oid=$1
+  printf '%*s' "${#oid}" '' | tr ' ' 0
 }
 
 claim_field() {
@@ -213,6 +242,41 @@ print_attempt_state() {
     "$relative" "$base_sha" "$attempt_key" "$(claim_field "$claim_file" 1)"
 }
 
+find_suppressing_attempt() {
+  local repo_root=$1
+  local relative=$2
+  local base_sha=$3
+  local current_blob
+  current_blob=$(git -C "$repo_root" rev-parse "$base_sha:$relative")
+  local attempts_dir
+  attempts_dir=$(attempts_dir_for "$repo_root")
+  [[ -d "$attempts_dir" ]] || return 1
+
+  local claim_file
+  for claim_file in "$attempts_dir"/*.claim; do
+    [[ -f "$claim_file" ]] || continue
+    local claimed_base claimed_relative claimed_blob attempt_key outcome_file outcome
+    claimed_base=$(claim_field "$claim_file" 2)
+    claimed_relative=$(claim_field "$claim_file" 3)
+    [[ "$claimed_relative" == "$relative" ]] || continue
+    claimed_blob=$(git -C "$repo_root" rev-parse "$claimed_base:$relative" 2>/dev/null) \
+      || die "cannot verify existing follow-up claim: ${claim_file##*/}"
+    [[ "$claimed_blob" == "$current_blob" ]] || continue
+    attempt_key=${claim_file##*/}
+    attempt_key=${attempt_key%.claim}
+    outcome_file="$(state_dir_for "$repo_root" "$attempt_key")/outcome"
+    if [[ -f "$outcome_file" ]]; then
+      outcome=$(sed -n '1p' "$outcome_file")
+      if [[ "$outcome" != pull-request && "$claimed_base" != "$base_sha" ]]; then
+        continue
+      fi
+    fi
+    print_attempt_state "$repo_root" "$relative" "$claimed_base" "$attempt_key"
+    return 0
+  done
+  return 1
+}
+
 resolve_attempt() {
   local repo=$1
   local follow_up=$2
@@ -235,15 +299,61 @@ resolve_attempt() {
       || die "follow-up on $remote/$default_branch is missing: $field"
   done
 
-  local attempt_key
-  attempt_key=$(attempt_key_at_base "$repo_root" "$relative" "$base_sha")
-  local claim_file
-  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
-  if [[ -f "$claim_file" ]]; then
-    print_attempt_state "$repo_root" "$relative" "$base_sha" "$attempt_key"
+  if find_suppressing_attempt "$repo_root" "$relative" "$base_sha"; then
     return 0
   fi
+  local attempt_key
+  attempt_key=$(attempt_key_at_base "$repo_root" "$relative" "$base_sha")
   printf 'eligible\t%s\t%s\t%s\n' "$relative" "$base_sha" "$attempt_key"
+}
+
+reserve_content_claim() {
+  local repo_root=$1
+  local relative=$2
+  local base_sha=$3
+  local attempt_key=$4
+  local owner=$5
+  local content_ref
+  content_ref=$(content_ref_at_base "$repo_root" "$relative" "$base_sha")
+  local zero_oid
+  zero_oid=$(zero_oid_for "$base_sha")
+
+  while true; do
+    local reserved_base
+    reserved_base=$(git -C "$repo_root" rev-parse --verify "$content_ref^{commit}" 2>/dev/null || true)
+    if [[ -z "$reserved_base" ]]; then
+      if git -C "$repo_root" update-ref "$content_ref" "$base_sha" "$zero_oid" 2>/dev/null; then
+        return 0
+      fi
+      continue
+    fi
+    if [[ "$reserved_base" == "$base_sha" ]]; then
+      return 0
+    fi
+
+    local reserved_key reserved_claim reserved_state outcome
+    reserved_key=$(attempt_key_at_base "$repo_root" "$relative" "$reserved_base")
+    reserved_claim=$(claim_file_for "$repo_root" "$reserved_key")
+    if [[ ! -f "$reserved_claim" ]]; then
+      git -C "$repo_root" update-ref -d "$content_ref" "$reserved_base" 2>/dev/null || true
+      continue
+    fi
+    reserved_state=$(state_dir_for "$repo_root" "$reserved_key")
+    if [[ ! -f "$reserved_state/outcome" ]]; then
+      release_claim "$repo_root" "$attempt_key" "$owner"
+      print_attempt_state "$repo_root" "$relative" "$reserved_base" "$reserved_key"
+      return 1
+    fi
+    outcome=$(sed -n '1p' "$reserved_state/outcome")
+    if [[ "$outcome" == pull-request ]]; then
+      release_claim "$repo_root" "$attempt_key" "$owner"
+      print_attempt_state "$repo_root" "$relative" "$reserved_base" "$reserved_key"
+      return 1
+    fi
+    if git -C "$repo_root" update-ref "$content_ref" "$base_sha" "$reserved_base" 2>/dev/null; then
+      return 0
+    fi
+  done
 }
 
 create_claim() {
@@ -267,6 +377,9 @@ create_claim() {
   if ln "$temp_file" "$claim_file" 2>/dev/null; then
     rm "$temp_file"
     mkdir -p "$(state_dir_for "$repo_root" "$attempt_key")"
+    if ! reserve_content_claim "$repo_root" "$relative" "$base_sha" "$attempt_key" "$owner"; then
+      return 0
+    fi
     printf 'claimed\t%s\t%s\n' "$attempt_key" "$owner"
     return 0
   fi
@@ -286,6 +399,11 @@ release_claim() {
   state_dir=$(state_dir_for "$repo_root" "$attempt_key")
   [[ ! -e "$state_dir/binding" && ! -e "$state_dir/outcome" ]] \
     || die 'cannot release a claim after binding or terminal outcome'
+  local base_sha relative content_ref
+  base_sha=$(claim_field "$claim_file" 2)
+  relative=$(claim_field "$claim_file" 3)
+  content_ref=$(content_ref_at_base "$repo_root" "$relative" "$base_sha")
+  git -C "$repo_root" update-ref -d "$content_ref" "$base_sha" 2>/dev/null || true
   rmdir "$state_dir" 2>/dev/null || true
   rm "$claim_file"
 }
@@ -407,7 +525,7 @@ list_follow_ups() {
       local discovered_at
       discovered_at=$(
         git -C "$repo_root" log --diff-filter=A --format=%ct "$base_sha" -- "$relative" \
-          | tail -n 1
+          | sed -n '1p'
       )
       [[ -n "$discovered_at" ]] || discovered_at=0
       printf '%020d\t%s\n' "$discovered_at" "$relative" >>"$candidates"
@@ -697,7 +815,11 @@ prepare_worker() {
       "worker changed after branch setup: branch=$verified_branch HEAD=${actual_sha:-unreadable}"
   fi
   local worker_status
-  worker_status=$(git -C "$worktree" status --porcelain 2>/dev/null || true)
+  if ! worker_status=$(git -C "$worktree" status --porcelain 2>/dev/null); then
+    fail_after_worktree_creation \
+      "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
+      'cannot inspect worker worktree after branch setup'
+  fi
   if [[ -n "$worker_status" ]]; then
     fail_after_worktree_creation \
       "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
@@ -786,15 +908,17 @@ recover_attempt() {
   local repo=''
   local attempt_key=''
   local owner=''
+  local remote=origin
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      --repo|--attempt-key|--owner)
+      --repo|--attempt-key|--owner|--remote)
         require_value "$1" "${2-}"
         case "$1" in
           --repo) repo=$2 ;;
           --attempt-key) attempt_key=$2 ;;
           --owner) owner=$2 ;;
+          --remote) remote=$2 ;;
         esac
         shift 2
         ;;
@@ -820,12 +944,26 @@ recover_attempt() {
 
   local binding_file="$state_dir/binding"
   if [[ -f "$binding_file" ]]; then
-    local bound_worktree
+    local bound_worktree bound_branch published_head
     bound_worktree=$(sed -n '1p' "$binding_file")
+    bound_branch=$(sed -n '2p' "$binding_file")
     [[ ! -e "$bound_worktree" && ! -L "$bound_worktree" ]] \
       || die "recover requires the bound worker worktree to be cleaned up first: $bound_worktree"
+    if ! published_head=$(
+      git -C "$repo_root" ls-remote "$remote" "refs/heads/$bound_branch" 2>/dev/null \
+        | awk 'NR == 1 { print $1 }'
+    ); then
+      die "recover cannot inspect the bound worker branch on remote: $remote"
+    fi
+    [[ -z "$published_head" ]] \
+      || die "recover refuses published branch $bound_branch; inspect it for a pull request and mark the terminal result"
     rm "$binding_file"
   fi
+  local base_sha relative content_ref
+  base_sha=$(claim_field "$claim_file" 2)
+  relative=$(claim_field "$claim_file" 3)
+  content_ref=$(content_ref_at_base "$repo_root" "$relative" "$base_sha")
+  git -C "$repo_root" update-ref -d "$content_ref" "$base_sha" 2>/dev/null || true
   if [[ -d "$state_dir" ]]; then
     rmdir "$state_dir" 2>/dev/null || die 'attempt state contains unexpected files'
   elif [[ -e "$state_dir" ]]; then
@@ -877,6 +1015,8 @@ clear_attempt() {
   state_dir=$(state_dir_for "$repo_root" "$attempt_key")
   [[ -f "$state_dir/outcome" ]] \
     || die 'clear refuses an active claim without a terminal outcome'
+  [[ "$(sed -n '1p' "$state_dir/outcome")" == pull-request ]] \
+    || die 'clear only permits a pull-request outcome after its pull request closes unmerged'
   if [[ -f "$state_dir/binding" ]]; then
     local bound_worktree
     bound_worktree=$(sed -n '1p' "$state_dir/binding")
@@ -884,6 +1024,9 @@ clear_attempt() {
       || die 'clear requires the bound worker worktree to be removed first'
   fi
 
+  local content_ref
+  content_ref=$(content_ref_at_base "$repo_root" "$relative" "$base_sha")
+  git -C "$repo_root" update-ref -d "$content_ref" "$base_sha" 2>/dev/null || true
   rm "$state_dir/outcome"
   [[ ! -e "$state_dir/binding" ]] || rm "$state_dir/binding"
   rmdir "$state_dir" 2>/dev/null || die 'attempt state contains unexpected files'

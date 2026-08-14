@@ -36,7 +36,9 @@ attempt suppression, and cleanup.
    `eligible` is only a snapshot, not a reservation. The platform adapter must
    win the attempt's atomic `claim` or `prepare` result before launching a
    worker; `skipped-unchanged ... claimed <owner> [<worktree> <branch>]` means
-   another sweep already owns it.
+   another sweep already owns the unchanged follow-up content. That active
+   ownership and a recorded pull request survive unrelated default-branch
+   advancement; terminal non-PR results become retryable after that advance.
 3. For `skipped-unchanged`:
    - When the result carries `claimed` and an owner, do not dispatch it again;
      another worker already owns the exact content and base identity. If the
@@ -187,9 +189,13 @@ After the worker returns:
   bound to that exact claim and preserves the local branch so cleanup cannot
   race a new checkout and delete its ref. It refuses dirty, unpublished changed,
   mismatched, foreign, or repository-root targets.
-- When an owning process ended before `mark`, use `cleanup` first for its bound
-  worktree, then `recover` with the exact attempt key and owner. Recovery refuses
-  live bound worktrees and terminal outcomes.
+- When an owning process ended before `mark`, first inspect its bound branch for
+  publication and an existing pull request. Record a found pull request with
+  `mark`; if a branch was published without one, finish or explicitly block that
+  publication rather than discarding its identity. Only when no publication
+  occurred, use `cleanup` first for its bound worktree, then `recover` with the
+  exact attempt key and owner. Recovery refuses live worktrees, published
+  branches, and terminal outcomes.
 
 Return one compact sweep report using only `pull-request`, `not-reproduced`,
 `needs-shaping`, `blocked`, `invalid-follow-up`, and `skipped-unchanged`. Link
