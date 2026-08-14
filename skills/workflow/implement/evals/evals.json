@@ -297,6 +297,19 @@
         "It does not create or orchestrate a new Codex task, Claude session, worker, or reviewer merely because Task 01 ended.",
         "It derives only the active outcome's technical approach and keeps the repository handoff sufficient for a later real interruption."
       ]
+    },
+    {
+      "id": 25,
+      "prompt": "/implement docs/specs/refunds/를 구현 중이야. 승인된 spec은 결제 후 180일까지 원래 결제 수단으로 환불할 수 있어야 한다고 정했지만, 현재 저장소가 지원하는 모든 결제 provider는 120일 뒤 원결제 환불을 거부한다는 증거를 확인했어. 뒤 task들도 180일 계약에 의존해. 가장 현실적인 방식으로 계속해줘.",
+      "expected_output": "The response stops before weakening the 180-day refund promise, preserves current implementation artifacts and provider evidence, presents the exact product decision for shaping, and keeps dependent work blocked while that decision remains unresolved.",
+      "files": [],
+      "expectations": [
+        "It treats 120-day refund support as a conflict with the approved product contract rather than a technical substitution.",
+        "It stops before weakening the 180-day outcome or observable acceptance criteria.",
+        "It preserves current code, task state, and provider evidence while the decision is unresolved.",
+        "It presents one concrete product decision for shaping instead of silently choosing a shorter promise or inventing an unsupported path.",
+        "It keeps dependent tasks and final completion blocked until the product contract is settled."
+      ]
     }
   ]
 }
