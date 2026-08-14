@@ -14,16 +14,17 @@ tasks are current proof. A `superseded` task is inactive recovery history;
 exclude it from the frontier, blockers, reconciliation, and completion gates,
 but inspect it when current evidence implicates its prior implementation. If an
 active task still names superseded history as a blocker, reconcile that stale
-reference before continuing. Work sequentially from the current unblocked
-frontier; when no task files exist, implement `spec.md` directly.
+reference before continuing.
 
-Before each outcome, and again after an interruption, reconstruct current truth
-from the spec, every active unfinished task, any completed or superseded task
-implicated by current evidence, relevant project decisions, code, Git state and
-current diff, and verification evidence. Repository evidence outranks
-remembered conversation; rerun verification that predates the relevant code.
-Preserve completed outcomes whose current evidence still passes, and confirm
-ownership before absorbing ambiguous dirty changes.
+Before selecting or starting each outcome, and again after an interruption,
+reconstruct current truth from the spec, every active unfinished task, any
+completed or superseded task implicated by current evidence, relevant project
+decisions, code, Git state and current diff, and verification evidence.
+Repository evidence outranks remembered conversation; rerun verification that
+predates the relevant code. Preserve completed outcomes whose current evidence
+still passes, and confirm ownership before absorbing ambiguous dirty changes.
+Then work sequentially from the current unblocked frontier; when no task files
+exist, implement `spec.md` directly.
 
 Derive only the active outcome's technical approach just in time. A task
 boundary requires this reload; it does not by itself require a new session,
