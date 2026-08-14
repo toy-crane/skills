@@ -65,7 +65,9 @@
   verification and use the active harness's automated code-review process on
   the entire implementation diff against the selected spec and acceptance
   criteria. This final gate applies to split and unsplit specs and covers
-  cross-task interactions and omitted requirements.
+  cross-task interactions and omitted requirements. It stays inside `implement`
+  because blocking findings return to implementation; it neither invokes nor
+  replaces the explicitly requested human judgment owned by `human-review`.
 - After the final gate passes, `implement` runs the actual product when the
   repository exposes it through a user-reviewable local server, verifies the
   changed routes and essential states, and shares a reachable address while
