@@ -56,7 +56,8 @@ attempt suppression, and cleanup.
      Keep it skipped while open. After an unmerged close, run `clear` for that
      exact base identity before retrying. A merged pull request should remove
      the follow-up on the updated default branch; report a mismatch instead of
-     opening a duplicate.
+     opening a duplicate. If the path was deleted and later re-created, treat it
+     as a fresh follow-up lifetime even when its Markdown matches the old item.
 4. Establish whether candidate scopes are independent before running workers
    concurrently. Process uncertain or overlapping scopes separately while
    retaining a distinct worktree and pull request for each item.
@@ -199,8 +200,10 @@ After the worker returns:
   --owner <owner>`. For a PR worker, run the same cleanup only after its exact
   `HEAD` is visible on the remote branch. The script removes only the worktree
   bound to that exact claim and preserves the local branch so cleanup cannot
-  race a new checkout and delete its ref. It refuses dirty, unpublished changed,
-  mismatched, foreign, or repository-root targets.
+  race a new checkout and delete its ref. It revalidates the repository-wide
+  coordinate reservation before removal and supports clean initialized
+  submodules. It refuses dirty, unpublished changed, mismatched, foreign, or
+  repository-root targets.
 - When an owning process ended before `mark`, first inspect its bound branch for
   publication and an existing pull request. Record a found pull request with
   `mark`; if a branch was published without one, finish or explicitly block that
@@ -208,10 +211,11 @@ After the worker returns:
   occurred, use `cleanup` first when its recorded bound or preparing worktree
   exists, then `recover` with the exact attempt key and owner. If preparation
   stopped after persisting the target but before creating its path, skip cleanup
-  and recover the missing target directly. Recovery refuses live worktrees,
-  published branches, and terminal outcomes. A preparing target is removed only
-  when its checkout is clean and still detached at the base or its exact
-  prepare-owned branch can be deleted with a head compare-and-swap.
+  and recover the missing target directly; recovery removes an exact stale Git
+  worktree registration before releasing ownership. Recovery refuses live
+  worktrees, published branches, and terminal outcomes. A preparing target is
+  removed only when its checkout is clean and still detached at the base or its
+  exact prepare-owned branch can be deleted with a head compare-and-swap.
 
 Return one compact sweep report using only `pull-request`, `not-reproduced`,
 `needs-shaping`, `blocked`, `invalid-follow-up`, and `skipped-unchanged`. Link

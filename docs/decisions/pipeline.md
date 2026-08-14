@@ -99,18 +99,21 @@
   review pull request. A worker edits only after reproducing the symptom and
   finding a settled deterministic success condition; it never merges its pull
   request.
-- Attempt state is disposable local coordination data keyed by follow-up content
-  and base commit. Atomic owner claims prevent duplicate workers, repository-wide
-  coordinate reservations prevent two attempts from sharing one worktree, and
-  terminal results retain decisive evidence. An interrupted non-terminal claim
-  is recovered only after the adapter proves its worker ended and cleans up its
-  exact bound worktree. Prepare persists the canonical worktree target before
-  checkout creation, and terminal identity retains owner and cleanup coordinates,
-  so either interruption window remains recoverable. Active claims and pull-
-  request outcomes continue to suppress unchanged content across unrelated base
-  advancement; non-PR outcomes become retryable when the base changes, but only
-  after any surviving terminal worktree is reconciled. A published branch is
-  reconciled with its pull request before any interrupted claim can be recovered.
+- Attempt state is disposable local coordination data keyed by the current
+  follow-up lifetime, content, and base commit. Atomic owner claims prevent
+  duplicate workers, repository-wide coordinate reservations prevent two
+  attempts from sharing one worktree, and cleanup revalidates that reservation
+  before removing a checkout. Terminal results retain decisive evidence. An
+  interrupted non-terminal claim is recovered only after the adapter proves its
+  worker ended and cleans up its exact bound worktree or missing Git registration.
+  Prepare persists the canonical worktree target before checkout creation, and
+  terminal identity retains owner and cleanup coordinates, so either interruption
+  window remains recoverable. Active claims and pull-request outcomes continue to
+  suppress unchanged content across unrelated base advancement; deletion followed
+  by re-creation starts a fresh lifetime even when the Markdown is identical.
+  Non-PR outcomes become retryable when the base changes, but only after any
+  surviving terminal worktree is reconciled. A published branch is reconciled
+  with its pull request before any interrupted claim can be recovered.
 
 ## Boundaries
 

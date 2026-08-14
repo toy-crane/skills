@@ -109,6 +109,29 @@ test_list_limits_candidates_and_reports_invalid_items() {
     --follow-up docs/follow-ups/invalid.md >/dev/null 2>&1; then
     fail 'identity should reject whitespace-only required follow-up fields'
   fi
+  local old_second_identity old_second_path old_second_base old_second_key
+  old_second_identity=$(
+    "$DISPATCHER" identity \
+      --repo "$coordinator" \
+      --follow-up docs/follow-ups/second.md
+  )
+  IFS=$'\t' read -r _ old_second_path old_second_base old_second_key \
+    <<<"$old_second_identity"
+  local old_second_claim old_second_owner
+  old_second_claim=$(
+    "$DISPATCHER" claim \
+      --repo "$coordinator" \
+      --follow-up "$old_second_path" \
+      --base-sha "$old_second_base"
+  )
+  IFS=$'\t' read -r _ _ old_second_owner <<<"$old_second_claim"
+  "$DISPATCHER" mark \
+    --repo "$coordinator" \
+    --follow-up "$old_second_path" \
+    --base-sha "$old_second_base" \
+    --owner "$old_second_owner" \
+    --outcome pull-request \
+    --detail 'https://github.com/example/repo/pull/old-second' >/dev/null
   local remote_only_identity
   remote_only_identity=$(
     "$DISPATCHER" identity \
@@ -128,6 +151,14 @@ test_list_limits_candidates_and_reports_invalid_items() {
   local expected_recreated=$'candidate\tdocs/follow-ups/first.md\ncandidate\tdocs/follow-ups/third.md\ncandidate\tdocs/follow-ups/fourth.md\ncandidate\tdocs/follow-ups/second.md\ninvalid-follow-up\tdocs/follow-ups/invalid.md'
   assert_eq "$expected_recreated" "$recreated" \
     'a re-created follow-up should use the latest addition that begins its current lifetime'
+  local recreated_identity
+  recreated_identity=$(
+    "$DISPATCHER" identity \
+      --repo "$coordinator" \
+      --follow-up docs/follow-ups/second.md
+  )
+  [[ "$recreated_identity" == $'eligible\tdocs/follow-ups/second.md\t'* ]] \
+    || fail 'a re-created follow-up should not inherit a prior lifetime pull-request outcome'
 
   git clone -q --depth 1 "file://$remote" "$shallow"
   assert_eq 'true' "$(git -C "$shallow" rev-parse --is-shallow-repository)" \
@@ -178,14 +209,29 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
     || fail 'identity should resolve an eligible follow-up against fresh remote state'
   local identity_key=${identity##*$'\t'}
 
+  local protocol_hooks="$sandbox/protocol-hooks"
+  local protocol_stderr="$sandbox/protocol-stderr"
+  mkdir -p "$protocol_hooks"
+  cat >"$protocol_hooks/post-checkout" <<'EOF'
+#!/usr/bin/env bash
+printf 'checkout hook protocol noise\n'
+EOF
+  chmod +x "$protocol_hooks/post-checkout"
+  git -C "$repo" config core.hooksPath "$protocol_hooks"
   local prepared
   prepared=$(
     "$DISPATCHER" prepare \
       --repo "$repo" \
       --follow-up docs/follow-ups/first.md \
       --worktree "$worker" \
-      --branch codex/fix-first
+      --branch codex/fix-first \
+      2>"$protocol_stderr"
   )
+  git -C "$repo" config --unset core.hooksPath
+  [[ "$prepared" == $'prepared\t'* ]] \
+    || fail 'checkout-hook output should not contaminate prepare protocol stdout'
+  [[ "$(grep -c '^checkout hook protocol noise$' "$protocol_stderr")" -eq 2 ]] \
+    || fail 'prepare should preserve checkout-hook diagnostics on stderr'
   local status prepared_path prepared_branch base_sha attempt_key owner
   IFS=$'\t' read -r status prepared_path prepared_branch base_sha attempt_key owner <<<"$prepared"
   assert_eq 'prepared' "$status" 'prepare should create an owned worker'
@@ -472,6 +518,17 @@ test_cleanup_requires_exact_attempt_ownership() {
   write_follow_up "$repo/docs/follow-ups/fourth.md" 'Fourth symptom'
   write_follow_up "$repo/docs/follow-ups/fifth.md" 'Fifth symptom'
   write_follow_up "$repo/docs/follow-ups/sixth.md" 'Sixth symptom'
+  write_follow_up "$repo/docs/follow-ups/seventh.md" 'Seventh symptom'
+  local submodule_repo="$sandbox/submodule-repo"
+  mkdir -p "$submodule_repo"
+  git -C "$submodule_repo" init -q
+  git -C "$submodule_repo" config user.email eval@example.com
+  git -C "$submodule_repo" config user.name 'Resolve Follow-ups Eval'
+  printf 'submodule fixture\n' >"$submodule_repo/fixture.txt"
+  git -C "$submodule_repo" add fixture.txt
+  git -C "$submodule_repo" commit -qm 'test: add submodule fixture'
+  git -C "$repo" -c protocol.file.allow=always submodule add -q \
+    "$submodule_repo" fixture-submodule
   commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record cleanup follow-ups'
   git -C "$repo" branch -M main
   git init -q --bare "$remote"
@@ -522,6 +579,9 @@ test_cleanup_requires_exact_attempt_ownership() {
   fi
 
   git -C "$repo" remote set-url origin "$sandbox/unavailable.git"
+  git -C "$second_worker" -c protocol.file.allow=always submodule update --init -q
+  [[ -z "$(git -C "$second_worker" status --porcelain --ignore-submodules=none)" ]] \
+    || fail 'initialized submodule cleanup fixture should remain clean'
   "$DISPATCHER" cleanup \
     --repo "$repo" \
     --worktree "$second_worker" \
@@ -675,6 +735,18 @@ EOF
   )
   local fifth_claim_status fifth_claim_key fifth_owner
   IFS=$'\t' read -r fifth_claim_status fifth_claim_key fifth_owner <<<"$fifth_claim"
+  local delimited_native="$sandbox/delimited"$'\t'worker
+  git -C "$repo" worktree add -q -b codex/delimited-native \
+    "$delimited_native" "$fifth_base"
+  if "$DISPATCHER" bind \
+    --repo "$repo" \
+    --attempt-key "$fifth_key" \
+    --owner "$fifth_owner" \
+    --worktree "$delimited_native" \
+    --branch codex/delimited-native >/dev/null 2>&1; then
+    fail 'bind should reject a canonical worktree path containing a protocol delimiter'
+  fi
+  git -C "$repo" worktree remove "$delimited_native"
   local dirty_native="$sandbox/dirty-native"
   git -C "$repo" config core.hooksPath "$hooks"
   git -C "$repo" worktree add -q -b codex/dirty-native "$dirty_native" "$fifth_base"
@@ -889,6 +961,51 @@ EOF
   [[ "$corrupt_identity" == $'skipped-unchanged\tdocs/follow-ups/sixth.md\t'*$'\tblocked\tcannot inspect worker worktree after branch setup\towner\t'* ]] \
     || fail 'an unverifiable worker should never be reported as prepared'
 
+  local missing_worker="$sandbox/missing-worker"
+  local missing_prepared
+  missing_prepared=$(
+    "$DISPATCHER" prepare \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/seventh.md \
+      --worktree "$missing_worker" \
+      --branch codex/missing-worker
+  )
+  local missing_status missing_path missing_branch missing_base missing_key missing_owner
+  IFS=$'\t' read -r missing_status missing_path missing_branch missing_base \
+    missing_key missing_owner <<<"$missing_prepared"
+  local common_dir missing_state
+  common_dir=$(git -C "$repo" rev-parse --git-common-dir)
+  if [[ "$common_dir" != /* ]]; then
+    common_dir="$repo/$common_dir"
+  fi
+  missing_state="$common_dir/resolve-follow-ups/attempts/$missing_key"
+  local missing_root
+  missing_root=$(CDPATH= cd -- "$missing_path" && pwd -P)
+  printf '%s\n%s\n%s\n' "$missing_root" "$missing_branch" prepare \
+    >"$missing_state/target"
+  rm "$missing_state/binding"
+  git -C "$repo" update-ref -d "refs/heads/$missing_branch" "$missing_base"
+  rm -rf "$missing_worker"
+  git -C "$repo" worktree list --porcelain \
+    | grep -Fqx "worktree $missing_root" \
+    || fail 'missing-path recovery fixture should retain its Git worktree registration'
+  "$DISPATCHER" recover \
+    --repo "$repo" \
+    --attempt-key "$missing_key" \
+    --owner "$missing_owner" >/dev/null
+  if git -C "$repo" worktree list --porcelain \
+    | grep -Fqx "worktree $missing_root"; then
+    fail 'recover should prune the exact missing worktree registration before retry'
+  fi
+  local missing_retry
+  missing_retry=$(
+    "$DISPATCHER" identity \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/seventh.md
+  )
+  [[ "$missing_retry" == $'eligible\tdocs/follow-ups/seventh.md\t'* ]] \
+    || fail 'a missing registered target should become eligible after recovery'
+
   rm -rf "$sandbox"
 }
 
@@ -1029,38 +1146,62 @@ test_coordination_failures_remain_owned_and_recoverable() {
   IFS=$'\t' read -r _ _ fourth_owner <<<"$fourth_claim"
   IFS=$'\t' read -r _ _ fifth_owner <<<"$fifth_claim"
   git -C "$repo" worktree add -q -b codex/shared-worker "$shared_worker" "$base_sha"
-  "$DISPATCHER" bind \
+  local failing_git_dir="$sandbox/failing-git"
+  local real_git
+  real_git=$(command -v git)
+  mkdir -p "$failing_git_dir"
+  cat >"$failing_git_dir/git" <<'EOF'
+#!/usr/bin/env bash
+if [[ " $* " == *' hash-object -w --stdin '* ]]; then
+  exit 91
+fi
+exec "$REAL_GIT" "$@"
+EOF
+  chmod +x "$failing_git_dir/git"
+  if REAL_GIT="$real_git" PATH="$failing_git_dir:$PATH" "$DISPATCHER" bind \
     --repo "$repo" \
     --attempt-key "$fourth_key" \
     --owner "$fourth_owner" \
     --worktree "$shared_worker" \
-    --branch codex/shared-worker >/dev/null
-  if "$DISPATCHER" bind \
+    --branch codex/shared-worker >/dev/null 2>&1; then
+    fail 'bind interruption fixture should stop after persisting its target'
+  fi
+  local fourth_interrupted
+  fourth_interrupted=$(
+    "$DISPATCHER" identity \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/fourth.md
+  )
+  [[ "$fourth_interrupted" == *$'\tclaimed\t'"$fourth_owner"$'\t'* ]] \
+    || fail 'interrupted bind should retain exact target ownership'
+  "$DISPATCHER" bind \
     --repo "$repo" \
     --attempt-key "$fifth_key" \
     --owner "$fifth_owner" \
     --worktree "$shared_worker" \
-    --branch codex/shared-worker >/dev/null 2>&1; then
-    fail 'two attempt owners should never bind the same canonical worktree'
-  fi
-  local fifth_after_conflict
-  fifth_after_conflict=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/fifth.md)
-  assert_eq $'skipped-unchanged\tdocs/follow-ups/fifth.md\t'"$base_sha"$'\t'"$fifth_key"$'\tclaimed\t'"$fifth_owner" \
-    "$fifth_after_conflict" \
-    'a rejected shared-worktree bind should leave the losing claim unbound and recoverable'
-  "$DISPATCHER" cleanup \
+    --branch codex/shared-worker >/dev/null
+  if "$DISPATCHER" cleanup \
     --repo "$repo" \
     --worktree "$shared_worker" \
     --attempt-key "$fourth_key" \
-    --owner "$fourth_owner" >/dev/null
-  "$DISPATCHER" recover \
+    --owner "$fourth_owner" >/dev/null 2>&1; then
+    fail 'abandoned target cleanup should not remove a checkout reserved by another attempt'
+  fi
+  [[ -d "$shared_worker" ]] \
+    || fail 'reservation mismatch must be detected before destructive worktree removal'
+  "$DISPATCHER" cleanup \
     --repo "$repo" \
-    --attempt-key "$fourth_key" \
-    --owner "$fourth_owner" >/dev/null
+    --worktree "$shared_worker" \
+    --attempt-key "$fifth_key" \
+    --owner "$fifth_owner" >/dev/null
   "$DISPATCHER" recover \
     --repo "$repo" \
     --attempt-key "$fifth_key" \
     --owner "$fifth_owner" >/dev/null
+  "$DISPATCHER" recover \
+    --repo "$repo" \
+    --attempt-key "$fourth_key" \
+    --owner "$fourth_owner" >/dev/null
 
   git -C "$repo" update-ref refs/resolve-follow-ups/content "$base_sha"
   local reservation_output
