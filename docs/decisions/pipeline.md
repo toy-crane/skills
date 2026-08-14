@@ -7,6 +7,14 @@
   change; it does not choose an MVP or detailed product behavior.
 - `shape-idea` starts from a concrete problem and broad direction, closes or
   defers material decisions, and writes the implementation-ready spec.
+- Every spec-producing path writes the same stable product contract:
+  user-visible outcomes, approved scope, observable acceptance criteria,
+  settled constraints and rationale, assumptions, off-limits areas and reasons,
+  deferred points, and remaining risks. It records behavior and decisions rather
+  than predicted implementation. `build-prototype` creates or updates this
+  contract when its approved surface closes without a prior shaping handoff and
+  consequential behavior outside that surface is settled or explicitly
+  deferred.
 - Implementation planning is just-in-time against current code. There is no
   separate plan-writing skill or durable `plan.md` lifecycle.
 - A spec with multiple outcomes that should be delivered separately is split by
@@ -37,7 +45,8 @@
   verification, and acceptance wording while preserving the approved observable
   product contract. A proposed change to a user-approved outcome, scope,
   observable acceptance criterion, off-limits area, or other product constraint
-  pauses implementation for a shaping decision.
+  preserves current artifacts and evidence, blocks affected and dependent work,
+  and pauses implementation for a shaping decision.
 - A previously completed outcome whose acceptance criteria no longer pass is
   not current completion evidence. Preserve its task and prior evidence, return
   it to a non-completed state, and repair or block it before dependent work or

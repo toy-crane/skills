@@ -6,7 +6,7 @@
 
 ## Blockers
 
-<Blocking task and why it gates this outcome, or `None.`>
+<Declared task dependency and why it gates this outcome, or `None.`>
 
 ## Acceptance criteria
 
@@ -27,12 +27,14 @@
 ## Status
 
 <!-- Current values: `pending`, `in-progress`, `completed`, or `blocked`.
-`completed` is valid only while every acceptance criterion passes. -->
+`completed` is valid only while all acceptance criteria and focused
+verification pass. -->
 pending
 
 ## Execution
 
-<!-- Append concise evidence and preserve earlier entries when status changes. -->
+<!-- Append concise evidence and preserve earlier entries when status changes.
+Execution Blocker is the current impediment, not a declared task dependency. -->
 - Verification: —
 - Blocker: —
 - Revision: —

@@ -79,24 +79,29 @@ on `/discover-opportunity` in Claude Code or `$discover-opportunity` in Codex.
 Start with `shape-idea` when the problem and a broad direction are already known.
 The discovery handoff remains in the conversation rather than a separate file.
 
-`shape-idea` records implementation-ready decisions in
-`docs/specs/<slug>/spec.md`. `build-prototype` can start from the current
-conversation alone; when a whole interface is approved, it creates or updates
-the spec and preserves `prototype.html` beside it. Use `split-into-tasks` only
+`shape-idea` records one stable product contract in
+`docs/specs/<slug>/spec.md`: user-visible outcomes, scope, observable acceptance
+criteria, settled constraints and rationale, assumptions, off-limits areas and
+reasons, deferrals, and risks. `build-prototype` can start from the current
+conversation alone; when a whole interface is approved and consequential
+non-visual behavior is settled or explicitly deferred, it creates or updates
+that same contract and preserves `prototype.html` beside it. Use
+`split-into-tasks` only
 when the spec contains outcomes that should be delivered separately. It also
 creates the complete shallow outcome map without predicting files, functions,
 code structure, or a step-by-step implementation sequence. It marks only the
 few intermediate reviews justified by material or downstream risk.
 
 Then pass the spec folder to `implement`. Before each outcome, it reloads the
-current spec, unfinished tasks, code, Git state, and verification evidence, then
-plans only that outcome in detail. After focused verification, it checks the
-observed result against the product contract and every unfinished task. It may
-update technical assumptions and affected unfinished tasks when the approved
-product behavior stays the same. If an approved outcome, observable acceptance
-criterion, scope, or other product constraint must change, it stops and returns
-that exact decision to shaping. A task marked `completed` is reopened if later
-evidence shows its criteria no longer pass.
+current spec, unfinished tasks, any completed task implicated by current
+evidence, code, Git state, and verification evidence, then plans only that
+outcome in detail. After focused verification, it checks the observed result
+against the product contract and every unfinished task. It may update technical
+assumptions and affected unfinished tasks when the approved product behavior
+stays the same. If an approved outcome, observable acceptance criterion, scope,
+or other product constraint must change, it stops and returns that exact
+decision to shaping. A task marked `completed` is reopened if later evidence
+shows its criteria no longer pass.
 
 After every outcome passes that check, the current harness's automated
 code-review process checks the integrated result against the selected spec and
@@ -143,12 +148,12 @@ new session or a closing-message handoff is not required for correctness.
   `shape-idea` without creating a document.
 - **[shape-idea](./skills/workflow/shape-idea/SKILL.md)**: Clarify a chosen problem and
   direction through correctable drafts, project evidence, and rendered UI
-  variants. Maintains project terms, records only settled decisions that future
-  work should reuse, then writes an implementation-ready spec.
+  variants. Maintain project terms and write the stable product contract that
+  later task splitting and implementation must preserve.
 - **[build-prototype](./skills/workflow/build-prototype/SKILL.md)**: Build every screen in
   one dummy-data HTML file using the project's design system, or the shell's
   minimal style when none exists. Review the rendered screens and preserve the
-  approved prototype beside the spec.
+  approved prototype beside the same product contract used by shaping.
 - **[split-into-tasks](./skills/workflow/split-into-tasks/SKILL.md)**: Split an existing
   spec into the complete shallow map of the fewest approved, independently
   deliverable vertical tasks, without predicting code-level implementation.

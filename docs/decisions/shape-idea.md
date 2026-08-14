@@ -4,6 +4,11 @@
 
 - Start from a concrete problem and broad direction, investigate available
   evidence, and present a concrete draft for the user to correct.
+- Close with `spec.md` as the stable product contract for implementation:
+  user-visible outcomes, approved scope, observable acceptance criteria,
+  settled constraints and rationale, assumptions, off-limits areas and reasons,
+  deferred points, and remaining risks. Record behavior rather than predicted
+  files, functions, code structure, technical layers, or implementation steps.
 - Treat low-risk, reversible choices made by the AI as assumptions. A choice is
   settled when the user confirms it or it is made under explicitly delegated
   authority. Only a settled outcome that meets the reusable project-decision
@@ -43,9 +48,8 @@
 - Separate functional verification from the user's experiential judgment.
 - Record unresolved product-change requests as deferred points and their
   possible impact as remaining risks.
-- Write confirmed implementation behavior, assumptions, any off-limits areas
-  and why, deferred points, and remaining risks to
-  `docs/specs/<slug>/spec.md`.
+- Write the complete product contract to `docs/specs/<slug>/spec.md` and keep
+  feature-local decisions there.
 - If code contradicts a user statement or current decision contract, surface
   the conflict rather than treating code as the decision-maker.
 

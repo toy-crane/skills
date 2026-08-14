@@ -5,88 +5,104 @@ description: Implement or resume settled work from a selected spec folder. Use w
 
 # Implement
 
-Treat the selected spec folder as the stable handoff: `spec.md` is the approved
-product contract, and approved task files, when present, are the current shallow
-delivery map. Implement tasks sequentially from the current unblocked frontier;
-otherwise implement `spec.md` directly. Before each outcome, reload the current
-spec, every unfinished task, relevant project decisions, code, Git state, and
-verification evidence, then derive that outcome's technical approach just in
-time. Do not rely on remembered conversation or persist a separate roadmap,
-execution ledger, durable implementation plan, or run-state file.
+## Load the current handoff
 
-Use the `tdd` skill where behavior can be verified through a pre-agreed public
-seam.
+Treat `spec.md` as the approved product contract and approved task files, when
+present, as its current shallow delivery map. Work sequentially from the current
+unblocked frontier; when no task files exist, implement `spec.md` directly.
 
-Use an available runtime-verification skill that matches each affected surface.
-If none is available, verify the changed behavior through the repository's
-supported runtime. If the changed behavior cannot be verified in the running
-product, leave verification incomplete. Builds, type checks, and tests do not
-replace this runtime check.
+Before each outcome, and again after an interruption, reconstruct current truth
+from the spec, every unfinished task, any completed task implicated by current
+evidence, relevant project decisions, code, Git state and current diff, and
+verification evidence. Repository evidence outranks remembered conversation;
+rerun verification that predates the relevant code. Preserve completed outcomes
+whose current evidence still passes, and confirm ownership before absorbing
+ambiguous dirty changes.
 
-Keep an in-scope discrepancy, an affected unfinished task, or an invalidated
-completed outcome in the current work; none is a follow-up. When a workaround
-leaves its root cause open, or you observe an out-of-scope defect with evidence,
-record it at the moment of discovery through the `project-knowledge` skill. If
-that skill is unavailable, write the symptom, observed evidence, suspected
-cause, what was tried, and a proposed next step to
-`docs/follow-ups/<slug>.md` yourself. Reporting it only in conversation loses
-it.
+Derive only the active outcome's technical approach just in time. A task
+boundary requires this reload; it does not by itself require a new session,
+worker, or reviewer. Keep the spec folder as the single handoff instead of
+adding a roadmap, execution ledger, durable implementation plan, or run-state
+file.
 
-After an actual interruption, reconstruct progress from repository state, not
-remembered conversation, then continue the remaining work. Confirm ownership
-before incorporating ambiguous dirty changes.
+## Implement and reconcile one outcome
 
-Complete each outcome and its acceptance criteria with focused verification.
-Before marking it complete or beginning dependent work, reconcile the observed
-behavior with the approved product contract and every unfinished task. Apply
-verified technical discoveries to technical assumptions, unfinished task
-boundaries and order, blockers, task-specific constraints, verification, and
-observably equivalent task-acceptance wording, recording concise revision
-evidence. Leave unaffected task contracts unchanged. This gate also applies
-when implementing `spec.md` without task files.
+Use the `tdd` skill at a pre-agreed public seam when available. Otherwise retain
+the same observable seam and implement one red-to-green behavior at a time.
 
-A change to an approved outcome, scope, observable spec acceptance criterion,
-off-limits area, or other product constraint is outside implementation
-authority. Stop before absorbing it and present the exact decision for the user
-to settle through shaping. If later code, integration, verification, or review
-invalidates a completed task, preserve its prior evidence, return it to
-`in-progress` or `blocked`, and repair it or leave completion blocked before
-dependent or final work continues. `completed` means its criteria pass now,
-not merely that they passed earlier.
+Use an available runtime-verification skill matching each affected surface, or
+verify through the repository's supported runtime. Keep the outcome incomplete
+when its changed behavior cannot be verified in the running product; builds,
+type checks, and tests do not replace runtime evidence.
 
-When tasks exist, record current status and concise verification, blocker, and
-revision evidence. Where commits are expected, commit code, tests, and the task
-update together as a meaningful checkpoint. Run only task-declared intermediate
-review checkpoints; reconciliation itself does not add a review invocation.
+Complete the outcome and its acceptance criteria with focused verification.
+Before marking it complete or starting dependent work, reconcile the observed
+behavior with the product contract and every unfinished task. This gate also
+applies when implementing `spec.md` without task files.
 
-After every outcome currently passes its reconciliation gate, run the complete
-required verification, then use the current harness's automated code-review
-process on the entire implementation diff against the selected spec and
-acceptance criteria. Prefer a
-model-invocable review facility when the harness provides one. A rejection
-recorded only in an earlier session is not current evidence; before handing
-off on that basis, retry the reviewer once in the active session.
+For a verified discovery that preserves the product contract:
 
-Completion requires every acceptance criterion and the final review gate to
-pass. If the current review cannot produce an outcome because it is user-only,
-rejected, errors, or times out, report an exact user-invocable command when the
-active harness confirms one. In Claude Code, the Skill tool may expose the
-reviewer as `code-review` even when user-facing aliases exist; use `/review`
-when the active session confirms that equivalence. If no confirmed command
-is available or no review facility exists, report the reviewer's unavailability
-as the remaining gate. Leave either fallback with the review gate outstanding
-and do not claim completion.
+- Correct the active outcome's disposable technical approach and any recorded
+  technical assumption.
+- Persist actual downstream effects in affected unfinished task boundaries,
+  order, blockers, task-specific constraints, verification, or observably
+  equivalent task-acceptance wording. Record concise revision evidence and
+  preserve unaffected task contracts.
 
-After all acceptance criteria and the final review gate pass, when the
-repository exposes the implemented result through a user-reviewable local
-server, run the actual product through its repository-supported development or
-preview path. Verify the changed routes and essential states in that running
-instance, then share an address the user can open and name what to review.
+When tasks exist, record current status and whichever verification, blocker, or
+revision evidence applies. Where commits are expected, commit code, tests, and
+the task update as one meaningful checkpoint. Run only task-declared
+intermediate review checkpoints; reconciliation adds no review checkpoint.
 
-Reuse a healthy server owned by the current checkout or start an isolated
-instance while preserving other checkouts and unrelated processes. Keep the
-server running until the user finishes review or a later authorized delivery
-step cleans up the current checkout. When the active environment cannot provide
-a reachable address, report the exact launch command and blocker as the
-remaining handoff limitation. Access to the running result does not imply human
-approval.
+## Preserve authority and durable discoveries
+
+Implementation authority covers the technical path and unfinished task map only
+while the approved product contract stays intact. When a discovery would change
+an approved outcome, scope, observable spec acceptance criterion, off-limits
+area, or other product constraint, preserve the current artifacts and evidence,
+leave the affected outcome and its dependents blocked, and stop before absorbing
+the change. Present the exact decision for the user to settle through shaping.
+
+If later code, integration, verification, or review invalidates a completed
+task, preserve its prior evidence and return it to `in-progress` or `blocked`.
+Keep dependent and final work blocked until that task's acceptance criteria and
+focused verification pass again. `completed` means current proof, not historical
+success.
+
+Resolve in-scope discrepancies and affected tasks in the current work. Route a
+workaround whose root cause remains open, or an evidenced out-of-scope defect,
+through `project-knowledge` at discovery time. If unavailable, write the
+symptom, observed evidence, suspected cause, what was tried, and proposed next
+step to `docs/follow-ups/<slug>.md`.
+
+## Pass the final gates
+
+After every outcome passes reconciliation, run the complete required
+verification and the current harness's automated code review on the entire diff
+against the selected spec and acceptance criteria. Prefer a model-invocable
+reviewer. A rejection recorded only in an earlier session is not current
+evidence; retry that reviewer once in the active session.
+
+Completion requires every acceptance criterion, reconciliation gate, complete
+verification, and final review to pass. A current user-only result, rejection,
+error, or timeout leaves the review gate open. Hand off an exact user command
+only when the active harness confirms it for that reviewer. In Claude Code,
+`/review` may alias `code-review`; use only the command the active session
+confirms. When the reviewer exists but no user command is confirmed, report that
+handoff as unavailable. When no review facility exists, report the missing
+facility. Both states remain incomplete.
+
+## Hand off the runnable product
+
+After the final gates pass, when the repository exposes the actual result
+through a user-reviewable local server, run it through the supported development
+or preview path. Verify the changed routes and essential states, share a
+reachable address, and name what to review.
+
+Reuse a healthy server owned by the current checkout or start an isolated one
+while preserving other checkouts and unrelated processes. Keep that server
+running until review finishes or authorized delivery cleanup stops it. If the
+environment cannot provide a reachable address, report the exact launch command
+and blocker without claiming a working URL. When the repository has no such
+server, hand off its verified result without inventing one. Access to a running
+result is evidence delivery, not human approval.

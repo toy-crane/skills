@@ -27,7 +27,7 @@ The full-surface build: every screen a feature needs in one self-contained HTML 
 _Avoid_: Mockup, wireframe, demo
 
 **Spec**:
-The durable handoff document a shape-idea or build-prototype session writes as it ends: confirmed decisions, assumptions, off-limits areas, deferred points, and remaining risks, addressed to later implementation work. Decisions are the deliverable; visuals are disposable, except an approved prototype, preserved beside the spec as its visual half.
+The durable product contract a shape-idea or build-prototype session writes for later implementation: user-visible outcomes, approved scope, observable acceptance criteria, settled constraints and rationale, assumptions, off-limits areas and reasons, deferred points, and remaining risks. It records behavior rather than predicted implementation. Visuals are disposable except an approved prototype, preserved beside the spec as its visual half.
 _Avoid_: Alignment brief, summary
 
 **Spec folder**:
