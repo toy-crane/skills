@@ -4,8 +4,9 @@
 
 A composable, model-agnostic set of skills for product discovery, shaping,
 prototyping, task splitting, implementation, runtime verification, human
-review, project knowledge, test-first development, and safe Git delivery.
-Install selected skills or the complete plugin.
+review, project knowledge, verified follow-up resolution, test-first
+development, and safe Git delivery. Install selected skills or the complete
+plugin.
 
 ## Install
 
@@ -217,10 +218,11 @@ the merged worktree.
 
 ## Supporting workflows
 
-Six additional skills can run independently. They handle stack setup, Expo
-runtime verification, project knowledge, visual explanation, final human
-judgment, and periodic cleanup. `implement` also uses a matching runtime-
-verification skill when one is available for an affected product surface.
+Seven additional skills can run independently. They handle stack setup, Expo
+runtime verification, project knowledge, verified follow-up resolution, visual
+explanation, final human judgment, and periodic cleanup. `implement` also uses
+a matching runtime-verification skill when one is available for an affected
+product surface.
 
 - **[add-stack-context](./skills/workflow/add-stack-context/SKILL.md)**: Audit the
   technologies that define a project's stack and install each vendor's official
@@ -233,6 +235,10 @@ verification skill when one is available for an affected product surface.
   terms and settled decisions that future work should reuse whenever they are
   taking shape, including while a plan weighs alternatives. Does not run for
   lookup, routine implementation details, or execution of settled decisions.
+- **[resolve-follow-ups](./skills/workflow/resolve-follow-ups/SKILL.md)**: Sweep
+  evidence-backed `docs/follow-ups/` items in bounded batches, reproduce each
+  symptom before editing, and publish verified fixes as independent
+  worktree-isolated pull requests without automatic merge.
 - **[explain-visually](./skills/workflow/explain-visually/SKILL.md)**: Render explanations
   with the best available tool. Use one sentence instead when one sentence fully
   answers the question.

@@ -14,6 +14,10 @@
 - Every published skill is self-sufficient because skills may be installed one
   at a time. Restate a required constraint inline instead of assuming another
   skill's text is available.
+- `resolve-follow-ups` keeps intent, reproduction, and reporting guidance in
+  its standalone skill while a bundled dispatcher owns the low-freedom
+  operations whose races are costly: fetched ordering, attempt identity,
+  atomic ownership, worktree binding, terminal state, recovery, and cleanup.
 - An orchestration skill may use an available specialized skill whose trigger
   matches the current surface, while retaining the outcome itself when that
   specialist is absent. `implement` applies this to runtime verification rather
@@ -86,6 +90,8 @@
 
 - Instructions may constrain outcomes and safety without prescribing a fixed
   sequence.
+- Use a deterministic bundled script when concurrency or destructive lifecycle
+  operations require atomic ownership and exact target verification.
 - Prefer executable positive direction over lists of forbidden actions.
 - UI metadata must continue to match the skill after a substantial edit.
 - Eval outputs are disposable; stable prompts and assertions may remain so later
