@@ -7,6 +7,9 @@
   discipline noun.
 - Check candidate names against built-in commands in Claude Code and Codex;
   `/plan` is reserved by both.
+- `define-product` names the work of turning a user-chosen app direction into
+  permanent, current product context. It does not use the `one-pager` artifact
+  format or imply application scaffolding in its name.
 - `shape-idea` names the work of turning a chosen direction into bounded,
   implementation-ready decisions; the spec is its handoff, not its activity.
 - `project-knowledge` names the current terms and settled decisions for future
@@ -58,6 +61,12 @@ repository.
   users naturally ask each skill to do.
 - `write-spec` for shaping — it overstates document production and hides the
   investigation and decision work.
+- `create-one-pager` for app context — it names the output format rather than
+  the product-definition work.
+- `start-app` for app context — it implies scaffolding or implementation beyond
+  the context artifact.
+- `shape-app` for app context — it makes its app-level responsibility difficult
+  to distinguish from the work-unit responsibility of `shape-idea`.
 - `domain-modeling` for project knowledge — it names a DDD tradition rather
   than the files the skill maintains.
 - `knowledge-stewardship` — it describes the AI's caretaker role accurately but

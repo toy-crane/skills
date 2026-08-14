@@ -10,12 +10,11 @@
   alternatives reflect a real trade-off.
 - `docs/decisions/README.md` indexes subjects without duplicating their
   decisions. Consumers read the index and only the relevant subject files.
-- A standalone workflow skill creates and maintains one permanent, current
-  app-level context document for a from-scratch application. The document
-  persists across work units so later shaping does not restart from a blank
-  product premise. `shape-idea` reads it when present but neither requires nor
-  creates it. Its product-only content contract lives in
-  [app-context](app-context.md).
+- `define-product` creates and maintains one permanent, current app-level
+  context document for a from-scratch application. The document persists across
+  work units so later shaping does not restart from a blank product premise.
+  `shape-idea` reads it when present but neither requires nor creates it. Its
+  product-only content contract lives in [app-context](app-context.md).
 - `docs/specs/<slug>/` carries one unit of work: `spec.md` as the anchor,
   `prototype.html` when a surface was approved, and `tasks/` when work was split.
   Preserve any qualifying project decision, then delete the folder when the
