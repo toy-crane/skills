@@ -2,6 +2,8 @@
 
 ## Decisions
 
+- `PRODUCT.md` at the repository root is the single canonical app-level
+  context file.
 - The app-level context is a concise, product-only account of the application.
   It carries:
   - a one-sentence definition of the app
@@ -35,6 +37,10 @@ surface makes it grow, stale, and compete with the specific context later work
 needs. A product-only boundary gives shaping a stable premise without replacing
 specs, project decisions, repository instructions, or stack documentation.
 
+A root `PRODUCT.md` gives human collaborators and different agent harnesses one
+predictable, vendor-neutral address without conflating product meaning with the
+repository usage guide or a work-unit spec.
+
 ## Reconsider when
 
 - Repeated shaping sessions cannot recover an app-wide product constraint from
@@ -49,6 +55,8 @@ specs, project decisions, repository instructions, or stack documentation.
   separate owners in the workflow.
 - A marketing one-pager — persuasion, company background, and sales calls to
   action do not help an AI preserve the product premise for later work.
+- A vendor-specific context path or `docs/product.md` — the canonical product
+  premise becomes less predictable to find across repositories and harnesses.
 
 ## Evidence worth preserving
 
