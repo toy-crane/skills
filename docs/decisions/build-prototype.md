@@ -50,8 +50,17 @@
   user's choice back into the single canonical prototype.
 - Keep real APIs, production routing, latency, frameworks, and network
   dependencies out of the prototype.
-- At approval, reuse an identified work-unit folder or derive a kebab-case slug
-  from the product or feature name. Preserve the approved file as
+- Treat screen approval as evidence for the visible surface, not as authority to
+  invent consequential behavior outside it. Keep reversible defaults as
+  assumptions; settle or explicitly defer consequential open behavior and
+  record the impact as a remaining risk.
+- After surface approval and every implementation-relevant decision is settled
+  or explicitly deferred, reuse an identified work-unit folder or derive a
+  kebab-case slug from the product or feature name. Create or update the same
+  stable product contract as shaping, preserving user-visible outcomes, approved
+  scope, observable acceptance criteria, settled constraints and rationale,
+  assumptions, off-limits areas and reasons, deferrals, and risks without
+  predicting implementation. Preserve the approved file as
   `docs/specs/<slug>/prototype.html`, linked from the spec. It is a visual
   reference, never production code.
 - Record surface decisions in the work-unit spec. Update a project decision

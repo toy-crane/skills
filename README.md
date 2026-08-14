@@ -56,12 +56,23 @@ flowchart LR
     SI --> BP["build-prototype<br/>(judge it by using it)"]
     SI --> SPEC[/spec folder/]
     BP --> SPEC
-    SPEC --> ST["split-into-tasks<br/>(multiple deliverables)"]
+    SPEC --> ST["split-into-tasks<br/>(shallow outcome map)"]
     SPEC --> IM["implement<br/>(spec folder)"]
     ST --> IM
-    IM --> DONE["verified, reviewed,<br/>and runnable when available"]
+    IM --> ONE["build one outcome"]
+    ONE --> CHECK["check real behavior"]
+    CHECK --> MATCH{"still matches the spec<br/>and remaining tasks?"}
+    MATCH -- "technical facts changed" --> UPDATE["update active tasks"]
+    UPDATE --> ONE
+    MATCH -- "product promise changed" --> SI
+    MATCH -- "yes" --> MORE{"more outcomes?"}
+    MORE -- "yes" --> ONE
+    MORE -- "no" --> FINAL["full checks + code review"]
+    FINAL -- "regression" --> ONE
+    FINAL --> DONE["verified, reviewed,<br/>and runnable when available"]
     IM -. "uses at pre-agreed public seams" .-> TDD[tdd]
     IM -. "uses for affected surfaces" .-> RV["matching runtime-verification skill"]
+    IM -. "open workaround or<br/>out-of-scope defect" .-> FU["follow-up"]
 ```
 
 Invoke `discover-opportunity` when no problem or direction is known. It runs only
@@ -69,24 +80,44 @@ on `/discover-opportunity` in Claude Code or `$discover-opportunity` in Codex.
 Start with `shape-idea` when the problem and a broad direction are already known.
 The discovery handoff remains in the conversation rather than a separate file.
 
-`shape-idea` records implementation-ready decisions in
-`docs/specs/<slug>/spec.md`. `build-prototype` can start from the current
-conversation alone; when a whole interface is approved, it creates or updates
-the spec and preserves `prototype.html` beside it. Use `split-into-tasks` only
+`shape-idea` records one stable product contract in
+`docs/specs/<slug>/spec.md`: user-visible outcomes, scope, observable acceptance
+criteria, settled constraints and rationale, assumptions, off-limits areas and
+reasons, deferrals, and risks. `build-prototype` can start from the current
+conversation alone; when a whole interface is approved and consequential
+non-visual behavior is settled or explicitly deferred, it creates or updates
+that same contract and preserves `prototype.html` beside it. Use
+`split-into-tasks` only
 when the spec contains outcomes that should be delivered separately. It also
-marks the few intermediate reviews justified by material or downstream risk.
-Then pass the spec folder to `implement`. It runs approved tasks sequentially
-when they exist and otherwise implements `spec.md` directly. After complete
-verification, the current harness's automated code-review process checks the
-integrated result against the selected spec and acceptance criteria. When the
-repository exposes the result through a user-reviewable local server,
-`implement` verifies the changed surface and shares an address while leaving
-that server available until the user finishes review or later delivery cleanup.
-Implementation planning is just in time, and `implement` uses `tdd` where
-behavior can be verified through pre-agreed public seams. For an affected
-product surface, it also uses an available matching runtime-verification skill,
-or verifies the changed behavior through the repository's supported runtime
-when none is available.
+creates the complete shallow outcome map without predicting files, functions,
+code structure, or a step-by-step implementation sequence. It marks only the
+few intermediate reviews justified by material or downstream risk.
+
+Then pass the spec folder to `implement`. Before each outcome, it reloads the
+current spec, active unfinished tasks, and any completed or superseded task
+implicated by current evidence, plus code, Git state, and verification evidence,
+then plans only that outcome in detail. After focused verification, it checks
+the observed result against the product contract and every active unfinished
+task. It may update technical assumptions and affected active tasks when the
+approved product behavior stays the same. If an approved outcome, observable
+acceptance criterion, scope, or other product constraint must change, it stops
+and returns that exact decision to shaping. A task marked `completed` is
+reopened if later evidence shows its criteria no longer pass. When an approved
+breakdown replaces historically completed work, its still-required obligations
+move to the replacement; the old task remains only as inactive `superseded`
+evidence and cannot block or re-enter the delivery frontier.
+
+After every outcome passes that check, the current harness's automated
+code-review process checks the integrated result against the selected spec and
+acceptance criteria. When the repository exposes the result through a
+user-reviewable local server, `implement` verifies the changed surface and
+shares an address while leaving that server available until the user finishes
+review or later delivery cleanup. `implement` uses `tdd` where behavior can be
+verified through pre-agreed public seams. For an affected product surface, it
+also uses an available matching runtime-verification skill, or verifies the
+changed behavior through the repository's supported runtime when none is
+available. Current-scope gaps stay in implementation. A workaround with an open
+root cause or an evidenced out-of-scope defect becomes a durable follow-up.
 
 Pass the folder itself, not an individual spec or task file.
 
@@ -112,7 +143,8 @@ docs/specs/checkout/
 ```
 
 Invoke the same folder again after an interruption. `implement` reconstructs
-progress from the folder, Git, the current diff, and verification results.
+progress from the folder, Git, the current diff, and verification results; a
+new session or a closing-message handoff is not required for correctness.
 
 - **[discover-opportunity](./skills/workflow/discover-opportunity/SKILL.md)**: Find
   side-project directions from agreed personal traces and relevant current
@@ -120,23 +152,25 @@ progress from the folder, Git, the current diff, and verification results.
   `shape-idea` without creating a document.
 - **[shape-idea](./skills/workflow/shape-idea/SKILL.md)**: Clarify a chosen problem and
   direction through correctable drafts, project evidence, and rendered UI
-  variants. Maintains project terms, records only settled decisions that future
-  work should reuse, then writes an implementation-ready spec.
+  variants. Maintain project terms and write the stable product contract that
+  later task splitting and implementation must preserve.
 - **[build-prototype](./skills/workflow/build-prototype/SKILL.md)**: Build every screen in
   one dummy-data HTML file using the project's design system, or the shell's
   minimal style when none exists. Review the rendered screens and preserve the
-  approved prototype beside the spec.
+  approved prototype beside the same product contract used by shaping.
 - **[split-into-tasks](./skills/workflow/split-into-tasks/SKILL.md)**: Split an existing
-  spec into the fewest approved, independently deliverable vertical tasks with
-  explicit blockers, acceptance criteria, focused verification, minimal state,
-  and only risk-justified intermediate review checkpoints.
+  spec into the complete shallow map of the fewest approved, independently
+  deliverable vertical tasks, without predicting code-level implementation.
+  Include explicit blockers, acceptance criteria, focused verification, minimal
+  state, and only risk-justified intermediate review checkpoints.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[implement](./skills/workflow/implement/SKILL.md)**: Implement an approved spec
-  folder, using its tasks sequentially when present and its spec directly when
-  absent, using `tdd` at pre-agreed public seams and matching runtime-verification
-  skills for affected product surfaces, then finish with full verification, the
-  current harness's automated code-review process, and a verified runnable
-  product address when the repository provides one.
+  folder one outcome at a time. Reload repository evidence before each outcome,
+  reconcile verified behavior with the product contract and active unfinished
+  tasks, ignore superseded history unless current evidence implicates it, reopen
+  invalidated work, and return to shaping when a product decision must change.
+  Then finish with full verification, automated code review, and a verified
+  runnable product address when the repository provides one.
 - **[tdd](./skills/workflow/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from
