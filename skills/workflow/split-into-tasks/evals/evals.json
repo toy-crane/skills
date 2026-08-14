@@ -127,6 +127,19 @@
         "It does not invent backfill, retry limits, retention exceptions, or recovery behavior that the user did not settle.",
         "It ends after updating the spec and task handoff without beginning implementation."
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "/split-into-tasks docs/specs/commerce/spec.md의 주문, 결제, 환불 결과를 전부 task로 나누고 각 task에서 수정할 파일, 만들 함수, 내부 코드 구조와 구현 순서까지 자세히 적어줘.",
+      "expected_output": "The response proposes the complete shallow task set for all independently deliverable spec outcomes, but declines to predict files, functions, code structure, or a step-by-step implementation sequence inside each outcome. It keeps those details for just-in-time implementation and waits for approval before writing task files.",
+      "files": [],
+      "expectations": [
+        "It covers every independently deliverable outcome in the spec rather than planning only the first task.",
+        "It uses the fewest vertical outcome tasks with observable acceptance and focused verification.",
+        "It records genuine blockers and task-specific constraints where they are known.",
+        "It omits predicted files, functions, code structure, and step-by-step internal implementation instructions.",
+        "It explains that the active outcome's technical approach is derived during implementation and waits for approval before writing files."
+      ]
     }
   ]
 }

@@ -205,6 +205,84 @@
         "It leaves runtime verification incomplete when the device-side proof cannot run.",
         "It does not treat passing type checks or tests as a substitute for runtime behavior."
       ]
+    },
+    {
+      "id": 18,
+      "prompt": "/implement docs/specs/export/의 Task 01을 구현 중이야. 런타임 확인 결과 계획했던 streaming helper는 브라우저에서 동작할 수 없지만, 저장소가 이미 지원하는 Blob download는 spec의 사용자 결과와 acceptance criteria를 그대로 만족해. 이후 task들은 이 helper에 의존하지 않아. 계속 구현해줘.",
+      "expected_output": "The response changes the active outcome's just-in-time technical approach to the verified Blob path, proves the same observable behavior, preserves the approved product contract, and continues without seeking approval or creating another durable plan.",
+      "files": [],
+      "expectations": [
+        "It treats the runtime result as authority to revise the active technical approach without asking the user to approve an implementation detail.",
+        "It preserves the approved outcome and observable acceptance criteria while verifying the Blob-based result.",
+        "It does not rewrite unaffected pending tasks merely to perform reconciliation.",
+        "It records concise evidence for the technical revision and continues through the normal outcome gate.",
+        "It does not create a separate roadmap, execution ledger, durable implementation plan, or run-state file."
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "/implement docs/specs/invitations/를 구현 중이야. 승인된 spec은 초대 링크가 만료되지 않는다고 명시하지만, 현재 저장소가 지원하는 모든 provider 경로는 7일 뒤 만료된다는 사실을 확인했어. 뒤 task들도 이 계약에 의존해. 알아서 가장 현실적인 방식으로 계속해줘.",
+      "expected_output": "The response stops before weakening the never-expire product contract, preserves current artifacts, presents the provider evidence and the exact product decision that shaping must settle, and does not continue dependent work.",
+      "files": [],
+      "expectations": [
+        "It recognizes that changing never-expire behavior to seven days changes the approved product contract rather than only a technical assumption.",
+        "It stops before weakening the spec or its observable acceptance criteria.",
+        "It presents the verified provider constraint and asks for one concrete product decision through shaping.",
+        "It preserves current code and repository evidence while the decision is unresolved.",
+        "It does not continue dependent tasks or hide the conflict as a follow-up."
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "/implement docs/specs/reminders/의 Task 01은 검증까지 끝났어. 실제 구현은 기존 ReminderRepository를 사용했고, pending인 Task 02와 03의 constraints, blockers, verification은 존재하지 않는 NotificationStore를 전제로 써 있어. 사용자 결과는 그대로야. 다음 task를 진행해줘.",
+      "expected_output": "Before starting the next outcome, the response rereads every unfinished task, revises only the affected pending contracts to match verified repository evidence, records why, and proceeds without changing the product contract or asking for another approval.",
+      "files": [],
+      "expectations": [
+        "It reconciles the verified Task 01 result against every unfinished task before beginning Task 02.",
+        "It revises affected pending boundaries, order, blockers, task-specific constraints, verification, or equivalent task-acceptance wording that relied on NotificationStore.",
+        "It leaves unaffected task content unchanged and preserves Task 01's completion evidence.",
+        "It records concise evidence explaining the revision.",
+        "It continues without requesting approval because the approved user outcomes and product constraints are preserved."
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "/implement docs/specs/sharing/를 계속해줘. Task 01은 completed이고 당시 검증 증거도 남아 있어. 그런데 Task 02 통합 뒤 새 런타임 확인에서 Task 01의 acceptance criterion이 깨졌고, Task 03은 Task 01에 의존해.",
+      "expected_output": "The response preserves Task 01 and its prior evidence, returns it to in-progress or blocked, repairs and reverifies it before dependent or final work, and does not treat historical completion as current proof.",
+      "files": [],
+      "expectations": [
+        "It treats the fresh regression as invalidating Task 01's current completed status.",
+        "It preserves the Task 01 file and its prior verification evidence while returning its status to in-progress or blocked.",
+        "It repairs and reverifies Task 01 before starting Task 03 or passing the final gate.",
+        "It does not erase Git history or silently leave Task 01 completed.",
+        "It keeps downstream and final completion blocked until the affected criterion passes again."
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "/implement docs/specs/billing/을 중단된 세션에서 재개해줘. Task 01은 completed, Task 02는 in-progress이고 worktree는 clean이며 최신 commit은 이 작업 소유야. Task 02에 기록된 verification은 그 commit보다 오래됐고 이전 대화 요약은 현재 task 파일과 일부 다르게 말해.",
+      "expected_output": "The response reconstructs progress from the current spec folder, task state, code, Git, and fresh verification; preserves Task 01; reloads the unfinished map; and resumes Task 02 just in time without trusting the stale conversation or creating a session handoff artifact.",
+      "files": [],
+      "expectations": [
+        "It treats current repository evidence rather than the conflicting conversation summary as authoritative.",
+        "It preserves Task 01 and does not restart completed work.",
+        "It fresh-verifies the task-owned commit before relying on the older Task 02 verification record.",
+        "It rereads every unfinished task and derives only Task 02's current implementation approach just in time.",
+        "It does not create a handoff, roadmap, execution ledger, durable plan, or run-state file merely because the session was interrupted."
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "/implement docs/specs/profile/의 Task 01 focused verification이 통과했어. 현재 spec, 코드, Git 상태와 모든 unfinished task를 다시 확인했지만 제품 계약이나 남은 작업에 영향을 주는 새 사실은 없어. 다음 task로 진행해줘.",
+      "expected_output": "The response records the passing evidence, completes Task 01, leaves the product contract and pending task files unchanged, and reloads the current handoff before proceeding to Task 02 without manufacturing reconciliation churn.",
+      "files": [],
+      "expectations": [
+        "It performs the reconciliation gate even though no revisions are needed.",
+        "It records the focused verification evidence and marks Task 01 completed.",
+        "It leaves spec.md and unaffected pending task contracts unchanged.",
+        "It creates no reconciliation document, pseudo-plan, or unnecessary task rewrite.",
+        "It reloads current repository state before deriving Task 02's just-in-time approach."
+      ]
     }
   ]
 }
