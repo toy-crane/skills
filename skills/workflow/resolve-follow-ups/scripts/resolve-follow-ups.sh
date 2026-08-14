@@ -11,10 +11,12 @@ usage() {
 Usage:
   resolve-follow-ups.sh list --repo PATH [--limit COUNT]
   resolve-follow-ups.sh identity --repo PATH --follow-up PATH [--remote NAME]
+  resolve-follow-ups.sh claim --repo PATH --follow-up PATH --base-sha SHA
+  resolve-follow-ups.sh bind --repo PATH --attempt-key KEY --owner TOKEN --worktree PATH --branch NAME
   resolve-follow-ups.sh prepare --repo PATH --follow-up PATH --worktree PATH --branch NAME [--remote NAME]
-  resolve-follow-ups.sh mark --repo PATH --follow-up PATH --base-sha SHA --outcome OUTCOME [--detail TEXT]
+  resolve-follow-ups.sh mark --repo PATH --follow-up PATH --base-sha SHA --owner TOKEN --outcome OUTCOME [--detail TEXT]
   resolve-follow-ups.sh clear --repo PATH --follow-up PATH --base-sha SHA
-  resolve-follow-ups.sh cleanup --repo PATH --worktree PATH [--base-sha SHA] [--remote NAME]
+  resolve-follow-ups.sh cleanup --repo PATH --worktree PATH --attempt-key KEY --owner TOKEN [--remote NAME]
 EOF
   exit 64
 }
@@ -35,8 +37,10 @@ validate_follow_up() {
 
 repo_root_for() {
   local repo=$1
-  git -C "$repo" rev-parse --show-toplevel 2>/dev/null \
+  local root
+  root=$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null) \
     || die "not a Git repository: $repo"
+  (CDPATH= cd -- "$root" && pwd -P)
 }
 
 relative_follow_up_path() {
@@ -54,7 +58,10 @@ relative_follow_up_path() {
   [[ "$parent" == "$repo_root/docs/follow-ups" ]] \
     || die 'follow-up must be a Markdown file directly under docs/follow-ups/'
   [[ "$candidate" == *.md ]] || die 'follow-up must use the .md extension'
-  printf 'docs/follow-ups/%s\n' "$(basename -- "$candidate")"
+  local relative="docs/follow-ups/$(basename -- "$candidate")"
+  [[ "$relative" != *$'\t'* && "$relative" != *$'\n'* ]] \
+    || die 'follow-up path cannot contain a tab or newline'
+  printf '%s\n' "$relative"
 }
 
 remote_default_branch() {
@@ -74,7 +81,7 @@ git_common_dir() {
   local common
   common=$(git -C "$repo_root" rev-parse --git-common-dir)
   case "$common" in
-    /*) printf '%s\n' "$common" ;;
+    /*) (CDPATH= cd -- "$common" && pwd -P) ;;
     *) (CDPATH= cd -- "$repo_root/$common" && pwd -P) ;;
   esac
 }
@@ -89,6 +96,93 @@ attempt_key_at_base() {
   blob_sha=$(git -C "$repo_root" rev-parse "$base_sha:$relative")
   printf '%s\n%s\n%s\n' "$relative" "$base_sha" "$blob_sha" \
     | git -C "$repo_root" hash-object --stdin
+}
+
+validate_attempt_key() {
+  local attempt_key=$1
+  [[ "$attempt_key" =~ ^[0-9a-f]{40,64}$ ]] \
+    || die 'attempt key must be the full hexadecimal key returned by claim or prepare'
+}
+
+validate_owner() {
+  local owner=$1
+  [[ "$owner" =~ ^[A-Za-z0-9._-]+$ ]] \
+    || die 'owner must be the token returned by claim or prepare'
+}
+
+attempts_dir_for() {
+  local repo_root=$1
+  printf '%s/resolve-follow-ups/attempts\n' "$(git_common_dir "$repo_root")"
+}
+
+claim_file_for() {
+  local repo_root=$1
+  local attempt_key=$2
+  validate_attempt_key "$attempt_key"
+  printf '%s/%s.claim\n' "$(attempts_dir_for "$repo_root")" "$attempt_key"
+}
+
+state_dir_for() {
+  local repo_root=$1
+  local attempt_key=$2
+  validate_attempt_key "$attempt_key"
+  printf '%s/%s\n' "$(attempts_dir_for "$repo_root")" "$attempt_key"
+}
+
+claim_field() {
+  local claim_file=$1
+  local line=$2
+  sed -n "${line}p" "$claim_file"
+}
+
+assert_claim_identity() {
+  local claim_file=$1
+  local relative=$2
+  local base_sha=$3
+  [[ -f "$claim_file" ]] || die "attempt identity is not claimed: ${claim_file##*/}"
+  [[ "$(claim_field "$claim_file" 2)" == "$base_sha" ]] \
+    || die 'attempt claim base does not match the requested identity'
+  [[ "$(claim_field "$claim_file" 3)" == "$relative" ]] \
+    || die 'attempt claim follow-up does not match the requested identity'
+}
+
+assert_claim_owner() {
+  local claim_file=$1
+  local owner=$2
+  validate_owner "$owner"
+  [[ -f "$claim_file" ]] || die "attempt identity is not claimed: ${claim_file##*/}"
+  [[ "$(claim_field "$claim_file" 1)" == "$owner" ]] \
+    || die 'attempt claim belongs to another worker'
+}
+
+print_attempt_state() {
+  local repo_root=$1
+  local relative=$2
+  local base_sha=$3
+  local attempt_key=$4
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  assert_claim_identity "$claim_file" "$relative" "$base_sha"
+
+  local state_dir
+  state_dir=$(state_dir_for "$repo_root" "$attempt_key")
+  local outcome_file="$state_dir/outcome"
+  if [[ -f "$outcome_file" ]]; then
+    local outcome
+    local detail
+    outcome=$(sed -n '1p' "$outcome_file")
+    detail=$(sed -n '2p' "$outcome_file")
+    printf 'skipped-unchanged\t%s\t%s\t%s\t%s' \
+      "$relative" "$base_sha" "$attempt_key" "$outcome"
+    if [[ -n "$detail" ]]; then
+      printf '\t%s' "$detail"
+    fi
+    printf '\n'
+    return 0
+  fi
+
+  printf 'skipped-unchanged\t%s\t%s\t%s\tclaimed\t%s\n' \
+    "$relative" "$base_sha" "$attempt_key" "$(claim_field "$claim_file" 1)"
 }
 
 resolve_attempt() {
@@ -118,23 +212,57 @@ resolve_attempt() {
 
   local attempt_key
   attempt_key=$(attempt_key_at_base "$repo_root" "$relative" "$base_sha")
-  local common_dir
-  common_dir=$(git_common_dir "$repo_root")
-  local attempt_file="$common_dir/resolve-follow-ups/attempts/$attempt_key"
-  if [[ -f "$attempt_file" ]]; then
-    local prior_outcome
-    local prior_detail
-    prior_outcome=$(sed -n '1p' "$attempt_file")
-    prior_detail=$(sed -n '2p' "$attempt_file")
-    printf 'skipped-unchanged\t%s\t%s\t%s\t%s' \
-      "$relative" "$base_sha" "$attempt_key" "$prior_outcome"
-    if [[ -n "$prior_detail" ]]; then
-      printf '\t%s' "$prior_detail"
-    fi
-    printf '\n'
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  if [[ -f "$claim_file" ]]; then
+    print_attempt_state "$repo_root" "$relative" "$base_sha" "$attempt_key"
     return 0
   fi
   printf 'eligible\t%s\t%s\t%s\n' "$relative" "$base_sha" "$attempt_key"
+}
+
+create_claim() {
+  local repo_root=$1
+  local relative=$2
+  local base_sha=$3
+  local attempt_key=$4
+  local attempts_dir
+  attempts_dir=$(attempts_dir_for "$repo_root")
+  mkdir -p "$attempts_dir"
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+
+  local temp_file
+  temp_file=$(mktemp "$attempts_dir/.claim.XXXXXX")
+  local owner=${temp_file##*/}
+  owner=${owner#.claim.}
+  validate_owner "$owner"
+  printf '%s\n%s\n%s\n' "$owner" "$base_sha" "$relative" >"$temp_file"
+
+  if ln "$temp_file" "$claim_file" 2>/dev/null; then
+    rm "$temp_file"
+    mkdir -p "$(state_dir_for "$repo_root" "$attempt_key")"
+    printf 'claimed\t%s\t%s\n' "$attempt_key" "$owner"
+    return 0
+  fi
+
+  rm "$temp_file"
+  print_attempt_state "$repo_root" "$relative" "$base_sha" "$attempt_key"
+}
+
+release_claim() {
+  local repo_root=$1
+  local attempt_key=$2
+  local owner=$3
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  assert_claim_owner "$claim_file" "$owner"
+  local state_dir
+  state_dir=$(state_dir_for "$repo_root" "$attempt_key")
+  [[ ! -e "$state_dir/binding" && ! -e "$state_dir/outcome" ]] \
+    || die 'cannot release a claim after binding or terminal outcome'
+  rmdir "$state_dir" 2>/dev/null || true
+  rm "$claim_file"
 }
 
 identity_attempt() {
@@ -153,15 +281,50 @@ identity_attempt() {
         esac
         shift 2
         ;;
-      *)
-        die "unknown identity option: $1"
-        ;;
+      *) die "unknown identity option: $1" ;;
     esac
   done
 
   [[ -n "$repo" ]] || die 'identity requires --repo'
   [[ -n "$follow_up" ]] || die 'identity requires --follow-up'
   resolve_attempt "$repo" "$follow_up" "$remote"
+}
+
+claim_attempt() {
+  local repo=''
+  local follow_up=''
+  local base_sha=''
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --repo|--follow-up|--base-sha)
+        require_value "$1" "${2-}"
+        case "$1" in
+          --repo) repo=$2 ;;
+          --follow-up) follow_up=$2 ;;
+          --base-sha) base_sha=$2 ;;
+        esac
+        shift 2
+        ;;
+      *) die "unknown claim option: $1" ;;
+    esac
+  done
+
+  [[ -n "$repo" ]] || die 'claim requires --repo'
+  [[ -n "$follow_up" ]] || die 'claim requires --follow-up'
+  [[ -n "$base_sha" ]] || die 'claim requires --base-sha'
+  local repo_root
+  repo_root=$(repo_root_for "$repo")
+  local relative
+  relative=$(relative_follow_up_path "$repo_root" "$follow_up")
+  local resolved_base
+  resolved_base=$(git -C "$repo_root" rev-parse "$base_sha^{commit}" 2>/dev/null) \
+    || die "base SHA is not a commit: $base_sha"
+  [[ "$resolved_base" == "$base_sha" ]] \
+    || die 'claim requires the full resolved base SHA returned by identity'
+  local attempt_key
+  attempt_key=$(attempt_key_at_base "$repo_root" "$relative" "$base_sha")
+  create_claim "$repo_root" "$relative" "$base_sha" "$attempt_key"
 }
 
 list_follow_ups() {
@@ -180,9 +343,7 @@ list_follow_ups() {
         limit=$2
         shift 2
         ;;
-      *)
-        die "unknown list option: $1"
-        ;;
+      *) die "unknown list option: $1" ;;
     esac
   done
 
@@ -225,6 +386,97 @@ list_follow_ups() {
   rm -rf "$temp_dir"
 }
 
+write_binding() {
+  local repo_root=$1
+  local attempt_key=$2
+  local owner=$3
+  local worker_root=$4
+  local branch=$5
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  assert_claim_owner "$claim_file" "$owner"
+  local state_dir
+  state_dir=$(state_dir_for "$repo_root" "$attempt_key")
+  mkdir -p "$state_dir"
+  local binding_file="$state_dir/binding"
+  local attempts_dir
+  attempts_dir=$(attempts_dir_for "$repo_root")
+  local temp_file
+  temp_file=$(mktemp "$attempts_dir/.binding.XXXXXX")
+  printf '%s\n%s\n' "$worker_root" "$branch" >"$temp_file"
+  if ln "$temp_file" "$binding_file" 2>/dev/null; then
+    rm "$temp_file"
+    return 0
+  fi
+  if cmp -s "$temp_file" "$binding_file"; then
+    rm "$temp_file"
+    return 0
+  fi
+  rm "$temp_file"
+  die 'attempt is already bound to a different worker'
+}
+
+bind_worker() {
+  local repo=''
+  local attempt_key=''
+  local owner=''
+  local worktree=''
+  local branch=''
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --repo|--attempt-key|--owner|--worktree|--branch)
+        require_value "$1" "${2-}"
+        case "$1" in
+          --repo) repo=$2 ;;
+          --attempt-key) attempt_key=$2 ;;
+          --owner) owner=$2 ;;
+          --worktree) worktree=$2 ;;
+          --branch) branch=$2 ;;
+        esac
+        shift 2
+        ;;
+      *) die "unknown bind option: $1" ;;
+    esac
+  done
+
+  [[ -n "$repo" ]] || die 'bind requires --repo'
+  [[ -n "$attempt_key" ]] || die 'bind requires --attempt-key'
+  [[ -n "$owner" ]] || die 'bind requires --owner'
+  [[ -n "$worktree" ]] || die 'bind requires --worktree'
+  [[ -n "$branch" ]] || die 'bind requires --branch'
+  validate_attempt_key "$attempt_key"
+  validate_owner "$owner"
+  git check-ref-format --branch "$branch" >/dev/null 2>&1 \
+    || die "invalid branch name: $branch"
+
+  local repo_root
+  repo_root=$(repo_root_for "$repo")
+  local worker_root
+  worker_root=$(repo_root_for "$worktree")
+  [[ "$worker_root" != "$repo_root" ]] || die 'bind refuses the repository root'
+  [[ "$(git_common_dir "$worker_root")" == "$(git_common_dir "$repo_root")" ]] \
+    || die 'bind target does not belong to the repository'
+  local actual_branch
+  actual_branch=$(git -C "$worker_root" symbolic-ref --quiet --short HEAD) \
+    || die 'bind requires a named worker branch'
+  [[ "$actual_branch" == "$branch" ]] \
+    || die "worker branch $actual_branch does not match requested branch $branch"
+
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  assert_claim_owner "$claim_file" "$owner"
+  local base_sha
+  base_sha=$(claim_field "$claim_file" 2)
+  local actual_sha
+  actual_sha=$(git -C "$worker_root" rev-parse HEAD)
+  [[ "$actual_sha" == "$base_sha" ]] \
+    || die "worker HEAD $actual_sha does not match claimed base $base_sha"
+
+  write_binding "$repo_root" "$attempt_key" "$owner" "$worker_root" "$branch"
+  printf 'bound\t%s\t%s\t%s\n' "$attempt_key" "$worker_root" "$branch"
+}
+
 prepare_worker() {
   local repo=''
   local follow_up=''
@@ -245,9 +497,7 @@ prepare_worker() {
         esac
         shift 2
         ;;
-      *)
-        die "unknown prepare option: $1"
-        ;;
+      *) die "unknown prepare option: $1" ;;
     esac
   done
 
@@ -257,14 +507,20 @@ prepare_worker() {
   [[ -n "$branch" ]] || die 'prepare requires --branch'
   git check-ref-format --branch "$branch" >/dev/null 2>&1 \
     || die "invalid branch name: $branch"
+  [[ "$worktree" != *$'\t'* && "$worktree" != *$'\n'* ]] \
+    || die 'worktree path cannot contain a tab or newline'
   [[ ! -e "$worktree" ]] || die "worktree path already exists: $worktree"
-  [[ -d "$(dirname -- "$worktree")" ]] \
-    || die "worktree parent does not exist: $(dirname -- "$worktree")"
+  local requested_worktree=$worktree
+  local worktree_parent
+  worktree_parent=$(dirname -- "$worktree")
+  [[ -d "$worktree_parent" ]] || die "worktree parent does not exist: $worktree_parent"
+  worktree_parent=$(CDPATH= cd -- "$worktree_parent" && pwd -P)
+  worktree="$worktree_parent/$(basename -- "$worktree")"
 
   local identity
   identity=$(resolve_attempt "$repo" "$follow_up" "$remote")
-  local status relative base_sha attempt_key prior_outcome
-  IFS=$'\t' read -r status relative base_sha attempt_key prior_outcome <<<"$identity"
+  local status relative base_sha attempt_key state owner
+  IFS=$'\t' read -r status relative base_sha attempt_key state owner <<<"$identity"
   if [[ "$status" == 'skipped-unchanged' ]]; then
     printf '%s\n' "$identity"
     return 0
@@ -273,56 +529,70 @@ prepare_worker() {
 
   local repo_root
   repo_root=$(repo_root_for "$repo")
+  local claim
+  claim=$(create_claim "$repo_root" "$relative" "$base_sha" "$attempt_key")
+  local claim_status claim_key
+  IFS=$'\t' read -r claim_status claim_key owner <<<"$claim"
+  if [[ "$claim_status" == 'skipped-unchanged' ]]; then
+    printf '%s\n' "$claim"
+    return 0
+  fi
+  [[ "$claim_status" == 'claimed' && "$claim_key" == "$attempt_key" ]] \
+    || die 'failed to claim the resolved attempt identity'
 
-  git -C "$repo_root" show-ref --verify --quiet "refs/heads/$branch" \
-    && die "branch already exists: $branch"
+  if git -C "$repo_root" show-ref --verify --quiet "refs/heads/$branch"; then
+    release_claim "$repo_root" "$attempt_key" "$owner"
+    die "branch already exists: $branch"
+  fi
   if ! git -C "$repo_root" worktree add -q -b "$branch" "$worktree" "$base_sha"; then
-    git -C "$repo_root" worktree remove --force "$worktree" >/dev/null 2>&1 || true
     git -C "$repo_root" update-ref -d "refs/heads/$branch" "$base_sha" \
       >/dev/null 2>&1 || true
+    release_claim "$repo_root" "$attempt_key" "$owner"
     die "failed to create worker worktree: $worktree"
   fi
+
   local actual_sha
   actual_sha=$(git -C "$worktree" rev-parse HEAD)
   if [[ "$actual_sha" != "$base_sha" ]]; then
-    git -C "$repo_root" worktree remove --force "$worktree" >/dev/null 2>&1 || true
-    git -C "$repo_root" branch -D "$branch" >/dev/null 2>&1 || true
     die "prepared worktree HEAD $actual_sha does not match base $base_sha"
   fi
+  write_binding "$repo_root" "$attempt_key" "$owner" "$worktree" "$branch"
 
-  printf 'prepared\t%s\t%s\t%s\t%s\n' \
-    "$worktree" "$branch" "$base_sha" "$attempt_key"
+  printf 'prepared\t%s\t%s\t%s\t%s\t%s\n' \
+    "$requested_worktree" "$branch" "$base_sha" "$attempt_key" "$owner"
 }
 
 mark_attempt() {
   local repo=''
   local follow_up=''
   local base_sha=''
+  local owner=''
   local outcome=''
   local detail=''
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      --repo|--follow-up|--base-sha|--outcome|--detail)
+      --repo|--follow-up|--base-sha|--owner|--outcome|--detail)
         require_value "$1" "${2-}"
         case "$1" in
           --repo) repo=$2 ;;
           --follow-up) follow_up=$2 ;;
           --base-sha) base_sha=$2 ;;
+          --owner) owner=$2 ;;
           --outcome) outcome=$2 ;;
           --detail) detail=$2 ;;
         esac
         shift 2
         ;;
-      *)
-        die "unknown mark option: $1"
-        ;;
+      *) die "unknown mark option: $1" ;;
     esac
   done
 
   [[ -n "$repo" ]] || die 'mark requires --repo'
   [[ -n "$follow_up" ]] || die 'mark requires --follow-up'
   [[ -n "$base_sha" ]] || die 'mark requires --base-sha'
+  [[ -n "$owner" ]] || die 'mark requires --owner'
+  validate_owner "$owner"
   case "$outcome" in
     not-reproduced|needs-shaping|blocked) ;;
     pull-request)
@@ -341,16 +611,31 @@ mark_attempt() {
   resolved_base=$(git -C "$repo_root" rev-parse "$base_sha^{commit}" 2>/dev/null) \
     || die "base SHA is not a commit: $base_sha"
   [[ "$resolved_base" == "$base_sha" ]] \
-    || die 'mark requires the full resolved base SHA returned by prepare'
+    || die 'mark requires the full resolved base SHA returned by claim or prepare'
   local attempt_key
   attempt_key=$(attempt_key_at_base "$repo_root" "$relative" "$base_sha")
-  local common_dir
-  common_dir=$(git_common_dir "$repo_root")
-  local attempt_dir="$common_dir/resolve-follow-ups/attempts"
-  mkdir -p "$attempt_dir"
-  local temp_file="$attempt_dir/.${attempt_key}.$$"
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  assert_claim_identity "$claim_file" "$relative" "$base_sha"
+  assert_claim_owner "$claim_file" "$owner"
+
+  local state_dir
+  state_dir=$(state_dir_for "$repo_root" "$attempt_key")
+  mkdir -p "$state_dir"
+  local outcome_file="$state_dir/outcome"
+  local attempts_dir
+  attempts_dir=$(attempts_dir_for "$repo_root")
+  local temp_file
+  temp_file=$(mktemp "$attempts_dir/.outcome.XXXXXX")
   printf '%s\n%s\n' "$outcome" "$detail" >"$temp_file"
-  mv "$temp_file" "$attempt_dir/$attempt_key"
+  if ! ln "$temp_file" "$outcome_file" 2>/dev/null; then
+    if ! cmp -s "$temp_file" "$outcome_file"; then
+      rm "$temp_file"
+      die 'attempt already has a different terminal outcome'
+    fi
+  fi
+  rm "$temp_file"
+
   printf 'recorded\t%s\t%s' "$attempt_key" "$outcome"
   if [[ -n "$detail" ]]; then
     printf '\t%s' "$detail"
@@ -374,9 +659,7 @@ clear_attempt() {
         esac
         shift 2
         ;;
-      *)
-        die "unknown clear option: $1"
-        ;;
+      *) die "unknown clear option: $1" ;;
     esac
   done
 
@@ -395,41 +678,59 @@ clear_attempt() {
     || die 'clear requires the full resolved base SHA returned by identity or prepare'
   local attempt_key
   attempt_key=$(attempt_key_at_base "$repo_root" "$relative" "$base_sha")
-  local common_dir
-  common_dir=$(git_common_dir "$repo_root")
-  local attempt_file="$common_dir/resolve-follow-ups/attempts/$attempt_key"
-  [[ -f "$attempt_file" ]] || die "attempt identity is not recorded: $attempt_key"
-  rm "$attempt_file"
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  assert_claim_identity "$claim_file" "$relative" "$base_sha"
+  local state_dir
+  state_dir=$(state_dir_for "$repo_root" "$attempt_key")
+  [[ -f "$state_dir/outcome" ]] \
+    || die 'clear refuses an active claim without a terminal outcome'
+  if [[ -f "$state_dir/binding" ]]; then
+    local bound_worktree
+    bound_worktree=$(sed -n '1p' "$state_dir/binding")
+    [[ ! -e "$bound_worktree" && ! -L "$bound_worktree" ]] \
+      || die 'clear requires the bound worker worktree to be removed first'
+  fi
+
+  rm "$state_dir/outcome"
+  [[ ! -e "$state_dir/binding" ]] || rm "$state_dir/binding"
+  rmdir "$state_dir" 2>/dev/null || die 'attempt state contains unexpected files'
+  rm "$claim_file"
   printf 'cleared\t%s\n' "$attempt_key"
 }
 
 cleanup_worker() {
   local repo=''
   local worktree=''
+  local attempt_key=''
+  local owner=''
   local remote=origin
-  local base_sha=''
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      --repo|--worktree|--remote|--base-sha)
+      --repo|--worktree|--attempt-key|--owner|--remote)
         require_value "$1" "${2-}"
         case "$1" in
           --repo) repo=$2 ;;
           --worktree) worktree=$2 ;;
+          --attempt-key) attempt_key=$2 ;;
+          --owner) owner=$2 ;;
           --remote) remote=$2 ;;
-          --base-sha) base_sha=$2 ;;
         esac
         shift 2
         ;;
-      *)
-        die "unknown cleanup option: $1"
-        ;;
+      *) die "unknown cleanup option: $1" ;;
     esac
   done
 
   [[ -n "$repo" ]] || die 'cleanup requires --repo'
   [[ -n "$worktree" ]] || die 'cleanup requires --worktree'
+  [[ -n "$attempt_key" ]] || die 'cleanup requires --attempt-key'
+  [[ -n "$owner" ]] || die 'cleanup requires --owner'
+  validate_attempt_key "$attempt_key"
+  validate_owner "$owner"
   [[ -d "$worktree" ]] || die "worktree does not exist: $worktree"
+  local requested_worktree=$worktree
 
   local repo_root
   repo_root=$(repo_root_for "$repo")
@@ -439,24 +740,36 @@ cleanup_worker() {
     || die 'cleanup refuses to remove the repository root'
   [[ "$(git_common_dir "$worker_root")" == "$(git_common_dir "$repo_root")" ]] \
     || die 'cleanup target does not belong to the repository'
+
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  assert_claim_owner "$claim_file" "$owner"
+  local state_dir
+  state_dir=$(state_dir_for "$repo_root" "$attempt_key")
+  local binding_file="$state_dir/binding"
+  [[ -f "$binding_file" ]] || die 'attempt is not bound to a worker worktree'
+  local bound_worktree
+  local bound_branch
+  bound_worktree=$(sed -n '1p' "$binding_file")
+  bound_branch=$(sed -n '2p' "$binding_file")
+  [[ "$bound_worktree" == "$worker_root" ]] \
+    || die 'cleanup target is not the worktree owned by this attempt'
+
   [[ -z "$(git -C "$worker_root" status --porcelain)" ]] \
     || die 'cleanup requires a clean worker worktree'
-
   local branch
   branch=$(git -C "$worker_root" symbolic-ref --quiet --short HEAD) \
     || die 'cleanup requires a named worker branch'
+  [[ "$branch" == "$bound_branch" ]] \
+    || die 'cleanup worker branch does not match the attempt binding'
   local head
   head=$(git -C "$worker_root" rev-parse HEAD)
+  local base_sha
+  base_sha=$(claim_field "$claim_file" 2)
+
   local safe_no_change=false
-  if [[ -n "$base_sha" ]]; then
-    local resolved_base
-    resolved_base=$(git -C "$repo_root" rev-parse "$base_sha^{commit}" 2>/dev/null) \
-      || die "base SHA is not a commit: $base_sha"
-    [[ "$resolved_base" == "$base_sha" ]] \
-      || die 'cleanup requires the full resolved base SHA returned by identity or prepare'
-    if [[ "$head" == "$base_sha" ]]; then
-      safe_no_change=true
-    fi
+  if [[ "$head" == "$base_sha" ]]; then
+    safe_no_change=true
   fi
   local remote_head=''
   local safe_published=false
@@ -473,12 +786,12 @@ cleanup_worker() {
     if [[ -n "$remote_head" ]]; then
       die "published branch HEAD $remote_head does not match worker HEAD $head"
     fi
-    die "worker is neither unchanged at its verified base nor published to $remote: $branch"
+    die "worker is neither unchanged at its claimed base nor published to $remote: $branch"
   fi
 
   git -C "$repo_root" worktree remove "$worker_root"
   git -C "$repo_root" update-ref -d "refs/heads/$branch" "$head"
-  printf 'cleaned\t%s\t%s\t%s\n' "$worktree" "$branch" "$head"
+  printf 'cleaned\t%s\t%s\t%s\n' "$requested_worktree" "$branch" "$head"
 }
 
 main() {
@@ -487,27 +800,15 @@ main() {
   shift
 
   case "$command" in
-    list)
-      list_follow_ups "$@"
-      ;;
-    identity)
-      identity_attempt "$@"
-      ;;
-    prepare)
-      prepare_worker "$@"
-      ;;
-    mark)
-      mark_attempt "$@"
-      ;;
-    clear)
-      clear_attempt "$@"
-      ;;
-    cleanup)
-      cleanup_worker "$@"
-      ;;
-    *)
-      die "unknown command: $command"
-      ;;
+    list) list_follow_ups "$@" ;;
+    identity) identity_attempt "$@" ;;
+    claim) claim_attempt "$@" ;;
+    bind) bind_worker "$@" ;;
+    prepare) prepare_worker "$@" ;;
+    mark) mark_attempt "$@" ;;
+    clear) clear_attempt "$@" ;;
+    cleanup) cleanup_worker "$@" ;;
+    *) die "unknown command: $command" ;;
   esac
 }
 

@@ -47,7 +47,9 @@
       "files": [],
       "expectations": [
         "It resolves attempt identity before dispatch.",
+        "It atomically claims the attempt before dispatch and gives the winning owner token to the worker.",
         "It uses isolation: worktree subagents because the creation-time freshness guarantee is present.",
+        "It binds the native checkout to the exact attempt and owner before editing.",
         "It requires each worker to compare HEAD with the identity base SHA before editing.",
         "It does not launch nested Claude CLI workers solely for isolation.",
         "It preserves one follow-up per worker and pull request."
@@ -72,7 +74,7 @@
       "files": [],
       "expectations": [
         "It does not treat the scheduled run's one worktree as per-item isolation.",
-        "It prepares and verifies a separate worktree and branch for each follow-up.",
+        "It atomically claims, prepares, and verifies a separate owned worktree and branch for each follow-up.",
         "It starts each Codex worker with its own working-directory boundary.",
         "It produces independent pull-request outcomes and never auto-merges them."
       ]
