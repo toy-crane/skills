@@ -140,6 +140,18 @@
         "It omits predicted files, functions, code structure, and step-by-step internal implementation instructions.",
         "It explains that the active outcome's technical approach is derived during implementation and waits for approval before writing files."
       ]
+    },
+    {
+      "id": 12,
+      "prompt": "/split-into-tasks docs/specs/reading-list/spec.md에는 개인 사용자가 글을 저장하고, 제목을 수정하고, 읽음 표시하거나 삭제하고, 새로고침 뒤에도 목록을 유지하며 전체/읽지 않음/읽음 상태로 보는 하나의 읽기 목록 흐름이 확정돼 있어. 각 기능은 따로 배포해서 쓸 가치가 없고 함께 있어야 기본 흐름으로 사용할 수 있어. task로 나눠줘.",
+      "expected_output": "The response recognizes one coherent reading-list workflow whose capabilities are not independently useful deliverables, creates no task files, and keeps the approved spec as the sole implementation handoff.",
+      "files": [],
+      "expectations": [
+        "It treats the complete reading-list workflow as one coherent deliverable rather than splitting its individual capabilities or states.",
+        "It does not create tasks merely because the workflow contains several observable operations.",
+        "It creates no docs/specs/reading-list/tasks files.",
+        "It keeps the approved spec as the sole handoff for implementation."
+      ]
     }
   ]
 }
