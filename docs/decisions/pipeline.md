@@ -4,7 +4,10 @@
 
 - A standalone workflow skill owns creating and maintaining the permanent
   app-level context for a from-scratch application. It is the greenfield entry
-  point before work-unit shaping and does not produce a work-unit spec.
+  point before work-unit shaping and does not produce a work-unit spec. Its
+  input includes at least a rough app direction or problem the user already
+  wants to pursue; it converges that seed rather than discovering opportunities
+  from a blank page.
 - `discover-opportunity` is not part of the pipeline. The greenfield entry point
   leaves a durable current artifact instead of handing a chosen direction to
   shaping through conversation alone.
@@ -132,6 +135,9 @@
   owns work-unit shaping. Neither skill makes the other's artifact a required
   input, and the app-level context does not absorb work-unit scope or acceptance
   criteria.
+- A user with no app direction is outside the greenfield skill's input
+  contract. The pipeline does not mine personal traces or invent candidate
+  opportunities to manufacture that missing seed.
 - Tasks are vertical, independently deliverable and verifiable, and separated
   only at outcomes that can stand on their own. Work that becomes meaningful
   only when completed together remains one task. A task is not a fine-grained
@@ -269,6 +275,10 @@ state keep automation reviewable without turning follow-up files into a queue.
 - Keeping `discover-opportunity` as a separate conversational entry point — its
   handoff disappears with the session and does not provide the durable app
   premise the greenfield workflow needs.
+- Folding blank-page opportunity discovery into the app-context skill —
+  divergent search and convergence on a durable app premise require different
+  evidence and stopping conditions, while the supported workflow already starts
+  from a user-chosen direction.
 - Making `shape-idea` create or own app-level context — it couples a permanent
   app artifact to a work-unit shaping lifecycle and makes independent use
   ambiguous.
