@@ -866,6 +866,30 @@ test_cleanup_requires_exact_attempt_ownership() {
     || fail 'remote-base failure should not create a worktree'
   git -C "$repo" remote set-url origin "$remote"
 
+  local fetch_failure_bin="$sandbox/fetch-failure-bin"
+  local real_git
+  real_git=$(command -v git)
+  mkdir -p "$fetch_failure_bin"
+  cat >"$fetch_failure_bin/git" <<EOF
+#!/usr/bin/env bash
+for arg in "\$@"; do
+  if [[ "\$arg" == fetch ]]; then
+    printf 'injected fetch failure\n' >&2
+    exit 41
+  fi
+done
+exec "$real_git" "\$@"
+EOF
+  chmod +x "$fetch_failure_bin/git"
+  local fetch_failure_output
+  if fetch_failure_output=$(
+    PATH="$fetch_failure_bin:$PATH" "$DISPATCHER" list --repo "$repo" 2>&1
+  ); then
+    fail 'list should stop instead of using a stale tracking ref after fetch fails'
+  fi
+  [[ "$fetch_failure_output" == *'cannot fetch remote default branch: origin/main'* ]] \
+    || fail 'a remote fetch failure should be reported as an explicit fresh-base blocker'
+
   local blocked_parent="$sandbox/blocked-parent"
   mkdir -p "$blocked_parent"
   if "$DISPATCHER" prepare \

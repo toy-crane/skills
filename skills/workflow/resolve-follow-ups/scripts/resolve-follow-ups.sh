@@ -94,8 +94,10 @@ remote_base() {
   if [[ "$(git -C "$repo_root" rev-parse --is-shallow-repository)" == true ]]; then
     fetch_args+=(--unshallow)
   fi
-  git -C "$repo_root" fetch "${fetch_args[@]}" "$remote" \
-    "+refs/heads/$default_branch:refs/remotes/$remote/$default_branch" >/dev/null
+  if ! git -C "$repo_root" fetch "${fetch_args[@]}" "$remote" \
+    "+refs/heads/$default_branch:refs/remotes/$remote/$default_branch" >/dev/null; then
+    die "cannot fetch remote default branch: $remote/$default_branch"
+  fi
   local base_sha
   base_sha=$(git -C "$repo_root" rev-parse "refs/remotes/$remote/$default_branch^{commit}")
   printf '%s\t%s\n' "$default_branch" "$base_sha"
