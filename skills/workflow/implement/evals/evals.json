@@ -310,6 +310,19 @@
         "It presents one concrete product decision for shaping instead of silently choosing a shorter promise or inventing an unsupported path.",
         "It keeps dependent tasks and final completion blocked until the product contract is settled."
       ]
+    },
+    {
+      "id": 26,
+      "prompt": "/implement docs/specs/import/를 계속해줘. Task 01은 과거 완료와 회귀 증거를 보존한 채 status가 superseded이고 Task 04가 그 결과를 대체해. Task 02는 pending이며 blocker가 없어. 현재 frontier부터 진행해줘.",
+      "expected_output": "The response preserves Task 01 as inactive history, excludes it from the unfinished delivery map and reconciliation frontier, and proceeds with active Task 02 without repairing or completing the superseded outcome again.",
+      "files": [],
+      "expectations": [
+        "It preserves Task 01 and its historical evidence without changing its superseded status.",
+        "It excludes Task 01 from the current unfinished task map, blockers, and reconciliation targets.",
+        "It does not repair, re-verify, or mark Task 01 completed again.",
+        "It selects active unblocked Task 02 as the current frontier before later Task 04.",
+        "It still reloads the spec, active unfinished tasks, relevant code, Git state, and current verification evidence before proceeding."
+      ]
     }
   ]
 }

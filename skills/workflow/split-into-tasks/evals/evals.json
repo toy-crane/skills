@@ -152,6 +152,19 @@
         "It creates no docs/specs/reading-list/tasks files.",
         "It keeps the approved spec as the sole handoff for implementation."
       ]
+    },
+    {
+      "id": 13,
+      "prompt": "/split-into-tasks docs/specs/import/의 Task 01은 과거에 completed였고 검증 증거가 남아 있지만, 통합 회귀로 현재 blocked야. 방금 승인한 새 breakdown은 Task 01의 결과를 Task 04로 완전히 대체하고 Task 02는 그대로 유지해. task handoff를 갱신해줘.",
+      "expected_output": "The response preserves Task 01 and its completion evidence as explicitly superseded inactive history, records that Task 04 replaces it and why, keeps Task 02 and Task 04 as the current delivery map, and creates no archive.",
+      "files": [],
+      "expectations": [
+        "It preserves the Task 01 file and its earlier completion and regression evidence.",
+        "It gives Task 01 an explicit terminal superseded state rather than leaving it pending, in-progress, blocked, or completed.",
+        "It records Task 04 as the replacement and the approved revision reason in Task 01's revision evidence.",
+        "It leaves only Task 02 and Task 04 active for future implementation.",
+        "It does not create an archive directory or delete the historically completed Task 01 file."
+      ]
     }
   ]
 }
