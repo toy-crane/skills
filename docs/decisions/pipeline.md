@@ -104,7 +104,8 @@
   duplicate workers, repository-wide coordinate reservations prevent two
   attempts from sharing one worktree, and cleanup revalidates that reservation
   before asking Git to remove a still-clean checkout. Clean initialized
-  submodules are deinitialized without bypassing Git's final dirty-worktree
+  submodules are deinitialized through isolated temporary Git metadata without
+  changing shared repository settings or bypassing Git's final dirty-worktree
   refusal. Terminal results retain decisive evidence. An
   interrupted non-terminal claim is recovered only after the adapter proves its
   worker ended and cleans up its exact bound worktree or missing Git registration.

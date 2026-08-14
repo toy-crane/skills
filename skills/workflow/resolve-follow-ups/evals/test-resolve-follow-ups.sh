@@ -730,6 +730,9 @@ test_cleanup_requires_exact_attempt_ownership() {
 
   git -C "$repo" remote set-url origin "$sandbox/unavailable.git"
   git -C "$second_worker" -c protocol.file.allow=always submodule update --init -q
+  git -C "$repo" config submodule.fixture-submodule.update rebase
+  local shared_submodule_url
+  shared_submodule_url=$(git -C "$repo" config --get submodule.fixture-submodule.url)
   [[ -z "$(git -C "$second_worker" status --porcelain --ignore-submodules=none)" ]] \
     || fail 'initialized submodule cleanup fixture should remain clean'
   "$DISPATCHER" cleanup \
@@ -739,6 +742,14 @@ test_cleanup_requires_exact_attempt_ownership() {
     --owner "$owner2" >/dev/null
   [[ ! -e "$second_worker" ]] \
     || fail 'owned no-change cleanup should not depend on remote availability'
+  assert_eq "$shared_submodule_url" \
+    "$(git -C "$repo" config --get submodule.fixture-submodule.url)" \
+    'worker cleanup should preserve the repository-wide submodule URL'
+  assert_eq 'rebase' \
+    "$(git -C "$repo" config --get submodule.fixture-submodule.update)" \
+    'worker cleanup should preserve custom repository-wide submodule settings'
+  [[ -f "$repo/fixture-submodule/fixture.txt" ]] \
+    || fail 'worker cleanup should not deinitialize the primary checkout submodule'
   git -C "$repo" remote set-url origin "$remote"
   local abandoned
   abandoned=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/second.md)

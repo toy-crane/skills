@@ -1487,6 +1487,41 @@ clear_attempt() {
   printf 'cleared\t%s\n' "$attempt_key"
 }
 
+deinitialize_worker_submodules() {
+  local repo_root=$1
+  local worker_root=$2
+  local worker_git_dir=$3
+  local submodule_git_dir=$4
+  local common_dir
+  common_dir=$(git_common_dir "$repo_root")
+  local head
+  head=$(git -C "$worker_root" rev-parse HEAD)
+  local shadow_root
+  shadow_root=$(mktemp -d "$(attempts_dir_for "$repo_root")/.cleanup-shadow.XXXXXX")
+  local shadow_git_dir="$shadow_root/.git"
+
+  if ! (
+    set -e
+    git init -q "$shadow_root"
+    cp "$common_dir/config" "$shadow_git_dir/config"
+    git --git-dir="$shadow_git_dir" config core.worktree "$worker_root"
+    ln -s "$submodule_git_dir" "$shadow_git_dir/modules"
+    export GIT_ALTERNATE_OBJECT_DIRECTORIES="$common_dir/objects"
+    git --git-dir="$shadow_git_dir" --work-tree="$worker_root" \
+      update-ref HEAD "$head"
+    git --git-dir="$shadow_git_dir" --work-tree="$worker_root" \
+      read-tree "$head"
+    cd "$worker_root"
+    GIT_DIR="$shadow_git_dir" GIT_WORK_TREE="$worker_root" \
+      git submodule deinit --all >/dev/null
+  ); then
+    find "$shadow_root" -depth -delete 2>/dev/null || true
+    die 'cleanup could not safely deinitialize worker submodules'
+  fi
+  find "$shadow_root" -depth -delete \
+    || die 'cleanup could not remove temporary submodule metadata'
+}
+
 cleanup_worker() {
   local repo=''
   local worktree=''
@@ -1627,7 +1662,8 @@ cleanup_worker() {
   esac
   submodule_git_dir="$worker_git_dir/modules"
   if [[ -d "$submodule_git_dir" ]]; then
-    git -C "$worker_root" submodule deinit --all >/dev/null
+    deinitialize_worker_submodules \
+      "$repo_root" "$worker_root" "$worker_git_dir" "$submodule_git_dir"
     [[ -z "$(git -C "$worker_root" status --porcelain --untracked-files=all --ignore-submodules=none)" ]] \
       || die 'cleanup detected worktree changes while deinitializing submodules'
     find "$submodule_git_dir" -depth -delete
