@@ -7,7 +7,7 @@
       "expected_output": "The response reports the invalid file without inventing evidence, considers valid items in discovery order, starts at most three isolated workers, and returns one terminal outcome per considered follow-up.",
       "files": [],
       "expectations": [
-        "It uses the bundled list and identity seams rather than creating one recurring schedule per file.",
+        "It uses the bundled list and identity seams against the fetched remote default branch rather than scanning a stale coordinator checkout or creating one recurring schedule per file.",
         "It reports the incomplete file as invalid-follow-up and does not fill in missing evidence.",
         "It starts no more than three actual workers even when more candidates exist.",
         "Each writing worker gets its own worktree and branch.",
@@ -24,7 +24,7 @@
         "It makes no speculative fix and opens no resolution pull request.",
         "It retains the follow-up file.",
         "It returns not-reproduced with concrete evidence and a useful next condition.",
-        "It records the unchanged attempt identity so every sweep does not repeat it."
+        "It records the unchanged attempt identity and compact decisive evidence so every sweep does not repeat it and later reports retain the useful next condition."
       ]
     },
     {
@@ -137,6 +137,43 @@
         "It does not fall back to the stale local HEAD despite the request.",
         "It makes no product edit and opens no resolution pull request.",
         "It reports blocked with the fetch condition and keeps the follow-up."
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "/resolve-follow-ups 재실행이야. prepare가 반환한 owner, worktree, branch는 남아 있지만 worker 프로세스가 종료된 뒤 mark 전에 세션이 끊겼어.",
+      "expected_output": "The coordinator verifies the owning worker is no longer active, cleans up the exact bound worktree when safe, recovers the claim with the recorded attempt key and owner, and makes the unchanged item eligible again without clearing an active or terminal attempt.",
+      "files": [],
+      "expectations": [
+        "It does not leave the interrupted claimed identity permanently suppressed.",
+        "It verifies that the owning process ended instead of recovering a claim merely because it is old.",
+        "It cleans up only the worktree bound to the exact attempt and owner before recovery.",
+        "It uses recover only for a non-terminal attempt and does not overwrite a terminal outcome.",
+        "It permits a fresh isolated retry after recovery."
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "/resolve-follow-ups worker가 선택된 캐시 증상 대신 별도의 재현 가능한 라우팅 결함을 발견했어. 선택 항목은 그대로 열어둬야 해.",
+      "expected_output": "The worker returns the new defect's five evidence fields to the coordinator without leaving the only record in its disposable checkout. The coordinator serializes the follow-up record in its own checkout before worker cleanup while preserving the selected item.",
+      "files": [],
+      "expectations": [
+        "It keeps the selected follow-up open and does not mix the different defect into a resolution pull request.",
+        "It returns symptom, observed evidence, suspected cause, what was tried, and proposed next step to the coordinator.",
+        "The coordinator records the new follow-up through project-knowledge when available or the same five-field format otherwise.",
+        "It does not clean up a disposable worker that contains the only copy of the new evidence."
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "/resolve-follow-ups prepare 직후 post-checkout hook이 추적되지 않은 파일을 만들었고, HEAD와 branch는 요청값과 일치해.",
+      "expected_output": "The dispatcher rejects the dirty worker before dispatch, records the exact attempt as blocked with recovery ownership, preserves the follow-up, and never lets the unrelated hook output enter a resolution pull request.",
+      "files": [],
+      "expectations": [
+        "It treats a clean status as part of the prepare and bind boundary rather than checking only HEAD and branch.",
+        "It stops before product editing or worker dispatch.",
+        "It preserves the selected follow-up and reports blocked with the dirty-checkout evidence.",
+        "It cleans or recovers only through the exact attempt owner."
       ]
     }
   ]

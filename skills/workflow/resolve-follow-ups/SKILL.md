@@ -26,19 +26,24 @@ Resolve this skill's directory, then use
 deterministic boundary for ordering, fresh-base identity, worktree creation,
 attempt suppression, and cleanup.
 
-1. Run `list --repo <root>` to obtain every valid candidate in discovery order
-   and every `invalid-follow-up`. Report invalid files without filling in their
-   missing evidence.
+1. Run `list --repo <root>` to fetch the remote default branch and obtain every
+   valid candidate in discovery order plus every `invalid-follow-up`. Report
+   invalid files without filling in their missing evidence. Do not enumerate a
+   possibly stale coordinator checkout.
 2. For each candidate in order, run
    `identity --repo <root> --follow-up <path>`. Continue until three eligible
    workers have been started or the ordered backlog is exhausted.
    `eligible` is only a snapshot, not a reservation. The platform adapter must
    win the attempt's atomic `claim` or `prepare` result before launching a
-   worker; `skipped-unchanged ... claimed <owner>` means another sweep already
-   owns it.
+   worker; `skipped-unchanged ... claimed <owner> [<worktree> <branch>]` means
+   another sweep already owns it.
 3. For `skipped-unchanged`:
    - When the result carries `claimed` and an owner, do not dispatch it again;
-     another worker already owns the exact content and base identity.
+     another worker already owns the exact content and base identity. If the
+     adapter proves that owning process has ended without a terminal result,
+     clean up its exact bound worktree when one is reported, then run `recover
+     --repo <root> --attempt-key <key> --owner <owner>`. Never recover an active
+     or uncertain worker merely because its claim is old.
    - Preserve a prior `not-reproduced`, `needs-shaping`, or `blocked` result
      until the follow-up content or remote default-branch SHA changes.
    - When the result carries `pull-request` and a URL, check that pull request.
@@ -117,9 +122,11 @@ directory as a substitute for per-item isolation.
   change or resolution pull request.
 
 When reproduction reveals a different out-of-scope defect, preserve the
-selected item. Invoke `project-knowledge` when available; otherwise record the
-new symptom, observed evidence, suspected cause, what was tried, and proposed
-next step in its own `docs/follow-ups/<symptom>.md` file.
+selected item and return the new symptom, observed evidence, suspected cause,
+what was tried, and proposed next step to the coordinator. Do not leave the only
+record in the disposable worker. The coordinator serializes these records in
+its own checkout through `project-knowledge` when available, or writes the same
+five fields to `docs/follow-ups/<symptom>.md`, before cleaning up the worker.
 
 ### Confirm authority to fix
 
@@ -156,8 +163,9 @@ next step in its own `docs/follow-ups/<symptom>.md` file.
 
 Finish the worker response with a compact block containing `outcome`,
 `follow-up`, `base-sha`, `attempt-key`, `owner`, `pull-request` when present,
-and the decisive reproduction or blocker evidence. The coordinator uses this
-block to record the exact attempt; prose alone is not a terminal result.
+the decisive reproduction or blocker evidence, and any newly discovered
+follow-up record for the coordinator. The coordinator uses this block to record
+the exact attempt; prose alone is not a terminal result.
 
 ## Record and clean up each outcome
 
@@ -167,10 +175,11 @@ After the worker returns:
   <sha> --owner <owner> --outcome pull-request --detail <URL>` so later sweeps
   do not duplicate it.
 - For a non-PR result, run the same `mark` command with `--outcome
-  not-reproduced`, `--outcome needs-shaping`, or `--outcome blocked` and omit
-  `--detail`. A different worker cannot replace the first terminal result. The
-  recorded identity is disposable local automation state, not a status field
-  in the tracked follow-up.
+  not-reproduced`, `--outcome needs-shaping`, or `--outcome blocked` and use
+  `--detail` for compact decisive evidence or the next useful condition. A
+  different worker cannot replace the first terminal result. The recorded
+  identity is disposable local automation state, not a status field in the
+  tracked follow-up.
 - For a clean non-PR worker that never moved beyond its base, run `cleanup` with
   `cleanup --repo <root> --worktree <worktree> --attempt-key <attempt-key>
   --owner <owner>`. For a PR worker, run the same cleanup only after its exact
@@ -178,6 +187,9 @@ After the worker returns:
   bound to that exact claim and preserves the local branch so cleanup cannot
   race a new checkout and delete its ref. It refuses dirty, unpublished changed,
   mismatched, foreign, or repository-root targets.
+- When an owning process ended before `mark`, use `cleanup` first for its bound
+  worktree, then `recover` with the exact attempt key and owner. Recovery refuses
+  live bound worktrees and terminal outcomes.
 
 Return one compact sweep report using only `pull-request`, `not-reproduced`,
 `needs-shaping`, `blocked`, `invalid-follow-up`, and `skipped-unchanged`. Link

@@ -59,6 +59,8 @@ test_list_limits_candidates_and_reports_invalid_items() {
   local sandbox
   sandbox=$(mktemp -d)
   local repo="$sandbox/repo"
+  local remote="$sandbox/remote.git"
+  local coordinator="$sandbox/coordinator"
   mkdir -p "$repo"
   new_repo "$repo"
 
@@ -66,24 +68,42 @@ test_list_limits_candidates_and_reports_invalid_items() {
   commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record first follow-up'
   write_follow_up "$repo/docs/follow-ups/second.md" 'Second symptom'
   commit_at "$repo" '2026-01-02T00:00:00Z' 'docs: record second follow-up'
+  git -C "$repo" branch -M main
+  git init -q --bare "$remote"
+  git -C "$remote" symbolic-ref HEAD refs/heads/main
+  git -C "$repo" remote add origin "$remote"
+  git -C "$repo" push -qu origin main
+  git clone -q "$remote" "$coordinator"
+
   write_follow_up "$repo/docs/follow-ups/third.md" 'Third symptom'
   commit_at "$repo" '2026-01-03T00:00:00Z' 'docs: record third follow-up'
   write_follow_up "$repo/docs/follow-ups/fourth.md" 'Fourth symptom'
   commit_at "$repo" '2026-01-04T00:00:00Z' 'docs: record fourth follow-up'
   printf '# Missing required fields\n' >"$repo/docs/follow-ups/invalid.md"
   commit_at "$repo" '2026-01-05T00:00:00Z' 'docs: record invalid follow-up'
+  git -C "$repo" push -qu origin main
+  local remote_sha
+  remote_sha=$(git -C "$repo" rev-parse HEAD)
 
   local actual
-  actual=$("$DISPATCHER" list --repo "$repo" --limit 3)
+  actual=$("$DISPATCHER" list --repo "$coordinator" --limit 3)
   local expected=$'candidate\tdocs/follow-ups/first.md\ncandidate\tdocs/follow-ups/second.md\ncandidate\tdocs/follow-ups/third.md\ninvalid-follow-up\tdocs/follow-ups/invalid.md'
   assert_eq "$expected" "$actual" \
     'list should select the three oldest valid follow-ups and report invalid files'
 
   local all_items
-  all_items=$("$DISPATCHER" list --repo "$repo")
+  all_items=$("$DISPATCHER" list --repo "$coordinator")
   local expected_all=$'candidate\tdocs/follow-ups/first.md\ncandidate\tdocs/follow-ups/second.md\ncandidate\tdocs/follow-ups/third.md\ncandidate\tdocs/follow-ups/fourth.md\ninvalid-follow-up\tdocs/follow-ups/invalid.md'
   assert_eq "$expected_all" "$all_items" \
-    'unbounded list should expose the ordered backlog so skipped attempts do not starve newer candidates'
+    'list should fetch the ordered remote backlog so a stale coordinator does not miss newer candidates'
+  local remote_only_identity
+  remote_only_identity=$(
+    "$DISPATCHER" identity \
+      --repo "$coordinator" \
+      --follow-up docs/follow-ups/third.md
+  )
+  [[ "$remote_only_identity" == $'eligible\tdocs/follow-ups/third.md\t'"$remote_sha"$'\t'* ]] \
+    || fail 'a remotely listed follow-up should remain actionable when it is absent from the stale checkout'
   rm -rf "$sandbox"
 }
 
@@ -142,6 +162,8 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
   [[ "$owner" =~ ^[A-Za-z0-9._-]+$ ]] || fail 'prepare should return an owner token'
   assert_eq "$remote_sha" "$(git -C "$worker" rev-parse HEAD)" \
     'prepared worktree should start at the fetched remote default branch'
+  local worker_root
+  worker_root=$(CDPATH= cd -- "$worker" && pwd -P)
 
   local duplicate_worker="$sandbox/duplicate-worker"
   local duplicate
@@ -152,8 +174,8 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
       --worktree "$duplicate_worker" \
       --branch codex/fix-first-duplicate
   )
-  assert_eq $'skipped-unchanged\tdocs/follow-ups/first.md\t'"$base_sha"$'\t'"$attempt_key"$'\tclaimed\t'"$owner" "$duplicate" \
-    'a second sweep should observe the atomic claim instead of creating a duplicate worker'
+  assert_eq $'skipped-unchanged\tdocs/follow-ups/first.md\t'"$base_sha"$'\t'"$attempt_key"$'\tclaimed\t'"$owner"$'\t'"$worker_root"$'\tcodex/fix-first' "$duplicate" \
+    'a second sweep should observe the atomic claim and its bound worker instead of creating a duplicate'
   [[ ! -e "$duplicate_worker" ]] || fail 'duplicate claim should not create another worktree'
   if git -C "$repo" show-ref --verify --quiet refs/heads/codex/fix-first-duplicate; then
     fail 'duplicate claim should not create another branch'
@@ -164,33 +186,46 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
     --follow-up docs/follow-ups/first.md \
     --base-sha "$base_sha" \
     --owner not-the-owner \
-    --outcome blocked >/dev/null 2>&1; then
+    --outcome blocked \
+    --detail 'wrong owner must not record this blocker' >/dev/null 2>&1; then
     fail 'mark should reject a worker that does not own the attempt claim'
   fi
 
+  if "$DISPATCHER" mark \
+    --repo "$repo" \
+    --follow-up docs/follow-ups/first.md \
+    --base-sha "$base_sha" \
+    --owner "$owner" \
+    --outcome not-reproduced >/dev/null 2>&1; then
+    fail 'mark should require decisive evidence for a non-PR terminal outcome'
+  fi
+
   local recorded
+  local not_reproduced_detail='./verify.sh exited 0 three times; retry after a captured failing run'
   recorded=$(
     "$DISPATCHER" mark \
       --repo "$repo" \
       --follow-up docs/follow-ups/first.md \
       --base-sha "$base_sha" \
       --owner "$owner" \
-      --outcome not-reproduced
+      --outcome not-reproduced \
+      --detail "$not_reproduced_detail"
   )
-  assert_eq $'recorded\t'"$attempt_key"$'\tnot-reproduced' "$recorded" \
-    'the claim owner should record one terminal outcome'
+  assert_eq $'recorded\t'"$attempt_key"$'\tnot-reproduced\t'"$not_reproduced_detail" "$recorded" \
+    'the claim owner should record one terminal outcome with its decisive evidence'
   if "$DISPATCHER" mark \
     --repo "$repo" \
     --follow-up docs/follow-ups/first.md \
     --base-sha "$base_sha" \
     --owner "$owner" \
-    --outcome blocked >/dev/null 2>&1; then
+    --outcome blocked \
+    --detail 'later conflicting blocker' >/dev/null 2>&1; then
     fail 'a terminal outcome should not be overwritten by a later result'
   fi
   local skipped
   skipped=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
-  assert_eq $'skipped-unchanged\tdocs/follow-ups/first.md\t'"$base_sha"$'\t'"$attempt_key"$'\tnot-reproduced' "$skipped" \
-    'identity should expose the immutable terminal outcome'
+  assert_eq $'skipped-unchanged\tdocs/follow-ups/first.md\t'"$base_sha"$'\t'"$attempt_key"$'\tnot-reproduced\t'"$not_reproduced_detail" "$skipped" \
+    'identity should expose the immutable terminal outcome and its evidence'
   if "$DISPATCHER" clear \
     --repo "$repo" \
     --follow-up docs/follow-ups/first.md \
@@ -321,6 +356,8 @@ test_cleanup_requires_exact_attempt_ownership() {
   write_follow_up "$repo/docs/follow-ups/first.md" 'First symptom'
   write_follow_up "$repo/docs/follow-ups/second.md" 'Second symptom'
   write_follow_up "$repo/docs/follow-ups/third.md" 'Third symptom'
+  write_follow_up "$repo/docs/follow-ups/fourth.md" 'Fourth symptom'
+  write_follow_up "$repo/docs/follow-ups/fifth.md" 'Fifth symptom'
   commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record cleanup follow-ups'
   git -C "$repo" branch -M main
   git init -q --bare "$remote"
@@ -351,6 +388,8 @@ test_cleanup_requires_exact_attempt_ownership() {
   )
   local s2 p2 b2 base2 key2 owner2
   IFS=$'\t' read -r s2 p2 b2 base2 key2 owner2 <<<"$second"
+  local second_root
+  second_root=$(CDPATH= cd -- "$second_worker" && pwd -P)
 
   if "$DISPATCHER" cleanup \
     --repo "$repo" \
@@ -361,6 +400,13 @@ test_cleanup_requires_exact_attempt_ownership() {
   fi
   [[ -d "$second_worker" ]] || fail 'ownership mismatch should preserve the other worker'
 
+  if "$DISPATCHER" recover \
+    --repo "$repo" \
+    --attempt-key "$key2" \
+    --owner "$owner2" >/dev/null 2>&1; then
+    fail 'recover should refuse an attempt whose bound worker still exists'
+  fi
+
   git -C "$repo" remote set-url origin "$sandbox/unavailable.git"
   "$DISPATCHER" cleanup \
     --repo "$repo" \
@@ -370,6 +416,29 @@ test_cleanup_requires_exact_attempt_ownership() {
   [[ ! -e "$second_worker" ]] \
     || fail 'owned no-change cleanup should not depend on remote availability'
   git -C "$repo" remote set-url origin "$remote"
+  local abandoned
+  abandoned=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/second.md)
+  assert_eq $'skipped-unchanged\tdocs/follow-ups/second.md\t'"$base2"$'\t'"$key2"$'\tclaimed\t'"$owner2"$'\t'"$second_root"$'\tcodex/fix-second' "$abandoned" \
+    'identity should expose enough bound-worker state to recover an interrupted attempt'
+  if "$DISPATCHER" recover \
+    --repo "$repo" \
+    --attempt-key "$key2" \
+    --owner not-the-owner >/dev/null 2>&1; then
+    fail 'recover should reject a worker that does not own the abandoned claim'
+  fi
+  local recovered
+  recovered=$(
+    "$DISPATCHER" recover \
+      --repo "$repo" \
+      --attempt-key "$key2" \
+      --owner "$owner2"
+  )
+  assert_eq $'recovered\t'"$key2" "$recovered" \
+    'recover should release an interrupted claim after its owned worktree is gone'
+  local recovered_identity
+  recovered_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/second.md)
+  [[ "$recovered_identity" == $'eligible\tdocs/follow-ups/second.md\t'* ]] \
+    || fail 'a recovered interrupted claim should become eligible again'
 
   local unavailable_output
   git -C "$repo" remote set-url origin "$sandbox/unavailable.git"
@@ -410,6 +479,80 @@ test_cleanup_requires_exact_attempt_ownership() {
 
   local hooks="$sandbox/hooks"
   mkdir -p "$hooks"
+  cat >"$hooks/post-checkout" <<'EOF'
+#!/usr/bin/env bash
+printf 'generated by checkout hook\n' >generated-by-hook.txt
+EOF
+  chmod +x "$hooks/post-checkout"
+  git -C "$repo" config core.hooksPath "$hooks"
+  local dirty_worker="$sandbox/dirty-worker"
+  local dirty_output
+  if dirty_output=$(
+    "$DISPATCHER" prepare \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/fourth.md \
+      --worktree "$dirty_worker" \
+      --branch codex/dirty-prepared 2>&1
+  ); then
+    fail 'prepare should reject a worktree dirtied by a checkout hook'
+  fi
+  git -C "$repo" config --unset core.hooksPath
+  [[ "$dirty_output" == *'worker worktree is dirty after branch setup'* ]] \
+    || fail 'dirty prepare should report the failed cleanliness gate'
+  local dirty_key dirty_owner
+  dirty_key=$(sed -n 's/.*attempt-key \([0-9a-f]*\) owner .*/\1/p' <<<"$dirty_output")
+  dirty_owner=$(sed -n 's/.* owner \([A-Za-z0-9._-]*\) requires owned cleanup.*/\1/p' <<<"$dirty_output")
+  [[ -n "$dirty_key" && -n "$dirty_owner" ]] \
+    || fail 'dirty prepare should expose the exact recovery ownership'
+  local dirty_identity
+  dirty_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/fourth.md)
+  local dirty_status dirty_path dirty_base
+  IFS=$'\t' read -r dirty_status dirty_path dirty_base _ <<<"$dirty_identity"
+  [[ "$dirty_identity" == $'skipped-unchanged\tdocs/follow-ups/fourth.md\t'*$'\tblocked\tworker worktree is dirty after branch setup' ]] \
+    || fail 'dirty prepare should become a terminal blocker instead of dispatching contaminated changes'
+  git -C "$dirty_worker" clean -fdq
+  "$DISPATCHER" cleanup \
+    --repo "$repo" \
+    --worktree "$dirty_worker" \
+    --attempt-key "$dirty_key" \
+    --owner "$dirty_owner" >/dev/null
+  "$DISPATCHER" clear \
+    --repo "$repo" \
+    --follow-up "$dirty_path" \
+    --base-sha "$dirty_base" >/dev/null
+
+  local fifth_identity
+  fifth_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/fifth.md)
+  local fifth_status fifth_path fifth_base fifth_key
+  IFS=$'\t' read -r fifth_status fifth_path fifth_base fifth_key <<<"$fifth_identity"
+  local fifth_claim
+  fifth_claim=$(
+    "$DISPATCHER" claim \
+      --repo "$repo" \
+      --follow-up "$fifth_path" \
+      --base-sha "$fifth_base"
+  )
+  local fifth_claim_status fifth_claim_key fifth_owner
+  IFS=$'\t' read -r fifth_claim_status fifth_claim_key fifth_owner <<<"$fifth_claim"
+  local dirty_native="$sandbox/dirty-native"
+  git -C "$repo" config core.hooksPath "$hooks"
+  git -C "$repo" worktree add -q -b codex/dirty-native "$dirty_native" "$fifth_base"
+  git -C "$repo" config --unset core.hooksPath
+  if "$DISPATCHER" bind \
+    --repo "$repo" \
+    --attempt-key "$fifth_key" \
+    --owner "$fifth_owner" \
+    --worktree "$dirty_native" \
+    --branch codex/dirty-native >/dev/null 2>&1; then
+    fail 'bind should reject a native worktree dirtied by a checkout hook'
+  fi
+  git -C "$dirty_native" clean -fdq
+  git -C "$repo" worktree remove "$dirty_native"
+  "$DISPATCHER" recover \
+    --repo "$repo" \
+    --attempt-key "$fifth_key" \
+    --owner "$fifth_owner" >/dev/null
+
   cat >"$hooks/post-checkout" <<'EOF'
 #!/usr/bin/env bash
 git branch codex/hook-conflict HEAD >/dev/null 2>&1 || true

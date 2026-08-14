@@ -9,12 +9,13 @@ die() {
 usage() {
   cat >&2 <<'EOF'
 Usage:
-  resolve-follow-ups.sh list --repo PATH [--limit COUNT]
+  resolve-follow-ups.sh list --repo PATH [--limit COUNT] [--remote NAME]
   resolve-follow-ups.sh identity --repo PATH --follow-up PATH [--remote NAME]
   resolve-follow-ups.sh claim --repo PATH --follow-up PATH --base-sha SHA
   resolve-follow-ups.sh bind --repo PATH --attempt-key KEY --owner TOKEN --worktree PATH --branch NAME
   resolve-follow-ups.sh prepare --repo PATH --follow-up PATH --worktree PATH --branch NAME [--remote NAME]
-  resolve-follow-ups.sh mark --repo PATH --follow-up PATH --base-sha SHA --owner TOKEN --outcome OUTCOME [--detail TEXT]
+  resolve-follow-ups.sh mark --repo PATH --follow-up PATH --base-sha SHA --owner TOKEN --outcome OUTCOME --detail TEXT
+  resolve-follow-ups.sh recover --repo PATH --attempt-key KEY --owner TOKEN
   resolve-follow-ups.sh clear --repo PATH --follow-up PATH --base-sha SHA
   resolve-follow-ups.sh cleanup --repo PATH --worktree PATH --attempt-key KEY --owner TOKEN [--remote NAME]
 EOF
@@ -46,6 +47,14 @@ repo_root_for() {
 relative_follow_up_path() {
   local repo_root=$1
   local follow_up=$2
+  if [[ "$follow_up" == docs/follow-ups/*.md ]]; then
+    local leaf=${follow_up#docs/follow-ups/}
+    [[ -n "$leaf" && "$leaf" != */* && "$leaf" != *$'\t'* && "$leaf" != *$'\n'* ]] \
+      || die 'follow-up must be a Markdown file directly under docs/follow-ups/'
+    printf 'docs/follow-ups/%s\n' "$leaf"
+    return 0
+  fi
+
   local candidate
   case "$follow_up" in
     /*) candidate=$follow_up ;;
@@ -74,6 +83,17 @@ remote_default_branch() {
   )
   [[ -n "$branch" ]] || die "cannot resolve the default branch for remote: $remote"
   printf '%s\n' "$branch"
+}
+
+remote_base() {
+  local repo_root=$1
+  local remote=$2
+  local default_branch
+  default_branch=$(remote_default_branch "$repo_root" "$remote")
+  git -C "$repo_root" fetch --prune "$remote" "+refs/heads/$default_branch:refs/remotes/$remote/$default_branch" >/dev/null
+  local base_sha
+  base_sha=$(git -C "$repo_root" rev-parse "refs/remotes/$remote/$default_branch^{commit}")
+  printf '%s\t%s\n' "$default_branch" "$base_sha"
 }
 
 git_common_dir() {
@@ -181,6 +201,14 @@ print_attempt_state() {
     return 0
   fi
 
+  local binding_file="$state_dir/binding"
+  if [[ -f "$binding_file" ]]; then
+    printf 'skipped-unchanged\t%s\t%s\t%s\tclaimed\t%s\t%s\t%s\n' \
+      "$relative" "$base_sha" "$attempt_key" "$(claim_field "$claim_file" 1)" \
+      "$(sed -n '1p' "$binding_file")" "$(sed -n '2p' "$binding_file")"
+    return 0
+  fi
+
   printf 'skipped-unchanged\t%s\t%s\t%s\tclaimed\t%s\n' \
     "$relative" "$base_sha" "$attempt_key" "$(claim_field "$claim_file" 1)"
 }
@@ -193,13 +221,10 @@ resolve_attempt() {
   repo_root=$(repo_root_for "$repo")
   local relative
   relative=$(relative_follow_up_path "$repo_root" "$follow_up")
-  local default_branch
-  default_branch=$(remote_default_branch "$repo_root" "$remote")
-
-  git -C "$repo_root" fetch --prune "$remote" \
-    "+refs/heads/$default_branch:refs/remotes/$remote/$default_branch" >/dev/null
-  local base_sha
-  base_sha=$(git -C "$repo_root" rev-parse "refs/remotes/$remote/$default_branch^{commit}")
+  local remote_state
+  remote_state=$(remote_base "$repo_root" "$remote")
+  local default_branch base_sha
+  IFS=$'\t' read -r default_branch base_sha <<<"$remote_state"
   git -C "$repo_root" cat-file -e "$base_sha:$relative" 2>/dev/null \
     || die "follow-up is not present on $remote/$default_branch: $relative"
 
@@ -330,6 +355,7 @@ claim_attempt() {
 list_follow_ups() {
   local repo=''
   local limit=0
+  local remote=origin
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -343,6 +369,11 @@ list_follow_ups() {
         limit=$2
         shift 2
         ;;
+      --remote)
+        require_value "$1" "${2-}"
+        remote=$2
+        shift 2
+        ;;
       *) die "unknown list option: $1" ;;
     esac
   done
@@ -352,25 +383,30 @@ list_follow_ups() {
 
   local repo_root
   repo_root=$(repo_root_for "$repo")
-  local follow_up_dir="$repo_root/docs/follow-ups"
-  [[ -d "$follow_up_dir" ]] || exit 0
+  local remote_state
+  remote_state=$(remote_base "$repo_root" "$remote")
+  local _default_branch base_sha
+  IFS=$'\t' read -r _default_branch base_sha <<<"$remote_state"
 
   local temp_dir
   temp_dir=$(mktemp -d)
   local candidates="$temp_dir/candidates"
   local invalid="$temp_dir/invalid"
+  local item="$temp_dir/item"
   : >"$candidates"
   : >"$invalid"
 
-  local path
-  while IFS= read -r path; do
-    local relative=${path#"$repo_root"/}
+  local relative
+  while IFS= read -r -d '' relative; do
+    local leaf=${relative#docs/follow-ups/}
+    [[ "$leaf" != */* && "$leaf" == *.md ]] || continue
     [[ "$relative" != *$'\t'* && "$relative" != *$'\n'* ]] \
       || die "follow-up path contains a tab or newline: $relative"
-    if validate_follow_up "$path"; then
+    git -C "$repo_root" show "$base_sha:$relative" >"$item"
+    if validate_follow_up "$item"; then
       local discovered_at
       discovered_at=$(
-        git -C "$repo_root" log --diff-filter=A --format=%ct -- "$relative" \
+        git -C "$repo_root" log --diff-filter=A --format=%ct "$base_sha" -- "$relative" \
           | tail -n 1
       )
       [[ -n "$discovered_at" ]] || discovered_at=0
@@ -378,7 +414,7 @@ list_follow_ups() {
     else
       printf '%s\n' "$relative" >>"$invalid"
     fi
-  done < <(find "$follow_up_dir" -maxdepth 1 -type f -name '*.md' -print | sort)
+  done < <(git -C "$repo_root" ls-tree -r -z --name-only "$base_sha" -- docs/follow-ups)
 
   sort -k1,1 -k2,2 "$candidates" \
     | awk -F '\t' -v limit="$limit" 'limit == 0 || NR <= limit { print "candidate\t" $2 }'
@@ -549,6 +585,10 @@ bind_worker() {
   actual_sha=$(git -C "$worker_root" rev-parse HEAD)
   [[ "$actual_sha" == "$base_sha" ]] \
     || die "worker HEAD $actual_sha does not match claimed base $base_sha"
+  local worker_status
+  worker_status=$(git -C "$worker_root" status --porcelain) \
+    || die 'bind cannot inspect the worker worktree'
+  [[ -z "$worker_status" ]] || die 'bind requires a clean worker worktree'
 
   write_binding "$repo_root" "$attempt_key" "$owner" "$worker_root" "$branch" \
     || die 'attempt is already bound to a different worker'
@@ -656,6 +696,13 @@ prepare_worker() {
       "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
       "worker changed after branch setup: branch=$verified_branch HEAD=${actual_sha:-unreadable}"
   fi
+  local worker_status
+  worker_status=$(git -C "$worktree" status --porcelain 2>/dev/null || true)
+  if [[ -n "$worker_status" ]]; then
+    fail_after_worktree_creation \
+      "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
+      'worker worktree is dirty after branch setup'
+  fi
   if ! write_binding "$repo_root" "$attempt_key" "$owner" "$worktree" "$branch"; then
     write_outcome "$repo_root" "$attempt_key" "$owner" blocked \
       'attempt was already bound to a different worker during prepare' || true
@@ -696,6 +743,8 @@ mark_attempt() {
   [[ -n "$follow_up" ]] || die 'mark requires --follow-up'
   [[ -n "$base_sha" ]] || die 'mark requires --base-sha'
   [[ -n "$owner" ]] || die 'mark requires --owner'
+  [[ -n "$detail" ]] \
+    || die 'mark requires --detail with decisive evidence or the next useful condition'
   validate_owner "$owner"
   case "$outcome" in
     not-reproduced|needs-shaping|blocked) ;;
@@ -731,6 +780,59 @@ mark_attempt() {
     printf '\t%s' "$detail"
   fi
   printf '\n'
+}
+
+recover_attempt() {
+  local repo=''
+  local attempt_key=''
+  local owner=''
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --repo|--attempt-key|--owner)
+        require_value "$1" "${2-}"
+        case "$1" in
+          --repo) repo=$2 ;;
+          --attempt-key) attempt_key=$2 ;;
+          --owner) owner=$2 ;;
+        esac
+        shift 2
+        ;;
+      *) die "unknown recover option: $1" ;;
+    esac
+  done
+
+  [[ -n "$repo" ]] || die 'recover requires --repo'
+  [[ -n "$attempt_key" ]] || die 'recover requires --attempt-key'
+  [[ -n "$owner" ]] || die 'recover requires --owner'
+  validate_attempt_key "$attempt_key"
+  validate_owner "$owner"
+
+  local repo_root
+  repo_root=$(repo_root_for "$repo")
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  assert_claim_owner "$claim_file" "$owner"
+  local state_dir
+  state_dir=$(state_dir_for "$repo_root" "$attempt_key")
+  [[ ! -e "$state_dir/outcome" ]] \
+    || die 'recover refuses an attempt with a terminal outcome; use clear after its review condition changes'
+
+  local binding_file="$state_dir/binding"
+  if [[ -f "$binding_file" ]]; then
+    local bound_worktree
+    bound_worktree=$(sed -n '1p' "$binding_file")
+    [[ ! -e "$bound_worktree" && ! -L "$bound_worktree" ]] \
+      || die "recover requires the bound worker worktree to be cleaned up first: $bound_worktree"
+    rm "$binding_file"
+  fi
+  if [[ -d "$state_dir" ]]; then
+    rmdir "$state_dir" 2>/dev/null || die 'attempt state contains unexpected files'
+  elif [[ -e "$state_dir" ]]; then
+    die 'attempt state path is not a directory'
+  fi
+  rm "$claim_file"
+  printf 'recovered\t%s\n' "$attempt_key"
 }
 
 clear_attempt() {
@@ -895,6 +997,7 @@ main() {
     bind) bind_worker "$@" ;;
     prepare) prepare_worker "$@" ;;
     mark) mark_attempt "$@" ;;
+    recover) recover_attempt "$@" ;;
     clear) clear_attempt "$@" ;;
     cleanup) cleanup_worker "$@" ;;
     *) die "unknown command: $command" ;;
