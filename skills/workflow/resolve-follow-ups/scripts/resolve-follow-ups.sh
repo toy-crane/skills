@@ -413,7 +413,82 @@ write_binding() {
     return 0
   fi
   rm "$temp_file"
-  die 'attempt is already bound to a different worker'
+  return 1
+}
+
+write_outcome() {
+  local repo_root=$1
+  local attempt_key=$2
+  local owner=$3
+  local outcome=$4
+  local detail=$5
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  assert_claim_owner "$claim_file" "$owner"
+  local state_dir
+  state_dir=$(state_dir_for "$repo_root" "$attempt_key")
+  mkdir -p "$state_dir"
+  local outcome_file="$state_dir/outcome"
+  local attempts_dir
+  attempts_dir=$(attempts_dir_for "$repo_root")
+  local temp_file
+  temp_file=$(mktemp "$attempts_dir/.outcome.XXXXXX")
+  printf '%s\n%s\n' "$outcome" "$detail" >"$temp_file"
+  if ln "$temp_file" "$outcome_file" 2>/dev/null; then
+    rm "$temp_file"
+    return 0
+  fi
+  if cmp -s "$temp_file" "$outcome_file"; then
+    rm "$temp_file"
+    return 0
+  fi
+  rm "$temp_file"
+  return 1
+}
+
+remove_unbound_worktree() {
+  local repo_root=$1
+  local worktree=$2
+  [[ -d "$worktree" ]] || return 1
+  local worker_root
+  worker_root=$(git -C "$worktree" rev-parse --show-toplevel 2>/dev/null) || return 1
+  worker_root=$(CDPATH= cd -- "$worker_root" && pwd -P) || return 1
+  [[ "$worker_root" != "$repo_root" ]] || return 1
+  local worker_common
+  worker_common=$(git_common_dir "$worker_root") || return 1
+  [[ "$worker_common" == "$(git_common_dir "$repo_root")" ]] || return 1
+  [[ -z "$(git -C "$worker_root" status --porcelain)" ]] || return 1
+  git -C "$repo_root" worktree remove "$worker_root"
+}
+
+fail_after_worktree_creation() {
+  local repo_root=$1
+  local worktree=$2
+  local attempt_key=$3
+  local owner=$4
+  local branch=$5
+  local detail=$6
+
+  if remove_unbound_worktree "$repo_root" "$worktree"; then
+    release_claim "$repo_root" "$attempt_key" "$owner"
+    die "$detail; the unbound worktree was removed and the claim was released"
+  fi
+
+  local worker_root=$worktree
+  local actual_branch=$branch
+  if [[ -d "$worktree" ]]; then
+    local discovered_root
+    discovered_root=$(git -C "$worktree" rev-parse --show-toplevel 2>/dev/null || true)
+    if [[ -n "$discovered_root" ]]; then
+      worker_root=$(CDPATH= cd -- "$discovered_root" && pwd -P)
+      actual_branch=$(git -C "$worker_root" symbolic-ref --quiet --short HEAD 2>/dev/null || true)
+      [[ -n "$actual_branch" ]] || actual_branch='(detached)'
+      write_binding "$repo_root" "$attempt_key" "$owner" "$worker_root" "$actual_branch" \
+        || true
+    fi
+  fi
+  write_outcome "$repo_root" "$attempt_key" "$owner" blocked "$detail" || true
+  die "$detail; attempt-key $attempt_key owner $owner requires owned cleanup"
 }
 
 bind_worker() {
@@ -473,7 +548,8 @@ bind_worker() {
   [[ "$actual_sha" == "$base_sha" ]] \
     || die "worker HEAD $actual_sha does not match claimed base $base_sha"
 
-  write_binding "$repo_root" "$attempt_key" "$owner" "$worker_root" "$branch"
+  write_binding "$repo_root" "$attempt_key" "$owner" "$worker_root" "$branch" \
+    || die 'attempt is already bound to a different worker'
   printf 'bound\t%s\t%s\t%s\n' "$attempt_key" "$worker_root" "$branch"
 }
 
@@ -544,9 +620,7 @@ prepare_worker() {
     release_claim "$repo_root" "$attempt_key" "$owner"
     die "branch already exists: $branch"
   fi
-  if ! git -C "$repo_root" worktree add -q -b "$branch" "$worktree" "$base_sha"; then
-    git -C "$repo_root" update-ref -d "refs/heads/$branch" "$base_sha" \
-      >/dev/null 2>&1 || true
+  if ! git -C "$repo_root" worktree add -q --detach "$worktree" "$base_sha"; then
     release_claim "$repo_root" "$attempt_key" "$owner"
     die "failed to create worker worktree: $worktree"
   fi
@@ -554,9 +628,25 @@ prepare_worker() {
   local actual_sha
   actual_sha=$(git -C "$worktree" rev-parse HEAD)
   if [[ "$actual_sha" != "$base_sha" ]]; then
-    die "prepared worktree HEAD $actual_sha does not match base $base_sha"
+    fail_after_worktree_creation \
+      "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
+      "prepared worktree HEAD $actual_sha does not match base $base_sha"
   fi
-  write_binding "$repo_root" "$attempt_key" "$owner" "$worktree" "$branch"
+  if ! git -C "$worktree" switch -q -c "$branch"; then
+    local switched_branch
+    switched_branch=$(git -C "$worktree" symbolic-ref --quiet --short HEAD 2>/dev/null || true)
+    actual_sha=$(git -C "$worktree" rev-parse HEAD)
+    if [[ "$switched_branch" != "$branch" || "$actual_sha" != "$base_sha" ]]; then
+      fail_after_worktree_creation \
+        "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
+        "failed to create worker branch: $branch"
+    fi
+  fi
+  if ! write_binding "$repo_root" "$attempt_key" "$owner" "$worktree" "$branch"; then
+    write_outcome "$repo_root" "$attempt_key" "$owner" blocked \
+      'attempt was already bound to a different worker during prepare' || true
+    die "attempt-key $attempt_key owner $owner was already bound during prepare"
+  fi
 
   printf 'prepared\t%s\t%s\t%s\t%s\t%s\n' \
     "$requested_worktree" "$branch" "$base_sha" "$attempt_key" "$owner"
@@ -619,22 +709,8 @@ mark_attempt() {
   assert_claim_identity "$claim_file" "$relative" "$base_sha"
   assert_claim_owner "$claim_file" "$owner"
 
-  local state_dir
-  state_dir=$(state_dir_for "$repo_root" "$attempt_key")
-  mkdir -p "$state_dir"
-  local outcome_file="$state_dir/outcome"
-  local attempts_dir
-  attempts_dir=$(attempts_dir_for "$repo_root")
-  local temp_file
-  temp_file=$(mktemp "$attempts_dir/.outcome.XXXXXX")
-  printf '%s\n%s\n' "$outcome" "$detail" >"$temp_file"
-  if ! ln "$temp_file" "$outcome_file" 2>/dev/null; then
-    if ! cmp -s "$temp_file" "$outcome_file"; then
-      rm "$temp_file"
-      die 'attempt already has a different terminal outcome'
-    fi
-  fi
-  rm "$temp_file"
+  write_outcome "$repo_root" "$attempt_key" "$owner" "$outcome" "$detail" \
+    || die 'attempt already has a different terminal outcome'
 
   printf 'recorded\t%s\t%s' "$attempt_key" "$outcome"
   if [[ -n "$detail" ]]; then

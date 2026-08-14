@@ -408,6 +408,57 @@ test_cleanup_requires_exact_attempt_ownership() {
   [[ "$third_identity" == $'eligible\tdocs/follow-ups/third.md\t'* ]] \
     || fail 'failed worktree creation should release its attempt claim'
 
+  local hooks="$sandbox/hooks"
+  mkdir -p "$hooks"
+  cat >"$hooks/post-checkout" <<'EOF'
+#!/usr/bin/env bash
+git branch codex/hook-conflict HEAD >/dev/null 2>&1 || true
+EOF
+  chmod +x "$hooks/post-checkout"
+  git -C "$repo" config core.hooksPath "$hooks"
+  local raced_worker="$sandbox/raced-worker"
+  if "$DISPATCHER" prepare \
+    --repo "$repo" \
+    --follow-up docs/follow-ups/third.md \
+    --worktree "$raced_worker" \
+    --branch codex/hook-conflict >/dev/null 2>&1; then
+    fail 'prepare should stop when another process creates the branch during worktree setup'
+  fi
+  git -C "$repo" config --unset core.hooksPath
+  [[ ! -e "$raced_worker" ]] \
+    || fail 'post-creation setup failure should remove only the unbound worktree it created'
+  git -C "$repo" show-ref --verify --quiet refs/heads/codex/hook-conflict \
+    || fail 'prepare should preserve a branch created by another process during setup'
+  third_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/third.md)
+  [[ "$third_identity" == $'eligible\tdocs/follow-ups/third.md\t'* ]] \
+    || fail 'safe post-creation failure should release the attempt claim for retry'
+
+  cat >"$hooks/post-checkout" <<'EOF'
+#!/usr/bin/env bash
+git -c user.email=eval@example.com -c user.name='Resolve Follow-ups Eval' \
+  commit --allow-empty -qm 'test: mutate prepared head'
+printf 'hook dirtied worker\n' >post-checkout-dirty.txt
+EOF
+  chmod +x "$hooks/post-checkout"
+  git -C "$repo" config core.hooksPath "$hooks"
+  local mismatched_worker="$sandbox/mismatched-worker"
+  local mismatch_output
+  if mismatch_output=$(
+    "$DISPATCHER" prepare \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/third.md \
+      --worktree "$mismatched_worker" \
+      --branch codex/hook-mismatch 2>&1
+  ); then
+    fail 'prepare should stop when a creation hook changes the verified base'
+  fi
+  git -C "$repo" config --unset core.hooksPath
+  [[ "$mismatch_output" == *'attempt-key '* && "$mismatch_output" == *'owner '* ]] \
+    || fail 'an unsafe post-creation failure should expose recovery ownership in its error'
+  third_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/third.md)
+  [[ "$third_identity" == $'skipped-unchanged\tdocs/follow-ups/third.md\t'*$'\tblocked\t'* ]] \
+    || fail 'an unremovable post-creation failure should become terminal instead of remaining claimed'
+
   git -C "$first_worker" config user.email eval@example.com
   git -C "$first_worker" config user.name 'Resolve Follow-ups Eval'
   printf 'verified fix\n' >"$first_worker/fix.txt"
