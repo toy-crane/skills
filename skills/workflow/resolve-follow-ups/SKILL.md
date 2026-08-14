@@ -201,9 +201,9 @@ After the worker returns:
   `HEAD` is visible on the remote branch. The script removes only the worktree
   bound to that exact claim and preserves the local branch so cleanup cannot
   race a new checkout and delete its ref. It revalidates the repository-wide
-  coordinate reservation before removal and supports clean initialized
-  submodules. It refuses dirty, unpublished changed, mismatched, foreign, or
-  repository-root targets.
+  coordinate reservation before removal, safely deinitializes clean submodules,
+  and leaves Git's final dirty-worktree refusal enabled. It refuses dirty,
+  unpublished changed, mismatched, foreign, or repository-root targets.
 - When an owning process ended before `mark`, first inspect its bound branch for
   publication and an existing pull request. Record a found pull request with
   `mark`; if a branch was published without one, finish or explicitly block that

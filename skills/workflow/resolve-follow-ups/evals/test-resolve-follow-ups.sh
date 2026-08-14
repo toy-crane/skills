@@ -577,6 +577,65 @@ test_merge_restored_follow_up_starts_a_new_lifetime() {
   rm -rf "$sandbox"
 }
 
+test_cleanup_preserves_a_racing_untracked_write() {
+  local sandbox
+  sandbox=$(mktemp -d)
+  local repo="$sandbox/repo"
+  local remote="$sandbox/remote.git"
+  local worker="$sandbox/worker"
+  local wrapper_dir="$sandbox/bin"
+  mkdir -p "$repo" "$wrapper_dir"
+  new_repo "$repo"
+  write_follow_up "$repo/docs/follow-ups/first.md" 'Cleanup race symptom'
+  commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record cleanup race follow-up'
+  git -C "$repo" branch -M main
+  git init -q --bare "$remote"
+  git -C "$remote" symbolic-ref HEAD refs/heads/main
+  git -C "$repo" remote add origin "$remote"
+  git -C "$repo" push -qu origin main
+
+  local prepared prep_status prep_path prep_branch prep_base attempt_key owner
+  prepared=$(
+    "$DISPATCHER" prepare \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/first.md \
+      --worktree "$worker" \
+      --branch codex/cleanup-race
+  )
+  IFS=$'\t' read -r \
+    prep_status prep_path prep_branch prep_base attempt_key owner <<<"$prepared"
+
+  local real_git
+  real_git=$(command -v git)
+  cat >"$wrapper_dir/git" <<'EOF'
+#!/usr/bin/env bash
+if [[ " $* " == *' worktree remove '* ]]; then
+  printf 'racing write\n' >"$RACE_WORKTREE/race.txt"
+fi
+exec "$REAL_GIT" "$@"
+EOF
+  chmod +x "$wrapper_dir/git"
+  if REAL_GIT="$real_git" RACE_WORKTREE="$worker" PATH="$wrapper_dir:$PATH" \
+    "$DISPATCHER" cleanup \
+      --repo "$repo" \
+      --worktree "$worker" \
+      --attempt-key "$attempt_key" \
+      --owner "$owner" >/dev/null 2>&1; then
+    fail 'cleanup should let Git preserve a write racing the final removal'
+  fi
+  [[ -f "$worker/race.txt" ]] \
+    || fail 'cleanup should preserve the untracked file that raced its final removal'
+  git -C "$worker" clean -fdq
+  "$DISPATCHER" cleanup \
+    --repo "$repo" \
+    --worktree "$worker" \
+    --attempt-key "$attempt_key" \
+    --owner "$owner" >/dev/null
+  [[ ! -e "$worker" ]] || fail 'cleanup should succeed after the racing write is reconciled'
+
+  rm -rf "$sandbox"
+}
+
 test_cleanup_requires_exact_attempt_ownership() {
   local sandbox
   sandbox=$(mktemp -d)
@@ -1405,6 +1464,7 @@ EOF
 test_list_limits_candidates_and_reports_invalid_items
 test_attempt_claims_are_atomic_and_terminal_state_is_immutable
 test_merge_restored_follow_up_starts_a_new_lifetime
+test_cleanup_preserves_a_racing_untracked_write
 test_cleanup_requires_exact_attempt_ownership
 test_coordination_failures_remain_owned_and_recoverable
 test_rewritten_history_ignores_pruned_non_pr_attempts

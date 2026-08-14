@@ -103,7 +103,9 @@
   follow-up lifetime, content, and base commit. Atomic owner claims prevent
   duplicate workers, repository-wide coordinate reservations prevent two
   attempts from sharing one worktree, and cleanup revalidates that reservation
-  before removing a checkout. Terminal results retain decisive evidence. An
+  before asking Git to remove a still-clean checkout. Clean initialized
+  submodules are deinitialized without bypassing Git's final dirty-worktree
+  refusal. Terminal results retain decisive evidence. An
   interrupted non-terminal claim is recovered only after the adapter proves its
   worker ended and cleans up its exact bound worktree or missing Git registration.
   Prepare persists the canonical worktree target before checkout creation, and

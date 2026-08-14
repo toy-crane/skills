@@ -1622,7 +1622,22 @@ cleanup_worker() {
 
   assert_worktree_reservation \
     "$repo_root" "$attempt_key" "$owner" "$worker_root" >/dev/null
-  git -C "$repo_root" worktree remove --force "$worker_root"
+  local worker_git_dir submodule_git_dir
+  worker_git_dir=$(git -C "$worker_root" rev-parse --path-format=absolute --git-dir)
+  case "$worker_git_dir" in
+    "$(git_common_dir "$repo_root")"/worktrees/*) ;;
+    *) die 'cleanup cannot validate the linked-worktree administrative directory' ;;
+  esac
+  submodule_git_dir="$worker_git_dir/modules"
+  if [[ -d "$submodule_git_dir" ]]; then
+    git -C "$worker_root" submodule deinit --all >/dev/null
+    [[ -z "$(git -C "$worker_root" status --porcelain --untracked-files=all --ignore-submodules=none)" ]] \
+      || die 'cleanup detected worktree changes while deinitializing submodules'
+    find "$submodule_git_dir" -depth -delete
+  fi
+  assert_worktree_reservation \
+    "$repo_root" "$attempt_key" "$owner" "$worker_root" >/dev/null
+  git -C "$repo_root" worktree remove "$worker_root"
   if [[ "$preparation_owned_branch" == true ]]; then
     git -C "$repo_root" update-ref -d "refs/heads/$branch" "$head" 2>/dev/null \
       || die "preparing worker branch changed during cleanup: $branch"
