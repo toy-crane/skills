@@ -4,12 +4,13 @@
     {
       "id": 1,
       "prompt": "/implement docs/specs/todo/를 구현하고 검증해줘. 이 폴더에는 task 파일이 없어.",
-      "expected_output": "The response implements spec.md directly, verifies the complete behavior, and finishes with the current harness's automated code-review process against the selected spec and acceptance criteria.",
+      "expected_output": "The response implements spec.md directly, verifies the complete behavior, reconciles the observed result with the approved product contract even without task files, and finishes with the current harness's automated code-review process against the selected spec and acceptance criteria.",
       "files": [],
       "expectations": [
         "It treats the provided spec folder as the complete implementation handoff.",
         "It implements spec.md directly because no approved task files exist.",
         "It runs the repository's complete required verification before finishing.",
+        "After focused verification, it reconciles the observed result with spec.md before the final integrated gate even though no task files exist.",
         "It uses the current harness's automated code-review process on the whole implementation diff against the selected spec and acceptance criteria."
       ]
     },
