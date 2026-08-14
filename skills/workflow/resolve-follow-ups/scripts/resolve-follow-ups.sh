@@ -158,16 +158,13 @@ follow_up_lifetime_at_base() {
   local repo_root=$1
   local relative=$2
   local base_sha=$3
-  local commit parent
-  while IFS= read -r commit; do
-    parent=$(git -C "$repo_root" rev-parse "$commit^1" 2>/dev/null || true)
-    if [[ -z "$parent" ]] \
-      || ! git -C "$repo_root" cat-file -e "$parent:$relative" 2>/dev/null; then
-      printf '%s\n' "$commit"
-      return 0
-    fi
-  done < <(git -C "$repo_root" rev-list --first-parent "$base_sha")
-  return 1
+  git -C "$repo_root" log \
+    --first-parent \
+    --diff-merges=first-parent \
+    --diff-filter=A \
+    --format=%H \
+    "$base_sha" -- "$relative" \
+    | sed -n '1p'
 }
 
 content_key_at_base() {

@@ -561,18 +561,37 @@ test_merge_restored_follow_up_starts_a_new_lifetime() {
   git -C "$repo" checkout "$original_base" -- docs/follow-ups/first.md
   git -C "$repo" add docs/follow-ups/first.md
   git -C "$repo" commit -qm 'docs: restore follow-up through merge'
+  local nonce
+  for nonce in $(seq 1 100); do
+    git -C "$repo" commit --allow-empty -qm "test: advance restored history $nonce"
+  done
   local restored_base
   restored_base=$(git -C "$repo" rev-parse HEAD)
   git -C "$repo" push -qu origin main
 
+  local wrapper_dir="$sandbox/bin"
+  local git_calls="$sandbox/git-calls"
+  local real_git
+  mkdir -p "$wrapper_dir"
+  real_git=$(command -v git)
+  : >"$git_calls"
+  cat >"$wrapper_dir/git" <<'EOF'
+#!/usr/bin/env bash
+printf x >>"$GIT_CALLS"
+exec "$REAL_GIT" "$@"
+EOF
+  chmod +x "$wrapper_dir/git"
   local restored_identity
   restored_identity=$(
-    "$DISPATCHER" identity \
+    REAL_GIT="$real_git" GIT_CALLS="$git_calls" PATH="$wrapper_dir:$PATH" \
+      "$DISPATCHER" identity \
       --repo "$coordinator" \
       --follow-up docs/follow-ups/first.md
   )
   [[ "$restored_identity" == $'eligible\tdocs/follow-ups/first.md\t'"$restored_base"$'\t'* ]] \
     || fail 'a follow-up restored against the default-branch parent should begin a fresh lifetime'
+  [[ "$(wc -c <"$git_calls" | tr -d ' ')" -lt 50 ]] \
+    || fail 'lifetime lookup should use batched history queries instead of one Git process per commit'
 
   rm -rf "$sandbox"
 }
