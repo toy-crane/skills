@@ -110,7 +110,8 @@
   terminal identity retains owner and cleanup coordinates, so either interruption
   window remains recoverable. Active claims and pull-request outcomes continue to
   suppress unchanged content across unrelated base advancement; deletion followed
-  by re-creation starts a fresh lifetime even when the Markdown is identical.
+  by re-creation starts a fresh lifetime even when the Markdown is identical,
+  including when a merge restores the path against its default-branch parent.
   Non-PR outcomes become retryable when the base changes, but only after any
   surviving terminal worktree is reconciled. A published branch is reconciled
   with its pull request before any interrupted claim can be recovered.

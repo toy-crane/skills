@@ -158,8 +158,16 @@ follow_up_lifetime_at_base() {
   local repo_root=$1
   local relative=$2
   local base_sha=$3
-  git -C "$repo_root" log --diff-filter=A --format=%H "$base_sha" -- "$relative" \
-    | sed -n '1p'
+  local commit parent
+  while IFS= read -r commit; do
+    parent=$(git -C "$repo_root" rev-parse "$commit^1" 2>/dev/null || true)
+    if [[ -z "$parent" ]] \
+      || ! git -C "$repo_root" cat-file -e "$parent:$relative" 2>/dev/null; then
+      printf '%s\n' "$commit"
+      return 0
+    fi
+  done < <(git -C "$repo_root" rev-list --first-parent "$base_sha")
+  return 1
 }
 
 content_key_at_base() {
@@ -659,11 +667,9 @@ list_follow_ups() {
       || die "follow-up path contains a tab or newline: $relative"
     git -C "$repo_root" show "$base_sha:$relative" >"$item"
     if validate_follow_up "$item"; then
-      local discovered_at
-      discovered_at=$(
-        git -C "$repo_root" log --diff-filter=A --format=%ct "$base_sha" -- "$relative" \
-          | sed -n '1p'
-      )
+      local discovered_at lifetime_sha
+      lifetime_sha=$(follow_up_lifetime_at_base "$repo_root" "$relative" "$base_sha")
+      discovered_at=$(git -C "$repo_root" show -s --format=%ct "$lifetime_sha")
       [[ -n "$discovered_at" ]] || discovered_at=0
       printf '%020d\t%s\n' "$discovered_at" "$relative" >>"$candidates"
     else

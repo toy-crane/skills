@@ -505,6 +505,78 @@ EOF
   rm -rf "$sandbox"
 }
 
+test_merge_restored_follow_up_starts_a_new_lifetime() {
+  local sandbox
+  sandbox=$(mktemp -d)
+  local repo="$sandbox/repo"
+  local remote="$sandbox/remote.git"
+  local coordinator="$sandbox/coordinator"
+  mkdir -p "$repo"
+  new_repo "$repo"
+  write_follow_up "$repo/docs/follow-ups/first.md" 'Merge-restored symptom'
+  commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record merge-restored follow-up'
+  git -C "$repo" branch -M main
+  local original_base
+  original_base=$(git -C "$repo" rev-parse HEAD)
+  git -C "$repo" branch restore-source
+  git init -q --bare "$remote"
+  git -C "$remote" symbolic-ref HEAD refs/heads/main
+  git -C "$repo" remote add origin "$remote"
+  git -C "$repo" push -qu origin main
+  git clone -q "$remote" "$coordinator"
+
+  local old_identity old_path old_base old_key old_claim old_owner
+  old_identity=$(
+    "$DISPATCHER" identity \
+      --repo "$coordinator" \
+      --follow-up docs/follow-ups/first.md
+  )
+  IFS=$'\t' read -r _ old_path old_base old_key <<<"$old_identity"
+  old_claim=$(
+    "$DISPATCHER" claim \
+      --repo "$coordinator" \
+      --follow-up "$old_path" \
+      --base-sha "$old_base"
+  )
+  IFS=$'\t' read -r _ _ old_owner <<<"$old_claim"
+  "$DISPATCHER" mark \
+    --repo "$coordinator" \
+    --follow-up "$old_path" \
+    --base-sha "$old_base" \
+    --owner "$old_owner" \
+    --outcome pull-request \
+    --detail 'https://github.com/example/repo/pull/merge-restored' >/dev/null
+
+  git -C "$repo" rm -q docs/follow-ups/first.md
+  git -C "$repo" commit -qm 'docs: retire merge-restored follow-up'
+  git -C "$repo" switch -q restore-source
+  printf '\nSide-branch investigation preserved this item.\n' \
+    >>"$repo/docs/follow-ups/first.md"
+  git -C "$repo" add docs/follow-ups/first.md
+  git -C "$repo" commit -qm 'docs: investigate follow-up on side branch'
+  git -C "$repo" switch -q main
+  if git -C "$repo" merge --no-ff --no-commit restore-source >/dev/null 2>&1; then
+    fail 'merge-restoration fixture should require an explicit delete/modify resolution'
+  fi
+  git -C "$repo" checkout "$original_base" -- docs/follow-ups/first.md
+  git -C "$repo" add docs/follow-ups/first.md
+  git -C "$repo" commit -qm 'docs: restore follow-up through merge'
+  local restored_base
+  restored_base=$(git -C "$repo" rev-parse HEAD)
+  git -C "$repo" push -qu origin main
+
+  local restored_identity
+  restored_identity=$(
+    "$DISPATCHER" identity \
+      --repo "$coordinator" \
+      --follow-up docs/follow-ups/first.md
+  )
+  [[ "$restored_identity" == $'eligible\tdocs/follow-ups/first.md\t'"$restored_base"$'\t'* ]] \
+    || fail 'a follow-up restored against the default-branch parent should begin a fresh lifetime'
+
+  rm -rf "$sandbox"
+}
+
 test_cleanup_requires_exact_attempt_ownership() {
   local sandbox
   sandbox=$(mktemp -d)
@@ -1332,6 +1404,7 @@ EOF
 
 test_list_limits_candidates_and_reports_invalid_items
 test_attempt_claims_are_atomic_and_terminal_state_is_immutable
+test_merge_restored_follow_up_starts_a_new_lifetime
 test_cleanup_requires_exact_attempt_ownership
 test_coordination_failures_remain_owned_and_recoverable
 test_rewritten_history_ignores_pruned_non_pr_attempts
