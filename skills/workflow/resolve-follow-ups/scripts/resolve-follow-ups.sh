@@ -286,12 +286,26 @@ print_attempt_state() {
   if [[ -f "$outcome_file" ]]; then
     local outcome
     local detail
+    local owner
     outcome=$(sed -n '1p' "$outcome_file")
     detail=$(sed -n '2p' "$outcome_file")
+    owner=$(claim_field "$claim_file" 1)
     printf 'skipped-unchanged\t%s\t%s\t%s\t%s' \
       "$relative" "$base_sha" "$attempt_key" "$outcome"
     if [[ -n "$detail" ]]; then
       printf '\t%s' "$detail"
+    fi
+    printf '\towner\t%s' "$owner"
+    local terminal_coordinates=''
+    if [[ -f "$state_dir/binding" ]]; then
+      terminal_coordinates="$state_dir/binding"
+    elif [[ -f "$state_dir/target" ]]; then
+      terminal_coordinates="$state_dir/target"
+    fi
+    if [[ -n "$terminal_coordinates" ]]; then
+      printf '\t%s\t%s' \
+        "$(sed -n '1p' "$terminal_coordinates")" \
+        "$(sed -n '2p' "$terminal_coordinates")"
     fi
     printf '\n'
     return 0
@@ -302,6 +316,14 @@ print_attempt_state() {
     printf 'skipped-unchanged\t%s\t%s\t%s\tclaimed\t%s\t%s\t%s\n' \
       "$relative" "$base_sha" "$attempt_key" "$(claim_field "$claim_file" 1)" \
       "$(sed -n '1p' "$binding_file")" "$(sed -n '2p' "$binding_file")"
+    return 0
+  fi
+
+  local target_file="$state_dir/target"
+  if [[ -f "$target_file" ]]; then
+    printf 'skipped-unchanged\t%s\t%s\t%s\tclaimed\t%s\t%s\t%s\n' \
+      "$relative" "$base_sha" "$attempt_key" "$(claim_field "$claim_file" 1)" \
+      "$(sed -n '1p' "$target_file")" "$(sed -n '2p' "$target_file")"
     return 0
   fi
 
@@ -469,8 +491,8 @@ release_claim() {
   assert_claim_owner "$claim_file" "$owner"
   local state_dir
   state_dir=$(state_dir_for "$repo_root" "$attempt_key")
-  [[ ! -e "$state_dir/binding" && ! -e "$state_dir/outcome" ]] \
-    || die 'cannot release a claim after binding or terminal outcome'
+  [[ ! -e "$state_dir/target" && ! -e "$state_dir/binding" && ! -e "$state_dir/outcome" ]] \
+    || die 'cannot release a claim after targeting, binding, or terminal outcome'
   local base_sha relative content_ref
   base_sha=$(claim_field "$claim_file" 2)
   relative=$(claim_field "$claim_file" 3)
@@ -642,6 +664,36 @@ write_binding() {
   return 1
 }
 
+write_target() {
+  local repo_root=$1
+  local attempt_key=$2
+  local owner=$3
+  local worktree=$4
+  local branch=$5
+  local claim_file
+  claim_file=$(claim_file_for "$repo_root" "$attempt_key")
+  assert_claim_owner "$claim_file" "$owner"
+  local state_dir
+  state_dir=$(state_dir_for "$repo_root" "$attempt_key")
+  mkdir -p "$state_dir"
+  local target_file="$state_dir/target"
+  local attempts_dir
+  attempts_dir=$(attempts_dir_for "$repo_root")
+  local temp_file
+  temp_file=$(mktemp "$attempts_dir/.target.XXXXXX")
+  printf '%s\n%s\n' "$worktree" "$branch" >"$temp_file"
+  if ln "$temp_file" "$target_file" 2>/dev/null; then
+    rm "$temp_file"
+    return 0
+  fi
+  if cmp -s "$temp_file" "$target_file"; then
+    rm "$temp_file"
+    return 0
+  fi
+  rm "$temp_file"
+  return 1
+}
+
 write_outcome() {
   local repo_root=$1
   local attempt_key=$2
@@ -714,6 +766,7 @@ fail_after_worktree_creation() {
         die "$detail; the worktree was removed but owned branch $branch changed during cleanup; attempt-key $attempt_key owner $owner can be recovered after branch reconciliation"
       fi
     fi
+    rm "$(state_dir_for "$repo_root" "$attempt_key")/target"
     release_claim "$repo_root" "$attempt_key" "$owner"
     die "$detail; the unbound worktree was removed and the claim was released"
   fi
@@ -727,8 +780,9 @@ fail_after_worktree_creation() {
       worker_root=$(CDPATH= cd -- "$discovered_root" && pwd -P)
       actual_branch=$(git -C "$worker_root" symbolic-ref --quiet --short HEAD 2>/dev/null || true)
       [[ -n "$actual_branch" ]] || actual_branch='(detached)'
-      write_binding "$repo_root" "$attempt_key" "$owner" "$worker_root" "$actual_branch" \
-        || true
+      if write_binding "$repo_root" "$attempt_key" "$owner" "$worker_root" "$actual_branch"; then
+        rm "$(state_dir_for "$repo_root" "$attempt_key")/target"
+      fi
     fi
   fi
   write_outcome "$repo_root" "$attempt_key" "$owner" blocked "$detail" || true
@@ -868,10 +922,13 @@ prepare_worker() {
     release_claim "$repo_root" "$attempt_key" "$owner"
     die "branch already exists: $branch"
   fi
+  write_target "$repo_root" "$attempt_key" "$owner" "$worktree" "$branch" \
+    || die "attempt-key $attempt_key owner $owner already has a different worktree target"
   if ! git -C "$repo_root" worktree add -q --detach "$worktree" "$base_sha"; then
     if [[ ! -e "$worktree" ]] \
       && ! git -C "$repo_root" worktree list --porcelain \
         | grep -Fqx "worktree $worktree"; then
+      rm "$(state_dir_for "$repo_root" "$attempt_key")/target"
       release_claim "$repo_root" "$attempt_key" "$owner"
       die "failed to create worker worktree: $worktree; no partial checkout was registered"
     fi
@@ -935,6 +992,7 @@ prepare_worker() {
       'attempt was already bound to a different worker during prepare' || true
     die "attempt-key $attempt_key owner $owner was already bound during prepare"
   fi
+  rm "$(state_dir_for "$repo_root" "$attempt_key")/target"
 
   printf 'prepared\t%s\t%s\t%s\t%s\t%s\n' \
     "$requested_worktree" "$branch" "$base_sha" "$attempt_key" "$owner"
@@ -1055,26 +1113,46 @@ recover_attempt() {
   fi
 
   local binding_file="$state_dir/binding"
+  local target_file="$state_dir/target"
+  local coordination_file=''
+  local preparing=false
   if [[ -f "$binding_file" ]]; then
+    coordination_file=$binding_file
+  elif [[ -f "$target_file" ]]; then
+    coordination_file=$target_file
+    preparing=true
+  fi
+  if [[ -n "$coordination_file" ]]; then
     local bound_worktree bound_branch published_head
-    bound_worktree=$(sed -n '1p' "$binding_file")
-    bound_branch=$(sed -n '2p' "$binding_file")
+    bound_worktree=$(sed -n '1p' "$coordination_file")
+    bound_branch=$(sed -n '2p' "$coordination_file")
     if [[ -e "$bound_worktree" || -L "$bound_worktree" ]]; then
       release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
       die "recover requires the bound worker worktree to be cleaned up first: $bound_worktree"
     fi
-    if ! published_head=$(
-      git -C "$repo_root" ls-remote "$remote" "refs/heads/$bound_branch" 2>/dev/null \
-        | awk 'NR == 1 { print $1 }'
-    ); then
-      release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
-      die "recover cannot inspect the bound worker branch on remote: $remote"
+    published_head=''
+    if [[ "$bound_branch" != '(detached)' ]]; then
+      if ! published_head=$(
+        git -C "$repo_root" ls-remote "$remote" "refs/heads/$bound_branch" 2>/dev/null \
+          | awk 'NR == 1 { print $1 }'
+      ); then
+        release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
+        die "recover cannot inspect the bound worker branch on remote: $remote"
+      fi
     fi
     if [[ -n "$published_head" ]]; then
       release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
       die "recover refuses published branch $bound_branch; inspect it for a pull request and mark the terminal result"
     fi
-    rm "$binding_file"
+    if [[ "$preparing" == true ]] \
+      && git -C "$repo_root" show-ref --verify --quiet "refs/heads/$bound_branch"; then
+      release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
+      die "recover refuses local preparation branch $bound_branch; reconcile it before releasing the claim"
+    fi
+    rm "$coordination_file"
+    if [[ "$coordination_file" == "$binding_file" && -f "$target_file" ]]; then
+      rm "$target_file"
+    fi
   fi
   local base_sha relative content_ref
   base_sha=$(claim_field "$claim_file" 2)
@@ -1139,9 +1217,15 @@ clear_attempt() {
     || die 'clear refuses an active claim without a terminal outcome'
   [[ "$(sed -n '1p' "$state_dir/outcome")" == pull-request ]] \
     || die 'clear only permits a pull-request outcome after its pull request closes unmerged'
+  local cleanup_coordinates=''
   if [[ -f "$state_dir/binding" ]]; then
+    cleanup_coordinates="$state_dir/binding"
+  elif [[ -f "$state_dir/target" ]]; then
+    cleanup_coordinates="$state_dir/target"
+  fi
+  if [[ -n "$cleanup_coordinates" ]]; then
     local bound_worktree
-    bound_worktree=$(sed -n '1p' "$state_dir/binding")
+    bound_worktree=$(sed -n '1p' "$cleanup_coordinates")
     [[ ! -e "$bound_worktree" && ! -L "$bound_worktree" ]] \
       || die 'clear requires the bound worker worktree to be removed first'
   fi
@@ -1153,9 +1237,15 @@ clear_attempt() {
     release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
     die 'pull-request outcome changed during clear'
   fi
+  cleanup_coordinates=''
   if [[ -f "$state_dir/binding" ]]; then
+    cleanup_coordinates="$state_dir/binding"
+  elif [[ -f "$state_dir/target" ]]; then
+    cleanup_coordinates="$state_dir/target"
+  fi
+  if [[ -n "$cleanup_coordinates" ]]; then
     local guarded_worktree
-    guarded_worktree=$(sed -n '1p' "$state_dir/binding")
+    guarded_worktree=$(sed -n '1p' "$cleanup_coordinates")
     if [[ -e "$guarded_worktree" || -L "$guarded_worktree" ]]; then
       release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
       die 'clear requires the bound worker worktree to remain removed'
@@ -1167,6 +1257,7 @@ clear_attempt() {
   git -C "$repo_root" update-ref -d "$content_ref" "$base_sha" 2>/dev/null || true
   rm "$state_dir/outcome"
   [[ ! -e "$state_dir/binding" ]] || rm "$state_dir/binding"
+  [[ ! -e "$state_dir/target" ]] || rm "$state_dir/target"
   if ! rmdir "$state_dir" 2>/dev/null; then
     release_claim_guard "$repo_root" "$attempt_key" "$guard_oid"
     die 'attempt state contains unexpected files'
@@ -1224,11 +1315,21 @@ cleanup_worker() {
   local state_dir
   state_dir=$(state_dir_for "$repo_root" "$attempt_key")
   local binding_file="$state_dir/binding"
-  [[ -f "$binding_file" ]] || die 'attempt is not bound to a worker worktree'
+  local target_file="$state_dir/target"
+  local coordination_file=''
+  local preparing=false
+  if [[ -f "$binding_file" ]]; then
+    coordination_file=$binding_file
+  elif [[ -f "$target_file" ]]; then
+    coordination_file=$target_file
+    preparing=true
+  else
+    die 'attempt has no bound or preparing worker worktree'
+  fi
   local bound_worktree
   local bound_branch
-  bound_worktree=$(sed -n '1p' "$binding_file")
-  bound_branch=$(sed -n '2p' "$binding_file")
+  bound_worktree=$(sed -n '1p' "$coordination_file")
+  bound_branch=$(sed -n '2p' "$coordination_file")
   [[ "$bound_worktree" == "$worker_root" ]] \
     || die 'cleanup target is not the worktree owned by this attempt'
 
@@ -1236,7 +1337,16 @@ cleanup_worker() {
     || die 'cleanup requires a clean worker worktree'
   local branch
   branch=$(git -C "$worker_root" symbolic-ref --quiet --short HEAD 2>/dev/null || true)
-  if [[ "$bound_branch" == '(detached)' ]]; then
+  local preparation_owned_branch=false
+  if [[ "$preparing" == true ]]; then
+    if [[ -z "$branch" ]]; then
+      branch='(detached)'
+    elif [[ "$branch" == "$bound_branch" ]]; then
+      preparation_owned_branch=true
+    else
+      die 'cleanup preparing worker branch does not match its persisted target'
+    fi
+  elif [[ "$bound_branch" == '(detached)' ]]; then
     [[ -z "$branch" ]] || die 'cleanup expected the bound worker to remain detached'
     branch='(detached)'
   else
@@ -1255,7 +1365,7 @@ cleanup_worker() {
   fi
   local remote_head=''
   local safe_published=false
-  if [[ "$safe_no_change" != true && "$branch" != '(detached)' ]]; then
+  if [[ "$branch" != '(detached)' && ( "$safe_no_change" != true || "$preparing" == true ) ]]; then
     remote_head=$(
       git -C "$repo_root" ls-remote "$remote" "refs/heads/$branch" 2>/dev/null \
         | awk 'NR == 1 { print $1 }'
@@ -1264,7 +1374,13 @@ cleanup_worker() {
       safe_published=true
     fi
   fi
-  if [[ "$safe_no_change" != true && "$safe_published" != true ]]; then
+  if [[ "$preparing" == true && -n "$remote_head" ]]; then
+    die "preparing worker branch is already published to $remote: $branch"
+  fi
+  if [[ "$preparing" == true && "$branch" == '(detached)' && "$safe_no_change" != true ]]; then
+    die 'cleanup refuses a changed detached worktree from interrupted preparation'
+  fi
+  if [[ "$preparing" != true && "$safe_no_change" != true && "$safe_published" != true ]]; then
     if [[ -n "$remote_head" ]]; then
       die "published branch HEAD $remote_head does not match worker HEAD $head"
     fi
@@ -1272,6 +1388,13 @@ cleanup_worker() {
   fi
 
   git -C "$repo_root" worktree remove "$worker_root"
+  if [[ "$preparation_owned_branch" == true ]]; then
+    git -C "$repo_root" update-ref -d "refs/heads/$branch" "$head" 2>/dev/null \
+      || die "preparing worker branch changed during cleanup: $branch"
+  fi
+  if [[ "$preparing" == true ]]; then
+    rm "$target_file"
+  fi
   printf 'cleaned\t%s\t%s\t%s\n' "$requested_worktree" "$branch" "$head"
 }
 

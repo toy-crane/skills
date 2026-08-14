@@ -246,8 +246,8 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
   fi
   local skipped
   skipped=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
-  assert_eq $'skipped-unchanged\tdocs/follow-ups/first.md\t'"$base_sha"$'\t'"$attempt_key"$'\tnot-reproduced\t'"$not_reproduced_detail" "$skipped" \
-    'identity should expose the immutable terminal outcome and its evidence'
+  assert_eq $'skipped-unchanged\tdocs/follow-ups/first.md\t'"$base_sha"$'\t'"$attempt_key"$'\tnot-reproduced\t'"$not_reproduced_detail"$'\towner\t'"$owner"$'\t'"$worker_root"$'\tcodex/fix-first' "$skipped" \
+    'identity should expose terminal evidence and exact cleanup ownership'
   if "$DISPATCHER" clear \
     --repo "$repo" \
     --follow-up docs/follow-ups/first.md \
@@ -352,8 +352,8 @@ test_attempt_claims_are_atomic_and_terminal_state_is_immutable() {
     --detail "$pull_request_url" >/dev/null
   local skipped_pr
   skipped_pr=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
-  assert_eq $'skipped-unchanged\tdocs/follow-ups/first.md\t'"$base_sha"$'\t'"$attempt_key"$'\tpull-request\t'"$pull_request_url" "$skipped_pr" \
-    'an unchanged pull request should remain suppressed across remote base advancement'
+  assert_eq $'skipped-unchanged\tdocs/follow-ups/first.md\t'"$base_sha"$'\t'"$attempt_key"$'\tpull-request\t'"$pull_request_url"$'\towner\t'"$second_owner"$'\t'"$native_root"$'\tcodex/native-first' "$skipped_pr" \
+    'an unchanged pull request should retain suppression and cleanup ownership across base advancement'
   local clear_one="$sandbox/clear-one"
   local clear_two="$sandbox/clear-two"
   "$DISPATCHER" clear \
@@ -615,7 +615,7 @@ EOF
   dirty_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/fourth.md)
   local dirty_status dirty_path dirty_base
   IFS=$'\t' read -r dirty_status dirty_path dirty_base _ <<<"$dirty_identity"
-  [[ "$dirty_identity" == $'skipped-unchanged\tdocs/follow-ups/fourth.md\t'*$'\tblocked\tworker worktree is dirty after branch setup' ]] \
+  [[ "$dirty_identity" == $'skipped-unchanged\tdocs/follow-ups/fourth.md\t'*$'\tblocked\tworker worktree is dirty after branch setup\towner\t'* ]] \
     || fail 'dirty prepare should become a terminal blocker instead of dispatching contaminated changes'
   git -C "$dirty_worker" clean -fdq
   "$DISPATCHER" cleanup \
@@ -854,7 +854,7 @@ EOF
     || fail 'status inspection failure should be an explicit preparation blocker'
   local corrupt_identity
   corrupt_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/sixth.md)
-  [[ "$corrupt_identity" == $'skipped-unchanged\tdocs/follow-ups/sixth.md\t'*$'\tblocked\tcannot inspect worker worktree after branch setup' ]] \
+  [[ "$corrupt_identity" == $'skipped-unchanged\tdocs/follow-ups/sixth.md\t'*$'\tblocked\tcannot inspect worker worktree after branch setup\towner\t'* ]] \
     || fail 'an unverifiable worker should never be reported as prepared'
 
   rm -rf "$sandbox"
@@ -946,7 +946,7 @@ test_rewritten_history_ignores_pruned_non_pr_attempts() {
   fi
   local current_identity
   current_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/first.md)
-  assert_eq $'skipped-unchanged\t'"$new_path"$'\t'"$new_base"$'\t'"$new_key"$'\tnot-reproduced\trewritten base did not reproduce' \
+  assert_eq $'skipped-unchanged\t'"$new_path"$'\t'"$new_base"$'\t'"$new_key"$'\tnot-reproduced\trewritten base did not reproduce\towner\t'"$new_owner" \
     "$current_identity" \
     'identity should ignore an obsolete non-PR claim whose rewritten base was pruned'
 
@@ -963,6 +963,7 @@ test_coordination_failures_remain_owned_and_recoverable() {
   new_repo "$repo"
   write_follow_up "$repo/docs/follow-ups/first.md" 'First coordination symptom'
   write_follow_up "$repo/docs/follow-ups/second.md" 'Second coordination symptom'
+  write_follow_up "$repo/docs/follow-ups/third.md" 'Third coordination symptom'
   commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record coordination follow-ups'
   git -C "$repo" branch -M main
   git init -q --bare "$remote"
@@ -1024,7 +1025,7 @@ EOF
   [[ -d "$partial_worker" ]] || fail 'the partial-checkout fixture should leave its registered worker'
   local partial_identity
   partial_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/second.md)
-  [[ "$partial_identity" == $'skipped-unchanged\tdocs/follow-ups/second.md\t'*$'\tblocked\tfailed to create worker worktree:'* ]] \
+  [[ "$partial_identity" == $'skipped-unchanged\tdocs/follow-ups/second.md\t'*$'\tblocked\tfailed to create worker worktree:'*$'\towner\t'* ]] \
     || fail 'a partial checkout should suppress duplicate attempts until owned cleanup'
   git -C "$partial_worker" clean -fdq
   local partial_cleaned
@@ -1037,6 +1038,64 @@ EOF
   )
   [[ "$partial_cleaned" == $'cleaned\t'*$'\t(detached)\t'"$base_sha" ]] \
     || fail 'owned cleanup should remove a clean partial detached worktree at its base'
+
+  cat >"$hooks/post-checkout" <<'EOF'
+#!/usr/bin/env bash
+sleep 3
+EOF
+  chmod +x "$hooks/post-checkout"
+  git -C "$repo" config core.hooksPath "$hooks"
+  local interrupted_worker="$sandbox/interrupted-worker"
+  local interrupted_log="$sandbox/interrupted-prepare.log"
+  "$DISPATCHER" prepare \
+    --repo "$repo" \
+    --follow-up docs/follow-ups/third.md \
+    --worktree "$interrupted_worker" \
+    --branch codex/interrupted-worker >"$interrupted_log" 2>&1 &
+  local interrupted_pid=$!
+  local wait_count
+  for wait_count in $(seq 1 100); do
+    [[ -d "$interrupted_worker" ]] && break
+    sleep 0.05
+  done
+  [[ -d "$interrupted_worker" ]] \
+    || fail 'interrupted prepare fixture should reach worktree creation'
+  kill -9 "$interrupted_pid" 2>/dev/null || true
+  wait "$interrupted_pid" 2>/dev/null || true
+  sleep 4
+  git -C "$repo" config --unset core.hooksPath
+
+  local interrupted_identity
+  interrupted_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/third.md)
+  local interrupted_status interrupted_path interrupted_base interrupted_key
+  local interrupted_state interrupted_owner interrupted_target interrupted_branch
+  IFS=$'\t' read -r interrupted_status interrupted_path interrupted_base interrupted_key \
+    interrupted_state interrupted_owner interrupted_target interrupted_branch \
+    <<<"$interrupted_identity"
+  assert_eq 'claimed' "$interrupted_state" \
+    'interrupted prepare should retain active ownership instead of launching a duplicate'
+  assert_eq 'codex/interrupted-worker' "$interrupted_branch" \
+    'interrupted prepare should retain its planned branch for cleanup'
+  assert_eq "$interrupted_base" "$(git -C "$interrupted_worker" rev-parse HEAD)" \
+    'interrupted prepare fixture should leave the exact claimed checkout'
+  local interrupted_cleaned
+  interrupted_cleaned=$(
+    "$DISPATCHER" cleanup \
+      --repo "$repo" \
+      --worktree "$interrupted_target" \
+      --attempt-key "$interrupted_key" \
+      --owner "$interrupted_owner"
+  )
+  [[ "$interrupted_cleaned" == $'cleaned\t'*$'\t(detached)\t'"$interrupted_base" ]] \
+    || fail 'cleanup should remove the persisted detached target from interrupted prepare'
+  "$DISPATCHER" recover \
+    --repo "$repo" \
+    --attempt-key "$interrupted_key" \
+    --owner "$interrupted_owner" >/dev/null
+  local interrupted_retry
+  interrupted_retry=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/third.md)
+  [[ "$interrupted_retry" == $'eligible\tdocs/follow-ups/third.md\t'* ]] \
+    || fail 'interrupted prepare should become eligible after exact cleanup and recovery'
 
   rm -rf "$sandbox"
 }

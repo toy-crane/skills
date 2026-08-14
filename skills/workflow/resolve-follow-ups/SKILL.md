@@ -47,7 +47,10 @@ attempt suppression, and cleanup.
      --repo <root> --attempt-key <key> --owner <owner>`. Never recover an active
      or uncertain worker merely because its claim is old.
    - Preserve a prior `not-reproduced`, `needs-shaping`, or `blocked` result
-     until the follow-up content or remote default-branch SHA changes.
+     until the follow-up content or remote default-branch SHA changes. Terminal
+     identity output retains `owner <owner> [<worktree> <branch>]`; if that
+     worktree still exists after its worker ended, use those exact coordinates
+     for `cleanup` before any later recovery or clear.
    - When the result carries `pull-request` and a URL, check that pull request.
      Keep it skipped while open. After an unmerged close, run `clear` for that
      exact base identity before retrying. A merged pull request should remove
@@ -95,7 +98,10 @@ isolate item workers. For each eligible item:
 2. Run `prepare --repo <root> --follow-up <path> --worktree <path> --branch
    <branch>`. Continue only for `prepared <worktree> <branch> <base-sha>
    <attempt-key> <owner>`; a concurrent sweep can instead return
-   `skipped-unchanged` without creating a checkout.
+   `skipped-unchanged` without creating a checkout. The dispatcher persists the
+   canonical worktree target before creation, so an interrupted prepare is
+   reported with the same claim owner, worktree, and planned branch for exact
+   cleanup rather than becoming an anonymous checkout.
 3. Start a top-level non-interactive Codex worker with `codex exec -C
    <worktree> --sandbox workspace-write <prompt>`. Configure only the network
    and approval capabilities needed to verify, push, and open the pull request.
@@ -193,9 +199,11 @@ After the worker returns:
   publication and an existing pull request. Record a found pull request with
   `mark`; if a branch was published without one, finish or explicitly block that
   publication rather than discarding its identity. Only when no publication
-  occurred, use `cleanup` first for its bound worktree, then `recover` with the
-  exact attempt key and owner. Recovery refuses live worktrees, published
-  branches, and terminal outcomes.
+  occurred, use `cleanup` first for its bound or preparing worktree, then
+  `recover` with the exact attempt key and owner. Recovery refuses live
+  worktrees, published branches, and terminal outcomes. A preparing target is
+  removed only when its checkout is clean and still detached at the base or its
+  exact prepare-owned branch can be deleted with a head compare-and-swap.
 
 Return one compact sweep report using only `pull-request`, `not-reproduced`,
 `needs-shaping`, `blocked`, `invalid-follow-up`, and `skipped-unchanged`. Link
