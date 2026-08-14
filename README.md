@@ -229,7 +229,7 @@ product surface.
   agent context in its recommended form. Runs during agent setup, after stack
   changes, or on entering an unaudited project.
 - **[expo-dev-loop](./skills/expo/expo-dev-loop/SKILL.md)**: Verify Expo and React
-  Native changes in a running app with Argent, selecting Metro reload or
+  Native changes in a running app with `agent-device`, selecting Metro reload or
   native rebuild from the actual change and completing only with device evidence.
 - **[project-knowledge](./skills/workflow/project-knowledge/SKILL.md)**: Maintain project
   terms and settled decisions that future work should reuse whenever they are
