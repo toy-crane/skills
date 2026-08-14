@@ -215,6 +215,19 @@
         "It records applicable constraints, assumptions, off-limits areas, deferrals, and risks without inferring behavior from source order or visual proximity.",
         "It omits predicted files, functions, code structure, technical layers, and step-by-step implementation work."
       ]
+    },
+    {
+      "id": 16,
+      "prompt": "/build-prototype 승인한 워크스페이스 탈퇴 화면을 마무리해줘. 일반 멤버가 스스로 탈퇴하는 화면과 상태 검토는 끝났어. 다만 마지막 소유자가 탈퇴할 때 소유권과 데이터가 어떻게 되는지는 아직 정하지 않았고 기존 spec 폴더도 없어. 구현 handoff를 남겨줘.",
+      "expected_output": "The response does not silently turn the consequential last-owner policy into settled behavior merely because screen review is closed. It asks one concrete product question with a recommendation, or explicitly defers that branch and records its impact as a remaining risk before claiming an implementation-ready product contract.",
+      "files": [],
+      "expectations": [
+        "It identifies last-owner ownership and data handling as a consequential unresolved product decision outside the approved screen behavior.",
+        "It does not invent transfer, deletion, retention, or blocking behavior as a confirmed outcome, constraint, or acceptance criterion.",
+        "It asks at most one concrete question with a recommendation and rationale, or explicitly defers that exact branch and records its impact.",
+        "It may preserve the approved ordinary-member prototype and settled behavior without reopening unrelated screen review.",
+        "It does not claim the product contract is implementation-ready while the consequential branch is neither settled nor explicitly deferred."
+      ]
     }
   ]
 }
