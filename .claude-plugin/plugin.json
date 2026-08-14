@@ -1,7 +1,7 @@
 {
   "name": "toycrane-skills",
-  "version": "0.38.3",
-  "description": "Skills for product discovery, shaping, implementation, verified follow-up resolution, runtime verification, review, project knowledge, test-first development, and safe Git delivery.",
+  "version": "0.39.0",
+  "description": "Skills for product definition, shaping, implementation, verified follow-up resolution, runtime verification, review, project knowledge, test-first development, and safe Git delivery.",
   "author": {
     "name": "toy-crane",
     "url": "https://github.com/toy-crane"
@@ -10,7 +10,7 @@
   "license": "MIT",
   "keywords": [
     "skills",
-    "discover-opportunity",
+    "define-product",
     "shape-idea",
     "split-into-tasks",
     "add-stack-context",
@@ -18,7 +18,8 @@
     "commit",
     "project-knowledge",
     "resolve-follow-ups",
-    "compact-decisions",
+    "maintain-project-context",
+    "product-context",
     "explain-visually",
     "expo",
     "agent-device",
@@ -44,11 +45,11 @@
     "./skills/git/merge",
     "./skills/workflow/add-stack-context",
     "./skills/workflow/build-prototype",
-    "./skills/workflow/compact-decisions",
-    "./skills/workflow/discover-opportunity",
+    "./skills/workflow/define-product",
     "./skills/workflow/explain-visually",
     "./skills/workflow/human-review",
     "./skills/workflow/implement",
+    "./skills/workflow/maintain-project-context",
     "./skills/workflow/project-knowledge",
     "./skills/workflow/resolve-follow-ups",
     "./skills/workflow/shape-idea",

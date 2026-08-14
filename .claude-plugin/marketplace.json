@@ -9,16 +9,18 @@
     {
       "name": "toycrane-skills",
       "source": "./",
-      "description": "Skills for product discovery, shaping, prototyping, task splitting, implementation, project knowledge, and test-first development.",
+      "description": "Skills for product definition, shaping, prototyping, task splitting, implementation, project knowledge, and test-first development.",
       "category": "productivity",
       "keywords": [
         "skills",
-        "discover-opportunity",
+        "define-product",
         "shape-idea",
         "split-into-tasks",
         "implement",
         "build-prototype",
+        "maintain-project-context",
         "project-knowledge",
+        "product-context",
         "planning",
         "tdd",
         "testing"
