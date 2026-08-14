@@ -228,6 +228,19 @@
         "It may preserve the approved ordinary-member prototype and settled behavior without reopening unrelated screen review.",
         "It does not claim the product contract is implementation-ready while the consequential branch is neither settled nor explicitly deferred."
       ]
+    },
+    {
+      "id": 17,
+      "prompt": "/build-prototype 승인한 활동 기록 화면을 마무리해줘. 화면과 상태 검토는 모두 끝났고, 사용자는 기간과 종류로 기록을 볼 수 있어. 시간대를 따로 고르지 않으면 현재 기기 시간대를 쓰는 건 네가 정한 저비용 기본값이라 사용자가 확정하지 않았지만 나중에 쉽게 바꿀 수 있어. 다른 미정 사항은 없어. 구현 handoff를 남겨줘.",
+      "expected_output": "The response preserves the approved activity-log behavior and prototype, writes the device-time-zone default as an explicitly labeled overridable assumption in spec.md, and does not promote that default to confirmed behavior or omit it from the product contract.",
+      "files": [],
+      "expectations": [
+        "It closes without another product question because the remaining default is cheap, reversible, and explicitly identified as agent-chosen.",
+        "It records the device-time-zone default under explicitly labeled assumptions in spec.md.",
+        "It does not present the device-time-zone default as a confirmed outcome, settled constraint, or observable acceptance criterion.",
+        "It preserves the approved activity-log outcomes, scope, acceptance criteria, and linked prototype.",
+        "It keeps deferrals and remaining risks distinct from the labeled assumption."
+      ]
     }
   ]
 }
