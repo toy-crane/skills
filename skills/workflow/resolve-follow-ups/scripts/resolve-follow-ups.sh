@@ -457,7 +457,9 @@ remove_unbound_worktree() {
   local worker_common
   worker_common=$(git_common_dir "$worker_root") || return 1
   [[ "$worker_common" == "$(git_common_dir "$repo_root")" ]] || return 1
-  [[ -z "$(git -C "$worker_root" status --porcelain)" ]] || return 1
+  local worker_status
+  worker_status=$(git -C "$worker_root" status --porcelain 2>/dev/null) || return 1
+  [[ -z "$worker_status" ]] || return 1
   git -C "$repo_root" worktree remove "$worker_root"
 }
 
@@ -626,7 +628,11 @@ prepare_worker() {
   fi
 
   local actual_sha
-  actual_sha=$(git -C "$worktree" rev-parse HEAD)
+  if ! actual_sha=$(git -C "$worktree" rev-parse HEAD 2>/dev/null); then
+    fail_after_worktree_creation \
+      "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
+      'prepared worktree HEAD cannot be read'
+  fi
   if [[ "$actual_sha" != "$base_sha" ]]; then
     fail_after_worktree_creation \
       "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
@@ -635,12 +641,20 @@ prepare_worker() {
   if ! git -C "$worktree" switch -q -c "$branch"; then
     local switched_branch
     switched_branch=$(git -C "$worktree" symbolic-ref --quiet --short HEAD 2>/dev/null || true)
-    actual_sha=$(git -C "$worktree" rev-parse HEAD)
+    actual_sha=$(git -C "$worktree" rev-parse HEAD 2>/dev/null || true)
     if [[ "$switched_branch" != "$branch" || "$actual_sha" != "$base_sha" ]]; then
       fail_after_worktree_creation \
         "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
-        "failed to create worker branch: $branch"
+      "failed to create worker branch: $branch"
     fi
+  fi
+  local verified_branch
+  verified_branch=$(git -C "$worktree" symbolic-ref --quiet --short HEAD 2>/dev/null || true)
+  actual_sha=$(git -C "$worktree" rev-parse HEAD 2>/dev/null || true)
+  if [[ "$verified_branch" != "$branch" || "$actual_sha" != "$base_sha" ]]; then
+    fail_after_worktree_creation \
+      "$repo_root" "$worktree" "$attempt_key" "$owner" "$branch" \
+      "worker changed after branch setup: branch=$verified_branch HEAD=${actual_sha:-unreadable}"
   fi
   if ! write_binding "$repo_root" "$attempt_key" "$owner" "$worktree" "$branch"; then
     write_outcome "$repo_root" "$attempt_key" "$owner" blocked \
@@ -866,7 +880,6 @@ cleanup_worker() {
   fi
 
   git -C "$repo_root" worktree remove "$worker_root"
-  git -C "$repo_root" update-ref -d "refs/heads/$branch" "$head"
   printf 'cleaned\t%s\t%s\t%s\n' "$requested_worktree" "$branch" "$head"
 }
 

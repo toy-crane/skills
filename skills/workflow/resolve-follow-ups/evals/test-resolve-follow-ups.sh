@@ -433,6 +433,37 @@ EOF
   [[ "$third_identity" == $'eligible\tdocs/follow-ups/third.md\t'* ]] \
     || fail 'safe post-creation failure should release the attempt claim for retry'
 
+  local hook_count="$sandbox/post-checkout-count"
+  cat >"$hooks/post-checkout" <<EOF
+#!/usr/bin/env bash
+count=0
+if [[ -f "$hook_count" ]]; then
+  count=\$(sed -n '1p' "$hook_count")
+fi
+count=\$((count + 1))
+printf '%s\n' "\$count" >"$hook_count"
+if [[ "\$count" -eq 2 ]]; then
+  git -c user.email=eval@example.com -c user.name='Resolve Follow-ups Eval' \\
+    commit --allow-empty -qm 'test: mutate head after branch switch'
+fi
+EOF
+  chmod +x "$hooks/post-checkout"
+  git -C "$repo" config core.hooksPath "$hooks"
+  local switched_worker="$sandbox/switched-worker"
+  if "$DISPATCHER" prepare \
+    --repo "$repo" \
+    --follow-up docs/follow-ups/third.md \
+    --worktree "$switched_worker" \
+    --branch codex/post-switch-mismatch >/dev/null 2>&1; then
+    fail 'prepare should revalidate HEAD after switching to the worker branch'
+  fi
+  git -C "$repo" config --unset core.hooksPath
+  [[ ! -e "$switched_worker" ]] \
+    || fail 'a clean post-switch mismatch should remove its unbound worktree'
+  third_identity=$("$DISPATCHER" identity --repo "$repo" --follow-up docs/follow-ups/third.md)
+  [[ "$third_identity" == $'eligible\tdocs/follow-ups/third.md\t'* ]] \
+    || fail 'a safely removed post-switch mismatch should release its claim'
+
   cat >"$hooks/post-checkout" <<'EOF'
 #!/usr/bin/env bash
 git -c user.email=eval@example.com -c user.name='Resolve Follow-ups Eval' \
@@ -485,6 +516,8 @@ EOF
   assert_eq $'cleaned\t'"$first_worker"$'\tcodex/fix-first\t'"$first_head" "$cleaned" \
     'cleanup should remove the exact owned worker after its changed HEAD is published'
   [[ ! -e "$first_worker" ]] || fail 'successful cleanup should remove the owned worktree'
+  assert_eq "$first_head" "$(git -C "$repo" rev-parse refs/heads/codex/fix-first)" \
+    'cleanup should retain the local branch instead of racing another checkout to delete it'
 
   rm -rf "$sandbox"
 }

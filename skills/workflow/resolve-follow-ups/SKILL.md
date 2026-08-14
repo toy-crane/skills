@@ -175,7 +175,8 @@ After the worker returns:
   `cleanup --repo <root> --worktree <worktree> --attempt-key <attempt-key>
   --owner <owner>`. For a PR worker, run the same cleanup only after its exact
   `HEAD` is visible on the remote branch. The script removes only the worktree
-  and branch bound to that exact claim and refuses dirty, unpublished changed,
+  bound to that exact claim and preserves the local branch so cleanup cannot
+  race a new checkout and delete its ref. It refuses dirty, unpublished changed,
   mismatched, foreign, or repository-root targets.
 
 Return one compact sweep report using only `pull-request`, `not-reproduced`,
