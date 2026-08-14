@@ -117,12 +117,13 @@ its impact as a remaining risk without reopening unrelated screen review.
 
 When every implementation-relevant product decision is settled or explicitly
 deferred, reuse an identified work-unit folder or derive a kebab-case slug.
-Record only confirmed behavior in `docs/specs/<slug>/spec.md`, creating or
-updating the same stable product contract used by shaping. Record or preserve
-its user-visible outcomes, approved scope, observable acceptance criteria,
-settled constraints and rationale, assumptions, off-limits areas and why,
-deferrals, and risks. Omit predicted files, functions, code structure, technical
-layers, and implementation steps. Save and link the approved surface as
+Record confirmed behavior alongside explicitly labeled assumptions and
+deferrals in `docs/specs/<slug>/spec.md`, creating or updating the same stable
+product contract used by shaping. Record or preserve its user-visible outcomes,
+approved scope, observable acceptance criteria, settled constraints and
+rationale, assumptions, off-limits areas and why, deferrals, and risks. Omit
+predicted files, functions, code structure, technical layers, and implementation
+steps. Save and link the approved surface as
 `docs/specs/<slug>/prototype.html`. Never infer navigation, order, or behavior
 from source order or visual proximity.
 
