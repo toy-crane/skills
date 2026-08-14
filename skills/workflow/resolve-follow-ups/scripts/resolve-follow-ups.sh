@@ -1502,10 +1502,12 @@ deinitialize_worker_submodules() {
   local shadow_git_dir="$shadow_root/.git"
   local ref_format
   ref_format=$(git -C "$repo_root" config --get extensions.refStorage || true)
+  local object_format
+  object_format=$(git -C "$repo_root" rev-parse --show-object-format)
 
   if ! (
     set -e
-    local init_args=(-q)
+    local init_args=(-q --object-format="$object_format")
     if [[ -n "$ref_format" ]]; then
       init_args+=(--ref-format="$ref_format")
     fi

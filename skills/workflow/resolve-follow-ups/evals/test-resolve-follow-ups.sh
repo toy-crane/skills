@@ -671,7 +671,7 @@ test_reftable_submodule_cleanup_uses_matching_shadow_metadata() {
   local remote="$sandbox/remote.git"
   local worker="$sandbox/worker"
   mkdir -p "$repo/docs/follow-ups" "$submodule_repo"
-  git -C "$repo" init -q --ref-format=reftable
+  git -C "$repo" init -q --object-format=sha256 --ref-format=reftable
   git -C "$repo" config user.email eval@example.com
   git -C "$repo" config user.name 'Resolve Follow-ups Eval'
   git -C "$submodule_repo" init -q
@@ -686,7 +686,7 @@ test_reftable_submodule_cleanup_uses_matching_shadow_metadata() {
   git -C "$repo" add .
   git -C "$repo" commit -qm 'test: record reftable cleanup fixture'
   git -C "$repo" branch -M main
-  git init -q --bare "$remote"
+  git init -q --bare --object-format=sha256 "$remote"
   git -C "$remote" symbolic-ref HEAD refs/heads/main
   git -C "$repo" remote add origin "$remote"
   git -C "$repo" push -qu origin main
