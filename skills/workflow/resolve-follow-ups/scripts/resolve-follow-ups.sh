@@ -159,6 +159,7 @@ follow_up_lifetime_at_base() {
   local relative=$2
   local base_sha=$3
   git -C "$repo_root" log \
+    --no-patch \
     --first-parent \
     --diff-merges=first-parent \
     --diff-filter=A \

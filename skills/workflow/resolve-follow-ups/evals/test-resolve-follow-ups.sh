@@ -513,6 +513,8 @@ test_merge_restored_follow_up_starts_a_new_lifetime() {
   local coordinator="$sandbox/coordinator"
   mkdir -p "$repo"
   new_repo "$repo"
+  printf '*.md diff=follow-up-text\n' >"$repo/.gitattributes"
+  git -C "$repo" add .gitattributes
   write_follow_up "$repo/docs/follow-ups/first.md" 'Merge-restored symptom'
   commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record merge-restored follow-up'
   git -C "$repo" branch -M main
@@ -582,6 +584,8 @@ exec "$REAL_GIT" "$@"
 EOF
   chmod +x "$wrapper_dir/git"
   local restored_identity
+  git -C "$coordinator" config \
+    diff.follow-up-text.textconv /definitely/missing/follow-up-textconv
   restored_identity=$(
     REAL_GIT="$real_git" GIT_CALLS="$git_calls" PATH="$wrapper_dir:$PATH" \
       "$DISPATCHER" identity \
