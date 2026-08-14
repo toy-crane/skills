@@ -284,6 +284,19 @@
         "It creates no reconciliation document, pseudo-plan, or unnecessary task rewrite.",
         "It reloads current repository state before deriving Task 02's just-in-time approach."
       ]
+    },
+    {
+      "id": 24,
+      "prompt": "/implement docs/specs/catalog/을 계속해줘. Task 01은 방금 완료됐고 현재 세션은 정상인데, 대화가 길어질 수 있으니 다음 Task 전에 새 Codex나 Claude 세션을 열지 네가 판단해서 진행해.",
+      "expected_output": "The response grounds the next outcome in current repository evidence and continues in the coherent current context without making session replacement a workflow gate. It treats task boundaries as reload and reconciliation boundaries, not automatic session or reviewer boundaries.",
+      "files": [],
+      "expectations": [
+        "It reloads the current spec, every unfinished task, relevant decisions, code, Git state, and verification evidence before Task 02.",
+        "It does not make correctness depend on predicting context length or deciding an automatic session replacement point.",
+        "It may continue in the coherent current context because no interruption or ownership ambiguity exists.",
+        "It does not create or orchestrate a new Codex task, Claude session, worker, or reviewer merely because Task 01 ended.",
+        "It derives only the active outcome's technical approach and keeps the repository handoff sufficient for a later real interruption."
+      ]
     }
   ]
 }

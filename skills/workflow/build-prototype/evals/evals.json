@@ -202,6 +202,19 @@
         "It reports audited coverage and any unverified coordinates or fidelity claims while retaining the full screen, state, interaction, and viewport coverage.",
         "If the reference cannot be inspected, it reports visual equivalence as unverified and limits the extra claim to stronger layout robustness."
       ]
+    },
+    {
+      "id": 15,
+      "prompt": "/build-prototype 승인한 예약 관리 화면을 마무리해줘. 사용자는 예약 목록을 보고 날짜를 바꾸거나 취소할 수 있고, 취소된 예약은 되돌릴 수 없어. 모든 화면과 상태 검토는 끝났고 기존 spec 폴더는 없어. 구현 handoff를 남겨줘.",
+      "expected_output": "The response preserves the approved prototype and creates spec.md as the same stable product contract used by shaping: approved user-visible outcomes, scope, observable acceptance criteria, settled constraints, assumptions, off-limits areas, deferrals, and risks, linked to prototype.html without predicting implementation internals.",
+      "files": [],
+      "expectations": [
+        "It creates docs/specs/<slug>/spec.md and saves the approved surface as linked prototype.html only after review is closed.",
+        "The spec states the approved reservation outcomes and scope rather than merely listing screen decisions.",
+        "The spec includes observable acceptance criteria for viewing, rescheduling, cancelling, and irreversible cancellation.",
+        "It records applicable constraints, assumptions, off-limits areas, deferrals, and risks without inferring behavior from source order or visual proximity.",
+        "It omits predicted files, functions, code structure, technical layers, and step-by-step implementation work."
+      ]
     }
   ]
 }
