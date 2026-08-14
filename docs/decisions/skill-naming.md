@@ -23,6 +23,9 @@
   object is the selected spec folder and changes on every invocation. It names
   the complete responsibility without exposing task, agent, or orchestrator
   mechanics.
+- `resolve-follow-ups` names the user-visible outcome of clearing recorded
+  follow-up work. Worktrees, workers, schedules, and pull requests remain
+  execution details rather than the skill name.
 - `commit`, `pull`, `push`, `pr`, and `merge` are one-word exceptions because
   they are already the standard user-facing Git operations. Their object is the
   current repository change or branch, and longer verb-object aliases would be

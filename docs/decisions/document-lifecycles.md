@@ -42,6 +42,9 @@ intentional.
   enter the glossary or a decision contract until its outcome settles on its own
   terms. Work that closed inside the session, a guess without evidence, and a
   defect fixed in the current change are not follow-ups.
+- Sweep attempt identities, owners, outcomes, and retry evidence are disposable
+  local automation state, not fields in tracked follow-up files. Git history
+  remains the archive after a verified fix deletes its follow-up.
 - A term or decision counts as preserved only after its target file is updated.
 - Every subject file appears exactly once in the index, and every index entry
   resolves to one subject file.

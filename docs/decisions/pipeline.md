@@ -93,6 +93,17 @@
   routing; `project-knowledge` owns the criteria and format. A recorded
   follow-up is a valid `shape-idea` input or a direct fix seed for a later
   session.
+- `resolve-follow-ups` sweeps the fetched remote default-branch backlog in
+  discovery order and starts no more than three eligible workers. Each item gets
+  its own verified fresh-base worktree, branch, commit series, and ready-for-
+  review pull request. A worker edits only after reproducing the symptom and
+  finding a settled deterministic success condition; it never merges its pull
+  request.
+- Attempt state is disposable local coordination data keyed by follow-up content
+  and base commit. Atomic owner claims prevent duplicate workers, terminal
+  results retain decisive evidence, and an interrupted non-terminal claim is
+  recovered only after the adapter proves its worker ended and cleans up its
+  exact bound worktree.
 
 ## Boundaries
 
@@ -131,6 +142,11 @@
 - Conversation history is useful while available but is not durable evidence.
   After a real interruption, repository artifacts determine what remains. A
   discovery reported only in the closing message is therefore not preserved.
+- A follow-up that does not reproduce remains unchanged. A reproduced item that
+  needs a product decision or material trade-off returns to `shape-idea`; the
+  sweep does not invent intent to keep automation moving. A different defect
+  discovered by a worker is returned to the coordinator for serialized
+  follow-up recording before that disposable worker is cleaned up.
 - Reconciliation is an outcome-completion responsibility inside `implement`,
   not a separate installed skill or a substitute for risk-selected or final
   automated code review.
@@ -188,6 +204,12 @@ Minimal task state and meaningful code checkpoints preserve useful recovery
 evidence without turning Git and task files into a second orchestration state
 machine.
 
+Follow-up sweeps need stricter mechanics than ordinary implementation because
+the backlog may move after a scheduled checkout starts and concurrent workers
+can otherwise mix changes or suppress retries. Fetching before enumeration,
+per-item isolation, reproduction and authority gates, and owner-fenced local
+state keep automation reviewable without turning follow-up files into a queue.
+
 ## Reconsider when
 
 - Spec folders routinely contain ambiguous or competing implementation
@@ -209,6 +231,11 @@ machine.
   justifying another standalone carrier for the check-first rule.
 - Recorded follow-ups accumulate unresolved in real repositories, justifying a
   pruning pass rather than only per-item deletion.
+- Follow-up sweeps run from several machines often enough that local attempt
+  state permits material duplicate work, justifying a shared queue.
+- Codex provides native per-subagent worktree roots with equivalent fresh-base,
+  ownership, and cleanup guarantees, making the external worker adapter
+  unnecessary.
 
 ## Still-rejected alternatives
 
@@ -237,6 +264,13 @@ machine.
 - A dedicated follow-up recording skill — it names a mechanism rather than a
   user outcome and would add another installable dependency, while
   `project-knowledge` already owns durable project memory.
+- One recurring schedule per follow-up — schedule state grows with the backlog
+  and duplicates selection policy that one bounded sweep can own.
+- Several follow-ups in one worker checkout or pull request — one failure or
+  overlap couples otherwise independent evidence and review.
+- A speculative fix from a recorded symptom, a stale local base, or unsettled
+  product intent — none establishes that the proposed patch is the verified
+  result the project wants.
 - Relying on the `project-knowledge` trigger description alone to fire during
   execution — installed context goes unused without explicit routing, the same
   effect measured for vendor agent context.
@@ -285,3 +319,10 @@ machine.
   invocation entered the automated review process; a forced Skill permission
   denial then handed `/review` to the user and kept the completion gate open.
   This supports conditional alias guidance, not a cross-version assumption.
+- The `resolve-follow-ups` dispatcher test exercises fetched remote ordering,
+  atomic claims, stale and changed bases, dirty checkout hooks, interrupted
+  claim recovery, terminal evidence, exact worktree ownership, unpublished
+  changes, and cleanup. An automated whole-diff review exposed remote-only
+  backlog loss, abandoned claims, dirty prepared workers, and lost non-PR
+  evidence; the added controls reproduce each failure before accepting the
+  corrected lifecycle.
