@@ -890,8 +890,6 @@ EOF
   [[ "$fetch_failure_output" == *'cannot fetch remote default branch: origin/main'* ]] \
     || fail 'a remote fetch failure should be reported as an explicit fresh-base blocker'
 
-  local blocked_parent="$sandbox/blocked-parent"
-  mkdir -p "$blocked_parent"
   if "$DISPATCHER" prepare \
     --repo "$repo" \
     --follow-up docs/follow-ups/third.md \
@@ -899,16 +897,31 @@ EOF
     --branch '(detached)' >/dev/null 2>&1; then
     fail 'prepare should reserve the detached-worktree marker for internal state only'
   fi
-  chmod 500 "$blocked_parent"
-  if "$DISPATCHER" prepare \
+  local worktree_failure_bin="$sandbox/worktree-failure-bin"
+  mkdir -p "$worktree_failure_bin"
+  cat >"$worktree_failure_bin/git" <<EOF
+#!/usr/bin/env bash
+previous=''
+for arg in "\$@"; do
+  if [[ "\$previous" == worktree && "\$arg" == add ]]; then
+    printf 'injected worktree creation failure\n' >&2
+    exit 42
+  fi
+  previous="\$arg"
+done
+exec "$real_git" "\$@"
+EOF
+  chmod +x "$worktree_failure_bin/git"
+  local failed_worker="$sandbox/failed-create-worker"
+  if PATH="$worktree_failure_bin:$PATH" "$DISPATCHER" prepare \
     --repo "$repo" \
     --follow-up docs/follow-ups/third.md \
-    --worktree "$blocked_parent/worker" \
+    --worktree "$failed_worker" \
     --branch codex/failed-create >/dev/null 2>&1; then
-    chmod 700 "$blocked_parent"
-    fail 'prepare should fail when the worktree directory cannot be created'
+    fail 'prepare should fail when git worktree creation fails'
   fi
-  chmod 700 "$blocked_parent"
+  [[ ! -e "$failed_worker" ]] \
+    || fail 'failed worktree creation should not leave a checkout path'
   if git -C "$repo" show-ref --verify --quiet refs/heads/codex/failed-create; then
     fail 'failed worktree creation should not leave a local branch that blocks retries'
   fi
