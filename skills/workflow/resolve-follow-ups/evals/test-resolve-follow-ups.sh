@@ -102,6 +102,8 @@ test_prepare_fetches_and_verifies_the_remote_default_branch() {
   mkdir -p "$repo"
   new_repo "$repo"
   write_follow_up "$repo/docs/follow-ups/first.md" 'First symptom'
+  dd if=/dev/zero bs=1024 count=256 2>/dev/null \
+    | tr '\0' x >>"$repo/docs/follow-ups/first.md"
   commit_at "$repo" '2026-01-01T00:00:00Z' 'docs: record first follow-up'
   git -C "$repo" branch -M main
   git init -q --bare "$remote"
@@ -282,6 +284,7 @@ test_cleanup_requires_a_clean_published_worker() {
     --follow-up docs/follow-ups/first.md \
     --worktree "$empty_worker" \
     --branch codex/no-change >/dev/null
+  git -C "$repo" remote set-url origin "$sandbox/unavailable.git"
   "$DISPATCHER" cleanup \
     --repo "$repo" \
     --worktree "$empty_worker" \
@@ -290,6 +293,41 @@ test_cleanup_requires_a_clean_published_worker() {
   [[ ! -e "$empty_worker" ]] || fail 'cleanup should remove a clean worker that never moved beyond its verified base'
   if git -C "$repo" show-ref --verify --quiet refs/heads/codex/no-change; then
     fail 'cleanup should remove the local branch for an unpublished no-change worker'
+  fi
+
+  local unavailable_output
+  if unavailable_output=$(
+    "$DISPATCHER" prepare \
+      --repo "$repo" \
+      --follow-up docs/follow-ups/first.md \
+      --worktree "$sandbox/unavailable-worker" \
+      --branch codex/unavailable-base 2>&1
+  ); then
+    fail 'prepare should stop when the remote default branch cannot be resolved'
+  fi
+  [[ "$unavailable_output" == *'cannot resolve the default branch for remote: origin'* ]] \
+    || fail 'prepare should report the unavailable remote as an explicit base blocker'
+  [[ ! -e "$sandbox/unavailable-worker" ]] \
+    || fail 'remote-base failure should not create a worktree'
+  if git -C "$repo" show-ref --verify --quiet refs/heads/codex/unavailable-base; then
+    fail 'remote-base failure should not create a local branch'
+  fi
+  git -C "$repo" remote set-url origin "$remote"
+
+  local blocked_parent="$sandbox/blocked-parent"
+  mkdir -p "$blocked_parent"
+  chmod 500 "$blocked_parent"
+  if "$DISPATCHER" prepare \
+    --repo "$repo" \
+    --follow-up docs/follow-ups/first.md \
+    --worktree "$blocked_parent/worker" \
+    --branch codex/failed-create >/dev/null 2>&1; then
+    chmod 700 "$blocked_parent"
+    fail 'prepare should fail when the worktree directory cannot be created'
+  fi
+  chmod 700 "$blocked_parent"
+  if git -C "$repo" show-ref --verify --quiet refs/heads/codex/failed-create; then
+    fail 'failed worktree creation should not leave a local branch that blocks retries'
   fi
 
   git -C "$worker" config user.email eval@example.com

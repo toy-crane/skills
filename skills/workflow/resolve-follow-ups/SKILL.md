@@ -137,15 +137,22 @@ next step in its own `docs/follow-ups/<symptom>.md` file.
 - Return `pull-request` with its URL. If publication or verification fails,
   retain the follow-up and return `blocked` rather than claiming resolution.
 
+Finish the worker response with a compact block containing `outcome`,
+`follow-up`, `base-sha`, `attempt-key`, `pull-request` when present, and the
+decisive reproduction or blocker evidence. The coordinator uses this block to
+record the exact attempt; prose alone is not a terminal result.
+
 ## Record and clean up each outcome
 
 After the worker returns:
 
-- Run `mark` with `pull-request --detail <URL>` so later sweeps do not duplicate
-  an open pull request.
-- Run `mark` with `not-reproduced`, `needs-shaping`, or `blocked` for a non-PR
-  outcome. The recorded identity is disposable local automation state, not a
-  status field in the tracked follow-up.
+- For a pull request, run `mark --repo <root> --follow-up <path> --base-sha
+  <sha> --outcome pull-request --detail <URL>` so later sweeps do not duplicate
+  it.
+- For a non-PR result, run the same `mark` command with `--outcome
+  not-reproduced`, `--outcome needs-shaping`, or `--outcome blocked` and omit
+  `--detail`. The recorded identity is disposable local automation state, not
+  a status field in the tracked follow-up.
 - For a clean non-PR worker that never moved beyond its base, run `cleanup` with
   that base SHA. For a PR worker, run `cleanup` only after its exact `HEAD` is
   visible on the remote branch. The script refuses dirty, unpublished changed,

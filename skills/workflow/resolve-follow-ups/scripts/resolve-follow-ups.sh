@@ -111,8 +111,8 @@ resolve_attempt() {
 
   local field
   for field in 'Symptom' 'Observed evidence' 'Suspected cause' 'What was tried' 'Proposed next step'; do
-    git -C "$repo_root" show "$base_sha:$relative" \
-      | grep -Eq "^\\*\\*${field}\\*\\*: .+" \
+    grep -Eq "^\\*\\*${field}\\*\\*: .+" \
+      < <(git -C "$repo_root" show "$base_sha:$relative") \
       || die "follow-up on $remote/$default_branch is missing: $field"
   done
 
@@ -276,7 +276,12 @@ prepare_worker() {
 
   git -C "$repo_root" show-ref --verify --quiet "refs/heads/$branch" \
     && die "branch already exists: $branch"
-  git -C "$repo_root" worktree add -q -b "$branch" "$worktree" "$base_sha"
+  if ! git -C "$repo_root" worktree add -q -b "$branch" "$worktree" "$base_sha"; then
+    git -C "$repo_root" worktree remove --force "$worktree" >/dev/null 2>&1 || true
+    git -C "$repo_root" update-ref -d "refs/heads/$branch" "$base_sha" \
+      >/dev/null 2>&1 || true
+    die "failed to create worker worktree: $worktree"
+  fi
   local actual_sha
   actual_sha=$(git -C "$worktree" rev-parse HEAD)
   if [[ "$actual_sha" != "$base_sha" ]]; then
@@ -453,14 +458,16 @@ cleanup_worker() {
       safe_no_change=true
     fi
   fi
-  local remote_head
-  remote_head=$(
-    git -C "$repo_root" ls-remote "$remote" "refs/heads/$branch" 2>/dev/null \
-      | awk 'NR == 1 { print $1 }'
-  )
+  local remote_head=''
   local safe_published=false
-  if [[ -n "$remote_head" && "$remote_head" == "$head" ]]; then
-    safe_published=true
+  if [[ "$safe_no_change" != true ]]; then
+    remote_head=$(
+      git -C "$repo_root" ls-remote "$remote" "refs/heads/$branch" 2>/dev/null \
+        | awk 'NR == 1 { print $1 }'
+    ) || die "cannot inspect worker branch on remote: $remote"
+    if [[ -n "$remote_head" && "$remote_head" == "$head" ]]; then
+      safe_published=true
+    fi
   fi
   if [[ "$safe_no_change" != true && "$safe_published" != true ]]; then
     if [[ -n "$remote_head" ]]; then
