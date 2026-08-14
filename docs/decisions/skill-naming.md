@@ -10,6 +10,11 @@
 - `define-product` names the work of turning a user-chosen app direction into
   permanent, current product context. It does not use the `one-pager` artifact
   format or imply application scaffolding in its name.
+- `maintain-project-context` names the deliberate periodic pass that keeps the
+  project's durable context current, concise, and internally consistent. The
+  object covers product context, terms, decisions, completed work-unit records,
+  and always-loaded repository guidance without granting authority to invent
+  new product meaning or project decisions.
 - `shape-idea` names the work of turning a chosen direction into bounded,
   implementation-ready decisions; the spec is its handoff, not its activity.
 - `project-knowledge` names the current terms and settled decisions for future
@@ -72,5 +77,8 @@ repository.
 - `knowledge-stewardship` — it describes the AI's caretaker role accurately but
   is longer and more abstract than the project artifacts people need to find.
 - `memory-layer` — memory already names CLAUDE.md and harness-managed memory.
+- Naming the maintenance pass after decision compaction — decisions are only
+  one of the durable context surfaces it reconciles, while compaction omits
+  currency and consistency from the user-visible outcome.
 - `show-results` for human review — it centers presentation rather than the
   scarce human judgment the skill protects.
