@@ -2,7 +2,7 @@
 
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
-A composable, model-agnostic set of skills for product discovery, shaping,
+A composable, model-agnostic set of skills for product definition, shaping,
 prototyping, task splitting, implementation, runtime verification, human
 review, project knowledge, verified follow-up resolution, test-first
 development, and safe Git delivery. Install selected skills or the complete
@@ -27,6 +27,12 @@ If an existing copy was installed before the source catalog moved into the
 relying on `skills update`. The CLI tracks the exact upstream skill path, while
 the reinstallation keeps the same skill names and refreshes that path.
 
+The product-context workflow replaces `discover-opportunity` with
+`define-product` and renames `compact-decisions` to
+`maintain-project-context`. A copy-in installation does not receive aliases for
+the retired names; remove those old copied folders after installing the
+replacements.
+
 ### Claude Code plugin (managed bundle)
 
 Installs the complete set as a read-only bundle. Updates arrive with new plugin
@@ -48,11 +54,12 @@ claude plugin install toycrane-skills@toycrane
 
 ## The pipeline
 
-Six skills cover discovery through implementation.
+Six skills cover product definition through implementation.
 
 ```mermaid
 flowchart LR
-    DO["discover-opportunity<br/>(no direction yet)"] --> SI["shape-idea<br/>(problem named,<br/>direction rough)"]
+    DP["define-product<br/>(app direction known)"] --> PRODUCT[/PRODUCT.md/]
+    PRODUCT -. "read when present" .-> SI["shape-idea<br/>(one work unit)"]
     SI --> BP["build-prototype<br/>(judge it by using it)"]
     SI --> SPEC[/spec folder/]
     BP --> SPEC
@@ -64,7 +71,8 @@ flowchart LR
     CHECK --> MATCH{"still matches the spec<br/>and remaining tasks?"}
     MATCH -- "technical facts changed" --> UPDATE["update active tasks"]
     UPDATE --> ONE
-    MATCH -- "product promise changed" --> SI
+    MATCH -- "work-unit promise changed" --> SI
+    MATCH -- "app premise changed" --> DP
     MATCH -- "yes" --> MORE{"more outcomes?"}
     MORE -- "yes" --> ONE
     MORE -- "no" --> FINAL["full checks + code review"]
@@ -75,10 +83,17 @@ flowchart LR
     IM -. "open workaround or<br/>out-of-scope defect" .-> FU["follow-up"]
 ```
 
-Invoke `discover-opportunity` when no problem or direction is known. It runs only
-on `/discover-opportunity` in Claude Code or `$discover-opportunity` in Codex.
-Start with `shape-idea` when the problem and a broad direction are already known.
-The discovery handoff remains in the conversation rather than a separate file.
+Invoke `define-product` when starting a from-scratch app whose rough direction
+or problem is already known. It creates or revises root `PRODUCT.md` as the
+current app-level premise: users and situations, problem and alternatives,
+promised change, core loop, capabilities and boundaries, experience principles,
+success signals, assumptions, and unknowns. Blank-page idea discovery is
+outside this workflow.
+
+Start with `shape-idea` when one concrete problem and broad work-unit direction
+are already known. It reads `PRODUCT.md` when present but remains independently
+usable when the file is absent, and it neither creates nor edits app-level
+product context.
 
 `shape-idea` records one stable product contract in
 `docs/specs/<slug>/spec.md`: user-visible outcomes, scope, observable acceptance
@@ -146,10 +161,11 @@ Invoke the same folder again after an interruption. `implement` reconstructs
 progress from the folder, Git, the current diff, and verification results; a
 new session or a closing-message handoff is not required for correctness.
 
-- **[discover-opportunity](./skills/workflow/discover-opportunity/SKILL.md)**: Find
-  side-project directions from agreed personal traces and relevant current
-  change. Runs only when explicitly invoked and hands the chosen direction to
-  `shape-idea` without creating a document.
+- **[define-product](./skills/workflow/define-product/SKILL.md)**: Turn a rough app
+  direction the user already wants to pursue into one current root `PRODUCT.md`.
+  Keep app-level users, problem, promise, core loop, boundaries, experience
+  principles, success signals, assumptions, and unknowns available across later
+  work units without absorbing technical or feature-level detail.
 - **[shape-idea](./skills/workflow/shape-idea/SKILL.md)**: Clarify a chosen problem and
   direction through correctable drafts, project evidence, and rendered UI
   variants. Maintain project terms and write the stable product contract that
@@ -219,10 +235,10 @@ the merged worktree.
 ## Supporting workflows
 
 Seven additional skills can run independently. They handle stack setup, Expo
-runtime verification, project knowledge, verified follow-up resolution, visual
-explanation, final human judgment, and periodic cleanup. `implement` also uses
-a matching runtime-verification skill when one is available for an affected
-product surface.
+runtime verification, incremental project knowledge, verified follow-up
+resolution, visual explanation, final human judgment, and periodic context
+maintenance. `implement` also uses a matching runtime-verification skill when
+one is available for an affected product surface.
 
 - **[add-stack-context](./skills/workflow/add-stack-context/SKILL.md)**: Audit the
   technologies that define a project's stack and install each vendor's official
@@ -246,9 +262,10 @@ product surface.
   or consequential repository change into a minimal visual handoff when the user
   asks to inspect actual outcomes and judge unresolved commitments. Show the
   whole outcome, then focus one review set on at most three active questions.
-- **[compact-decisions](./skills/workflow/compact-decisions/SKILL.md)**: Periodically clean
-  up decision files, the glossary, shipped specs, and agent instructions after
-  work accumulates. Shorten the documents without changing confirmed decisions.
+- **[maintain-project-context](./skills/workflow/maintain-project-context/SKILL.md)**:
+  Periodically reconcile `PRODUCT.md`, the glossary, decision contracts, shipped
+  specs, and agent instructions after work accumulates. Apply only meaning that
+  is already settled and leave ambiguous conflicts for explicit clarification.
 
 ## Acknowledgements
 

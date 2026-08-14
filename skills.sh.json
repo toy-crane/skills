@@ -4,9 +4,9 @@
   "groupings": [
     {
       "title": "Product development",
-      "description": "Skills for finding, shaping, implementing, and maintaining the context behind product work.",
+      "description": "Skills for defining, shaping, implementing, and maintaining the context behind product work.",
       "skills": [
-        "discover-opportunity",
+        "define-product",
         "shape-idea",
         "build-prototype",
         "split-into-tasks",
@@ -14,7 +14,7 @@
         "tdd",
         "add-stack-context",
         "project-knowledge",
-        "compact-decisions"
+        "maintain-project-context"
       ]
     },
     {
