@@ -38,7 +38,8 @@ pending
 ## Execution
 
 <!-- Append concise evidence and preserve earlier entries when status changes.
-Execution Blocker is the current impediment, not a declared task dependency. -->
+Execution Blocker is the current impediment for an active task, not a declared
+task dependency. In a superseded task, preserved entries are historical. -->
 - Verification: —
 - Blocker: —
 - Revision: —
