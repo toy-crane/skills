@@ -1,6 +1,6 @@
 {
   "name": "toycrane-skills",
-  "version": "0.38.1",
+  "version": "0.38.2",
   "description": "Skills for product discovery, shaping, implementation, verified follow-up resolution, runtime verification, review, project knowledge, test-first development, and safe Git delivery.",
   "author": {
     "name": "toy-crane",
@@ -21,7 +21,7 @@
     "compact-decisions",
     "explain-visually",
     "expo",
-    "agent-device",
+    "argent",
     "human-review",
     "implement",
     "merge",
