@@ -58,7 +58,15 @@ Six skills cover product definition through implementation.
 
 ```mermaid
 flowchart LR
-    DP["define-product<br/>(app direction known)"] --> PRODUCT[/PRODUCT.md/]
+    DP["define-product<br/>(rough direction known)"] --> READY{"whole direction clear<br/>without guessing?"}
+    READY -- "no" --> ASK["ask about real use<br/>(no guessed answers)"]
+    ASK --> READY
+    READY -- "yes" --> REQUEST{"writing already<br/>requested?"}
+    REQUEST -- "yes" --> PRODUCT[/PRODUCT.md/]
+    REQUEST -- "no" --> DRAFT["show the whole direction"]
+    DRAFT --> CONFIRM{"confirmed?"}
+    CONFIRM -- "not yet" --> ASK
+    CONFIRM -- "yes" --> PRODUCT
     PRODUCT -. "read when present" .-> SI["shape-idea<br/>(one work unit)"]
     SI --> BP["build-prototype<br/>(judge it by using it)"]
     SI --> SPEC[/spec folder/]
@@ -84,11 +92,13 @@ flowchart LR
 ```
 
 Invoke `define-product` when starting a from-scratch app whose rough direction
-or problem is already known. It creates or revises root `PRODUCT.md` as the
-current app-level premise: users and situations, problem and alternatives,
-promised change, core loop, capabilities and boundaries, experience principles,
-success signals, assumptions, and unknowns. Blank-page idea discovery is
-outside this workflow.
+or problem is already known. It starts from a concrete use scene and draws out
+the user's product meaning instead of filling gaps from the initial solution
+idea. After the complete direction is confirmed, it creates or revises root
+`PRODUCT.md` with the users and situations, problem and alternatives, promised
+change, core loop, capabilities and boundaries, experience principles, success
+signals, assumptions, and unknowns. Blank-page idea discovery is outside this
+workflow.
 
 Start with `shape-idea` when one concrete problem and broad work-unit direction
 are already known. It reads `PRODUCT.md` when present but remains independently
@@ -161,11 +171,12 @@ Invoke the same folder again after an interruption. `implement` reconstructs
 progress from the folder, Git, the current diff, and verification results; a
 new session or a closing-message handoff is not required for correctness.
 
-- **[define-product](./skills/workflow/define-product/SKILL.md)**: Turn a rough app
-  direction the user already wants to pursue into one current root `PRODUCT.md`.
-  Keep app-level users, problem, promise, core loop, boundaries, experience
-  principles, success signals, assumptions, and unknowns available across later
-  work units without absorbing technical or feature-level detail.
+- **[define-product](./skills/workflow/define-product/SKILL.md)**: Draw out the
+  product meaning behind a rough app direction, confirm it with the user, and
+  preserve it in one current root `PRODUCT.md`. Keep app-level users, problem,
+  promise, core loop, boundaries, experience principles, success signals,
+  assumptions, and unknowns available across later work units without
+  absorbing technical or feature-level detail.
 - **[shape-idea](./skills/workflow/shape-idea/SKILL.md)**: Clarify a chosen problem and
   direction through correctable drafts, project evidence, and rendered UI
   variants. Maintain project terms and write the stable product contract that
