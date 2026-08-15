@@ -6,8 +6,12 @@
   from-scratch application and making deliberate changes to its product meaning
   with the user. It is the greenfield entry point before work-unit shaping and
   does not produce a work-unit spec. Its input includes at least a rough app
-  direction or problem the user already wants to pursue; it converges that seed
-  rather than discovering opportunities from a blank page.
+  direction or problem the user already wants to pursue. That seed starts an
+  interview; it does not authorize the AI to complete missing product meaning.
+  The skill draws out the user's actual use situation, current behavior, and
+  desired change, confirms the complete direction, and only then writes
+  `PRODUCT.md`. It converges the chosen seed rather than discovering
+  opportunities from a blank page.
 - `discover-opportunity` is not part of the pipeline. The greenfield entry point
   leaves a durable current artifact instead of handing a chosen direction to
   shaping through conversation alone.
@@ -144,6 +148,11 @@
 - A user with no app direction is outside the greenfield skill's input
   contract. The pipeline does not mine personal traces or invent candidate
   opportunities to manufacture that missing seed.
+- A partial direction is valid input to the interview but not a complete
+  product definition. Missing central meaning blocks the `PRODUCT.md` handoff
+  until the user supplies it or delegates the exact choice. A less central gap
+  crosses the handoff only when the user accepts it as an assumption or chooses
+  to leave it unknown.
 - Tasks are vertical, independently deliverable and verifiable, and separated
   only at outcomes that can stand on their own. Work that becomes meaningful
   only when completed together remains one task. A task is not a fine-grained

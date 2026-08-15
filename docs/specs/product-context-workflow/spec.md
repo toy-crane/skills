@@ -3,8 +3,9 @@
 ## User-visible outcomes
 
 - A user starting a from-scratch application with a rough direction can invoke
-  `define-product` to create one durable root `PRODUCT.md` that gives later AI
-  work the current app-level product premise.
+  `define-product` to draw out the product meaning they already have in mind.
+  After the user confirms the complete direction, the skill creates one durable
+  root `PRODUCT.md` that gives later AI work the current app-level premise.
 - Invoking `define-product` again updates that same product definition with the
   user instead of creating a parallel artifact or silently preserving obsolete
   meaning.
@@ -21,8 +22,10 @@
 ### Product definition
 
 `define-product` starts from an app direction or problem the user already wants
-to pursue. It converges the product premise and keeps one current `PRODUCT.md`
-containing:
+to pursue. That seed starts an interview rather than supplying every missing
+part of the product. The skill begins with a concrete use scene, asks only
+questions that could change the app-level meaning, and keeps one current
+`PRODUCT.md` containing:
 
 - a one-sentence definition of the app;
 - primary users and their usage situations;
@@ -34,9 +37,21 @@ containing:
 - success signals;
 - material assumptions and unknowns.
 
-The skill distinguishes supported product facts from assumptions and unknowns.
-It asks for user judgment only where a consequential product choice cannot be
-resolved from available evidence.
+The user remains the authority for product meaning. Repository and external
+evidence may answer factual questions but cannot replace the user's intended
+user, situation, problem, promised change, core loop, boundary, experience
+principle, or success signal. The skill asks open questions without recommended
+answers while drawing out meaning. If the user has not made a choice, it offers
+to leave the point unknown or decide it together; options and recommendations
+begin only after the user chooses the latter.
+
+The skill writes only after the user confirms one full draft that distinguishes
+directly confirmed meaning, choices made under clearly scoped delegation,
+accepted assumptions, and intentional unknowns. A complete initial direction
+with an explicit write request may serve as that confirmation when it requires
+no material guess and does not conflict with existing meaning. Missing central
+meaning continues the interview rather than becoming an automatic assumption
+or unknown.
 
 ### Work-unit shaping
 
@@ -66,8 +81,17 @@ set. The supported greenfield flow assumes a rough direction and begins with
   `maintain-project-context`, with each usable as a standalone installation.
 - The installed skill list and current documentation contain no invokable
   `discover-opportunity` or decision-only maintenance entry point.
-- Given a rough app direction and no `PRODUCT.md`, `define-product` produces the
-  single root file with every approved product-content category represented.
+- Given only `/define-product 웹 페이지 URL을 Markdown으로 변환해 LLM으로 바로
+  넘기는 서비스.`, `define-product` preserves only that stated direction, asks
+  one open question about the actual user, situation, page, and current way of
+  getting its content into an LLM, and does not create `PRODUCT.md`.
+- Given one answer to that first question while other central meaning remains
+  unresolved, `define-product` briefly reflects what became clear and asks the
+  next product question instead of completing the file by inference.
+- Given a complete app direction, an explicit request to write, and no conflict
+  with existing meaning, `define-product` produces the single root file with
+  every approved product-content category represented and asks no redundant
+  question.
 - Given an existing `PRODUCT.md`, `define-product` revises the same file and
   preserves still-current meaning while making consequential changes explicit
   to the user.
@@ -100,6 +124,13 @@ set. The supported greenfield flow assumes a rough direction and begins with
   than a concrete design system.
 - Product definition and work-unit shaping remain independent because their
   artifacts have different lifetimes and either skill may be installed alone.
+- A rough solution direction grants permission to begin the product interview,
+  not permission to infer missing intent. The output fields check the completed
+  definition; they are not a fixed questionnaire and do not require the user to
+  speak in document terminology.
+- Product meaning settles through direct user confirmation or explicit
+  delegation for one clearly scoped choice. Silence does not turn a gap into a
+  fact, assumption, unknown, or delegated decision.
 - Periodic maintenance can edit several durable artifacts but cannot create new
   product meaning or project decisions. File-writing authority does not confer
   decision authority.
@@ -126,6 +157,10 @@ set. The supported greenfield flow assumes a rough direction and begins with
   feature catalog, or work-unit spec.
 - Inferring product intent or a settled project decision from shipped code,
   document recency, or lack of objection.
+- Completing unspoken product meaning from a rough solution, leading the user
+  with recommended answers during the interview, or writing `PRODUCT.md` while
+  its central user, situation, problem, current alternative, promised change,
+  or core loop remains a guess.
 - Keeping compatibility aliases for the retired or renamed entry points in the
   current published skill set.
 
@@ -141,3 +176,6 @@ None.
 - Product context can still drift between maintenance passes when a product
   change is settled outside `define-product` but never recorded in an
   authoritative project artifact.
+- An interview can become tiring if the skill repeats full summaries or asks
+  about fields that do not change later work. It must reflect only newly learned
+  meaning each round and keep non-material gaps out of the conversation.
