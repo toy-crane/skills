@@ -111,3 +111,10 @@ shaping session from sliding into implementation.
   Two runs per condition detect only large differences, and web search was
   unavailable throughout, so the comparison ran under harsher conditions than
   normal.
+- Grading those four runs blind against the retained eval assertions split
+  transport-without-evidence exactly along the wording boundary. A separate
+  assertion caught a revised run asserting that vendor agent context existed
+  after its only check returned an error, so the wording does not remove
+  overclaiming on its own. Assertions about grounding the dependency and about
+  finishing without a question passed everywhere and were kept or dropped on
+  that basis rather than on the split they failed to produce.
