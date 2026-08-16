@@ -102,9 +102,11 @@
   model-invoked to audit and install the same context during agent setup, after
   stack changes, and on entering an existing project whose vendor context has
   not been checked.
-- Before building a workaround for an external dependency, `shape-idea` checks
-  official documentation, issue trackers, and release notes. If no answer
-  applies, the spec records what was checked and why it fell short.
+- Before building on or working around a third-party package or tool,
+  `shape-idea` grounds its conclusion in evidence of how that dependency
+  actually behaves and confirms it in the project. The spec records what was
+  checked, what fell short, and the upstream change that would reopen the
+  decision.
 - When execution applies a workaround whose root cause stays open, or observes
   an out-of-scope defect with evidence, it records a follow-up at the moment of
   discovery through `project-knowledge`, and writes the item directly when that

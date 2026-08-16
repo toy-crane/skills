@@ -37,8 +37,11 @@
 - Durable project writes are limited to the spec folder, glossary, current
   decision contracts, and installed vendor agent context. Do not edit product
   source during shaping.
-- For external-dependency questions, check official docs, issue trackers, and
-  release notes before making a technical experiment or workaround.
+- Ground any conclusion about a third-party package or tool in evidence of how
+  it actually behaves — its own source, documentation, releases, and maintainer
+  statements — and confirm it in this project before building on it or working
+  around it. Record what was checked, what fell short, and the upstream change
+  that would reopen the decision.
 
 ## Boundaries
 
@@ -80,5 +83,31 @@ shaping session from sliding into implementation.
   very difference the session needs them to judge.
 - Editing product code while shaping — it mixes alignment and implementation
   and leaves unreviewed source changes behind.
-- Building a custom workaround before checking the dependency's own sources —
-  it repeats solved work and loses the provenance of the answer.
+- Building a custom workaround before establishing how the dependency behaves —
+  it repeats solved work, loses the provenance of the answer, and defends the
+  workaround with reasoning the evidence would have corrected.
+- Naming a fixed lookup order or specific research tools — the observed failure
+  is concluding without evidence, not consulting the wrong source, and a fixed
+  order strands the session when the named source is unreachable.
+- Treating community posts as a source tier — no session in the recorded set
+  settled a dependency question from Stack Overflow, Reddit, or a forum.
+
+## Evidence worth preserving
+
+- Across fourteen recorded sessions, the decisive source was the installed
+  package's own source or type definitions, confirmed by local reproduction;
+  official docs and issue threads explained or corroborated. Maintainer
+  statements in issues decided twice. No session settled a question from Stack
+  Overflow or Reddit. Escalation past the agent's own guess was almost always
+  user-prompted, and usually after a workaround had been started.
+- A blind two-by-two forward run on one brief carrying two planted dependency
+  questions found both control runs specifying a transport with no evidence
+  that it existed, one defending it with reasoning that did not bear on the
+  question. Neither revised run did. Both revised runs instead found another
+  route once the obvious lookups failed — one by installing and measuring the
+  dependency, one by reaching the vendor's own help documentation — and the
+  measured run's numbers changed its acceptance criteria. Cost did not separate
+  by condition; the cheapest and most expensive runs shared the same wording.
+  Two runs per condition detect only large differences, and web search was
+  unavailable throughout, so the comparison ran under harsher conditions than
+  normal.
