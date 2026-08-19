@@ -87,19 +87,23 @@
   `implement` because must-fix findings return to implementation; it neither
   invokes nor replaces the explicitly requested human judgment owned by
   `human-review`.
-- That pass uses the harness's standard review mode, named explicitly rather
-  than inherited from an earlier invocation, and receives the spec's approved
-  scope, off-limits areas, remaining risks, and relevant decision contracts
-  wherever the harness accepts review context. Repository instructions may dial
-  the mode down for speed or up for a high-risk change; the run stays single.
+- The review depth is `implement`'s judgment for the change at hand, weighing
+  what the change touches against what verification already settles. It names
+  the mode explicitly where the harness offers modes, because one given no mode
+  may reuse an earlier invocation's, and takes the harness's standard mode when
+  nothing argues either way. The run stays single at any depth. The reviewer
+  receives the spec's approved scope, off-limits areas, remaining risks, and
+  relevant decision contracts wherever the harness accepts review context. A
+  pass that did not review the intended scope is not spent.
 - `implement` fixes a finding only when it shows an approved acceptance
   criterion failing, or is a defect or caused regression in the changed
   behavior that reproduction confirms on a path ordinary use reaches. It then
   reruns only the affected verification and sends no scope through the reviewer
-  twice in that run, including the repairs made to an already-reviewed scope. Every other finding is recorded instead: an evidenced
-  defect or open workaround becomes a follow-up, an already-disposed trade-off
-  is noted as disposed, and a material consequence the spec leaves open is
-  named in the handoff as a decision the user owns.
+  twice in that run, including the repairs made to an already-reviewed scope.
+  Every other finding is recorded instead: an evidenced defect or open
+  workaround becomes a follow-up, an already-disposed trade-off is noted as
+  disposed, and a material consequence the spec leaves open is named in the
+  handoff as a decision the user owns.
 - The automated review is evidence attached to the handoff rather than a
   completion condition. Verified work whose reviewer is user-only, rejected,
   errored, timed out, or absent is complete, and its handoff records the review
@@ -300,8 +304,8 @@ state keep automation reviewable without turning follow-up files into a queue.
   avoided rework they produce, or material defects repeatedly appear before an
   undeclared checkpoint.
 - Defects a deeper review mode would have caught repeatedly surface after
-  handoff, or one standard pass proves too slow to default to for ordinary
-  changes.
+  handoff, or depth selection collapses in practice into always taking the
+  fallback mode, making the criteria inert.
 - Triage repeatedly returns defects to the user or a follow-up that should have
   been repaired in the run that introduced them.
 - A harness ships a reviewer designed to converge, such as a mode that
@@ -374,8 +378,9 @@ state keep automation reviewable without turning follow-up files into a queue.
   to certify a diff.
 - Removing the automated review or making it opt-in — its first pass caught
   user-visible defects that verification did not.
-- A recall-tuned review mode as the default — deliberate over-reporting moves
-  cost into triage without a matching gain in must-fix findings.
+- Fixing one review mode for every change — no observed failure justifies it,
+  the single pass already bounds the cost of a deeper mode, and a fixed level
+  removes judgment the implementer is better placed to apply.
 - A separate completion state for work whose reviewer was unavailable — it
   reintroduces the incomplete report the evidence rule exists to remove.
 - Review after every task or edit — it adds fixed cost without requiring a

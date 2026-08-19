@@ -93,15 +93,17 @@ over the entire diff against the selected spec and acceptance criteria. Prefer a
 model-invocable reviewer; a rejection recorded only in an earlier session is not
 current evidence, so retry that reviewer once in the active session.
 
-Use the harness's standard review mode, and name it explicitly where the
-harness offers modes rather than letting it reuse a remembered one: in Claude
-Code that is `code-review medium`, while Codex has no mode dial and one `review`
-run is the whole choice. Name only what the active installation confirms.
-Repository instructions may dial the mode down for speed or up for a high-risk
-change; the pass stays single either way. Wherever the reviewer accepts
-instructions or context, give it the spec's approved scope, off-limits areas,
-remaining risks, and the relevant decision contracts, so it does not re-argue
-trade-offs the project already settled.
+Name the mode explicitly where the harness offers modes, since one given no
+mode may reuse an earlier invocation's. Choose the depth this change warrants,
+weighing what it touches against what verification already settles, and take
+the harness's standard mode when nothing argues either way. In Claude Code that
+is `code-review medium`; Codex has no mode dial. The pass stays single at any
+depth. Wherever the reviewer accepts instructions or context, give it the spec's
+approved scope, off-limits areas, remaining risks, and the relevant decision
+contracts, so it does not re-argue trade-offs the project already settled.
+
+A pass that did not review the intended scope is not spent. Correct the target
+and run it once.
 
 ## Triage the findings and report them as evidence
 

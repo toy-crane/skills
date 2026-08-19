@@ -137,9 +137,8 @@ evidence and cannot block or re-enter the delivery frontier.
 
 After every outcome passes that check, the current harness's automated
 code-review process reads the integrated result once against the selected spec
-and acceptance criteria. That pass runs at the harness's standard mode unless
-repository instructions dial it, and its findings are triaged rather than
-looped: `implement` repairs only what breaks an approved acceptance criterion
+and acceptance criteria. `implement` picks the depth that change warrants, and
+its findings are triaged rather than looped: `implement` repairs only what breaks an approved acceptance criterion
 or reproduces as a defect on an ordinary path, then records the rest as
 follow-ups, disposed trade-offs, or decisions the user owns. The review is
 evidence attached to the handoff, so a reviewer that is unavailable, user-only,
