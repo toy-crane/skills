@@ -194,6 +194,23 @@ checks cannot decide.
   and still reported the verified work complete. The wording therefore separates
   repair from record, and treats an unusable review as evidence rather than an
   open gate.
+- Compressing that review text from 54 lines to 37 kept every behavior eight
+  Sonnet runs checked — counting a declared checkpoint and the final pass as
+  two reviews and no more, handing off a user-only reviewer with only the
+  commands the session confirmed, triaging six mixed findings to their separate
+  dispositions, refusing an explicit request to re-review a spent scope, and
+  taking the standard mode for a runtime-verified UI change. Two sentences
+  broke because compression removed their reasoning while keeping their
+  conclusion. Depth selection chose a cloud mode the model cannot invoke once
+  "prefer a model-invocable reviewer" was cut, and the wrong-scope rule went
+  unapplied because it never named the signal that detects the case. Bounding
+  the choice to invocable modes and naming the signal — findings citing paths
+  the change does not contain — fixed both, confirmed on fresh held-out
+  scenarios: a one-shot production migration drew the deepest invocable mode
+  with the cloud mode offered rather than selected, and a notifications change
+  reviewed as the payments module was separated from an ordinary out-of-scope
+  finding. A conclusion without its reason survives compression as text and not
+  as behavior.
 - Baseline `build-prototype` and `human-review` controls created and sometimes
   browser-verified their temporary HTML while still returning only a file path,
   offering to run it later, or never reaching a usable link. Isolated post-build
