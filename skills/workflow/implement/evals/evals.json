@@ -46,7 +46,7 @@
       "files": [],
       "expectations": [
         "It reviews the entire implementation diff in a single pass.",
-        "It names the review mode explicitly and uses the harness's standard mode absent a repository instruction dialing it.",
+        "It names the review mode explicitly and takes the harness's standard mode because nothing about this change argues for more or less depth.",
         "It delegates reviewer topology and mechanics to the active harness while requiring one automated review outcome.",
         "It repairs only findings that break an approved acceptance criterion or that it confirms by reproducing a defect on an ordinary-use path, and reruns only the affected verification.",
         "It does not invoke the reviewer a second time in this run, including for its own repairs.",
@@ -357,13 +357,13 @@
     },
     {
       "id": 29,
-      "prompt": "/implement docs/specs/ledger/를 끝까지 구현해줘. 이 저장소의 AGENTS.md는 결제 코드 변경에는 자동 리뷰를 가장 높은 강도로 돌리라고 적어 놨어.",
-      "expected_output": "The response uses the repository-instructed higher review mode for its single review pass, names that mode explicitly, triages the findings by the same rules, and does not add a second pass because the mode was raised.",
+      "prompt": "/implement docs/specs/ledger/를 끝까지 구현해줘. 이번 변경은 결제 정산 로직과 권한 검사를 함께 건드리고, 결정적 검증으로는 권한 경계를 충분히 확인하기 어려워.",
+      "expected_output": "The response selects a deeper review mode than the standard one because the change touches a permission boundary that deterministic checks cannot settle, names that mode explicitly, still runs the review once, and triages its findings by the same rules.",
       "files": [],
       "expectations": [
-        "It follows the repository instruction and runs the higher review mode instead of the harness's standard mode.",
+        "It selects the review depth from what this change touches and what verification cannot settle, rather than defaulting without considering it.",
         "It names the mode explicitly rather than relying on a mode the harness remembers.",
-        "It still runs the review exactly once.",
+        "It still runs the review exactly once at the depth it chose.",
         "It applies the same repair-or-record triage to the findings that mode returns."
       ]
     },
@@ -377,6 +377,31 @@
         "It relies on the rerun verification as the evidence that the repairs hold.",
         "It reports completion with the review outcome and the repairs recorded as evidence.",
         "It offers a user-invocable review command as an optional next step only when the active harness confirms one."
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "/implement docs/specs/reports/의 구현과 검증은 끝났어. 자동 리뷰를 1회 돌렸는데, 돌아온 지적들이 전부 이 저장소에 없는 파일 경로를 가리켜. 마무리해줘.",
+      "expected_output": "The response recognizes that the pass did not review the intended diff, treats it as not yet spent, corrects the target and runs it once, and triages whatever that corrected pass returns.",
+      "files": [],
+      "expectations": [
+        "It checks the reviewer's reported scope against the intended diff rather than triaging findings about files the change does not contain.",
+        "It treats a pass that reviewed the wrong scope as unspent instead of counting it as this run's single review.",
+        "It corrects the target and runs the review once more, and does not repeat beyond that.",
+        "It repairs nothing from the mistargeted findings.",
+        "If the corrected pass still cannot review the intended diff, it records that fact and reports the verified work as complete."
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "/implement docs/specs/profile-photo/를 끝까지 구현해줘. 프로필 사진 자르기 UI만 바뀌고, 런타임 검증으로 화면 동작은 전부 확인돼.",
+      "expected_output": "The response takes the harness's standard review mode because nothing about a runtime-verified UI-only change argues for more or less depth, names it, and runs it once.",
+      "files": [],
+      "expectations": [
+        "It takes the harness's standard review mode as the fallback rather than reaching for extra depth.",
+        "It names the mode explicitly.",
+        "It runs the review exactly once.",
+        "It does not treat runtime verification as a reason to skip the review pass."
       ]
     }
   ]

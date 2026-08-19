@@ -6,8 +6,8 @@
   the whole implementation diff, and then a finished handoff. The review is
   evidence attached to that handoff. It is not a completion gate that repeats
   until it reports nothing.
-- The review runs once at the harness's standard review mode unless the project
-  dials it. Its findings are triaged: only findings that break an approved
+- The implementer picks the review depth the change warrants and names it. Its
+  findings are triaged: only findings that break an approved
   acceptance criterion or are confirmed defects on an ordinary-use path are
   fixed. Everything else is recorded, not fixed, and no second review runs.
 - When the reviewer is user-only, rejected, errors, times out, or does not
@@ -34,12 +34,13 @@ reviewer and tries it once in the active session even when an earlier session
 recorded a rejection. It names the effort mode explicitly rather than relying
 on a mode the harness remembers from an earlier invocation.
 
-The default mode is the harness's standard review: the mode whose findings are
-tuned for precision, so each one is worth acting on, rather than a cheaper mode
-that only skims the diff or a recall-tuned mode that deliberately over-reports.
-In Claude Code that is `code-review medium`; in Codex it is one `review` run.
-Repository instructions such as `AGENTS.md` or `CLAUDE.md` may dial the mode
-down for speed or up for a high-risk change; the run stays single either way.
+The depth is `implement`'s judgment for the change at hand, weighing what the
+change touches against what verification already settles. It names the mode
+explicitly where the harness offers modes, because a harness given no mode may
+reuse an earlier invocation's, and takes the harness's standard mode when
+nothing argues either way. In Claude Code that standard mode is
+`code-review medium`; Codex has no mode dial. The run stays single at any
+depth, and a pass that did not review the intended scope is not spent.
 
 The reviewer is given the spec's approved scope, off-limits areas, remaining
 risks, and the relevant decision contracts wherever the harness accepts review
@@ -139,8 +140,11 @@ justifies them and states that the checkpoint is one bounded pass.
   why, and names only a command the active harness confirms for that reviewer.
 - Given no review facility, `implement` reports completion, states that the
   facility is absent, and invents no command.
-- Given repository instructions that set a different review mode, `implement`
-  uses that mode and still runs once.
+- Given a change whose risk argues for more or less depth than the standard
+  mode, `implement` selects that depth, names it, and still runs once.
+- Given a review that returned findings about a different diff than the intended
+  one, `implement` corrects the target and runs the pass once rather than
+  treating it as spent.
 - Given a task with a declared checkpoint, `implement` runs one review of the
   declared scope with the same triage and no second round.
 - Given `tdd` in use, refactoring after green triggers no review invocation.
@@ -155,20 +159,23 @@ justifies them and states that the checkpoint is one bounded pass.
 
 ## Settled constraints and rationale
 
-- The gate semantics — one pass, triage, review as evidence — are the default
-  for every user and harness. Only the review mode is a per-project dial. This
-  is a convergence fix, not an accommodation for a subscription tier.
+- The gate semantics — one pass, triage, review as evidence — hold for every
+  user and harness. The depth stays the implementer's judgment because no
+  observed failure justifies fixing it, and one pass already bounds its cost.
+  This is a convergence fix, not an accommodation for a subscription tier.
 - The single review pass stays because first passes caught user-visible bugs
   in the measured sessions: EUC-KR decoding, percent-encoded Korean filenames,
   Enter during IME composition, and an IPv4-mapped IPv6 SSRF bypass. The change
   is the stopping condition, not the review.
-- The default is the harness's standard mode, not its cheapest, because an
+- The fallback is the harness's standard mode, not its cheapest, because an
   independent look at the diff is the only thing this step contributes that
   verification and reconciliation do not. A mode that reads hunks inside the
   authoring session gives up most of that independence. Once the loop is
-  removed, one standard pass has a bounded, predictable cost, so depth is worth
-  paying for; a recall-tuned mode is not, because its deliberate over-reporting
-  is what made triage expensive in the measured sessions.
+  removed, one pass has a bounded cost at any depth, so the choice can stay with
+  the implementer rather than being fixed by the skill.
+- Naming the mode is fixed even though the depth is not: a harness given no mode
+  may reuse the level from an earlier invocation, so an unnamed mode leaves this
+  review's depth to an unrelated past choice.
 - Confirmed means reproduced. The harness reviewers are tuned to surface
   candidates, so their output cannot double as a zero-findings gate.
 - The review stays inside `implement`; must-fix findings return to
@@ -213,9 +220,9 @@ justifies them and states that the checkpoint is one bounded pass.
 
 ## Assumptions
 
-- A1. The default mode is stated as the harness's standard single review pass,
-  with `code-review medium` and one Codex `review` as examples, rather than the
-  literal word "medium".
+- A1. The skill states depth-selection criteria with the harness's standard
+  mode as the fallback, rather than fixing one level. `code-review medium` and
+  Codex's dial-free `review` appear as examples of that fallback.
 - A2. Completion is reported normally with the review evidence entry; there is
   no separate "completed without review" status.
 - A3. Intermediate checkpoints follow the same one-pass triage at the same
@@ -250,11 +257,13 @@ justifies them and states that the checkpoint is one bounded pass.
 
 ## Remaining risks
 
-- One standard pass may miss defects the measured five-round loop eventually
-  caught. Runtime verification, recorded follow-ups, and the project dial
-  mitigate this. Reconsider the default if defects a deeper mode would have
-  caught repeatedly surface after handoff, or if one standard pass proves too
-  slow to be the default for ordinary changes.
+- One pass may miss defects the measured five-round loop eventually caught.
+  Runtime verification, recorded follow-ups, and depth selection mitigate this.
+  Reconsider if defects a deeper mode would have caught repeatedly surface after
+  handoff.
+- Depth selection is model-judged and unmeasured. It may settle on the fallback
+  in every case, making the criteria inert, or reach for depth that the change
+  does not warrant.
 - Triage is model-judged. Over-permissive triage could record real defects as
   follow-ups; the reproduction rule and durable follow-ups mitigate this.
 - Reviewer context injection is harness-dependent. Claude Code's `code-review`
