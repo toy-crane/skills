@@ -363,6 +363,7 @@
       "expectations": [
         "It selects the review depth from what this change touches and what verification cannot settle, rather than defaulting without considering it.",
         "It names the mode explicitly rather than relying on a mode the harness remembers.",
+        "It stays within review modes it can invoke itself and does not select a user-triggered or separately billed mode.",
         "It still runs the review exactly once at the depth it chose.",
         "It applies the same repair-or-record triage to the findings that mode returns."
       ]
