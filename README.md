@@ -83,9 +83,12 @@ flowchart LR
     MATCH -- "app premise changed" --> DP
     MATCH -- "yes" --> MORE{"more outcomes?"}
     MORE -- "yes" --> ONE
-    MORE -- "no" --> FINAL["full checks + code review"]
-    FINAL -- "regression" --> ONE
-    FINAL --> DONE["verified, reviewed,<br/>and runnable when available"]
+    MORE -- "no" --> FINAL["full checks<br/>+ one code review pass"]
+    FINAL --> TRIAGE{"breaks a criterion or<br/>reproduces as a defect?"}
+    TRIAGE -- "yes" --> FIX["repair, recheck<br/>(no second review)"]
+    FIX --> DONE["verified and runnable,<br/>with the review as evidence"]
+    TRIAGE -- "no" --> REC["record: follow-up,<br/>note, or user decision"]
+    REC --> DONE
     IM -. "uses at pre-agreed public seams" .-> TDD[tdd]
     IM -. "uses for affected surfaces" .-> RV["matching runtime-verification skill"]
     IM -. "open workaround or<br/>out-of-scope defect" .-> FU["follow-up"]
@@ -133,16 +136,23 @@ move to the replacement; the old task remains only as inactive `superseded`
 evidence and cannot block or re-enter the delivery frontier.
 
 After every outcome passes that check, the current harness's automated
-code-review process checks the integrated result against the selected spec and
-acceptance criteria. When the repository exposes the result through a
-user-reviewable local server, `implement` verifies the changed surface and
-shares an address while leaving that server available until the user finishes
-review or later delivery cleanup. `implement` uses `tdd` where behavior can be
-verified through pre-agreed public seams. For an affected product surface, it
-also uses an available matching runtime-verification skill, or verifies the
-changed behavior through the repository's supported runtime when none is
-available. Current-scope gaps stay in implementation. A workaround with an open
-root cause or an evidenced out-of-scope defect becomes a durable follow-up.
+code-review process reads the integrated result once against the selected spec
+and acceptance criteria. That pass runs at the harness's standard mode unless
+repository instructions dial it, and its findings are triaged rather than
+looped: `implement` repairs only what breaks an approved acceptance criterion
+or reproduces as a defect on an ordinary path, then records the rest as
+follow-ups, disposed trade-offs, or decisions the user owns. The review is
+evidence attached to the handoff, so a reviewer that is unavailable, user-only,
+or silent does not turn verified work into unfinished work. When the repository
+exposes the result through a user-reviewable local server, `implement` verifies
+the changed surface and shares an address while leaving that server available
+until the user finishes review or later delivery cleanup. `implement` uses
+`tdd` where behavior can be verified through pre-agreed public seams. For an
+affected product surface, it also uses an available matching
+runtime-verification skill, or verifies the changed behavior through the
+repository's supported runtime when none is available. Current-scope gaps stay
+in implementation. A workaround with an open root cause or an evidenced
+out-of-scope defect becomes a durable follow-up.
 
 Pass the folder itself, not an individual spec or task file.
 
@@ -189,15 +199,16 @@ new session or a closing-message handoff is not required for correctness.
   spec into the complete shallow map of the fewest approved, independently
   deliverable vertical tasks, without predicting code-level implementation.
   Include explicit blockers, acceptance criteria, focused verification, minimal
-  state, and only risk-justified intermediate review checkpoints.
+  state, and only risk-justified intermediate review checkpoints, each one
+  bounded review pass.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[implement](./skills/workflow/implement/SKILL.md)**: Implement an approved spec
   folder one outcome at a time. Reload repository evidence before each outcome,
   reconcile verified behavior with the product contract and active unfinished
   tasks, ignore superseded history unless current evidence implicates it, reopen
   invalidated work, and return to shaping when a product decision must change.
-  Then finish with full verification, automated code review, and a verified
-  runnable product address when the repository provides one.
+  Then finish with full verification, one triaged automated code-review pass,
+  and a verified runnable product address when the repository provides one.
 - **[tdd](./skills/workflow/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from

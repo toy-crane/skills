@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Implement or resume settled work from a selected spec folder. Use when the user provides a `docs/specs/SLUG/` folder and wants its settled spec or approved tasks completed in the current checkout with verification, the current harness's automated code-review process, and a runnable product handoff when the repository exposes one through a local server.
+description: Implement or resume settled work from a selected spec folder. Use when the user provides a `docs/specs/SLUG/` folder and wants its settled spec or approved tasks completed in the current checkout with verification, one triaged pass of the current harness's automated code-review process, and a runnable product handoff when the repository exposes one through a local server.
 ---
 
 # Implement
@@ -59,7 +59,9 @@ For a verified discovery that preserves the product contract:
 When tasks exist, record current status and whichever verification, blocker, or
 revision evidence applies. Where commits are expected, commit code, tests, and
 the task update as one meaningful checkpoint. Run only task-declared
-intermediate review checkpoints; reconciliation adds no review checkpoint.
+intermediate review checkpoints, each as one pass over its declared cumulative
+scope focused on its declared risk, triaged by the same rules as the final
+review; reconciliation adds no review checkpoint.
 
 ## Preserve authority and durable discoveries
 
@@ -83,28 +85,64 @@ through `project-knowledge` at discovery time. If unavailable, write the
 symptom, observed evidence, suspected cause, what was tried, and proposed next
 step to `docs/follow-ups/<slug>.md`.
 
-## Pass the final gates
+## Review the whole diff once
 
 After every outcome passes reconciliation, run the complete required
-verification and the current harness's automated code review on the entire diff
-against the selected spec and acceptance criteria. Prefer a model-invocable
-reviewer. A rejection recorded only in an earlier session is not current
-evidence; retry that reviewer once in the active session.
+verification. Then run the current harness's automated code review exactly once
+over the entire diff against the selected spec and acceptance criteria. Prefer a
+model-invocable reviewer; a rejection recorded only in an earlier session is not
+current evidence, so retry that reviewer once in the active session.
 
-Completion requires every acceptance criterion, reconciliation gate, complete
-verification, and final review to pass. A current user-only result, rejection,
-error, or timeout leaves the review gate open. Hand off an exact user command
-only when the active harness confirms it for that reviewer. In Claude Code,
-`/review` may alias `code-review`; use only the command the active session
-confirms. When the reviewer exists but no user command is confirmed, report that
-handoff as unavailable. When no review facility exists, report the missing
-facility. Both states remain incomplete.
+Use the harness's standard review mode, and name it explicitly where the
+harness offers modes rather than letting it reuse a remembered one: in Claude
+Code that is `code-review medium`, while Codex has no mode dial and one `review`
+run is the whole choice. Name only what the active installation confirms.
+Repository instructions may dial the mode down for speed or up for a high-risk
+change; the pass stays single either way. Wherever the reviewer accepts
+instructions or context, give it the spec's approved scope, off-limits areas,
+remaining risks, and the relevant decision contracts, so it does not re-argue
+trade-offs the project already settled.
+
+## Triage the findings and report them as evidence
+
+Repair a finding only when it shows an approved acceptance criterion failing, or
+is a defect or caused regression in the changed behavior that you confirm by
+reproducing it on a path ordinary use reaches. A reviewer's assertion is not
+that confirmation. Rerun only the affected verification afterwards, and send no
+scope through the reviewer twice: a scope already reviewed, including the
+repairs made to it, is done for this run. A later pass over a scope this run has
+not yet reviewed, such as the whole diff after an intermediate checkpoint,
+remains that scope's own single pass. When someone asks for another look at an
+already-reviewed scope, name the confirmed user command instead of invoking the
+reviewer again yourself.
+
+Record every other finding instead of repairing it. Route an evidenced defect or
+an open workaround through `project-knowledge`, or write the symptom, observed
+evidence, suspected cause, what was tried, and proposed next step to
+`docs/follow-ups/<slug>.md` when that skill is absent. Note a trade-off already
+disposed of by the spec, an accepted remaining risk, or a decision contract as
+disposed. Keep an out-of-scope, stylistic, or unconfirmed finding in the
+handoff. Name a material consequence the spec leaves open, such as a security
+trade-off or a pathological-input failure, as a decision the user owns, and
+offer `human-review` for judging it rather than opening another repair round.
+
+Completion requires every acceptance criterion, reconciliation gate, and the
+complete verification to pass, the single review pass to have been attempted,
+and its must-fix findings to be repaired and reverified. The review outcome
+belongs in the handoff rather than in that condition: record the mode used, what
+came back, what was repaired, what was recorded and where, and what awaits a
+user decision. When the reviewer is user-only, rejected, errors, times out, or
+does not exist, say so and why, and report the verified work as complete. Offer
+an exact user command as an optional next step only when the active harness
+confirms it for that reviewer; in Claude Code, `/review` may alias
+`code-review`, so use only the command the active session confirms, and invent
+none when the harness confirms none.
 
 ## Hand off the runnable product
 
-After the final gates pass, when the repository exposes the actual result
-through a user-reviewable local server, run it through the supported development
-or preview path. Verify the changed routes and essential states, share a
+After that report, when the repository exposes the actual result through a
+user-reviewable local server, run it through the supported development or
+preview path. Verify the changed routes and essential states, share a
 reachable address, and name what to review.
 
 Reuse a healthy server owned by the current checkout or start an isolated one

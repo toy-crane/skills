@@ -79,12 +79,12 @@
   and share an address the user can open. This user-delivery contract is separate
   from browser verification and each skill carries it directly.
 - `implement` owns the runnable product handoff after its acceptance criteria
-  and automated review gate pass. When the repository exposes the actual result
-  through a user-reviewable local server, run and verify the changed routes and
-  states, share an address, and keep the current checkout's server available
-  until review finishes or later delivery cleanup, without disrupting another
-  checkout or unrelated process. This access is not `human-review` and does not
-  imply human approval.
+  pass and its single review pass has been triaged. When the repository exposes
+  the actual result through a user-reviewable local server, run and verify the
+  changed routes and states, share an address, and keep the current checkout's
+  server available until review finishes or later delivery cleanup, without
+  disrupting another checkout or unrelated process. This access is not
+  `human-review` and does not imply human approval.
 
 ## Boundaries
 
@@ -180,6 +180,20 @@ checks cannot decide.
   questions plus two named deferred commitments. The account control passed
   browser verification; the five-question control correctly remained an
   unverified draft when browser verification did not finish.
+- Two held-out forward runs exercised the revised `implement` review text on a
+  fixture whose implementation carried two planted defects. Given six findings
+  of mixed kinds, the run repaired only the acceptance-criterion break and the
+  reproducible ordinary-path defect, reran the affected verification, left the
+  spec's already-disposed streaming trade-off unrepaired and unrecorded, wrote
+  the out-of-scope defect to `docs/follow-ups/`, kept the style note and an
+  unreproducible suspicion in the handoff, invoked no reviewer, and reported
+  completion. The second run, told to establish reviewer availability itself,
+  invoked `code-review medium` once and got a review of the session's working
+  directory rather than its own repository; it detected the mismatch, repaired
+  nothing from it, reported the review as producing no evidence about its diff,
+  and still reported the verified work complete. The wording therefore separates
+  repair from record, and treats an unusable review as evidence rather than an
+  open gate.
 - Baseline `build-prototype` and `human-review` controls created and sometimes
   browser-verified their temporary HTML while still returning only a file path,
   offering to run it later, or never reaching a usable link. Isolated post-build
