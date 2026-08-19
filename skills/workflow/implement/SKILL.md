@@ -59,9 +59,8 @@ For a verified discovery that preserves the product contract:
 When tasks exist, record current status and whichever verification, blocker, or
 revision evidence applies. Where commits are expected, commit code, tests, and
 the task update as one meaningful checkpoint. Run only task-declared
-intermediate review checkpoints, each as one pass over its declared cumulative
-scope focused on its declared risk, triaged by the same rules as the final
-review; reconciliation adds no review checkpoint.
+intermediate review checkpoints, each one pass over its declared scope and risk,
+triaged by the rules below; reconciliation adds no checkpoint.
 
 ## Preserve authority and durable discoveries
 
@@ -85,60 +84,45 @@ through `project-knowledge` at discovery time. If unavailable, write the
 symptom, observed evidence, suspected cause, what was tried, and proposed next
 step to `docs/follow-ups/<slug>.md`.
 
-## Review the whole diff once
+## Review the whole diff once, then triage
 
-After every outcome passes reconciliation, run the complete required
-verification. Then run the current harness's automated code review exactly once
-over the entire diff against the selected spec and acceptance criteria. Prefer a
-model-invocable reviewer; a rejection recorded only in an earlier session is not
-current evidence, so retry that reviewer once in the active session.
+After every outcome passes reconciliation and the complete verification, run
+the harness's automated code review once over the whole diff against the spec
+and its acceptance criteria. Retry a model-invocable reviewer that only an
+earlier session rejected. Choose the depth this change warrants from the modes
+you can invoke yourself, weighing what it touches against what verification
+already settles, and name it, since a harness given no mode may reuse an
+earlier one. A deeper mode reserved for the user is something to offer, not to
+select. Take the harness's standard mode when nothing argues either way:
+`code-review medium` in Claude Code, while Codex has no dial. Wherever the
+reviewer accepts context, give it the spec's approved scope, off-limits areas,
+and remaining risks, so it does not re-argue settled trade-offs. Check the
+findings against the diff you meant to review: paths the change does not
+contain mean the reviewer read another target, so that pass is not spent —
+retarget it and run it once.
 
-Name the mode explicitly where the harness offers modes, since one given no
-mode may reuse an earlier invocation's. Choose the depth this change warrants,
-weighing what it touches against what verification already settles, and take
-the harness's standard mode when nothing argues either way. In Claude Code that
-is `code-review medium`; Codex has no mode dial. The pass stays single at any
-depth. Wherever the reviewer accepts instructions or context, give it the spec's
-approved scope, off-limits areas, remaining risks, and the relevant decision
-contracts, so it does not re-argue trade-offs the project already settled.
+Repair a finding only when it breaks an approved acceptance criterion, or is a
+defect or regression you confirm by reproducing it on a path ordinary use
+reaches; a reviewer's assertion is not that confirmation. Rerun the affected
+verification, and send no scope through the reviewer twice, repairs included.
+Each scope gets one pass: a declared checkpoint's cumulative scope, then the
+whole diff. Point anyone asking for another look at a confirmed user command
+instead of invoking the reviewer again.
 
-A pass that did not review the intended scope is not spent. Correct the target
-and run it once.
+Record every other finding rather than repairing it: an evidenced defect or open
+workaround through `project-knowledge`, or as `docs/follow-ups/<slug>.md` when
+that skill is absent; a trade-off the spec or a decision contract already
+disposed of, as disposed; an out-of-scope, stylistic, or unconfirmed finding, in
+the handoff; and a material consequence the spec leaves open, such as a security
+trade-off or a pathological-input failure, as a decision the user owns, with
+`human-review` offered for judging it.
 
-## Triage the findings and report them as evidence
-
-Repair a finding only when it shows an approved acceptance criterion failing, or
-is a defect or caused regression in the changed behavior that you confirm by
-reproducing it on a path ordinary use reaches. A reviewer's assertion is not
-that confirmation. Rerun only the affected verification afterwards, and send no
-scope through the reviewer twice: a scope already reviewed, including the
-repairs made to it, is done for this run. A later pass over a scope this run has
-not yet reviewed, such as the whole diff after an intermediate checkpoint,
-remains that scope's own single pass. When someone asks for another look at an
-already-reviewed scope, name the confirmed user command instead of invoking the
-reviewer again yourself.
-
-Record every other finding instead of repairing it. Route an evidenced defect or
-an open workaround through `project-knowledge`, or write the symptom, observed
-evidence, suspected cause, what was tried, and proposed next step to
-`docs/follow-ups/<slug>.md` when that skill is absent. Note a trade-off already
-disposed of by the spec, an accepted remaining risk, or a decision contract as
-disposed. Keep an out-of-scope, stylistic, or unconfirmed finding in the
-handoff. Name a material consequence the spec leaves open, such as a security
-trade-off or a pathological-input failure, as a decision the user owns, and
-offer `human-review` for judging it rather than opening another repair round.
-
-Completion requires every acceptance criterion, reconciliation gate, and the
-complete verification to pass, the single review pass to have been attempted,
-and its must-fix findings to be repaired and reverified. The review outcome
-belongs in the handoff rather than in that condition: record the mode used, what
-came back, what was repaired, what was recorded and where, and what awaits a
-user decision. When the reviewer is user-only, rejected, errors, times out, or
-does not exist, say so and why, and report the verified work as complete. Offer
-an exact user command as an optional next step only when the active harness
-confirms it for that reviewer; in Claude Code, `/review` may alias
-`code-review`, so use only the command the active session confirms, and invent
-none when the harness confirms none.
+The review is evidence in the handoff, not a completion condition. Completion
+needs the acceptance criteria, reconciliation, and verification to pass, and the
+must-fix findings repaired and reverified. Report what the pass produced, what
+it changed, and what it left open. When the reviewer is user-only, rejected,
+errors, times out, or does not exist, say so and still report the verified work
+as complete, offering only a command the active session confirms.
 
 ## Hand off the runnable product
 
