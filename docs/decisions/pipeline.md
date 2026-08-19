@@ -76,20 +76,40 @@
   implicates their prior implementation. Never retain or archive a superseded
   task that has no completion history.
 - A task's declared intermediate review checkpoint remains part of that task's
-  contract. The active harness uses its automated code-review process for the
-  stated cumulative scope and risk before substantial dependent work continues.
+  contract. The active harness reviews the stated cumulative scope once,
+  focused on the stated risk, before substantial dependent work continues. The
+  same mode, triage, and single-pass rule as the final review apply.
 - After every outcome is implemented, rerun the complete deterministic
-  verification and use the active harness's automated code-review process on
-  the entire implementation diff against the selected spec and acceptance
-  criteria. This final gate applies to split and unsplit specs and covers
-  cross-task interactions and omitted requirements. It stays inside `implement`
-  because blocking findings return to implementation; it neither invokes nor
-  replaces the explicitly requested human judgment owned by `human-review`.
-- After the final gate passes, `implement` runs the actual product when the
-  repository exposes it through a user-reviewable local server, verifies the
-  changed routes and essential states, and shares a reachable address while
-  keeping the current checkout's server available until review finishes or
-  later delivery cleanup.
+  verification, then run the active harness's automated code-review process
+  exactly once over the entire implementation diff against the selected spec
+  and acceptance criteria. The pass applies to split and unsplit specs and
+  covers cross-task interactions and omitted requirements. It stays inside
+  `implement` because must-fix findings return to implementation; it neither
+  invokes nor replaces the explicitly requested human judgment owned by
+  `human-review`.
+- That pass uses the harness's standard review mode, named explicitly rather
+  than inherited from an earlier invocation, and receives the spec's approved
+  scope, off-limits areas, remaining risks, and relevant decision contracts
+  wherever the harness accepts review context. Repository instructions may dial
+  the mode down for speed or up for a high-risk change; the run stays single.
+- `implement` fixes a finding only when it shows an approved acceptance
+  criterion failing, or is a defect or caused regression in the changed
+  behavior that reproduction confirms on a path ordinary use reaches. It then
+  reruns only the affected verification and sends no scope through the reviewer
+  twice in that run, including the repairs made to an already-reviewed scope. Every other finding is recorded instead: an evidenced
+  defect or open workaround becomes a follow-up, an already-disposed trade-off
+  is noted as disposed, and a material consequence the spec leaves open is
+  named in the handoff as a decision the user owns.
+- The automated review is evidence attached to the handoff rather than a
+  completion condition. Verified work whose reviewer is user-only, rejected,
+  errored, timed out, or absent is complete, and its handoff records the review
+  outcome, the mode used, what was fixed, what was recorded and where, and any
+  decision left to the user.
+- After the review pass and any must-fix repairs, `implement` runs the actual
+  product when the repository exposes it through a user-reviewable local
+  server, verifies the changed routes and essential states, and shares a
+  reachable address while keeping the current checkout's server available until
+  review finishes or later delivery cleanup.
 - Context or harness interruption resumes from the spec folder, task status,
   Git history, current diff, and test results. Preserve completed outcomes and
   request user confirmation before absorbing dirty state of uncertain
@@ -173,18 +193,19 @@
   adequately settle a security, data, permission, migration, recovery, or
   external-contract risk. The existence of a task alone is not sufficient.
 - The active harness is authoritative for reviewer topology and mechanics.
-  `implement` requires an automated code-review outcome without prescribing one
-  universal process.
+  `implement` requires one attempted review pass and its triage without
+  prescribing a universal reviewer process, and never repeats the pass to reach
+  a quiet result.
 - The runnable handoff applies only to an actual product result exposed by a
   repository-supported local server. Preserve other checkouts and unrelated
   processes, and report an exact launch command and blocker when the environment
   cannot provide a reachable address. Server access is evidence delivery, not
   human approval or an automatic `human-review` invocation.
 - A harness-specific review command may be named only when the active
-  installation confirms it for that reviewer. Such guidance remains
-  conditional and must preserve the portable completion contract: pass
-  automated review or hand off an exact user-invocable command while leaving
-  the gate outstanding.
+  installation confirms it for that reviewer. Such guidance remains conditional
+  and must preserve the portable completion contract: complete the verified
+  work, record what the review produced or why it produced nothing, and offer a
+  confirmed command as an optional next step without inventing one.
 - Conversation history is useful while available but is not durable evidence.
   After a real interruption, repository artifacts determine what remains. A
   discovery reported only in the closing message is therefore not preserved.
@@ -195,8 +216,8 @@
   follow-up recording, commit, and durable follow-up-only pull-request handoff
   before that disposable worker is cleaned up.
 - Reconciliation is an outcome-completion responsibility inside `implement`,
-  not a separate installed skill or a substitute for risk-selected or final
-  automated code review.
+  not a separate installed skill or a substitute for the risk-selected or final
+  review pass.
 - Preserve unrelated changes and confirm ownership when dirty-state ownership
   or overlap cannot be established safely.
 - Pause when a proposed product-contract change invalidates an outcome,
@@ -237,8 +258,18 @@ paths.
 
 Task files carry exceptional intermediate review checkpoints, so the execution
 skill does not need to restate their procedure. Complete verification proves
-known behavior; the harness's automated final code review adds its own signal
-without forcing every host through the same reviewer topology.
+known behavior; one automated review pass adds an independent look at the diff
+without forcing every host through the same reviewer topology. That independent
+look is what the standard mode buys, which is why the default is the harness's
+ordinary review rather than its cheapest.
+
+Repeating that pass is a different mechanism from running it. Reviewers report
+candidates, so a rule that ends only at zero findings has no reachable stopping
+point and spends its later rounds re-arguing settled trade-offs. Reproduction
+decides what returns to implementation, the recorded remainder keeps the rest
+visible, and the user keeps the judgments that need product intent. Treating the
+result as evidence rather than a gate also keeps a verified product from being
+reported as unfinished when the reviewer is simply unavailable.
 
 The runnable handoff lets the user inspect the verified implementation without
 turning server mechanics into a separate pipeline phase. Keeping the outcome in
@@ -246,9 +277,10 @@ turning server mechanics into a separate pipeline phase. Keeping the outcome in
 `human-review` focused on unresolved human judgment.
 
 Specialized runtime-verification skills own framework-specific observation
-loops, while `implement` owns their selection and the completion gate. A generic
-dispatcher would duplicate that orchestration without adding a separate user
-outcome.
+loops, while `implement` owns their selection and the completion gates that
+remain: acceptance criteria, reconciliation, and verification in the running
+product. A generic dispatcher would duplicate that orchestration without adding
+a separate user outcome.
 
 Minimal task state and meaningful code checkpoints preserve useful recovery
 evidence without turning Git and task files into a second orchestration state
@@ -267,9 +299,14 @@ state keep automation reviewable without turning follow-up files into a queue.
 - Selected intermediate reviews regularly cost more than the defects or
   avoided rework they produce, or material defects repeatedly appear before an
   undeclared checkpoint.
-- Available automated code-review processes cannot reliably cover the complete
-  diff or report blocking findings consistently enough for the shared
-  completion gate.
+- Defects a deeper review mode would have caught repeatedly surface after
+  handoff, or one standard pass proves too slow to default to for ordinary
+  changes.
+- Triage repeatedly returns defects to the user or a follow-up that should have
+  been repaired in the run that introduced them.
+- A harness ships a reviewer designed to converge, such as a mode that
+  re-verifies only named findings, or gives a cheap mode independent reviewer
+  context.
 - The minimal task state cannot reconstruct real interrupted runs safely.
 - Outcome reconciliation repeatedly misses downstream contract changes or its
   reread and task-revision cost exceeds the rework it prevents.
@@ -332,6 +369,15 @@ state keep automation reviewable without turning follow-up files into a queue.
 - Relying on the `project-knowledge` trigger description alone to fire during
   execution — installed context goes unused without explicit routing, the same
   effect measured for vendor agent context.
+- Repeating the automated review until it reports nothing — measured runs did
+  not converge, and the reviewers are tuned to surface candidates rather than
+  to certify a diff.
+- Removing the automated review or making it opt-in — its first pass caught
+  user-visible defects that verification did not.
+- A recall-tuned review mode as the default — deliberate over-reporting moves
+  cost into triage without a matching gain in must-fix findings.
+- A separate completion state for work whose reviewer was unavailable — it
+  reintroduces the incomplete report the evidence rule exists to remove.
 - Review after every task or edit — it adds fixed cost without requiring a
   material risk boundary.
 - Forbidding every intermediate review — a late permission, migration, or
@@ -368,15 +414,37 @@ state keep automation reviewable without turning follow-up files into a queue.
 - In that Todo eval, a risk-selected intermediate review and the final review
   found distinct blocking security issues; a final-review-only variant finished
   in similar time. This supports declaring intermediate review only where risk
-  justifies it and always retaining the integrated final gate.
+  justifies it and always retaining the integrated final review.
 - Vendor evaluations cited when the context-installation rule was adopted
   measured large gains from version-matched official context and also showed
   that agents frequently failed to invoke an installed skill without an
   explicit routing instruction.
 - Claude Code 2.1.226 exposed `/review` as an alias for `code-review`. A live
   invocation entered the automated review process; a forced Skill permission
-  denial then handed `/review` to the user and kept the completion gate open.
-  This supports conditional alias guidance, not a cross-version assumption.
+  denial then handed `/review` to the user. This supports conditional alias
+  guidance, not a cross-version assumption.
+- Claude Code 2.1.235 `code-review` modes: `low` reads the diff once in the
+  calling session with no subagents and at most four findings; `medium` runs
+  eight finder subagents plus one verifier per candidate and is tuned for
+  precision; `high` keeps that fan-out but is tuned for recall and instructs
+  the reviewer to err on the side of surfacing; `xhigh` and `max` add angles
+  and a sweep. With no mode given it reuses the last one typed, so the mode is
+  named explicitly. Codex 0.147.0 `review` takes custom review instructions and
+  has no effort dial.
+- One implementation session took 18 minutes to implement and commit, then ran
+  five recall-tuned review rounds over 83 of its 102 minutes. Output tokens
+  were 113,003 before the first review and 219,304 inside the review rounds;
+  each single pass cost 7 to 26 minutes and 22,400 to 34,302 output tokens.
+  Findings fell 10, 6, 5, 4, 1 without reaching zero, and a security trade-off
+  the spec had already disposed of was re-flagged in every round, ending as the
+  last round's only finding. The first pass alone returned 10 findings of which
+  8 were real, in scope, and new. This supports one standard pass with triage:
+  the first look carries the value, and repetition converged on re-litigation.
+- A second session ended when the user interrupted a third repair round for a
+  pathological-input defect the orchestrator itself judged not to affect
+  ordinary use. A third reported a fully working, runtime-verified product as
+  incomplete because its reviewer was user-only. Both are the completion-gate
+  framing rather than reviewer quality.
 - The `resolve-follow-ups` dispatcher test exercises fetched remote ordering,
   atomic claims, stale and changed bases, dirty checkout hooks, interrupted
   claim recovery, terminal evidence, exact worktree ownership, unpublished
