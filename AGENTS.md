@@ -29,6 +29,16 @@ directories too but dedupes by skill name, so the extra paths add nothing to
 `npx skills add`. Keep both sets of symlinks in step when adding, removing, or
 renaming a skill.
 
+## Output styles ship with the plugin only
+
+`output-styles/<name>.md` is a Claude Code output style. The plugin discovers
+it by directory convention at the plugin root, the same level as `skills/`, so
+adding one needs no `plugin.json` entry. skills.sh only scans for `SKILL.md`
+files, so an output style never reaches a copy-in install — plugin users get
+it, skills.sh users do not. Symlink each one into
+`.claude/output-styles/<name>.md -> ../../output-styles/<name>.md`, the same
+pattern used for skills, so it is selectable while working in this repo.
+
 ## Not everything here ships
 
 `writing-great-skills` (vendored from [mattpocock/skills](https://github.com/mattpocock/skills),
