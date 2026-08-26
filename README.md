@@ -288,6 +288,14 @@ one is available for an affected product surface.
   specs, and agent instructions after work accumulates. Apply only meaning that
   is already settled and leave ambiguous conflicts for explicit clarification.
 
+## Output styles
+
+- **[natural-korean](./output-styles/natural-korean.md)**: A Claude Code
+  response style for natural, spoken-register Korean instead of
+  translated-sounding Korean. Ships with the Claude Code plugin only —
+  skills.sh copies skill folders, not output styles. Select it with
+  `/output-style` after installing the plugin.
+
 ## Acknowledgements
 
 The skill-writing philosophy behind this project is deeply inspired by
