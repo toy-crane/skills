@@ -32,9 +32,19 @@ Ground any conclusion about a third-party package or tool in evidence of how it
 actually behaves — its own source, documentation, releases, and maintainer
 statements — and confirm it in this project before building on it or working
 around it. Record what was checked, what fell short, and the upstream change
-that would reopen the decision. When a decision selects a framework or hosted
-service, install any official vendor agent context in the form the vendor
-recommends.
+that would reopen the decision.
+
+When a decision selects a framework or hosted service, invoke
+`add-stack-context` when available and let it own discovery, source acceptance,
+installation, live vendor-document routing, and accounting. When it is absent,
+retain the selected technology's outcome inline: use `find-skills` when
+available, or an equivalent current Skills search when not, verify vendor
+control before installing an official skill, require explicit approval for a
+community skill, and check other official vendor channels. Keep a changing
+`llms.txt` at its official source and preserve a bounded `AGENTS.md` or
+`CLAUDE.md` instruction that retrieves it during relevant work instead of
+copying its contents into the repository. Account for the selected technology
+before continuing.
 
 ## Present one decision at a time
 
