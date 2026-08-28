@@ -3,10 +3,11 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use $expo-smoke-test before I ship this change. I edited the Settings screen so notification status starts as Disabled and tapping Enable notifications changes it to Enabled. PRODUCT.md says the core loop is: open the app, add a reminder, and see it in today's list. Metro is running, and an iOS simulator and an Android emulator are both available.",
-      "expected_output": "The response classifies the screen-only change as eligible for the Metro path, opens one isolated agent-device session per platform, verifies the Settings change and the PRODUCT.md core-loop journey on each platform with exact assertions, records the core loop as a replayable script after user confirmation, and reports iOS and Android evidence separately without inferring either from the other.",
+      "prompt": "Use $expo-smoke-test before I ship this change. I edited the Settings screen so notification status starts as Disabled and tapping Enable notifications changes it to Enabled. PRODUCT.md says the core loop is: open the app, add a reminder, and see it in today's list. Metro is running, a development build is installed on both an iOS simulator and an Android emulator, and Expo Go is also installed on both.",
+      "expected_output": "The response classifies the screen-only change as eligible for the Metro path, verifies against the installed development build rather than Expo Go, opens one isolated agent-device session per platform, verifies the Settings change and the PRODUCT.md core-loop journey on each platform with exact assertions, records the core loop as a replayable script after user confirmation, and reports iOS and Android evidence separately without inferring either from the other.",
       "files": [],
       "expectations": [
+        "It verifies against the installed development build and does not use Expo Go even though it is available and the change is JavaScript-only.",
         "It classifies the screen-only React change as eligible for the Metro path and does not rebuild the native binary without evidence of native impact.",
         "It opens a separate named agent-device session for iOS and for Android rather than reusing one session for both platforms.",
         "It reads the core loop from PRODUCT.md and does not create or edit that file.",

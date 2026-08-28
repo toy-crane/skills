@@ -30,6 +30,11 @@ agent-device help react-native
 If `agent-device` is unavailable, report that runtime verification is blocked
 and give `npm install -g agent-device@latest` as the setup command.
 
+Point each platform's client at this project's own dev server rather than a
+default port another checkout may already hold. Pass the port as a session
+runtime hint with `--metro-port`, and confirm from the running tools which port
+this project actually serves.
+
 ## Choose devices and sessions
 
 Use a local simulator and emulator as the default targets. Use a physical
@@ -39,20 +44,30 @@ is missing, report the exact prerequisites from
 `agent-device help physical-device` as a blocker rather than substituting a
 simulator.
 
+Run every platform against a development build of the project itself. A
+development build is the binary this change will ship in, so it is the only
+client that can carry the project's own native modules, config plugins,
+permissions, and entitlements. Expo Go is a fixed prebuilt shell: passing there
+proves the JavaScript behaved inside a different binary than the one being
+delivered, which is not the evidence this check exists to produce. When no
+development build is installed, build one with the repository-supported command,
+normally `npx expo run:ios` or `npx expo run:android`, before verifying.
+
 Give each platform its own named session, so both apps can run at once. Target
 devices by the names `agent-device devices` reports, which are not adb serials
-or simulator UDIDs:
+or simulator UDIDs, and open the development build by its own app id:
 
 ```bash
 agent-device devices --platform ios
-agent-device open "Expo Go" exp://127.0.0.1:<metro-port> --platform ios --device "<name>" --session smoke-ios --relaunch
-agent-device open exp://127.0.0.1:<metro-port> --platform android --device "<name>" --session smoke-android
+agent-device apps --platform ios
+agent-device open <app-id> --platform ios --device "<name>" --session smoke-ios --relaunch
+agent-device open <app-id> --platform android --device "<name>" --session smoke-android --relaunch
 ```
 
-Open the actual installed app identifier, development-client URL, or Expo Go
-project URL reported by the running tools; do not invent one. On iOS prefer the
-host-shell-plus-URL form. On Android a URL target rejects `--relaunch`, so open
-the host package first when the journey needs a clean process.
+Open the actual installed app identifier or development-client URL reported by
+the running tools; do not invent one. A URL target rejects `--relaunch`, so open
+the app id when the journey needs a clean process and pass the URL afterward
+only if the build needs to be pointed at a specific dev server.
 
 Carry `--session <name>` on every command in a named-session flow. Without it a
 command targets the implicit default session instead of the platform you meant.
@@ -69,20 +84,20 @@ Classify the whole change once, before launching:
 
 - **Metro path:** JavaScript or TypeScript behavior, React components, styles,
   navigation code, and bundle-loaded assets that do not alter the native app.
-  Reuse the running app and Metro server, and let Fast Refresh or
-  `agent-device metro reload` apply the change.
+  Reuse the installed development build and its Metro server, and let Fast
+  Refresh or `agent-device metro reload` apply the change.
 - **Native path:** app config that affects the binary, config plugins, native
   modules or dependencies, permissions, entitlements, icons or splash
   configuration, native project files, SDK or React Native upgrades, and
-  startup behavior. Build with the repository-supported command, normally
-  `npx expo run:ios` or `npx expo run:android`, install the resulting
-  development build, and relaunch it.
+  startup behavior. Rebuild with the repository-supported command, install the
+  resulting development build, and relaunch it.
 
-Use the native path for a mixed change or when native impact remains uncertain.
-Expo Go cannot prove a native change; use a development build. Preserve the
-project's managed or checked-in native workflow rather than regenerating native
-directories as an incidental verification step. Native builds for the two
-platforms may run one after another while verification still runs per session.
+Both paths run on a development build; the classification decides whether that
+build must be rebuilt, not which client to use. Use the native path for a mixed
+change or when native impact remains uncertain. Preserve the project's managed
+or checked-in native workflow rather than regenerating native directories as an
+incidental verification step. Native builds for the two platforms may run one
+after another while verification still runs per session.
 
 ## Verify each platform
 
@@ -132,7 +147,7 @@ the user that the journey represents the core loop, then publish without
 closing:
 
 ```bash
-agent-device open "Expo Go" exp://127.0.0.1:<metro-port> --platform ios --device "<name>" --session core-ios --relaunch --save-script=/abs/path/to/project/e2e/core-loop.ios.ad
+agent-device open <app-id> --platform ios --device "<name>" --session core-ios --relaunch --metro-port <metro-port> --save-script=/abs/path/to/project/e2e/core-loop.ios.ad
 agent-device wait 'id="<first-target>"' 60000 --session core-ios
 # drive the core-loop journey
 agent-device wait 'id="<destination>"' 15000 --session core-ios
@@ -152,12 +167,16 @@ pre-authenticated state or non-secret fixture credentials.
 
 When a script exists, replay it as the regression check. Stop the session that
 owns the device runner first: a replay starts its own daemon and fails on iOS
-while another daemon holds the runner lease. Re-verify a reported divergence
-live from the step it names, then re-record the script from a clean session so
-the recorded journey matches current intended behavior. A divergence reporting
-that the selector still matches but the recorded identity does not usually
-means the script was recorded in an already-warm session, not that the app
-changed.
+while another daemon holds the runner lease.
+
+A replay result is not by itself product evidence. A recorded step binds to the
+accessibility identity captured at record time, and that identity is not stable
+across relaunches on iOS, so a divergence is at least as likely to be a
+recording artifact as a real regression. Never report a divergence as a broken
+core loop. Re-verify live from the step it names, and report the core loop as
+passing or failing on what the live run shows. Distinguish a divergence from an
+infrastructure failure such as a daemon timeout, which says nothing about the
+app at all; re-run those rather than investigating them as app behavior.
 
 ## Finish the run
 

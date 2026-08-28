@@ -34,6 +34,17 @@ current change, and a representative journey derived from the core loop in
 `PRODUCT.md` or its core loop is missing, the run verifies the change flow
 only and reports the gap without blocking.
 
+### Client
+
+Every run verifies against a development build of the project. Expo Go is not
+an accepted client for this skill: it is a fixed prebuilt shell that cannot
+carry the project's own native modules, config plugins, permissions, or
+entitlements, so passing there proves only that the JavaScript behaved inside a
+different binary than the one being delivered. When no development build is
+installed, the run builds one before verifying. The Metro-versus-native
+classification decides whether that build must be rebuilt, not which client to
+use.
+
 ### Devices
 
 Simulators and emulators are the default targets. A physical device is used
@@ -128,6 +139,13 @@ with open root causes and evidenced out-of-scope defects route through
   cheaper and more stable than re-deriving the journey from product prose
   each run, and divergence reports carry ranked selector suggestions that
   keep maintenance bounded.
+- The development build is the client because this skill's whole output is
+  pre-delivery confidence. Verification is only as good as the binary it ran
+  in, and Expo Go's native surface is fixed by Expo rather than by the project,
+  so it cannot exercise the project's own native modules, config plugins,
+  permissions, or entitlements. Accepting it would let a run report both-platform
+  confidence for a binary that will never ship. The cost is that a first run in
+  a project without a development build must build one.
 - Simulators and emulators are the default because iOS physical devices need
   one-time signing setup and unlock/connection state, which is too heavy a
   default for a repeatable loop; Android physical needs only USB debugging,
@@ -147,21 +165,33 @@ with open root causes and evidenced out-of-scope defects route through
   concurrency or replay, or changes `.ad` semantics.
 - Forward run on a real fixture, August 2026. An Expo SDK 57 app with a
   PRODUCT.md core loop was driven on a dedicated iOS 26.5 simulator and a
-  dedicated API 35 arm64 emulator, both running Expo Go 57.0.9 against one
-  Metro server. Two named sessions verified the change flow independently:
-  each read `Disabled`, pressed the toggle, and read `Enabled` through exact
-  `get text` assertions. Core-loop scripts recorded and replayed on both
-  platforms, and two replays run as concurrent background jobs both exited 0
-  (iOS 9.4s, Android 11.7s, against 7–8s and 3–6s solo), confirming both the
-  isolation and the contention cost. Four defects in the first skill draft
-  surfaced only here: a relative `--save-script` path resolves against the
-  daemon's working directory and silently wrote outside the project; an
-  Android URL target rejects `--relaunch`; a replay fails on iOS while another
-  daemon holds the runner lease; and a script recorded in an already-warm
-  session failed cold replay 4 of 4 times on recorded-ancestry identity, while
-  a script recorded in a fresh session passed 3 of 3. Android replay passed 3
-  of 3. The device names `agent-device` reports are neither adb serials nor
-  simulator UDIDs.
+  dedicated API 35 arm64 emulator. The first pass ran on Expo Go 57.0.9; the
+  contract then moved to development builds and the whole pass was repeated on
+  `npx expo run:ios` and `npx expo run:android` output. On the development
+  builds, two named sessions verified the change flow independently: each read
+  `Disabled`, pressed the toggle, and read `Enabled` through exact `get text`
+  assertions. Core-loop scripts recorded and replayed on both platforms.
+  Concurrent replays on Expo Go both exited 0 (iOS 9.4s, Android 11.7s, against
+  7–8s and 3–6s solo), confirming session isolation and the contention cost.
+- Defects that surfaced only by running it: a relative `--save-script` path
+  resolves against the daemon's working directory and silently wrote outside
+  the project; a URL target rejects `--relaunch`; an iOS replay fails while
+  another daemon holds the runner lease; the device names `agent-device`
+  reports are neither adb serials nor simulator UDIDs; and a development build
+  launched with a stale dev-server URL silently loaded a **different project's
+  bundle** from another checkout's Metro on the default port, surfacing that
+  project's source paths as if they were this one's. An Android emulator also
+  needs a port reverse to reach a non-default host Metro port.
+- Replay reliability, measured on the development builds. iOS passed 5 of 8;
+  all three failures were `identity-mismatch` on the recorded accessibility
+  ancestry, not app changes. Android passed 3 of 6; all three failures were
+  daemon timeouts under sustained load, with no divergence. An earlier Expo Go
+  sample suggested that recording from a fresh session made replay stable
+  (3 of 3); the development-build measurement contradicts that, so the fresh-
+  session rule is not a reliability fix and the skill no longer claims it is.
+  A missing `expo-linking` native module also proved the client argument
+  directly: the development build raised it as a RedBox, while Expo Go ships
+  that module prebuilt and would have masked it.
 - Naming research, August 2026. QA sources agree on the triad: smoke is broad
   and shallow over critical flows per build, sanity is narrow and deep over a
   specific change, regression is the full re-check. The React Native and Expo
@@ -185,6 +215,8 @@ with open root causes and evidenced out-of-scope defects route through
 
 ## Off-limits
 
+- Accepting Expo Go, or any prebuilt shell the project does not build, as the
+  client that satisfies a platform's evidence.
 - Changing `expo-dev-loop`'s contract or its representative-target default.
 - Creating or editing `PRODUCT.md` from this skill.
 - Assuming another installed skill's text; anything required is restated
@@ -195,6 +227,13 @@ with open root causes and evidenced out-of-scope defects route through
 
 ## Deferred points
 
+- Whether recorded `.ad` replay stays the core-loop regression mechanism, or
+  becomes optional with the live drive as the primary path. The measured iOS
+  divergence rate is the reason to reopen it; the approved scope still makes
+  replay the regression check, so this needs the user's decision rather than an
+  implementation choice.
+- Whether `expo-dev-loop` should also require a development build. The same
+  argument applies to it, but changing its contract is off-limits here.
 - Whether one shared `.ad` script can serve both platforms in apps with
   consistent testIDs; confirm per target project before merging scripts.
 - CI wiring (`prepare ios-runner`, runner caching, `close --shutdown`); v1
@@ -212,11 +251,12 @@ with open root causes and evidenced out-of-scope defects route through
 - Parallel native builds can contend for CPU and disk; the sequential-build,
   parallel-verify allowance mitigates but is unmeasured. Concurrent replays
   measured 1.3 to 3 times their solo duration.
-- Recorded scripts bind to the accessibility ancestry seen at record time, so
-  iOS replay is sensitive to how the recording session was started. The
-  clean-session rule was measured on one fixture only; a UI whose ancestry
-  varies for other reasons could still diverge without an app change.
-- The fixture run exercised the Metro path only. The native rebuild path,
-  physical devices, and the iOS runner signing blocker remain unverified.
+- Recorded scripts bind to the accessibility identity seen at record time, and
+  that identity is not stable across iOS relaunches. At the measured rate,
+  roughly a third of iOS replays report a divergence with no app change, so
+  replay cannot stand alone as the regression signal and every divergence costs
+  a live re-verification. Whether replay earns its place at that rate is an
+  open decision recorded below.
+- Physical devices and the iOS runner signing blocker remain unverified.
 - The core-loop journey derivation from product prose is model-judged; the
   one-time confirmation and the recorded script bound the drift.
