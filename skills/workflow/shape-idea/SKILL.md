@@ -8,7 +8,7 @@ description: Turn a chosen problem and broad direction into shared decisions and
 ## Keep alignment separate from delivery
 
 Limit durable project writes to the spec folder, glossary, current decision
-contracts, and installed vendor agent context. Leave product code unchanged.
+contracts, and current vendor agent context. Leave product code unchanged.
 Keep technical experiments, benchmarks, variants, comparison renders, and
 component previews temporary. Preserve `prototype.html` only when it covers the
 whole surface and the user explicitly approves it as the prototype.

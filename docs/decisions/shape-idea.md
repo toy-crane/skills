@@ -35,7 +35,7 @@
   substitute. Verify only the states needed for a trustworthy comparison before
   the user judges one unresolved experiential decision.
 - Durable project writes are limited to the spec folder, glossary, current
-  decision contracts, and installed vendor agent context. Do not edit product
+  decision contracts, and current vendor agent context. Do not edit product
   source during shaping.
 - When a framework or hosted service settles during shaping, establish its
   current agent context through `add-stack-context` when available. Keep the
