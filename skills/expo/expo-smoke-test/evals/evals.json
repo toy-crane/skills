@@ -1,0 +1,33 @@
+{
+  "skill_name": "expo-smoke-test",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use $expo-smoke-test before I ship this change. I edited the Settings screen so notification status starts as Disabled and tapping Enable notifications changes it to Enabled. PRODUCT.md says the core loop is: open the app, add a reminder, and see it in today's list. Metro is running, and an iOS simulator and an Android emulator are both available.",
+      "expected_output": "The response classifies the screen-only change as eligible for the Metro path, opens one isolated agent-device session per platform, verifies the Settings change and the PRODUCT.md core-loop journey on each platform with exact assertions, records the core loop as a replayable script after user confirmation, and reports iOS and Android evidence separately without inferring either from the other.",
+      "files": [],
+      "expectations": [
+        "It classifies the screen-only React change as eligible for the Metro path and does not rebuild the native binary without evidence of native impact.",
+        "It opens a separate named agent-device session for iOS and for Android rather than reusing one session for both platforms.",
+        "It reads the core loop from PRODUCT.md and does not create or edit that file.",
+        "It verifies both the changed Settings flow and the core-loop journey on each platform with exact assertions rather than a screenshot alone.",
+        "It confirms the journey with the user before saving it as the recorded core-loop script.",
+        "It reports iOS and Android results separately and makes no parity claim from a single platform's run.",
+        "If a platform target, Metro, or the device session is unavailable, it reports that platform's failed gate and exact next action instead of claiming both-platform success."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use $expo-smoke-test to check this change on both platforms. This repository has no PRODUCT.md. I added a camera permission and a config plugin, and I want it verified on my connected iPhone and on the Android emulator.",
+      "expected_output": "The response classifies the permission and config-plugin change as requiring the native path on both platforms, checks the physical iOS prerequisites before promising an iPhone run, verifies the change flow per platform, and reports that no core-loop regression exists because PRODUCT.md is absent.",
+      "files": [],
+      "expectations": [
+        "It classifies the permission and config-plugin change as the native path and uses a development build rather than Expo Go.",
+        "It verifies the change flow on each platform in its own session with exact assertions.",
+        "It reports that no PRODUCT.md core loop exists, verifies the change flow alone, and does not invent a core-loop journey.",
+        "For the physical iPhone, it establishes Developer Mode and signed XCTest runner prerequisites, and reports the exact missing setup as a blocker instead of silently substituting a simulator.",
+        "It reports iOS and Android results separately with their targets and evidence."
+      ]
+    }
+  ]
+}
