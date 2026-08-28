@@ -145,6 +145,23 @@ with open root causes and evidenced out-of-scope defects route through
   recorded fill/type inputs are written literally, grounding the no-secrets
   rule. Reopen the session design if a release drops named-session
   concurrency or replay, or changes `.ad` semantics.
+- Forward run on a real fixture, August 2026. An Expo SDK 57 app with a
+  PRODUCT.md core loop was driven on a dedicated iOS 26.5 simulator and a
+  dedicated API 35 arm64 emulator, both running Expo Go 57.0.9 against one
+  Metro server. Two named sessions verified the change flow independently:
+  each read `Disabled`, pressed the toggle, and read `Enabled` through exact
+  `get text` assertions. Core-loop scripts recorded and replayed on both
+  platforms, and two replays run as concurrent background jobs both exited 0
+  (iOS 9.4s, Android 11.7s, against 7–8s and 3–6s solo), confirming both the
+  isolation and the contention cost. Four defects in the first skill draft
+  surfaced only here: a relative `--save-script` path resolves against the
+  daemon's working directory and silently wrote outside the project; an
+  Android URL target rejects `--relaunch`; a replay fails on iOS while another
+  daemon holds the runner lease; and a script recorded in an already-warm
+  session failed cold replay 4 of 4 times on recorded-ancestry identity, while
+  a script recorded in a fresh session passed 3 of 3. Android replay passed 3
+  of 3. The device names `agent-device` reports are neither adb serials nor
+  simulator UDIDs.
 - Naming research, August 2026. QA sources agree on the triad: smoke is broad
   and shallow over critical flows per build, sanity is narrow and deep over a
   specific change, regression is the full re-check. The React Native and Expo
@@ -193,8 +210,13 @@ with open root causes and evidenced out-of-scope defects route through
   ordinary smoke tests do not demand four layers of runtime evidence. The
   description carries the actual depth.
 - Parallel native builds can contend for CPU and disk; the sequential-build,
-  parallel-verify allowance mitigates but is unmeasured.
-- Replay may report divergence noise on apps with unstable accessibility
-  surfaces, costing live re-verification time.
+  parallel-verify allowance mitigates but is unmeasured. Concurrent replays
+  measured 1.3 to 3 times their solo duration.
+- Recorded scripts bind to the accessibility ancestry seen at record time, so
+  iOS replay is sensitive to how the recording session was started. The
+  clean-session rule was measured on one fixture only; a UI whose ancestry
+  varies for other reasons could still diverge without an app change.
+- The fixture run exercised the Metro path only. The native rebuild path,
+  physical devices, and the iOS runner signing blocker remain unverified.
 - The core-loop journey derivation from product prose is model-judged; the
   one-time confirmation and the recorded script bound the drift.

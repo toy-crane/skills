@@ -39,19 +39,29 @@ is missing, report the exact prerequisites from
 `agent-device help physical-device` as a blocker rather than substituting a
 simulator.
 
-Give each platform its own named session with its own runtime hints, so both
-apps can run at once:
+Give each platform its own named session, so both apps can run at once. Target
+devices by the names `agent-device devices` reports, which are not adb serials
+or simulator UDIDs:
 
 ```bash
-agent-device open <discovered-app-id> --platform ios --session smoke-ios --relaunch
-agent-device open <discovered-app-id> --platform android --session smoke-android --relaunch
+agent-device devices --platform ios
+agent-device open "Expo Go" exp://127.0.0.1:<metro-port> --platform ios --device "<name>" --session smoke-ios --relaunch
+agent-device open exp://127.0.0.1:<metro-port> --platform android --device "<name>" --session smoke-android
 ```
 
 Open the actual installed app identifier, development-client URL, or Expo Go
-project URL reported by the running tools; do not invent one. Keep
-state-changing commands serial inside a single session. Run the two sessions
-concurrently when the harness supports concurrent work, and sequentially when
-it does not; each platform owes the same evidence either way.
+project URL reported by the running tools; do not invent one. On iOS prefer the
+host-shell-plus-URL form. On Android a URL target rejects `--relaunch`, so open
+the host package first when the journey needs a clean process.
+
+Carry `--session <name>` on every command in a named-session flow. Without it a
+command targets the implicit default session instead of the platform you meant.
+
+Keep state-changing commands serial inside a single session. Run the two
+sessions concurrently when the harness supports concurrent work, and
+sequentially when it does not; each platform owes the same evidence either way.
+Concurrent runs contend for CPU and device I/O, so allow longer per-command
+timeouts than a solo run needs.
 
 ## Classify the runtime path
 
@@ -102,34 +112,52 @@ Collect evidence proportional to the claim: a screenshot for visual output,
 focused logs for runtime behavior, network output for request behavior, and
 performance artifacts for performance claims.
 
+When an overlay dismissal reports that the overlay is still visible, capture a
+screenshot before concluding it blocks the run. A development client's own
+floating controls can register as an overlay while the app UI stays fully
+reachable; report what the screenshot shows rather than retrying the dismissal.
+
 When the `expo-dev-loop` skill is available, it may carry one platform's
 verification. Target selection, both-platform coverage, the core-loop
 regression, and the completion gate stay here.
 
 ## Record or replay the core loop
 
-When no recorded core-loop script exists for a platform, arm recording on that
-platform's first open, drive the journey live, end on an assertion that proves
-the destination, confirm with the user that the journey represents the core
-loop, then publish the script without closing the session:
+When no recorded core-loop script exists for a platform, record one in a
+session that starts clean, because the recorded target carries the accessibility
+ancestry observed at record time. Start a fresh session whose armed open is its
+first action, assert readiness before the first interaction, drive the journey,
+end on a selector-targeted assertion that proves the destination, confirm with
+the user that the journey represents the core loop, then publish without
+closing:
 
 ```bash
-agent-device open <discovered-app-id> --platform ios --session smoke-ios --relaunch --save-script=e2e/core-loop.ios.ad
-# drive the core-loop journey, ending with a selector-targeted wait
-agent-device session save-script --session smoke-ios
+agent-device open "Expo Go" exp://127.0.0.1:<metro-port> --platform ios --device "<name>" --session core-ios --relaunch --save-script=/abs/path/to/project/e2e/core-loop.ios.ad
+agent-device wait 'id="<first-target>"' 60000 --session core-ios
+# drive the core-loop journey
+agent-device wait 'id="<destination>"' 15000 --session core-ios
+agent-device session save-script --session core-ios
 ```
 
-Carry `--session <name>` on every command in a named-session flow, publication
-included; without it a command targets the implicit default session instead of
-the platform you meant.
+Give `--save-script` an absolute path. A relative path resolves against the
+daemon's working directory rather than the project, which silently writes the
+script outside the repository. Follow the project's existing script-path
+convention for the absolute target when it has one.
 
-Follow the project's existing script-path convention when it has one. Recorded
-`fill` and `type` inputs are written literally, so record only pre-authenticated
-state or non-secret fixture credentials.
+Assert readiness immediately after the open. A script that interacts straight
+after opening races the bundle load and diverges on every cold replay.
 
-When a script exists, replay it as the regression check. Re-verify a reported
-divergence live from the step it names, then update the script so the recorded
-journey matches current intended behavior.
+Recorded `fill` and `type` inputs are written literally, so record only
+pre-authenticated state or non-secret fixture credentials.
+
+When a script exists, replay it as the regression check. Stop the session that
+owns the device runner first: a replay starts its own daemon and fails on iOS
+while another daemon holds the runner lease. Re-verify a reported divergence
+live from the step it names, then re-record the script from a clean session so
+the recorded journey matches current intended behavior. A divergence reporting
+that the selector still matches but the recorded identity does not usually
+means the script was recorded in an already-warm session, not that the app
+changed.
 
 ## Finish the run
 
