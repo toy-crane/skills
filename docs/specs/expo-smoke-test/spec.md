@@ -8,10 +8,10 @@
   runtime evidence.
 - The two platform runs happen in parallel where the harness allows concurrent
   sessions, and sequentially elsewhere, with the same evidence either way.
-- The core loop becomes a durable regression: the first run records it as
-  `.ad` scripts in the target app repository, and later runs replay them.
-- `expo-dev-loop` users see no change. The fast per-edit loop keeps its
-  one-representative-target default.
+- Every run drives the core loop on the actual app. The user gets evidence that
+  the journey was exercised end to end this time, not that a recording matched.
+- `expo-dev-loop` keeps its per-edit cadence and one-representative-target
+  default; it gains the same development-build requirement.
 - The skill ships through both channels and stands alone when installed by
   itself.
 
@@ -69,15 +69,18 @@ rebuild for anything that alters the binary, native path when mixed or
 uncertain. Native rebuilds of the two platforms may run sequentially while
 verification still runs per session.
 
-### Core-loop record and replay
+### Core-loop drive
 
-When no recorded core-loop script exists, the run drives the journey live,
-confirms with the user that the journey represents the core loop, and records
-one `.ad` script per platform at a stable committed path in the target app
-repository. Later runs replay the scripts as the regression check. A replay
-divergence is re-verified live from the divergence point and the script is
-updated. Secrets are never recorded into scripts; recorded flows use
-pre-authenticated state or fixture credentials.
+Every run drives the core-loop journey on the actual app, on each platform,
+from the current screen state: read the screen, act, and assert the named
+outcome. The journey is derived from `PRODUCT.md` each run, so that file stays
+its single definition. Confirm the derived journey with the user when the core
+loop admits more than one reasonable reading.
+
+A recorded-and-replayed script is not an accepted substitute. Replay verifies
+each step against the identity captured at record time and stops at the first
+mismatch, so a diverging run never exercises the rest of the journey, and a
+passing one is gated on fingerprints rather than on the app behaving.
 
 ### Evidence and completion
 
@@ -107,9 +110,11 @@ with open root causes and evidenced out-of-scope defects route through
   claims one platform from the other's run.
 - Given a missing `PRODUCT.md` or core loop, the run verifies the change flow
   only, reports the gap, and leaves `PRODUCT.md` untouched.
-- Given no recorded core-loop script, the run records per-platform `.ad`
-  scripts after user confirmation of the journey; a later run replays them.
-- Given a replay divergence, the run re-verifies live and updates the script.
+- Given a `PRODUCT.md` core loop, every run drives that journey on each
+  platform's running app and asserts its final outcome, including runs where an
+  earlier run already passed.
+- Given a core loop that admits more than one reading, the run confirms the
+  derived journey with the user before treating it as the checked journey.
 - Given a harness without concurrent sessions, platforms run sequentially and
   the evidence contract is unchanged.
 - Given an explicit physical-iOS request without runner signing, the run
@@ -135,10 +140,13 @@ with open root causes and evidenced out-of-scope defects route through
 - Parallelism is an optimization, not the contract. The contract is session
   isolation plus per-platform evidence, so the skill stays harness-neutral
   and degrades to sequential runs without weakening completion.
-- Record-then-replay for the core loop: replaying a confirmed script is
-  cheaper and more stable than re-deriving the journey from product prose
-  each run, and divergence reports carry ranked selector suggestions that
-  keep maintenance bounded.
+- The core loop is driven live every run because a smoke test's whole product
+  is the observation that the app still works. Replay was measured and rejected:
+  it stops at the first identity mismatch, so a diverging run leaves the rest of
+  the journey unexercised while reporting a failure the app did not cause, and a
+  passing run certifies fingerprints rather than behavior. Live driving costs
+  more wall clock and re-derives the journey from `PRODUCT.md` each time, which
+  is the price of every result meaning something.
 - The development build is the client because this skill's whole output is
   pre-delivery confidence. Verification is only as good as the binary it ran
   in, and Expo Go's native surface is fixed by Expo rather than by the project,
@@ -207,10 +215,11 @@ with open root causes and evidenced out-of-scope defects route through
 
 - A1. Cadence is on-demand plus delivery checkpoint, not per-edit. If the
   user wants it per-change, only the trigger description changes.
-- A2. Default script path is `e2e/core-loop.<platform>.ad` in the target app
-  repository; an existing project convention overrides it.
-- A3. The first recorded journey needs one user confirmation before it
-  becomes the standing regression baseline.
+- A2. The journey is re-derived from `PRODUCT.md` each run rather than stored,
+  so `PRODUCT.md` remains its only definition and no second artifact can drift
+  from it.
+- A3. Confirmation is asked only when the core loop admits more than one
+  reasonable journey, not on every run.
 - A4. The exact version number and README wording are implementation choices.
 
 ## Off-limits
@@ -224,18 +233,14 @@ with open root causes and evidenced out-of-scope defects route through
 - Assuming another installed skill's text; anything required is restated
   inline.
 - Hardcoding one harness's concurrency mechanics as the contract.
-- Recording secrets into `.ad` scripts.
+- Reporting a core loop as verified on evidence other than this run driving it
+  on that platform's running app.
 - Touching the vendored `writing-great-skills` skill.
 
 ## Deferred points
 
-- Whether recorded `.ad` replay stays the core-loop regression mechanism, or
-  becomes optional with the live drive as the primary path. The measured iOS
-  divergence rate is the reason to reopen it; the approved scope still makes
-  replay the regression check, so this needs the user's decision rather than an
-  implementation choice.
-- Whether one shared `.ad` script can serve both platforms in apps with
-  consistent testIDs; confirm per target project before merging scripts.
+- Whether a long core loop needs a way to resume mid-journey after an
+  infrastructure failure, now that no recorded plan exists to resume from.
 - CI wiring (`prepare ios-runner`, runner caching, `close --shutdown`); v1
   targets local interactive runs.
 - Whether `implement` or the pipeline decision should name `expo-smoke-test`
@@ -251,12 +256,10 @@ with open root causes and evidenced out-of-scope defects route through
 - Parallel native builds can contend for CPU and disk; the sequential-build,
   parallel-verify allowance mitigates but is unmeasured. Concurrent replays
   measured 1.3 to 3 times their solo duration.
-- Recorded scripts bind to the accessibility identity seen at record time, and
-  that identity is not stable across iOS relaunches. At the measured rate,
-  roughly a third of iOS replays report a divergence with no app change, so
-  replay cannot stand alone as the regression signal and every divergence costs
-  a live re-verification. Whether replay earns its place at that rate is an
-  open decision recorded below.
+- Driving live costs more wall clock per run than a clean replay did, and the
+  journey is re-derived by the model each time, so a vaguely written core loop
+  can be read differently across runs. `PRODUCT.md` and the confirmation step
+  bound this, but neither prevents it.
 - Physical devices and the iOS runner signing blocker remain unverified.
 - The core-loop journey derivation from product prose is model-judged; the
   one-time confirmation and the recorded script bound the drift.

@@ -1,6 +1,6 @@
 ---
 name: expo-smoke-test
-description: Verify an Expo or React Native change together with the app's core loop on both iOS and Android using agent-device. Use before delivering a change, when the user asks to confirm behavior on both platforms, or when the recorded core-loop journey should run again as a regression. Run one isolated device session per platform, record the core loop as a replayable script, and finish only with separate runtime evidence for each platform. For verifying one change on a single target during ordinary editing, use expo-dev-loop instead.
+description: Verify an Expo or React Native change together with the app's core loop on both iOS and Android using agent-device. Use before delivering a change, when the user asks to confirm behavior on both platforms, or when the core loop should be exercised again as a regression. Run one isolated device session per platform against a development build, drive both journeys on the running app, and finish only with separate runtime evidence for each platform. For verifying one change on a single target during ordinary editing, use expo-dev-loop instead.
 ---
 
 # Expo Smoke Test
@@ -133,50 +133,38 @@ floating controls can register as an overlay while the app UI stays fully
 reachable; report what the screenshot shows rather than retrying the dismissal.
 
 When the `expo-dev-loop` skill is available, it may carry one platform's
-verification. Target selection, both-platform coverage, the core-loop
-regression, and the completion gate stay here.
+verification. Target selection, both-platform coverage, the core-loop drive,
+and the completion gate stay here.
 
-## Record or replay the core loop
+## Drive the core loop
 
-When no recorded core-loop script exists for a platform, record one in a
-session that starts clean, because the recorded target carries the accessibility
-ancestry observed at record time. Start a fresh session whose armed open is its
-first action, assert readiness before the first interaction, drive the journey,
-end on a selector-targeted assertion that proves the destination, confirm with
-the user that the journey represents the core loop, then publish without
-closing:
+Drive the core-loop journey on the running app every run, on each platform.
+Derive it from `PRODUCT.md` so that file stays its single definition, and
+confirm the derived journey with the user when the core loop admits more than
+one reasonable reading.
+
+Assert readiness before the first interaction, then work from the current
+screen: read it, act, and assert the outcome each step establishes. End on an
+assertion that proves the journey reached its destination.
 
 ```bash
-agent-device open <app-id> --platform ios --device "<name>" --session core-ios --relaunch --metro-port <metro-port> --save-script=/abs/path/to/project/e2e/core-loop.ios.ad
-agent-device wait 'id="<first-target>"' 60000 --session core-ios
-# drive the core-loop journey
-agent-device wait 'id="<destination>"' 15000 --session core-ios
-agent-device session save-script --session core-ios
+agent-device wait 'id="<first-target>"' 60000 --session smoke-ios
+agent-device fill 'id="<input>"' "<value>" --settle --session smoke-ios
+agent-device press 'id="<action>"' --settle --session smoke-ios
+agent-device wait 'id="<destination>"' 15000 --session smoke-ios
 ```
 
-Give `--save-script` an absolute path. A relative path resolves against the
-daemon's working directory rather than the project, which silently writes the
-script outside the repository. Follow the project's existing script-path
-convention for the absolute target when it has one.
+A replayed recording does not satisfy this. Replay checks each step against the
+element identity captured when the script was made and stops at the first
+mismatch, so a diverging run leaves the rest of the journey unexercised while
+reporting a failure the app did not cause, and a passing run certifies
+fingerprints rather than behavior. Report a core loop as verified only from
+this run driving it on that platform's running app.
 
-Assert readiness immediately after the open. A script that interacts straight
-after opening races the bundle load and diverges on every cold replay.
-
-Recorded `fill` and `type` inputs are written literally, so record only
-pre-authenticated state or non-secret fixture credentials.
-
-When a script exists, replay it as the regression check. Stop the session that
-owns the device runner first: a replay starts its own daemon and fails on iOS
-while another daemon holds the runner lease.
-
-A replay result is not by itself product evidence. A recorded step binds to the
-accessibility identity captured at record time, and that identity is not stable
-across relaunches on iOS, so a divergence is at least as likely to be a
-recording artifact as a real regression. Never report a divergence as a broken
-core loop. Re-verify live from the step it names, and report the core loop as
-passing or failing on what the live run shows. Distinguish a divergence from an
-infrastructure failure such as a daemon timeout, which says nothing about the
-app at all; re-run those rather than investigating them as app behavior.
+Read a failure for what it is before reporting it. An assertion that fails on a
+loaded, healthy app is a regression; a daemon timeout, a lost device, or a
+snapshot the accessibility layer could not capture says nothing about the app,
+so recover and re-drive rather than reporting the core loop as broken.
 
 ## Finish the run
 

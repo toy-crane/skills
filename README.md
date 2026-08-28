@@ -271,9 +271,9 @@ surface.
   Native changes in a running app with `agent-device`, selecting Metro reload or
   native rebuild from the actual change and completing only with device evidence.
 - **[expo-smoke-test](./skills/expo/expo-smoke-test/SKILL.md)**: Before delivery,
-  verify the current change and the `PRODUCT.md` core loop on iOS and Android in
-  one isolated `agent-device` session per platform, recording the core loop as a
-  replayable script and reporting each platform's evidence separately.
+  drive the current change and the `PRODUCT.md` core loop on iOS and Android
+  development builds, in one isolated `agent-device` session per platform,
+  reporting each platform's evidence separately.
 - **[project-knowledge](./skills/workflow/project-knowledge/SKILL.md)**: Maintain project
   terms and settled decisions that future work should reuse whenever they are
   taking shape, including while a plan weighs alternatives. Does not run for
