@@ -37,6 +37,11 @@
 - Durable project writes are limited to the spec folder, glossary, current
   decision contracts, and installed vendor agent context. Do not edit product
   source during shaping.
+- When a framework or hosted service settles during shaping, establish its
+  current agent context through `add-stack-context` when available. Keep the
+  outcome self-contained when it is absent: discover official skills, preserve
+  live routes to current vendor guidance instead of copying that guidance, and
+  account for the technology before continuing.
 - Ground any conclusion about a third-party package or tool in evidence of how
   it actually behaves — its own source, documentation, releases, and maintainer
   statements — and confirm it in this project before building on it or working
