@@ -258,8 +258,9 @@ the merged worktree.
 Eight additional skills can run independently. They handle stack setup, Expo
 runtime verification, pre-delivery both-platform checks, incremental project
 knowledge, verified follow-up resolution, visual explanation, final human
-judgment, and periodic context maintenance. `implement` also uses a matching runtime-verification skill when
-one is available for an affected product surface.
+judgment, and periodic context maintenance. `implement` also uses a matching
+runtime-verification skill when one is available for an affected product
+surface.
 
 - **[add-stack-context](./skills/workflow/add-stack-context/SKILL.md)**: Audit the
   technologies that define a project's stack, discover vendor-controlled skills,

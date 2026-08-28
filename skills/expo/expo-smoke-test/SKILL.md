@@ -116,8 +116,12 @@ loop, then publish the script without closing the session:
 ```bash
 agent-device open <discovered-app-id> --platform ios --session smoke-ios --relaunch --save-script=e2e/core-loop.ios.ad
 # drive the core-loop journey, ending with a selector-targeted wait
-agent-device session save-script
+agent-device session save-script --session smoke-ios
 ```
+
+Carry `--session <name>` on every command in a named-session flow, publication
+included; without it a command targets the implicit default session instead of
+the platform you meant.
 
 Follow the project's existing script-path convention when it has one. Recorded
 `fill` and `type` inputs are written literally, so record only pre-authenticated
