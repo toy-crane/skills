@@ -216,8 +216,10 @@ with open root causes and evidenced out-of-scope defects route through
 ## Off-limits
 
 - Accepting Expo Go, or any prebuilt shell the project does not build, as the
-  client that satisfies a platform's evidence.
-- Changing `expo-dev-loop`'s contract or its representative-target default.
+  client that satisfies a platform's evidence. The user extended this to
+  `expo-dev-loop`, which now carries the same client requirement.
+- Changing `expo-dev-loop`'s representative-target default or its per-edit
+  cadence.
 - Creating or editing `PRODUCT.md` from this skill.
 - Assuming another installed skill's text; anything required is restated
   inline.
@@ -232,8 +234,6 @@ with open root causes and evidenced out-of-scope defects route through
   divergence rate is the reason to reopen it; the approved scope still makes
   replay the regression check, so this needs the user's decision rather than an
   implementation choice.
-- Whether `expo-dev-loop` should also require a development build. The same
-  argument applies to it, but changing its contract is off-limits here.
 - Whether one shared `.ad` script can serve both platforms in apps with
   consistent testIDs; confirm per target project before merging scripts.
 - CI wiring (`prepare ios-runner`, runner caching, `close --shutdown`); v1

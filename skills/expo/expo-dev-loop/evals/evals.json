@@ -3,12 +3,13 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use $expo-dev-loop to verify my current Expo change on iOS. I updated only the Settings screen so notification status starts as Disabled and tapping Enable notifications changes it to Enabled. Metro is already running and Expo Go is installed on the available simulator.",
-      "expected_output": "The response classifies the screen-only change as eligible for the Metro path, reuses the running Expo Go app instead of rebuilding the native binary, drives the current screen with agent-device, and claims completion only after observing the Disabled state, the interaction, and the Enabled state without relevant runtime errors.",
+      "prompt": "Use $expo-dev-loop to verify my current Expo change on iOS. I updated only the Settings screen so notification status starts as Disabled and tapping Enable notifications changes it to Enabled. Metro is already running, and both a development build and Expo Go are installed on the available simulator.",
+      "expected_output": "The response classifies the screen-only change as eligible for the Metro path, reuses the running development build rather than Expo Go and rather than rebuilding the native binary, drives the current screen with agent-device, and claims completion only after observing the Disabled state, the interaction, and the Enabled state without relevant runtime errors.",
       "files": [],
       "expectations": [
         "It classifies the screen-only React change as eligible for the Metro path and does not rebuild the native binary without evidence of native impact.",
-        "It confirms the current Metro update is loaded in Expo Go or the selected development build.",
+        "It verifies in the development build and does not use Expo Go even though it is installed and the change is JavaScript-only.",
+        "It confirms the current Metro update is loaded in the selected development build and serves this project's bundle.",
         "It uses the actual discovered app or development-client target rather than inventing an identifier or URL.",
         "It verifies the initial Disabled status, presses Enable notifications, and verifies the final Enabled status through exact device observations or assertions.",
         "It checks a focused reproduction window for relevant JavaScript or native runtime failures.",
