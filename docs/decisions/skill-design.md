@@ -151,6 +151,13 @@ checks cannot decide.
   shuffled blind routing run, with the original 21 prompts unchanged and all
   eight new discovery and noise prompts correct. Two of the new prompts were
   held out of the wording work.
+- A blind routing check separated `expo-smoke-test` from `expo-dev-loop` on
+  eight prompts, run twice with the two descriptions presented in opposite
+  order to control for position bias: 16 of 16 correct. Single-target edit
+  checks routed to `expo-dev-loop`, both-platform and pre-delivery checks and
+  an explicit core-loop regression routed to `expo-smoke-test`, and two
+  non-verification prompts activated neither. The deciding wording is the
+  closing redirect sentence in `expo-smoke-test`'s description.
 - An explain-visually pruning eval found most form-selection instructions inert
   but retained the over-rendering brake. Later renderer testing required fresh
   held-out controls because each revised clause fitted the prompt that produced

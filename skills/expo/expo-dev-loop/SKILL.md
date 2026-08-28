@@ -33,9 +33,9 @@ Classify the whole change before launching the app:
 
 - **Metro path:** JavaScript or TypeScript behavior, React components, styles,
   navigation code, and bundle-loaded assets that do not alter the native app.
-  Reuse the running Expo Go or development build and Metro server. Let Fast
-  Refresh apply the change or use `agent-device metro reload` when a full JS
-  reload is needed.
+  Reuse the running development build and Metro server. Let Fast Refresh apply
+  the change or use `agent-device metro reload` when a full JS reload is
+  needed.
 - **Native path:** Expo app config that affects the binary, config plugins,
   native modules or dependencies, permissions, entitlements, icons or splash
   configuration, native project files, SDK or React Native upgrades, and
@@ -44,17 +44,27 @@ Classify the whole change before launching the app:
   development build, and relaunch it.
 
 Use the native path for a mixed change or when native impact remains uncertain.
-Expo Go cannot prove a native change; use a development build. Preserve the
+Both paths run on a development build of the project, so the classification
+decides whether that build must be rebuilt rather than which client to use.
+Expo Go is a fixed prebuilt shell whose native surface belongs to Expo rather
+than to this project, so a result observed there is about a different binary
+than the one being shipped; build a development build instead. Preserve the
 project's managed or checked-in native workflow rather than regenerating native
 directories as an incidental verification step.
 
 ## Prepare the observation loop
 
 Keep state-changing device commands serial within one session. Open the actual
-installed app identifier, development-client URL, or Expo Go project URL
-reported by the running tools; do not invent one. Use `open --relaunch` when
-startup or clean process state matters, then capture the initial interactive
-snapshot.
+installed app identifier or development-client URL reported by the running
+tools; do not invent one. A URL target rejects `--relaunch`, so open the app id
+when startup or clean process state matters, then capture the initial
+interactive snapshot.
+
+Point the client at this project's own dev server rather than a default port
+another checkout may already hold. Pass the port as a session runtime hint with
+`--metro-port`, and confirm the loaded bundle belongs to this project: a
+development build left pointing at a stale URL loads another project's bundle
+and reports that project's source paths as if they were this one's.
 
 When Expo MCP local capabilities are already available, use its Router sitemap,
 current Expo documentation, or short app-log collection as framework-side

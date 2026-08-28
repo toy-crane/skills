@@ -255,11 +255,12 @@ the merged worktree.
 
 ## Supporting workflows
 
-Seven additional skills can run independently. They handle stack setup, Expo
-runtime verification, incremental project knowledge, verified follow-up
-resolution, visual explanation, final human judgment, and periodic context
-maintenance. `implement` also uses a matching runtime-verification skill when
-one is available for an affected product surface.
+Eight additional skills can run independently. They handle stack setup, Expo
+runtime verification, pre-delivery both-platform checks, incremental project
+knowledge, verified follow-up resolution, visual explanation, final human
+judgment, and periodic context maintenance. `implement` also uses a matching
+runtime-verification skill when one is available for an affected product
+surface.
 
 - **[add-stack-context](./skills/workflow/add-stack-context/SKILL.md)**: Audit the
   technologies that define a project's stack, discover vendor-controlled skills,
@@ -269,6 +270,10 @@ one is available for an affected product surface.
 - **[expo-dev-loop](./skills/expo/expo-dev-loop/SKILL.md)**: Verify Expo and React
   Native changes in a running app with `agent-device`, selecting Metro reload or
   native rebuild from the actual change and completing only with device evidence.
+- **[expo-smoke-test](./skills/expo/expo-smoke-test/SKILL.md)**: Before delivery,
+  drive the current change and the `PRODUCT.md` core loop on iOS and Android
+  development builds, in one isolated `agent-device` session per platform,
+  reporting each platform's evidence separately.
 - **[project-knowledge](./skills/workflow/project-knowledge/SKILL.md)**: Maintain project
   terms and settled decisions that future work should reuse whenever they are
   taking shape, including while a plan weighs alternatives. Does not run for

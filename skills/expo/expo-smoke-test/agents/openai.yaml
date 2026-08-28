@@ -1,0 +1,4 @@
+interface:
+  display_name: "Expo Smoke Test"
+  short_description: "Verify a change and the core loop on iOS and Android"
+  default_prompt: "Use $expo-smoke-test to verify this Expo change and the app's core loop on both iOS and Android."

@@ -34,6 +34,12 @@
 - `resolve-follow-ups` names the user-visible outcome of clearing recorded
   follow-up work. Worktrees, workers, schedules, and pull requests remain
   execution details rather than the skill name.
+- `expo-smoke-test` takes the established QA term for its activity rather than
+  verb-object grammar. Smoke testing already names a broad, shallow pass over
+  the flows whose failure makes a build pointless, which is what the skill's
+  core-loop half does. A skill name installs into a flat global namespace, so
+  the `expo` marker keeps the stack scope visible next to same-concept skills
+  for other stacks.
 - `commit`, `pull`, `push`, `pr`, and `merge` are one-word exceptions because
   they are already the standard user-facing Git operations. Their object is the
   current repository change or branch, and longer verb-object aliases would be
@@ -82,3 +88,8 @@ repository.
   currency and consistency from the user-visible outcome.
 - `show-results` for human review — it centers presentation rather than the
   scarce human judgment the skill protects.
+- `expo-e2e-check` for the both-platform pass — E2E names a test-suite runner
+  category in the React Native ecosystem, where Maestro and Detox own the term,
+  rather than an agent-driven verification loop.
+- A bare `smoke-test` without the stack marker — installed skill names share one
+  flat namespace, so the same concept for another stack would collide.
