@@ -25,8 +25,9 @@
   out-of-scope defect observed with evidence. One file per item, written at the
   moment of discovery, deleted when the work ships or the item is promoted into
   a spec folder.
-- `AGENTS.md` or `CLAUDE.md` carries repository mechanics and the route to the
-  decision index, not a cache of decision content.
+- `AGENTS.md` or `CLAUDE.md` carries repository mechanics, the route to the
+  decision index, and compact task-time routes to current official vendor
+  context. It does not cache decision content or copies of external guidance.
 - `maintain-project-context` is the periodic hygiene pass across permanent
   product context, the glossary, decision contracts, shipped spec folders, and
   always-loaded repository guidance. It may apply meaning already settled by an

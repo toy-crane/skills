@@ -121,11 +121,12 @@
 - Before beginning another outcome, `implement` reloads the current handoff and
   repository evidence. The same context may continue, but remembered
   conversation alone cannot supply the next task's plan or current truth.
-- When shaping settles on a framework or hosted service, install the vendor's
-  official agent context in its recommended form. `add-stack-context` is
-  model-invoked to audit and install the same context during agent setup, after
-  stack changes, and on entering an existing project whose vendor context has
-  not been checked.
+- When shaping settles on a framework or hosted service, route its current
+  agent context through `add-stack-context` when that skill is available and
+  retain the same outcome inline when it is not. The
+  [stack-context](stack-context.md) contract owns discovery, source acceptance,
+  live vendor-document routing, and the audit used during setup, stack changes,
+  and entry into an unchecked project.
 - Before building on or working around a third-party package or tool,
   `shape-idea` grounds its conclusion in evidence of how that dependency
   actually behaves and confirms it in the project. The spec records what was

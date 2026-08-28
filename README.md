@@ -262,9 +262,10 @@ maintenance. `implement` also uses a matching runtime-verification skill when
 one is available for an affected product surface.
 
 - **[add-stack-context](./skills/workflow/add-stack-context/SKILL.md)**: Audit the
-  technologies that define a project's stack and install each vendor's official
-  agent context in its recommended form. Runs during agent setup, after stack
-  changes, or on entering an unaudited project.
+  technologies that define a project's stack, discover vendor-controlled skills,
+  keep changing official guidance live, and surface community skills for
+  approval. Runs during agent setup, after stack changes, or on entering an
+  unaudited project.
 - **[expo-dev-loop](./skills/expo/expo-dev-loop/SKILL.md)**: Verify Expo and React
   Native changes in a running app with `agent-device`, selecting Metro reload or
   native rebuild from the actual change and completing only with device evidence.
