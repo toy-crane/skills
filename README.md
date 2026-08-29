@@ -83,14 +83,14 @@ flowchart LR
     MATCH -- "app premise changed" --> DP
     MATCH -- "yes" --> MORE{"more outcomes?"}
     MORE -- "yes" --> ONE
-    MORE -- "no" --> FINAL["full checks<br/>+ one code review pass"]
+    MORE -- "no" --> FINAL["full checks + changed/core loop<br/>+ one code review pass"]
     FINAL --> TRIAGE{"breaks a criterion or<br/>reproduces as a defect?"}
     TRIAGE -- "yes" --> FIX["repair, recheck<br/>(no second review)"]
     FIX --> DONE["verified and runnable,<br/>with the review as evidence"]
     TRIAGE -- "no" --> REC["record: follow-up,<br/>note, or user decision"]
     REC --> DONE
     IM -. "uses at pre-agreed public seams" .-> TDD[tdd]
-    IM -. "uses for affected surfaces" .-> RV["matching runtime-verification skill"]
+    IM -. "proves affected surfaces" .-> RV["matching runtime skill<br/>or strongest usable path"]
     IM -. "open workaround or<br/>out-of-scope defect" .-> FU["follow-up"]
 ```
 
@@ -148,10 +148,14 @@ user-reviewable local server, `implement` verifies the changed surface and
 shares an address while leaving that server available until the user finishes
 review or later delivery cleanup. `implement` uses `tdd` where behavior can be
 verified through pre-agreed public seams. For an affected product surface, it
-also uses an available matching runtime-verification skill, or verifies the
-changed behavior through the repository's supported runtime when none is
-available. Current-scope gaps stay in implementation. A workaround with an open
-root cause or an evidenced out-of-scope defect becomes a durable follow-up.
+uses an available matching runtime-verification skill. When none is available,
+it autonomously investigates the repository and current environment and builds
+the strongest usable runtime path instead of asking the user to approve the
+method. After focused checks, it re-verifies the changed flow and the
+`PRODUCT.md` core loop on every claimed platform; missing core-loop coverage is
+reported rather than invented. Current-scope gaps stay in implementation. A
+workaround with an open root cause or an evidenced out-of-scope defect becomes
+a durable follow-up.
 
 Pass the folder itself, not an individual spec or task file.
 

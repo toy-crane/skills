@@ -37,10 +37,25 @@ file.
 Use the `tdd` skill at a pre-agreed public seam when available. Otherwise retain
 the same observable seam and implement one red-to-green behavior at a time.
 
-Use an available runtime-verification skill matching each affected surface, or
-verify through the repository's supported runtime. Keep the outcome incomplete
-when its changed behavior cannot be verified in the running product; builds,
-type checks, and tests do not replace runtime evidence.
+Derive the runtime evidence the active outcome owes from its acceptance
+criteria, affected surfaces, claimed platforms, and any claim about a deeper
+layer such as networking, native integration, component behavior, or
+performance. Use an available specialized runtime-verification skill matching
+each affected surface; it owns its framework-specific observation loop.
+
+When none is available, investigate the repository and current environment and
+construct the strongest usable runtime path yourself. Consult current
+authoritative guidance when a framework or tool's behavior matters. Do not ask
+the user to approve this ordinary technical choice merely because a skill is
+missing.
+
+After a meaningful behavior change, exercise the smallest complete affected
+flow in the running product. Establish that the current change is loaded, no
+relevant runtime error occurs during reproduction, and the exact observable
+result passes. Inspect a deeper layer only when the outcome claims it. If the
+available in-scope paths cannot expose the changed behavior, record the exact
+failed gate and prerequisite and keep the outcome incomplete; builds, type
+checks, tests, screenshots, and code inspection do not replace runtime evidence.
 
 Complete the outcome and its acceptance criteria with focused verification.
 Before marking it complete or starting dependent work, reconcile the observed
@@ -83,6 +98,20 @@ workaround whose root cause remains open, or an evidenced out-of-scope defect,
 through `project-knowledge` at discovery time. If unavailable, write the
 symptom, observed evidence, suspected cause, what was tried, and proposed next
 step to `docs/follow-ups/<slug>.md`.
+
+## Re-verify the product before review
+
+After all outcomes pass focused verification and reconciliation, rerun the
+complete deterministic verification, then re-exercise the changed flow and a
+representative journey derived from the root `PRODUCT.md` core loop in the
+running product. Every platform named in the result owes its own runtime
+evidence; never infer one platform from another.
+
+When `PRODUCT.md` or its core loop is absent, re-verify the changed flow and
+report the missing regression coverage without inventing a journey or editing
+the file. When the core loop admits materially different journeys, preserve the
+current evidence and return that product interpretation for clarification; it
+is distinct from approval of the verification method.
 
 ## Review the whole diff once, then triage
 
