@@ -5,8 +5,8 @@
 A composable, model-agnostic set of skills for product definition, shaping,
 prototyping, task splitting, implementation, runtime verification, human
 review, project knowledge, verified follow-up resolution, test-first
-development, and safe Git delivery. Install selected skills or the complete
-plugin.
+development, cross-client skill and custom-agent synchronization, and safe Git
+delivery. Install selected skills or the complete plugin.
 
 ## Install
 
@@ -33,6 +33,29 @@ The product-context workflow replaces `discover-opportunity` with
 the retired names; remove those old copied folders after installing the
 replacements.
 
+### Project sync (skills + companion agents)
+
+Install `sync-toycrane-skills` once, then invoke it whenever a project should
+follow the latest published set:
+
+```bash
+npx -y skills@latest add toy-crane/skills \
+  --skill sync-toycrane-skills \
+  --agent codex claude-code \
+  -y
+```
+
+Use `/sync-toycrane-skills` in Claude Code or `$sync-toycrane-skills` in Codex.
+It refreshes Toycrane-managed skills through `skills.sh`, installs new skills
+that apply to the project's stack, retires missing managed skills, and then
+materializes any companion custom agents into both `.claude/agents/` and
+`.codex/agents/`. The locks preserve project-owned skills and agents unless the
+user explicitly approves adopting a colliding name.
+
+This is the cross-client installation path for companion agents. A skill folder
+can carry their source payload, but neither client discovers that nested payload
+as a native custom agent on its own.
+
 ### Claude Code plugin (managed bundle)
 
 Installs the complete set as a read-only bundle. Updates arrive with new plugin
@@ -51,6 +74,10 @@ Or from your shell:
 claude plugin marketplace add toy-crane/skills
 claude plugin install toycrane-skills@toycrane
 ```
+
+The plugin installs the managed skill bundle for Claude Code. Run the
+project-local sync workflow above when the same project also needs companion
+agents in Claude Code and Codex.
 
 ## The pipeline
 
@@ -260,12 +287,12 @@ the merged worktree.
 
 ## Supporting workflows
 
-Eight additional skills can run independently. They handle stack setup, Expo
-runtime verification, pre-delivery both-platform checks, incremental project
-knowledge, verified follow-up resolution, visual explanation, final human
-judgment, and periodic context maintenance. `implement` also uses a matching
-runtime-verification skill when one is available for an affected product
-surface.
+Nine additional skills can run independently. They handle stack setup, Expo
+runtime verification, pre-delivery both-platform checks, cross-client skill and
+agent synchronization, incremental project knowledge, verified follow-up
+resolution, visual explanation, final human judgment, and periodic context
+maintenance. `implement` also uses a matching runtime-verification skill when
+one is available for an affected product surface.
 
 - **[add-stack-context](./skills/workflow/add-stack-context/SKILL.md)**: Audit the
   technologies that define a project's stack, discover vendor-controlled skills,
@@ -277,8 +304,12 @@ surface.
   native rebuild from the actual change and completing only with device evidence.
 - **[expo-smoke-test](./skills/expo/expo-smoke-test/SKILL.md)**: Before delivery,
   drive the current change and the `PRODUCT.md` core loop on iOS and Android
-  development builds, in one isolated `agent-device` session per platform,
-  reporting each platform's evidence separately.
+  development builds by spawning one `expo-smoke-runner` subagent per platform,
+  waiting for both isolated sessions, and reporting their evidence separately.
+- **[sync-toycrane-skills](./skills/workflow/sync-toycrane-skills/SKILL.md)**:
+  Reconcile the latest applicable Toycrane skills with `skills.sh`, then install,
+  refresh, or retire their project-local companion agents for both Claude Code
+  and Codex without taking ownership of unrelated artifacts.
 - **[project-knowledge](./skills/workflow/project-knowledge/SKILL.md)**: Maintain project
   terms and settled decisions that future work should reuse whenever they are
   taking shape, including while a plan weighs alternatives. Does not run for

@@ -1,7 +1,7 @@
 {
   "name": "toycrane-skills",
-  "version": "0.43.0",
-  "description": "Skills for product definition, shaping, implementation, verified follow-up resolution, runtime verification, review, project knowledge, test-first development, and safe Git delivery.",
+  "version": "0.44.0",
+  "description": "Skills for product definition, shaping, implementation, runtime verification, cross-client skill and agent synchronization, review, project knowledge, test-first development, and safe Git delivery.",
   "author": {
     "name": "toy-crane",
     "url": "https://github.com/toy-crane"
@@ -23,6 +23,9 @@
     "explain-visually",
     "expo",
     "agent-device",
+    "custom-agent",
+    "subagent",
+    "sync",
     "human-review",
     "implement",
     "merge",
@@ -54,6 +57,7 @@
     "./skills/workflow/resolve-follow-ups",
     "./skills/workflow/shape-idea",
     "./skills/workflow/split-into-tasks",
+    "./skills/workflow/sync-toycrane-skills",
     "./skills/workflow/tdd",
     "./skills/expo/expo-dev-loop",
     "./skills/expo/expo-smoke-test"
