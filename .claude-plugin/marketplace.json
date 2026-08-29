@@ -9,7 +9,7 @@
     {
       "name": "toycrane-skills",
       "source": "./",
-      "description": "Skills for product definition, shaping, prototyping, task splitting, implementation, project knowledge, and test-first development.",
+      "description": "Skills for product shaping through implementation, runtime verification, project knowledge, cross-client skill and agent sync, and safe Git delivery.",
       "category": "productivity",
       "keywords": [
         "skills",
@@ -21,6 +21,9 @@
         "maintain-project-context",
         "project-knowledge",
         "product-context",
+        "expo",
+        "custom-agent",
+        "sync",
         "planning",
         "tdd",
         "testing"
