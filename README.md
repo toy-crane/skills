@@ -153,9 +153,10 @@ it autonomously investigates the repository and current environment and builds
 the strongest usable runtime path instead of asking the user to approve the
 method. After focused checks, it re-verifies the changed flow and the
 `PRODUCT.md` core loop on every claimed platform; missing core-loop coverage is
-reported rather than invented. Current-scope gaps stay in implementation. A
-workaround with an open root cause or an evidenced out-of-scope defect becomes
-a durable follow-up.
+reported rather than invented. If a review repair changes executable behavior,
+it repeats that runtime gate on the repaired revision without a second review.
+Current-scope gaps stay in implementation. A workaround with an open root cause
+or an evidenced out-of-scope defect becomes a durable follow-up.
 
 Pass the folder itself, not an individual spec or task file.
 

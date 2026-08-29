@@ -70,6 +70,11 @@ flow and a representative journey derived from the root `PRODUCT.md` core loop
 on the running product. This is a bounded regression check of the product's
 primary journey, not an exhaustive application-wide suite.
 
+If the automated review leads to a repair that changes executable product
+behavior, that repair invalidates the earlier runtime evidence. `implement`
+re-runs the same changed-flow and core-loop gate on the repaired revision before
+handoff, without sending the repaired scope through a second review pass.
+
 Every platform named in the result owes its own runtime evidence. Evidence from
 one platform does not establish another. When `PRODUCT.md` or a core loop is
 absent, `implement` re-verifies the changed flow and reports that core-loop
@@ -119,6 +124,10 @@ Ordinary selection of a verification technique stays autonomous.
 - Given a defined `PRODUCT.md` core loop, final verification drives both the
   changed flow and one representative core-loop journey on every claimed
   platform, with separate evidence for each platform.
+- Given a must-fix review finding whose repair changes executable product
+  behavior, the final changed-flow and core-loop gate runs again on the repaired
+  revision on every claimed platform, while the automated review remains a
+  single pass.
 - Given no defined core loop, final verification re-runs the changed flow,
   reports the missing regression coverage, and leaves `PRODUCT.md` unchanged.
 - Given a runtime claim about a deeper layer such as networking, native
@@ -144,6 +153,8 @@ Ordinary selection of a verification technique stays autonomous.
 - Runtime evidence is claim-shaped. Exact behavioral assertions establish
   correctness, screenshots establish visible output, logs establish runtime
   health, and deeper instrumentation is required only for deeper claims.
+- Final runtime evidence must describe the executable revision being handed
+  off; a later repair cannot inherit evidence from the revision it replaced.
 - Every claimed platform requires direct evidence because platform parity is
   an implementation claim, not a safe inference.
 - Verification evidence stays in the existing handoff and task lifecycle. A
@@ -203,7 +214,7 @@ Ordinary selection of a verification technique stays autonomous.
 - Instruction wording may still fail to activate an available specialist or
   may over-trigger broad verification. Held-out scenarios must cover skill
   selection, fallback construction, core-loop regression, platform claims, and
-  blocked runtime evidence.
+  blocked runtime evidence, including invalidation after a review repair.
 
 ## Evidence considered
 

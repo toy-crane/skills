@@ -99,7 +99,7 @@ through `project-knowledge` at discovery time. If unavailable, write the
 symptom, observed evidence, suspected cause, what was tried, and proposed next
 step to `docs/follow-ups/<slug>.md`.
 
-## Re-verify the product before review
+## Re-verify the product before review and after repairs
 
 After all outcomes pass focused verification and reconciliation, rerun the
 complete deterministic verification, then re-exercise the changed flow and a
@@ -133,10 +133,13 @@ retarget it and run it once.
 Repair a finding only when it breaks an approved acceptance criterion, or is a
 defect or regression you confirm by reproducing it on a path ordinary use
 reaches; a reviewer's assertion is not that confirmation. Rerun the affected
-verification, and send no scope through the reviewer twice, repairs included.
-Each scope gets one pass: a declared checkpoint's cumulative scope, then the
-whole diff. Point anyone asking for another look at a confirmed user command
-instead of invoking the reviewer again.
+verification. When the repair changes executable product behavior, it
+invalidates the earlier final runtime evidence: re-run the changed-flow and
+core-loop gate above on every claimed platform after the repair passes. Send no
+scope through the reviewer twice, repairs included. Each scope gets one pass: a
+declared checkpoint's cumulative scope, then the whole diff. Point anyone asking
+for another look at a confirmed user command instead of invoking the reviewer
+again.
 
 Record every other finding rather than repairing it: an evidenced defect or open
 workaround through `project-knowledge`, or as `docs/follow-ups/<slug>.md` when
@@ -147,11 +150,12 @@ trade-off or a pathological-input failure, as a decision the user owns, with
 `human-review` offered for judging it.
 
 The review is evidence in the handoff, not a completion condition. Completion
-needs the acceptance criteria, reconciliation, and verification to pass, and the
-must-fix findings repaired and reverified. Report what the pass produced, what
-it changed, and what it left open. When the reviewer is user-only, rejected,
-errors, times out, or does not exist, say so and still report the verified work
-as complete, offering only a command the active session confirms.
+needs the acceptance criteria, reconciliation, and verification to pass on the
+executable revision being handed off, and the must-fix findings repaired and
+reverified. Report what the pass produced, what it changed, and what it left
+open. When the reviewer is user-only, rejected, errors, times out, or does not
+exist, say so and still report the verified work as complete, offering only a
+command the active session confirms.
 
 ## Hand off the runnable product
 

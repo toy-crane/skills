@@ -56,7 +56,10 @@
 - Before final completion, `implement` re-verifies the changed flow and the
   representative core-loop journey from `PRODUCT.md` on every platform its
   result claims. When no core loop is defined, it verifies the changed flow and
-  reports the missing regression coverage rather than inventing a journey.
+  reports the missing regression coverage rather than inventing a journey. A
+  review repair that changes executable product behavior invalidates the earlier
+  runtime evidence, so this gate repeats on the repaired revision without a
+  second review pass.
 - Each outcome is complete after its acceptance criteria and focused
   deterministic verification pass, followed by reconciliation of the observed
   behavior with the spec and every active unfinished task. Task files hold only
@@ -104,12 +107,14 @@
 - `implement` fixes a finding only when it shows an approved acceptance
   criterion failing, or is a defect or caused regression in the changed
   behavior that reproduction confirms on a path ordinary use reaches. It then
-  reruns only the affected verification and sends no scope through the reviewer
-  twice in that run, including the repairs made to an already-reviewed scope.
-  Every other finding is recorded instead: an evidenced defect or open
-  workaround becomes a follow-up, an already-disposed trade-off is noted as
-  disposed, and a material consequence the spec leaves open is named in the
-  handoff as a decision the user owns.
+  reruns the affected verification; when the repair changes executable product
+  behavior, it also repeats the final changed-flow and core-loop runtime gate on
+  every claimed platform. It sends no scope through the reviewer twice in that
+  run, including repairs made to an already-reviewed scope. Every other finding
+  is recorded instead: an evidenced defect or open workaround becomes a
+  follow-up, an already-disposed trade-off is noted as disposed, and a material
+  consequence the spec leaves open is named in the handoff as a decision the
+  user owns.
 - The automated review is evidence attached to the handoff rather than a
   completion condition. Verified work whose reviewer is user-only, rejected,
   errored, timed out, or absent is complete, and its handoff records the review

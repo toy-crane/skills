@@ -464,6 +464,18 @@
         "It does not use a visible page, screenshot, type check, or successful build as evidence for the performance percentage.",
         "If the measurement cannot be obtained, it leaves the performance claim unverified rather than weakening the claim silently."
       ]
+    },
+    {
+      "id": 38,
+      "prompt": "/implement docs/specs/reminders/의 구현, 결정적 검증, iOS와 Android 최종 스모크, 자동 리뷰 1회까지 끝냈어. 리뷰가 일반 경로의 저장 결함을 찾아서 제품 코드를 고쳤고 관련 저장 검증도 다시 통과했어. 이제 마무리해줘.",
+      "expected_output": "The response treats the executable review repair as invalidating the pre-review runtime evidence, re-runs the changed flow and PRODUCT.md core loop on both iOS and Android against the repaired revision, and does not invoke the automated reviewer again.",
+      "files": [],
+      "expectations": [
+        "It does not hand off the repaired executable revision using only the runtime evidence collected before that repair.",
+        "It re-drives the changed flow and the PRODUCT.md core loop on both claimed platforms after the repair.",
+        "It preserves separate iOS and Android runtime evidence for the repaired revision.",
+        "It does not run a second automated review over the repair."
+      ]
     }
   ]
 }
