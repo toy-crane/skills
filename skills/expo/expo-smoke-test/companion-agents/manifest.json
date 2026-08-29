@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "agents": [
+    {
+      "name": "expo-smoke-runner",
+      "claude": "claude/expo-smoke-runner.md",
+      "codex": "codex/expo-smoke-runner.toml"
+    }
+  ]
+}
