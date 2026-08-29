@@ -48,9 +48,11 @@
 - `implement` uses `tdd` where behavior can be verified through a pre-agreed
   public seam.
 - For each affected product surface, `implement` uses an available matching
-  runtime-verification skill. When none is available, it verifies the changed
-  behavior through the repository's supported runtime. Behavior not verified in
-  the running product remains incomplete; static checks do not replace it.
+  runtime-verification skill. When none is available, implementation authority
+  covers investigating the repository and current environment, selecting the
+  strongest usable runtime observation path, and carrying out that verification
+  without pausing for approval of the technical method. Behavior not verified
+  in the running product remains incomplete; static checks do not replace it.
 - Each outcome is complete after its acceptance criteria and focused
   deterministic verification pass, followed by reconciliation of the observed
   behavior with the spec and every active unfinished task. Task files hold only
@@ -361,6 +363,10 @@ state keep automation reviewable without turning follow-up files into a queue.
 - A generic runtime-verification dispatcher — matching framework skills already
   own their observation loops, while `implement` owns the implementation
   completion gate and remains usable when none is installed.
+- Pausing for approval when no matching runtime-verification skill is installed
+  — the user already authorized the technical implementation path, and skill
+  availability does not turn ordinary verification-method selection into a
+  product decision.
 - A dedicated follow-up recording skill — it names a mechanism rather than a
   user outcome and would add another installable dependency, while
   `project-knowledge` already owns durable project memory.
