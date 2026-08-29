@@ -1,6 +1,6 @@
 ---
 name: expo-smoke-test
-description: Verify an Expo or React Native change together with the app's core loop on both iOS and Android using agent-device. Use before delivering a change, when the user asks to confirm behavior on both platforms, or when the core loop should be exercised again as a regression. Run one isolated device session per platform against a development build, drive both journeys on the running app, and finish only with separate runtime evidence for each platform. For verifying one change on a single target during ordinary editing, use expo-dev-loop instead.
+description: Verify an Expo or React Native change together with the app's core loop on both iOS and Android using agent-device. Use before delivering a change, when the user asks to confirm behavior on both platforms, or when the core loop should be exercised again as a regression. Coordinate shared prerequisites, then spawn exactly two isolated platform subagents—prefer the installed expo-smoke-runner profile—wait for both, and finish only with separate runtime evidence for each platform. For verifying one change on a single target during ordinary editing, use expo-dev-loop instead.
 ---
 
 # Expo Smoke Test
@@ -73,8 +73,7 @@ Carry `--session <name>` on every command in a named-session flow. Without it a
 command targets the implicit default session instead of the platform you meant.
 
 Keep state-changing commands serial inside a single session. Run the two
-sessions concurrently when the harness supports concurrent work, and
-sequentially when it does not; each platform owes the same evidence either way.
+sessions concurrently through the two platform workers described below.
 Concurrent runs contend for CPU and device I/O, so allow longer per-command
 timeouts than a solo run needs.
 
@@ -98,6 +97,41 @@ change or when native impact remains uncertain. Preserve the project's managed
 or checked-in native workflow rather than regenerating native directories as an
 incidental verification step. Native builds for the two platforms may run one
 after another while verification still runs per session.
+
+## Delegate exactly two platform workers
+
+The coordinator owns everything shared: inspect the change and `PRODUCT.md`,
+classify the runtime path once, select both targets and app identifiers, prepare
+the development builds, start or identify the project-owned Metro server, and
+define the changed flow plus core-loop journey. Finish native builds serially
+when they would contend for the same project state. Do not make either platform
+worker rediscover or mutate this shared setup.
+
+Once those prerequisites are ready, use the harness's subagent capability to
+spawn exactly two workers concurrently:
+
+- one `expo-smoke-runner` for iOS with session `smoke-ios`;
+- one `expo-smoke-runner` for Android with session `smoke-android`.
+
+Give each worker only its platform assignment, including the project directory,
+target device, app id or development-client URL, Metro port, runtime path,
+changed flow and exact expected outcome, core-loop journey or its confirmed
+absence, evidence requirements, and its fixed session name. The worker drives
+the app and returns evidence; it never covers the other platform or spawns a
+nested agent.
+
+Wait for both workers, then aggregate their reports against the completion gate.
+One worker finishing or passing never substitutes for the other. This explicit
+topology prevents the observed failure where a generic concurrency hint leaves
+both sessions in the coordinator instead of creating isolated test contexts.
+
+Select the custom agent named `expo-smoke-runner` when the installation exposes
+it. If subagents are available but that profile is not installed, still spawn
+exactly two general-purpose subagents and include this skill's complete
+per-platform verification contract in each assignment. This keeps the skill
+self-contained. If the harness exposes no subagent capability at all, run both
+named sessions directly, preserve the same evidence gate, and report that
+platform-context isolation was unavailable.
 
 ## Verify each platform
 
@@ -131,10 +165,6 @@ When an overlay dismissal reports that the overlay is still visible, capture a
 screenshot before concluding it blocks the run. A development client's own
 floating controls can register as an overlay while the app UI stays fully
 reachable; report what the screenshot shows rather than retrying the dismissal.
-
-When the `expo-dev-loop` skill is available, it may carry one platform's
-verification. Target selection, both-platform coverage, the core-loop drive,
-and the completion gate stay here.
 
 ## Drive the core loop
 
@@ -176,10 +206,10 @@ separating observed results from remaining inference. Evidence from one platform
 never establishes the other.
 
 If verification is blocked, name the app, platform, session, failed gate, and
-the exact next command or user action needed. Close both sessions when
-finished, and leave a healthy Metro server running for the next edit loop
-unless the user requested cleanup; in CI, release the devices with
-`agent-device close --shutdown`.
+the exact next command or user action needed. Each worker closes its own session
+when finished; the coordinator closes any session it had to run directly. Leave
+a healthy Metro server running for the next edit loop unless the user requested
+cleanup; in CI, release the devices with `agent-device close --shutdown`.
 
 When a workaround such as clearing a cache or rebuilding leaves its root cause
 open, or you observe an out-of-scope defect with evidence, record it at the

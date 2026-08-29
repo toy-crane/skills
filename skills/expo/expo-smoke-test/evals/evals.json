@@ -4,11 +4,12 @@
     {
       "id": 1,
       "prompt": "Use $expo-smoke-test before I ship this change. I edited the Settings screen so notification status starts as Disabled and tapping Enable notifications changes it to Enabled. PRODUCT.md says the core loop is: open the app, add a reminder, and see it in today's list. Metro is running, a development build is installed on both an iOS simulator and an Android emulator, and Expo Go is also installed on both.",
-      "expected_output": "The response classifies the screen-only change as eligible for the Metro path, verifies against the installed development build rather than Expo Go, opens one isolated agent-device session per platform, drives both the Settings change and the PRODUCT.md core-loop journey on each running app with exact assertions, and reports iOS and Android evidence separately without inferring either from the other.",
+      "expected_output": "The coordinator classifies the screen-only change as eligible for the Metro path, verifies against the installed development build rather than Expo Go, then spawns exactly two expo-smoke-runner subagents concurrently—one per platform and named session—waits for both, and reports their separate runtime evidence without inferring either from the other.",
       "files": [],
       "expectations": [
         "It verifies against the installed development build and does not use Expo Go even though it is available and the change is JavaScript-only.",
         "It classifies the screen-only React change as eligible for the Metro path and does not rebuild the native binary without evidence of native impact.",
+        "After preparing shared prerequisites, it explicitly spawns exactly two expo-smoke-runner subagents concurrently, assigns iOS/smoke-ios to one and Android/smoke-android to the other, and waits for both before aggregating.",
         "It opens a separate named agent-device session for iOS and for Android rather than reusing one session for both platforms.",
         "It reads the core loop from PRODUCT.md and does not create or edit that file.",
         "It verifies both the changed Settings flow and the core-loop journey on each platform with exact assertions rather than a screenshot alone.",
@@ -20,10 +21,11 @@
     {
       "id": 2,
       "prompt": "Use $expo-smoke-test to check this change on both platforms. This repository has no PRODUCT.md. I added a camera permission and a config plugin, and I want it verified on my connected iPhone and on the Android emulator.",
-      "expected_output": "The response classifies the permission and config-plugin change as requiring the native path on both platforms, checks the physical iOS prerequisites before promising an iPhone run, verifies the change flow per platform, and reports that no core-loop regression exists because PRODUCT.md is absent.",
+      "expected_output": "The coordinator classifies the permission and config-plugin change as requiring the native path on both platforms, checks and prepares the platform prerequisites, then delegates exactly one platform to each of two expo-smoke-runner subagents, waits for both, and reports that core-loop coverage is absent because PRODUCT.md is absent.",
       "files": [],
       "expectations": [
         "It classifies the permission and config-plugin change as the native path and uses a development build rather than Expo Go.",
+        "It owns shared classification and build preparation, then explicitly spawns one expo-smoke-runner for iOS and one for Android and waits for both reports.",
         "It verifies the change flow on each platform in its own session with exact assertions.",
         "It reports that no PRODUCT.md core loop exists, verifies the change flow alone, and does not invent a core-loop journey.",
         "For the physical iPhone, it establishes Developer Mode and signed XCTest runner prerequisites, and reports the exact missing setup as a blocker instead of silently substituting a simulator.",
