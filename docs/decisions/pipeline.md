@@ -53,6 +53,10 @@
   strongest usable runtime observation path, and carrying out that verification
   without pausing for approval of the technical method. Behavior not verified
   in the running product remains incomplete; static checks do not replace it.
+- Before final completion, `implement` re-verifies the changed flow and the
+  representative core-loop journey from `PRODUCT.md` on every platform its
+  result claims. When no core loop is defined, it verifies the changed flow and
+  reports the missing regression coverage rather than inventing a journey.
 - Each outcome is complete after its acceptance criteria and focused
   deterministic verification pass, followed by reconciliation of the observed
   behavior with the spec and every active unfinished task. Task files hold only
@@ -367,6 +371,10 @@ state keep automation reviewable without turning follow-up files into a queue.
   — the user already authorized the technical implementation path, and skill
   availability does not turn ordinary verification-method selection into a
   product decision.
+- Limiting final runtime verification to the changed acceptance criteria — a
+  locally correct change can still break the product's primary journey; the
+  bounded core loop catches that regression without requiring an exhaustive
+  application-wide test on every implementation.
 - A dedicated follow-up recording skill — it names a mechanism rather than a
   user outcome and would add another installable dependency, while
   `project-knowledge` already owns durable project memory.
