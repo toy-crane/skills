@@ -300,12 +300,14 @@ one is available for an affected product surface.
   approval. Runs during agent setup, after stack changes, or on entering an
   unaudited project.
 - **[expo-dev-loop](./skills/expo/expo-dev-loop/SKILL.md)**: Verify Expo and React
-  Native changes in a running app with `agent-device`, selecting Metro reload or
-  native rebuild from the actual change and completing only with device evidence.
+  Native changes in a running app with `agent-device`, first proving target
+  readiness and the scenario's required state, then selecting Metro reload or
+  native rebuild and completing only with device evidence.
 - **[expo-smoke-test](./skills/expo/expo-smoke-test/SKILL.md)**: Before delivery,
-  drive the current change and the `PRODUCT.md` core loop on iOS and Android
-  development builds by spawning one `expo-smoke-runner` subagent per platform,
-  waiting for both isolated sessions, and reporting their evidence separately.
+  prepare a known-app, fresh-device, or preserved-prior state as the scenario
+  requires, then drive the current change and the `PRODUCT.md` core loop on iOS
+  and Android development builds through one isolated `expo-smoke-runner` per
+  platform.
 - **[sync-toycrane-skills](./skills/workflow/sync-toycrane-skills/SKILL.md)**:
   Reconcile the latest applicable Toycrane skills with `skills.sh`, then install,
   refresh, or retire their project-local companion agents for both Claude Code

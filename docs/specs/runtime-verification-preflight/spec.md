@@ -159,6 +159,12 @@ prerequisite still missing.
   and permission reset as separate operations. Its doctor command diagnoses
   device, app, development-server, and React Native or Expo readiness. No one
   operation establishes all client, OS, host, and backend state.
+- Upstream `agent-device` 0.20.10 adds enforced device claims for session open
+  and sessionless device mutations after 0.20.9 allowed a foreign worktree to
+  shut down another session's emulator. Fresh-device preparation therefore
+  requires 0.20.10 or newer and holds the final observation session's claim
+  across reset and handoff. Reopen this minimum when the upstream ownership
+  contract changes. Evidence: [claim-enforcement fix](https://github.com/callstack/agent-device/pull/1809).
 - The current official Next.js
   [`next-dev-loop`](https://github.com/vercel/next.js/blob/canary/skills/next-dev-loop/SKILL.md)
   already performs a session preflight for its browser and framework

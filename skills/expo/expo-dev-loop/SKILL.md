@@ -1,6 +1,6 @@
 ---
 name: expo-dev-loop
-description: Verify Expo and React Native changes in a running app with agent-device. Use after editing screens, navigation, interactions, app configuration, config plugins, native dependencies, permissions, startup behavior, or performance, or whenever the user asks to confirm an Expo change on an iOS or Android simulator, emulator, or physical device. Classify whether the change can use the Metro fast path or requires a native rebuild, then finish only with observable runtime evidence.
+description: Verify Expo and React Native changes in a running app with agent-device. Use after editing screens, navigation, interactions, app configuration, config plugins, native dependencies, permissions, startup behavior, or performance, or whenever the user asks to confirm an Expo change on an iOS or Android simulator, emulator, or physical device. Establish target readiness and the scenario's required state, classify whether the change can use the Metro fast path or requires a native rebuild, then finish only with observable runtime evidence.
 ---
 
 # Expo Dev Loop
@@ -51,6 +51,54 @@ than to this project, so a result observed there is about a different binary
 than the one being shipped; build a development build instead. Preserve the
 project's managed or checked-in native workflow rather than regenerating native
 directories as an incidental verification step.
+
+## Pass preflight before observation
+
+Keep three gates separate and report the first one that fails:
+
+1. **Runtime readiness:** the intended target, development build, project-owned
+   Metro server, and observation session are usable, and the loaded bundle or
+   native build belongs to this checkout.
+2. **Known initial state:** app-local data, OS permissions, login or fixture
+   state, and any affected backend have the state the scenario requires.
+3. **Behavior verification:** the ready app is driven and its named outcome is
+   asserted. A successful launch or prepared state never satisfies this gate.
+
+Use narrow readiness checks in the ordinary loop. Run `agent-device doctor`
+only when the user asks for setup diagnosis or a failed readiness check suggests
+an unhealthy device, app, development server, or runner.
+
+Choose the least destructive state profile that proves the behavior:
+
+- **Known app state:** prepare only the app data, explicit permissions, login,
+  and fixture state the flow needs. App-state clearing and permission reset are
+  separate boundaries; report which were changed and which were preserved.
+- **Fresh device:** use only when the behavior depends on first-device state,
+  such as first launch, OS permission history, secure storage, application
+  identity, deep links, push behavior, native configuration, or another
+  device-level surface. A simulator or emulator is dedicated only when the
+  request or project allocation establishes that ownership; absence from an
+  advisory claim list is not proof. Fresh-device preparation requires
+  `agent-device` 0.20.10 or newer, whose device claims reject foreign local
+  mutations. Acquire the exact target through the loop's final named session
+  with `agent-device open`, confirm `agent-device device status` names that
+  session and workspace, and keep the claim through reset, boot, reinstall,
+  Metro reconnection, and observation. If the claim cannot be acquired or held
+  across the selected reset mechanism, stop before reset. Address only that
+  target, never all devices. After reset, re-establish any allowed backend
+  fixture before observation.
+- **Preserved or prior state:** retain or seed the earlier app and backend state
+  required by returning-user, upgrade, or migration behavior. Do not clear away
+  the premise being tested.
+
+Never erase a physical, user-owned, shared, or otherwise unowned target. When a
+fresh-device check has no eligible virtual target, report the runtime-readiness
+blocker. When a usable target exists but its required state cannot safely be
+established, report the known-initial-state blocker. Do not substitute
+destructive app or backend actions. Treat a stateful backend as a separate
+affected surface: use only the project's deterministic local or test
+preparation path, and never infer backend state from a ready client or
+destructively reset a remote service under ordinary verification authority.
 
 ## Prepare the observation loop
 
@@ -112,8 +160,9 @@ Reporting it only in conversation loses it.
 Finish only when the selected runtime contains the current change, the exact
 user-visible expectation passes, relevant runtime errors are absent during the
 reproduction, and every platform claim has device evidence. Report the target,
-flow, assertions, and artifact paths, separating observed results from
-remaining inference or unverified coverage.
+state profile, readiness evidence, prepared and preserved state boundaries,
+flow, assertions, and artifact paths, separating observed results from remaining
+inference or unverified coverage.
 
 If verification is blocked, name the app, platform, session, failed gate, and
 the exact next command or user action needed. Close the `agent-device` session

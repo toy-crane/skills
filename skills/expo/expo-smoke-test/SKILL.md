@@ -1,6 +1,6 @@
 ---
 name: expo-smoke-test
-description: Verify an Expo or React Native change together with the app's core loop on both iOS and Android using agent-device. Use before delivering a change, when the user asks to confirm behavior on both platforms, or when the core loop should be exercised again as a regression. Coordinate shared prerequisites, then spawn exactly two isolated platform subagents—prefer the installed expo-smoke-runner profile—wait for both, and finish only with separate runtime evidence for each platform. For verifying one change on a single target during ordinary editing, use expo-dev-loop instead.
+description: Verify an Expo or React Native change together with the app's core loop on both iOS and Android using agent-device. Use before delivering a change, when the user asks to confirm behavior on both platforms, or when the core loop should be exercised again as a regression. Establish runtime readiness and an explicit state profile, coordinate shared prerequisites, then spawn exactly two isolated platform subagents—prefer the installed expo-smoke-runner profile—wait for both, and finish only with separate runtime evidence for each platform. For verifying one change on a single target during ordinary editing, use expo-dev-loop instead.
 ---
 
 # Expo Smoke Test
@@ -34,6 +34,62 @@ Point each platform's client at this project's own dev server rather than a
 default port another checkout may already hold. Pass the port as a session
 runtime hint with `--metro-port`, and confirm from the running tools which port
 this project actually serves.
+
+## Pass preflight before behavior
+
+Keep three gates explicit for each platform:
+
+1. **Runtime readiness:** the exact target, development build, project-owned
+   Metro server, and observation path are usable, and the loaded bundle or
+   native build belongs to this checkout.
+2. **Known initial state:** app-local data, OS permissions, login or fixture
+   state, and every affected backend boundary match the journey's premise.
+3. **Behavior verification:** the prepared app is driven and the change flow
+   plus core loop reach their exact outcomes. Passing preparation never
+   satisfies this gate.
+
+Use narrow checks for routine readiness. Run `agent-device doctor` only when
+the user asks for environment diagnosis or a failed readiness check suggests an
+unhealthy device, app, development server, or runner.
+
+Choose and report one state profile per platform:
+
+- **Known app state** is the default. Prepare only the app data, explicit
+  permissions, login, and fixture state the journey needs while preserving
+  unrelated device state. Empty and seeded states both qualify when they are
+  explicit and reproducible. App-state clearing and permission reset are
+  separate boundaries; report each one actually changed.
+- **Fresh device** applies when the request requires a fresh install or the
+  change depends on first launch, onboarding, OS permission history, secure
+  device storage, application identity, native configuration, deep links, push
+  behavior, another device-level surface, or evidenced device-state
+  contamination. Reset only a simulator or emulator the request or project
+  allocation establishes as dedicated to this run. Fresh-device preparation
+  requires `agent-device` 0.20.10 or newer, whose device claims reject foreign
+  local mutations. Acquire each exact target through its final `smoke-ios` or
+  `smoke-android` session with `agent-device open`, confirm
+  `agent-device device status` names that session and workspace, and keep the
+  claim through reset, boot, reinstall, Metro reconnection, and worker handoff.
+  If the claim cannot be acquired or held across the selected reset mechanism,
+  stop before reset. Absence from an advisory claim list is not proof of
+  ownership. Address one exact target, never all devices. After reset,
+  re-establish the allowed backend fixture before behavior verification.
+- **Preserved or prior state** retains or seeds the earlier application and
+  backend state needed for returning-user, upgrade, or migration behavior.
+  Once that premise is prepared, do not clear app data or erase the target
+  before driving the flow.
+
+Never erase a physical, user-owned, shared, or otherwise unowned target. When a
+fresh-device claim has no eligible virtual target, report that platform's
+runtime-readiness blocker. When a usable target exists but its required state
+cannot safely be established, report the known-initial-state blocker. Do not
+weaken the scenario or mutate another owner's environment.
+
+Treat Supabase or another stateful service as a separate affected surface. Use
+only the repository's deterministic local or test readiness, migration, reset,
+and seed path needed by the journey. A ready client never proves backend state,
+and ordinary verification authority never permits a destructive linked or
+remote reset.
 
 ## Choose devices and sessions
 
@@ -102,23 +158,34 @@ after another while verification still runs per session.
 
 The coordinator owns everything shared: inspect the change and `PRODUCT.md`,
 classify the runtime path once, select both targets and app identifiers, prepare
-the development builds, start or identify the project-owned Metro server, and
-define the changed flow plus core-loop journey. Finish native builds serially
-when they would contend for the same project state. Do not make either platform
-worker rediscover or mutate this shared setup.
+the development builds, start or identify the project-owned Metro server,
+select each platform's state profile, prepare every destructive or backend
+prerequisite, and define the changed flow plus core-loop journey. Finish native
+builds serially when they would contend for the same project state. Do not make
+either platform worker rediscover, reset, or mutate this shared setup.
 
-Once those prerequisites are ready, use the harness's subagent capability to
-spawn exactly two workers concurrently:
+Once each platform's preflight is ready or explicitly blocked, use the
+harness's subagent capability to spawn exactly two workers concurrently:
 
 - one `expo-smoke-runner` for iOS with session `smoke-ios`;
 - one `expo-smoke-runner` for Android with session `smoke-android`.
 
-Give each worker only its platform assignment, including the project directory,
-target device, app id or development-client URL, Metro port, runtime path,
-changed flow and exact expected outcome, core-loop journey or its confirmed
-absence, evidence requirements, and its fixed session name. The worker drives
-the app and returns evidence; it never covers the other platform or spawns a
-nested agent.
+Give a ready worker the project directory, target device, app id or
+development-client URL, Metro port, runtime path, selected state profile,
+readiness evidence, prepared and preserved state boundaries, explicit
+initial-state assertions, changed flow and exact expected outcome, core-loop
+journey or its confirmed absence, evidence requirements, and its fixed session
+name. The worker confirms the assigned initial state, drives the app, and
+returns evidence; it never covers the other platform, resets a device or
+backend, or spawns a nested agent.
+
+Give a blocked worker only the platform, fixed session name, selected state
+profile, coordinator-established failed gate and evidence, preserved
+boundaries, exact prerequisite, and project directory. Target, app, runtime,
+and initial-state fields may be absent because preflight did not establish
+them. The worker returns the blocker without mutating the environment. The
+other worker may still return direct platform evidence, but a blocked platform
+prevents both-platform completion.
 
 Wait for both workers, then aggregate their reports against the completion gate.
 One worker finishing or passing never substitutes for the other. This explicit
@@ -137,6 +204,11 @@ platform-context isolation was unavailable.
 
 On each platform, exercise the smallest complete flow the change affects, then
 the core-loop journey. Check four layers for each:
+
+Before the first behavior interaction, assert the assigned initial-state
+premise on the running app. A mismatch is a known-initial-state failure, not an
+application regression, and the worker does not repair it with an unassigned
+reset.
 
 1. **Loaded:** the intended Metro update or native build is running on that
    target, with no bundle, build, or incompatible-client error.
@@ -201,9 +273,10 @@ so recover and re-drive rather than reporting the core loop as broken.
 Finish only when each platform separately shows the current change loaded, the
 change flow passing its exact expectation, the core-loop journey passing or its
 absence reported, and no relevant runtime errors during the reproduction.
-Report each platform's target, flows, assertions, and artifact paths on its own,
-separating observed results from remaining inference. Evidence from one platform
-never establishes the other.
+Report each platform's target, state profile, readiness evidence, prepared and
+preserved state boundaries, flows, assertions, and artifact paths on its own,
+separating observed results from remaining inference. Evidence from one
+platform never establishes the other.
 
 If verification is blocked, name the app, platform, session, failed gate, and
 the exact next command or user action needed. Each worker closes its own session
