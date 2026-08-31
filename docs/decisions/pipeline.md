@@ -53,6 +53,14 @@
   strongest usable runtime observation path, and carrying out that verification
   without pausing for approval of the technical method. Behavior not verified
   in the running product remains incomplete; static checks do not replace it.
+- Each specialized runtime-verification skill owns its runtime preflight and
+  separates readiness, known initial state, and observed behavior. It uses the
+  least destructive state profile that proves the scenario: app-scoped known
+  state by default, a dedicated fresh target only for device-level claims or
+  evidenced contamination, and deliberately preserved prior state for upgrade,
+  migration, or returning-user behavior. Client reset never implies host or
+  backend reset, and destructive preparation has one owner before concurrent
+  observation begins.
 - Before final completion, `implement` re-verifies the changed flow and the
   representative core-loop journey from `PRODUCT.md` on every platform its
   result claims. When no core loop is defined, it verifies the changed flow and
@@ -247,6 +255,10 @@
   decision gate.
 - Vendor context uses official sources only and must not be hardcoded to a fixed
   provider list or installation form.
+- Whole-device reset is permitted only on a simulator or emulator dedicated to
+  the active verification. Physical, user-owned, shared, and otherwise unowned
+  targets are never erased. Destructive remote backend reset requires separate
+  explicit authority and is not ordinary implementation verification.
 
 ## Why
 
@@ -296,7 +308,13 @@ Specialized runtime-verification skills own framework-specific observation
 loops, while `implement` owns their selection and the completion gates that
 remain: acceptance criteria, reconciliation, and verification in the running
 product. A generic dispatcher would duplicate that orchestration without adding
-a separate user outcome.
+a separate user outcome. The same ownership includes preflight because only the
+specialist knows which runtime, state boundary, and observation channel make its
+evidence meaningful. App-scoped known state keeps the common loop fast, while a
+conditional dedicated-device reset pays the higher cost only when the claim
+depends on first-device state. Keeping prior-state verification as a separate
+profile prevents clean-install confidence from hiding upgrade and migration
+defects.
 
 Minimal task state and meaningful code checkpoints preserve useful recovery
 evidence without turning Git and task files into a second orchestration state
@@ -372,6 +390,14 @@ state keep automation reviewable without turning follow-up files into a queue.
 - A generic runtime-verification dispatcher — matching framework skills already
   own their observation loops, while `implement` owns the implementation
   completion gate and remains usable when none is installed.
+- A generic environment-readiness skill — readiness and state controls belong
+  to the runtime that can interpret them, while a separately invoked helper
+  would make a required completion gate optional and duplicate orchestration.
+- Erasing every simulator or emulator before every runtime check — it spends
+  fresh-install cost on claims that need only known app state, disrupts shared
+  work, and removes the prior state required to verify upgrades and migrations.
+- Treating a whole-device erase as a complete clean environment — host build
+  tooling and external backend state remain outside the device reset boundary.
 - Pausing for approval when no matching runtime-verification skill is installed
   — the user already authorized the technical implementation path, and skill
   availability does not turn ordinary verification-method selection into a
