@@ -12,6 +12,8 @@
         "After preparing shared prerequisites, it explicitly spawns exactly two expo-smoke-runner subagents concurrently, assigns iOS/smoke-ios to one and Android/smoke-android to the other, and waits for both before aggregating.",
         "It opens a separate named agent-device session for iOS and for Android rather than reusing one session for both platforms.",
         "It reads the core loop from PRODUCT.md and does not create or edit that file.",
+        "It uses the known-app-state profile for this ordinary screen flow, prepares only the app and fixture state the journey needs, and does not erase either whole virtual device without a device-level claim.",
+        "It keeps runtime readiness, known initial state, and behavior verification as separate gates and reports their evidence separately.",
         "It verifies both the changed Settings flow and the core-loop journey on each platform with exact assertions rather than a screenshot alone.",
         "It drives the core-loop journey on each running app rather than replaying a recording, and derives the journey from PRODUCT.md.",
         "It reports iOS and Android results separately and makes no parity claim from a single platform's run.",
@@ -29,7 +31,38 @@
         "It verifies the change flow on each platform in its own session with exact assertions.",
         "It reports that no PRODUCT.md core loop exists, verifies the change flow alone, and does not invent a core-loop journey.",
         "For the physical iPhone, it establishes Developer Mode and signed XCTest runner prerequisites, and reports the exact missing setup as a blocker instead of silently substituting a simulator.",
+        "It never erases the physical iPhone; it establishes the required camera-permission state through supported app-scoped controls or reports that state gate as blocked.",
         "It reports iOS and Android results separately with their targets and evidence."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use $expo-smoke-test before I ship. I changed first-run onboarding, camera permission handling, and Keychain-backed login. The iOS simulator is dedicated to this worktree but has been reused for other apps. The Android emulator is currently in use by another workspace. Local Supabase is running with old test data. Verify both platforms from a brand-new user's state.",
+      "expected_output": "The coordinator selects the fresh-device profile because the claims depend on first launch, permission history, and secure device storage. It prepares only the dedicated iOS target, refuses to erase the foreign-owned Android emulator, establishes a separate deterministic local Supabase fixture, and does not delegate behavior verification until each platform's preflight result is explicit.",
+      "files": [],
+      "expectations": [
+        "It labels runtime readiness, known initial state, and behavior verification as separate gates and never treats preparation as a passing behavior result.",
+        "It selects the fresh-device profile for both claimed platforms because first launch, OS permission history, and secure storage are part of the behavior.",
+        "It accepts the iOS simulator as destructively eligible only because the request establishes that it is dedicated, requires agent-device 0.20.10 or newer, acquires and holds the final smoke-ios session claim across reset and handoff, and never uses an all-devices reset.",
+        "It refuses to erase or otherwise mutate the Android emulator owned by another workspace and reports the dedicated-target prerequisite for Android.",
+        "It treats Supabase as a separate state boundary, uses only the project's deterministic local or test migration and seed path, and never resets a linked or remote backend under ordinary verification authority.",
+        "The coordinator owns destructive preparation before the platform workers; workers receive the selected profile and preflight evidence and do not reset devices or backends themselves.",
+        "It still spawns exactly two workers, gives Android a blocker-only assignment that performs no device action, prevents nested workers, waits for both reports, and does not claim both-platform completion.",
+        "It reinstalls the development build and reconnects the current project's Metro runtime after any whole-device reset before behavior verification begins.",
+        "It reports the selected profile, target identity, prepared and preserved boundaries, each gate result, and the exact blocker without claiming both-platform completion while Android remains unavailable."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use $expo-smoke-test on iOS and Android before delivery. This change migrates an existing signed-in user's offline drafts from the previous app version. Both virtual devices are dedicated and healthy, and the test backend can be seeded with the old schema and account data.",
+      "expected_output": "The coordinator selects the preserved-or-prior-state profile, prepares the previous-version app and backend fixture on each dedicated target, upgrades through the repository-supported path, and verifies the migrated drafts plus the core loop without erasing away the migration premise.",
+      "files": [],
+      "expectations": [
+        "It selects the preserved-or-prior-state profile rather than fresh-device or blank app state.",
+        "It establishes the required previous-version app, signed-in account, offline drafts, and allowed test-backend fixture before upgrading.",
+        "It does not clear app data or erase either virtual device after the prior state has been prepared.",
+        "It verifies the migration outcome and core loop separately on iOS and Android with exact runtime assertions and focused health evidence.",
+        "It reports which prior state was seeded and preserved and distinguishes a state-preparation failure from a migration behavior failure."
       ]
     }
   ]

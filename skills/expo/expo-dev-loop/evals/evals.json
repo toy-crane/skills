@@ -16,6 +16,33 @@
         "It reports the iOS target and evidence while making no unverified Android-parity claim.",
         "If Metro, the simulator, the project URL, or the device session is unavailable, it reports the failed gate and exact next action instead of claiming success."
       ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use $expo-dev-loop to verify my current Expo change on one iOS simulator. I changed the signed-in profile editor, and the existing account plus its pre-migration local data must remain in place for this check. The simulator is already booted, but it may still be connected to Metro from another checkout. Make sure the environment is ready, but do not turn this into a delivery smoke test.",
+      "expected_output": "The response performs a lightweight single-target preflight, proves that the development build and Metro bundle belong to the current checkout, deliberately preserves the signed-in prior state required by the scenario, and only then verifies the changed profile flow. It does not erase the simulator or infer both-platform coverage.",
+      "files": [],
+      "expectations": [
+        "It separates target and runtime readiness, the required known initial state, and behavior verification instead of treating successful startup as a passing behavior check.",
+        "It confirms that the development build and loaded Metro bundle belong to the current checkout before interacting with the app.",
+        "It selects a preserved-prior-state scenario for the signed-in account and pre-migration data rather than clearing app state or erasing the simulator.",
+        "It uses the ordinary one-target development cadence and does not escalate to expo-smoke-test or claim Android coverage.",
+        "It runs broad environment diagnostics only if a narrow readiness check fails or the user asks for diagnosis.",
+        "It reports the selected target, preserved state boundaries, readiness evidence, behavioral assertion, and the first failed gate with an exact next action if blocked."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use $expo-dev-loop to verify a first-launch deep-link change on my dedicated iOS simulator. The check needs a true fresh-device state, but agent-device 0.20.9 is installed. Do not touch any other simulator.",
+      "expected_output": "The response selects the fresh-device profile but blocks before reset because agent-device 0.20.9 does not provide the required enforced claim coverage. It requires 0.20.10 or newer, names the known-initial-state gate and exact upgrade action, and never substitutes an all-device or unclaimed reset.",
+      "files": [],
+      "expectations": [
+        "It selects fresh-device state because the requested behavior depends on first launch and a device-level deep-link surface.",
+        "It refuses destructive preparation with agent-device 0.20.9 and requires version 0.20.10 or newer before reset.",
+        "It plans to acquire the exact simulator through the final named session, verify that session's ownership, and hold the claim through reset and observation.",
+        "It addresses only the explicitly dedicated simulator and never erases all devices or infers ownership from an empty advisory claim list.",
+        "Because a usable target exists but the required state cannot yet be established safely, it reports a known-initial-state blocker with the exact upgrade action and performs no behavior verification."
+      ]
     }
   ]
 }
