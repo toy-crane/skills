@@ -80,10 +80,11 @@ Choose the least destructive state profile that proves the behavior:
   request or project allocation establishes that ownership; absence from an
   advisory claim list is not proof. Fresh-device preparation requires
   `agent-device` 0.20.10 or newer, whose device claims reject foreign local
-  mutations. Acquire the exact target through the loop's final named session
-  with `agent-device open`, confirm `agent-device device status` names that
-  session and workspace, and keep the claim through reset, boot, reinstall,
-  Metro reconnection, and observation. If the claim cannot be acquired or held
+  mutations; earlier releases advertise claims without enforcing them. Acquire
+  the exact target through the loop's final named session with
+  `agent-device open`, confirm `agent-device device status` names that session
+  and workspace, and keep the claim through reset, boot, reinstall, Metro
+  reconnection, and observation. If the claim cannot be acquired or held
   across the selected reset mechanism, stop before reset. Address only that
   target, never all devices. After reset, re-establish any allowed backend
   fixture before observation.
