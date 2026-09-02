@@ -66,8 +66,9 @@ Choose and report one state profile per platform:
   contamination. Reset only a simulator or emulator the request or project
   allocation establishes as dedicated to this run. Fresh-device preparation
   requires `agent-device` 0.20.10 or newer, whose device claims reject foreign
-  local mutations. Acquire each exact target through its final `smoke-ios` or
-  `smoke-android` session with `agent-device open`, confirm
+  local mutations; earlier releases advertise claims without enforcing them.
+  Acquire each exact target through its final `smoke-ios` or `smoke-android`
+  session with `agent-device open`, confirm
   `agent-device device status` names that session and workspace, and keep the
   claim through reset, boot, reinstall, Metro reconnection, and worker handoff.
   If the claim cannot be acquired or held across the selected reset mechanism,
@@ -188,9 +189,9 @@ other worker may still return direct platform evidence, but a blocked platform
 prevents both-platform completion.
 
 Wait for both workers, then aggregate their reports against the completion gate.
-One worker finishing or passing never substitutes for the other. This explicit
-topology prevents the observed failure where a generic concurrency hint leaves
-both sessions in the coordinator instead of creating isolated test contexts.
+One worker finishing or passing never substitutes for the other. Name the two
+workers explicitly: a generic concurrency hint leaves both sessions in the
+coordinator instead of creating isolated test contexts.
 
 Select the custom agent named `expo-smoke-runner` when the installation exposes
 it. If subagents are available but that profile is not installed, still spawn
