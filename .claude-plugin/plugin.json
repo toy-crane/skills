@@ -1,7 +1,7 @@
 {
   "name": "toycrane-skills",
-  "version": "0.45.0",
-  "description": "Skills for product definition, shaping, implementation, runtime verification, cross-client skill and agent synchronization, review, project knowledge, test-first development, and safe Git delivery.",
+  "version": "0.46.0",
+  "description": "Skills for product definition, shaping, implementation, runtime verification, project skill updates with cross-client agent synchronization, review, project knowledge, test-first development, and safe Git delivery.",
   "author": {
     "name": "toy-crane",
     "url": "https://github.com/toy-crane"
@@ -25,6 +25,7 @@
     "agent-device",
     "custom-agent",
     "subagent",
+    "update-project-skills",
     "sync",
     "human-review",
     "implement",

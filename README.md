@@ -5,8 +5,8 @@
 A composable, model-agnostic set of skills for product definition, shaping,
 prototyping, task splitting, implementation, runtime verification, human
 review, project knowledge, verified follow-up resolution, test-first
-development, cross-client skill and custom-agent synchronization, and safe Git
-delivery. Install selected skills or the complete plugin.
+development, project skill updates with cross-client custom-agent
+synchronization, and safe Git delivery. Install selected skills or the complete plugin.
 
 ## Install
 
@@ -26,6 +26,7 @@ If an existing copy was installed before the source catalog moved into the
 `git`, `workflow`, and `expo` groups, run the add command once more instead of
 relying on `skills update`. The CLI tracks the exact upstream skill path, while
 the reinstallation keeps the same skill names and refreshes that path.
+`update-project-skills` reports such entries instead of reinstalling them.
 
 The product-context workflow replaces `discover-opportunity` with
 `define-product` and renames `compact-decisions` to
@@ -33,10 +34,10 @@ The product-context workflow replaces `discover-opportunity` with
 the retired names; remove those old copied folders after installing the
 replacements.
 
-### Project sync (skills + companion agents)
+### Project update (installed skills + companion agents)
 
 Install `update-project-skills` once, then invoke it whenever a project should
-follow the latest published set:
+follow the latest published skills:
 
 ```bash
 npx -y skills@latest add toy-crane/skills \
@@ -45,11 +46,13 @@ npx -y skills@latest add toy-crane/skills \
   -y
 ```
 
-Use `/update-project-skills` in Claude Code or `$update-project-skills` in Codex.
-It refreshes Toycrane-managed skills through `skills.sh`, installs new skills
-that apply to the project's stack, retires missing managed skills, and then
-materializes any companion custom agents into both `.claude/agents/` and
-`.codex/agents/`. The locks preserve project-owned skills and agents unless the
+Use `/update-project-skills` in Claude Code or `$update-project-skills` in
+Codex. It updates every skill recorded in `skills-lock.json` through
+`skills update`, whatever its source, then reconciles the Toycrane set:
+installs newly published skills that apply to the project's stack, retires
+unpublished managed skills, and materializes any companion custom agents into
+both `.claude/agents/` and `.codex/agents/`. Third-party skills are refreshed in
+place only, and the locks preserve project-owned skills and agents unless the
 user explicitly approves adopting a colliding name.
 
 This is the cross-client installation path for companion agents. A skill folder
@@ -309,9 +312,10 @@ one is available for an affected product surface.
   and Android development builds through one isolated `expo-smoke-runner` per
   platform.
 - **[update-project-skills](./skills/workflow/update-project-skills/SKILL.md)**:
-  Reconcile the latest applicable Toycrane skills with `skills.sh`, then install,
-  refresh, or retire their project-local companion agents for both Claude Code
-  and Codex without taking ownership of unrelated artifacts.
+  Update every skill installed in the project to its latest published version
+  with `skills.sh`, reconcile the Toycrane set, and install, refresh, or retire
+  its project-local companion agents for both Claude Code and Codex without
+  taking ownership of unrelated artifacts.
 - **[project-knowledge](./skills/workflow/project-knowledge/SKILL.md)**: Maintain project
   terms and settled decisions that future work should reuse whenever they are
   taking shape, including while a plan weighs alternatives. Does not run for

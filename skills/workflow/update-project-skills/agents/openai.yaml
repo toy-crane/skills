@@ -1,4 +1,4 @@
 interface:
   display_name: "Update Project Skills"
-  short_description: "Reconcile Toycrane skills and companion agents"
-  default_prompt: "Use $update-project-skills to reconcile this project's Toycrane-managed skills and companion agents for Claude Code and Codex."
+  short_description: "Update installed skills and Toycrane companion agents"
+  default_prompt: "Use $update-project-skills to bring every skill installed in this project to its latest version and reconcile the Toycrane skills and companion agents for Claude Code and Codex."

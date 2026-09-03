@@ -1,69 +1,83 @@
 ---
 name: update-project-skills
-description: Reconcile the published skills and their companion custom agents from toy-crane/skills into the current Git project. Use when the user asks to install, update, refresh, reconcile, or remove retired Toycrane project skills or custom agents for Claude Code and Codex. Follow latest upstream through skills.sh, preserve project-local and third-party artifacts, and materialize only agent files whose ownership is recorded.
+description: Update every skill installed in the current Git project to its latest published version through skills.sh, from toy-crane/skills and every other source, then reconcile the Toycrane set by installing newly published skills that fit the project's stack, retiring unpublished ones, and materializing their companion custom agents for Claude Code and Codex. Use when the user asks to update, upgrade, refresh, or sync the skills or custom agents installed in a project. Third-party skills are refreshed in place only; project-local skills and agents stay untouched.
 ---
 
 # Update Project Skills
 
-Reconcile the target project with `https://github.com/toy-crane/skills` through
-the current `skills.sh` CLI, then materialize any custom agents carried by the
-installed skills for both Claude Code and Codex.
+Bring every skill installed in the target project to its latest published
+version through the current `skills.sh` CLI, then reconcile the Toycrane set
+from `https://github.com/toy-crane/skills` and materialize the custom agents
+carried by its installed skills for both Claude Code and Codex.
 
 Treat `.agents/skills` as the canonical project skill copy. The CLI exposes the
 same skill files to Claude Code through relative links under `.claude/skills`.
-Treat `skills-lock.json` entries whose `source` is `toy-crane/skills` as
-Toycrane-managed. Preserve every skill and agent without recorded Toycrane
-ownership unless the user explicitly approves adopting its name.
+`skills-lock.json` records every skill the CLI installed and its source. Treat
+entries whose `source` is `toy-crane/skills` as Toycrane-managed and every
+other entry as third-party. Skills and agents without a lock entry are
+project-local; preserve them unless the user explicitly approves adopting a
+name.
 
-## Reconcile the project
+## Update every installed skill
 
 1. Resolve the target Git repository from the requested path or current
    directory. Read its instructions and inspect its status before changing it.
-2. Inspect current upstream and installed inventories:
+2. Inspect the installed and upstream inventories:
 
    ```bash
-   npx -y skills@latest add toy-crane/skills --list
    npx -y skills@latest list --json
+   npx -y skills@latest add toy-crane/skills --list
    ```
 
-   Read the project's `skills-lock.json` when present. The upstream list is the
-   current published set; ignore the source repository's own development-only
+   Read the project's `skills-lock.json`. The upstream list is the current
+   published Toycrane set; ignore the source repository's own development-only
    dependencies under `.agents/skills`.
-3. Classify the skill reconciliation:
-   - Refresh every locked Toycrane skill that is still published.
-   - Install each newly published universal skill whose name is absent locally.
-   - Install a newly published skill from the `expo` group only when a
-     `package.json` depends on `expo` or `react-native`.
-   - Continue refreshing an already managed stack-specific skill even if the
-     stack is no longer detected; stack detection gates new installation only.
-   - Remove a locked Toycrane skill that is no longer published.
-   - Preserve every other project-local or third-party skill.
-   - Treat a published Toycrane name that exists locally without a matching
-     lock entry as a collision. Show the path and ask before adopting it.
-4. Apply all current managed skills and eligible new skills in one explicit
-   call so stack exclusions remain excluded:
+3. Update every locked skill in place, from every source, in one project-scoped
+   call:
 
    ```bash
-   npx -y skills@latest add toy-crane/skills \
-     --skill <skill-name> [<skill-name> ...] \
-     --agent codex claude-code \
-     -y
+   npx -y skills@latest update -p -y
    ```
 
-   Re-adding refreshes managed skills and installs missing ones. Do not include
-   an unapproved collision.
-5. Remove retired managed skill names from the whole project:
+   The CLI refreshes each lock entry that records a `skillPath`, one clone per
+   source, and reinstalls it for the current client plus the universal
+   `.agents` copy; existing `.claude/skills` links keep resolving because they
+   are relative. Carry three parts of its output into the final report: the
+   per-skill results, the entries it cannot update in place because they were
+   installed before `skillPath` tracking (with the reinstall hint it prints),
+   and the skills it reports as deleted upstream. Leave those last two groups
+   as reported; whether to reinstall or remove them is the user's call.
 
-   ```bash
-   npx -y skills@latest remove <skill-name> [<skill-name> ...] -y
-   ```
+## Reconcile the Toycrane set
 
-   Keep retirement unscoped. An agent-scoped removal can leave the canonical
-   `.agents` copy and lock entry behind.
+Classify the published Toycrane list against the lock:
+
+- Install each newly published universal skill whose name is absent locally.
+- Install a newly published skill from the `expo` group only when a
+  `package.json` depends on `expo` or `react-native`. Stack detection gates
+  new installation only; an already managed stack-specific skill keeps being
+  updated even if the stack is no longer detected.
+- Treat a published Toycrane name that exists locally without a matching lock
+  entry as a collision. Show the path and ask before adopting it.
+- Retire each locked Toycrane skill that is no longer published.
+
+Install the new skills in one explicit call so stack exclusions and unapproved
+collisions stay excluded, then remove retired names from the whole project:
+
+```bash
+npx -y skills@latest add toy-crane/skills \
+  --skill <new-skill-name> [<new-skill-name> ...] \
+  --agent codex claude-code \
+  -y
+npx -y skills@latest remove <retired-skill-name> [<retired-skill-name> ...] -y
+```
+
+Keep retirement unscoped. An agent-scoped removal can leave the canonical
+`.agents` copy and lock entry behind.
 
 ## Reconcile companion agents
 
-Run the synchronizer from the freshly installed project copy of this skill:
+Run the synchronizer from the freshly updated project copy of this skill:
 
 ```bash
 python3 .agents/skills/update-project-skills/scripts/sync_companion_agents.py \
@@ -101,13 +115,13 @@ identity before writing its canonical Claude Code and Codex pair.
 
 ## Verify the result
 
-- Rerun both skills inventory commands.
-- Confirm each managed current skill exists in `.agents/skills` and in
-  `skills-lock.json` with source `toy-crane/skills`.
-- Confirm `.claude/skills/<name>` is a relative link to
-  `../../.agents/skills/<name>` for each managed skill.
-- Confirm retired managed skills are absent from the lock and both skill paths,
-  while project-local skills remain unchanged.
+- Rerun `npx -y skills@latest list --json`.
+- Confirm each current Toycrane skill exists in `.agents/skills` and in
+  `skills-lock.json` with source `toy-crane/skills`, and that
+  `.claude/skills/<name>` is a relative link to `../../.agents/skills/<name>`.
+- Confirm retired Toycrane skills are absent from the lock and both skill
+  paths, third-party lock entries still name their original sources, and
+  project-local skills remain unchanged.
 - Run the companion check:
 
   ```bash
@@ -119,18 +133,22 @@ identity before writing its canonical Claude Code and Codex pair.
 - When `.agent-sync/manifest.json` exists, run the repository's agent sync
   check after the companion check. Confirm it lists every current managed
   Toycrane skill in `shared_skills` and every companion in `shared_agents`.
-- Inspect the complete Git diff and follow the repository's commit policy.
+- Inspect the complete Git diff. Report, per skill, whether it changed and how
+  much (`git diff --stat` is enough), followed by the entries the update
+  skipped and the upstream deletions it warned about. Then follow the
+  repository's commit policy.
 - If the current Claude Code or Codex session does not expose a newly installed
-  custom agent, finish the reconciliation and report that a new session is
-  needed before testing agent routing.
+  custom agent, finish the update and report that a new session is needed
+  before testing agent routing.
 
 ## Boundaries
 
 - Keep every change project-local; never use `--global` or `-g`.
-- Do not run an unscoped `skills update -p`, which may refresh unrelated
-  third-party skills.
+- Third-party skills change only through the in-place update. Installing a new
+  third-party skill or removing one that disappeared upstream waits for the
+  user's request naming it.
 - Commit `skills-lock.json`, `.agents/toycrane-agents-lock.json` when present,
-  installed skills, and managed agent files together so ownership is durable.
+  updated skills, and managed agent files together so ownership stays durable.
 - Do not remove or overwrite an artifact whose lock does not prove Toycrane
   ownership without explicit approval for that name.
 - Do not push unless the user asks.
