@@ -57,7 +57,7 @@
     "./skills/workflow/resolve-follow-ups",
     "./skills/workflow/shape-idea",
     "./skills/workflow/split-into-tasks",
-    "./skills/workflow/sync-toycrane-skills",
+    "./skills/workflow/update-project-skills",
     "./skills/workflow/tdd",
     "./skills/expo/expo-dev-loop",
     "./skills/expo/expo-smoke-test"

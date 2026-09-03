@@ -1,9 +1,9 @@
 ---
-name: sync-toycrane-skills
+name: update-project-skills
 description: Reconcile the published skills and their companion custom agents from toy-crane/skills into the current Git project. Use when the user asks to install, update, refresh, reconcile, or remove retired Toycrane project skills or custom agents for Claude Code and Codex. Follow latest upstream through skills.sh, preserve project-local and third-party artifacts, and materialize only agent files whose ownership is recorded.
 ---
 
-# Sync Toycrane Skills
+# Update Project Skills
 
 Reconcile the target project with `https://github.com/toy-crane/skills` through
 the current `skills.sh` CLI, then materialize any custom agents carried by the
@@ -66,7 +66,7 @@ ownership unless the user explicitly approves adopting its name.
 Run the synchronizer from the freshly installed project copy of this skill:
 
 ```bash
-python3 .agents/skills/sync-toycrane-skills/scripts/sync_companion_agents.py \
+python3 .agents/skills/update-project-skills/scripts/sync_companion_agents.py \
   --project <project-root> \
   [--retired-skill <retired-skill-name> ...]
 ```
@@ -88,7 +88,7 @@ the script reports an unowned collision, show every colliding path and ask for
 approval for that name. After approval, adopt only the approved names:
 
 ```bash
-python3 .agents/skills/sync-toycrane-skills/scripts/sync_companion_agents.py \
+python3 .agents/skills/update-project-skills/scripts/sync_companion_agents.py \
   --project <project-root> \
   --adopt <approved-agent-name>
 ```
@@ -111,7 +111,7 @@ identity before writing its canonical Claude Code and Codex pair.
 - Run the companion check:
 
   ```bash
-  python3 .agents/skills/sync-toycrane-skills/scripts/sync_companion_agents.py \
+  python3 .agents/skills/update-project-skills/scripts/sync_companion_agents.py \
     --project <project-root> \
     --check
   ```

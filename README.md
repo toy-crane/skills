@@ -35,17 +35,17 @@ replacements.
 
 ### Project sync (skills + companion agents)
 
-Install `sync-toycrane-skills` once, then invoke it whenever a project should
+Install `update-project-skills` once, then invoke it whenever a project should
 follow the latest published set:
 
 ```bash
 npx -y skills@latest add toy-crane/skills \
-  --skill sync-toycrane-skills \
+  --skill update-project-skills \
   --agent codex claude-code \
   -y
 ```
 
-Use `/sync-toycrane-skills` in Claude Code or `$sync-toycrane-skills` in Codex.
+Use `/update-project-skills` in Claude Code or `$update-project-skills` in Codex.
 It refreshes Toycrane-managed skills through `skills.sh`, installs new skills
 that apply to the project's stack, retires missing managed skills, and then
 materializes any companion custom agents into both `.claude/agents/` and
@@ -308,7 +308,7 @@ one is available for an affected product surface.
   requires, then drive the current change and the `PRODUCT.md` core loop on iOS
   and Android development builds through one isolated `expo-smoke-runner` per
   platform.
-- **[sync-toycrane-skills](./skills/workflow/sync-toycrane-skills/SKILL.md)**:
+- **[update-project-skills](./skills/workflow/update-project-skills/SKILL.md)**:
   Reconcile the latest applicable Toycrane skills with `skills.sh`, then install,
   refresh, or retire their project-local companion agents for both Claude Code
   and Codex without taking ownership of unrelated artifacts.

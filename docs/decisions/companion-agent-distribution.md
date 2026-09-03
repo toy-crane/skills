@@ -9,7 +9,7 @@
   independently published skills or a separate user-facing product. The
   coordinator skill remains independently usable and includes an inline
   fallback when its custom agent profile is unavailable.
-- `sync-toycrane-skills` is the installation path. After `skills.sh` refreshes
+- `update-project-skills` is the installation path. After `skills.sh` refreshes
   project-local skill copies, its bundled synchronizer materializes companion
   definitions into `.claude/agents/` and `.codex/agents/`.
 - `.agents/toycrane-agents-lock.json` proves which agent names the synchronizer
@@ -43,7 +43,7 @@
   authorizes removal of alternate-path definitions for that identity.
 - The Claude Code plugin may ship the containing skills, but plugin
   installation alone does not materialize Codex agents. Cross-client agent
-  installation stays with `sync-toycrane-skills`.
+  installation stays with `update-project-skills`.
 
 ## Why
 

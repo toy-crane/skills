@@ -44,6 +44,12 @@
   they are already the standard user-facing Git operations. Their object is the
   current repository change or branch, and longer verb-object aliases would be
   less predictable in both Claude Code and Codex.
+- `update-project-skills` names the outcome a user asks for: every skill
+  installed in the project brought to its latest published version. The object
+  is the project's installed set from every source, and the Toycrane-specific
+  reconciliation of new, retired, and companion-agent-bearing skills is a step
+  inside that outcome rather than the name. `project` keeps the scope distinct
+  from a user-global update.
 
 ## Boundaries
 
@@ -93,3 +99,6 @@ repository.
   rather than an agent-driven verification loop.
 - A bare `smoke-test` without the stack marker — installed skill names share one
   flat namespace, so the same concept for another stack would collide.
+- `sync-toycrane-skills` for the installed-skill update — it named one source
+  and the reconciliation mechanism; once the skill refreshes every installed
+  skill, a source-branded name under-describes the outcome the user asks for.
