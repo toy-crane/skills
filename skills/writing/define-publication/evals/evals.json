@@ -30,7 +30,7 @@
       "prompt": "/define-publication 첨부한 docs/publications/blog.md가 현재 전제야. 독자를 개인 개발자에서 팀 리드까지 넓히기로 했어. 나머지는 유지하면서 파일을 갱신해줘.",
       "expected_output": "The response revises the same file in place, changes only the confirmed reader meaning, preserves the rest, and makes the consequential change explicit.",
       "files": [
-        "../../draft-piece/evals/fixtures/blog-monorepo/docs/publications/blog.md"
+        "evals/fixtures/blog/docs/publications/blog.md"
       ],
       "expectations": [
         "It updates docs/publications/blog.md rather than creating a dated or parallel file.",

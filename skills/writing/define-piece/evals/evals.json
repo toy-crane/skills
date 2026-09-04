@@ -6,7 +6,7 @@
       "prompt": "/define-piece 첨부한 docs/publications/blog.md가 우리 블로그 전제야. 이번 글감은 '저장소의 tally 스크립트로 문서 폴더 줄 수 세기'. 방향은 스크립트를 처음 보는 개발자가 한 번에 따라 하게 하는 것.",
       "expected_output": "The response opens with a one-sentence thesis, title candidates, and an outline of section headings for the user to correct, asks at most one consequential question with a recommended answer, and writes no brief or prose yet.",
       "files": [
-        "../../draft-piece/evals/fixtures/blog-monorepo/docs/publications/blog.md"
+        "evals/fixtures/blog/docs/publications/blog.md"
       ],
       "expectations": [
         "It presents a thesis, two or three title candidates, and an outline rather than a list of questions.",
