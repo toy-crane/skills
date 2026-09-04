@@ -9,7 +9,7 @@
     {
       "name": "toycrane-skills",
       "source": "./",
-      "description": "Skills for product shaping through implementation, runtime verification, project knowledge, cross-client skill and agent sync, and safe Git delivery.",
+      "description": "Skills for product shaping through implementation, runtime verification, writing publications and pieces, project knowledge, cross-client skill and agent sync, and safe Git delivery.",
       "category": "productivity",
       "keywords": [
         "skills",
@@ -26,7 +26,11 @@
         "sync",
         "planning",
         "tdd",
-        "testing"
+        "testing",
+        "define-publication",
+        "define-piece",
+        "draft-piece",
+        "writing"
       ]
     }
   ]

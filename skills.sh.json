@@ -18,6 +18,15 @@
       ]
     },
     {
+      "title": "Writing",
+      "description": "Skills for defining a publication, briefing one piece, and drafting it with reader-question and execution evidence.",
+      "skills": [
+        "define-publication",
+        "define-piece",
+        "draft-piece"
+      ]
+    },
+    {
       "title": "Git delivery",
       "description": "Skills for safely recording, synchronizing, publishing, and merging repository changes.",
       "skills": [

@@ -7,7 +7,7 @@ toy-crane's agent skills, distributed two ways: copy-in via **skills.sh**
 ## The published set is `skills/`
 
 `skills/<group>/<name>/SKILL.md` is what ships. Use the settled `git`, `workflow`,
-or `expo` group from [skill-layout](docs/decisions/skill-layout.md). Each
+`expo`, or `writing` group from [skill-layout](docs/decisions/skill-layout.md). Each
 published skill must also appear in
 `.claude-plugin/plugin.json`'s `skills` array: the plugin ships exactly that
 array, while skills.sh discovers everything under `skills/`. Adding a skill =
@@ -61,7 +61,7 @@ another skill by name but must never assume knowledge of another skill's text
 ## Project decisions
 
 Before changing document lifecycles, skill naming or design, the pipeline,
-shape-idea, build-prototype, or explain-visually, read
+shape-idea, build-prototype, explain-visually, or the writing workflow, read
 [docs/decisions/README.md](docs/decisions/README.md) and only the linked subject
 files relevant to the change. Do not duplicate their content here.
 
