@@ -23,12 +23,13 @@ Confirm ownership before absorbing ambiguous dirty changes.
 
 ## Write against the brief
 
-Write the piece at the location the publication file names, filling any
-`<slug>` in that location with the brief folder's slug so the brief and the
-piece stay paired, section by section in the outline's order. After each section, check it against the
-brief: the thesis it serves, the reader question it answers, the scope it
-stays inside, the material it draws on. Use the project's terms from
-`GLOSSARY.md` and the voice the publication file and style decisions set.
+Write the piece section by section in the outline's order, at the location
+the publication file names; fill any `<slug>` in that location with the brief
+folder's slug so the brief and the piece stay paired. After each section,
+check it against the brief: the thesis it serves, the reader question it
+answers, the scope it stays inside, the material it draws on. Use the
+project's terms from `GLOSSARY.md` and the voice the publication file and
+style decisions set.
 
 Embedded code and commands are claims the reader will reproduce. Run each one
 in this repository at the time it is written, and match any stated output to
@@ -71,8 +72,8 @@ the piece that should have answered it, and repair a factual error the
 execution check exposed. When a repair changes embedded code, rerun that code.
 Everything else the checks or your own reading surfaces, such as stylistic
 remarks, a better structure outside the outline, or an idea the scope leaves
-out, is recorded in the handoff rather than acted on. A second revision round
-is not started; further editing is the user's call after reading.
+out, is recorded in the handoff rather than acted on; further editing is the
+user's call after reading.
 
 Reusable style or structure choices made while drafting go through
 `project-knowledge` when available; otherwise note them in the handoff.

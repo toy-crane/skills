@@ -94,5 +94,4 @@ brief folder and the piece file stay paired. Record:
 - for pieces with code, which code blocks and commands are execution-checked;
 - assumptions, deferred points, and remaining risks.
 
-Summarize the same brief in the conversation and do not prompt for another
-action.
+Summarize the same brief in the conversation and finish there.

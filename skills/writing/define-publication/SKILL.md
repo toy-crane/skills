@@ -101,13 +101,12 @@ assumption or unknown only after the user agrees to leave it in that state.
 
 Continue the interview while an unanswered point could materially change the
 readers, the promised change, the voice, the coverage, or how a piece is
-evidenced. Ask about other areas only when their answer would change later
-pieces; do not manufacture detail merely to fill a section.
-
-Do not write the file while the central reader, situation, promise, or voice
-remains a guess or an unacknowledged gap. Explain what is still missing and
-continue. A less central gap may remain only when the user accepts it as an
-assumption or intentionally leaves it unknown.
+evidenced, and write the file only once the central reader, situation,
+promise, and voice are confirmed rather than guessed; until then, say what is
+still missing and keep going. Ask about other areas only when their answer
+would change later pieces; do not manufacture detail merely to fill a section.
+A less central gap may remain only when the user accepts it as an assumption
+or intentionally leaves it unknown.
 
 Show the full premise once before writing. Clearly separate what the user
 confirmed, what was decided under delegation, and what remains an accepted
