@@ -83,3 +83,23 @@ writing's words stay the same words.
   publications need title-derived URLs that the brief slug cannot serve.
 - Unbounded revision until the reviewer is silent — the writing analogue of the
   review loops the code pipeline already rejects.
+
+## Evidence worth preserving
+
+- Forward runs on 2026-09-04 with Claude Fable 5.1 in a fixture repository:
+  `define-piece` given only a topic wrote the whole brief in its first turn
+  until the skill said to present candidates and wait; the rerun presented a
+  thesis, three titles, an outline, and one question, and wrote nothing.
+  `draft-piece` on the blog-monorepo fixture wrote the piece, executed both
+  marked commands, ran the reader-question check through a fresh-context
+  subagent, revised nothing, previewed, and left Git untouched; asked to
+  change the thesis mid-draft it stopped without touching the brief.
+- A blind routing run of 50 cases, two repeats, with `define-product`,
+  `shape-idea`, `implement`, and the three writing skills loaded together:
+  no writing skill fired on a code prompt, `define-piece` separated from
+  `shape-idea` on 9 of 9, and `draft-piece`'s folder-path prompts activated
+  implicitly no more often than `implement`'s, so direct invocation remains
+  the reliable route for both.
+- A prompt audit against Claude Fable 5.1 removed three restated rules; four
+  re-probes (publication opening and write, brief write, draft with single
+  revision) behaved identically before and after.
