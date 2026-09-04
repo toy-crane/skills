@@ -1,0 +1,4 @@
+interface:
+  display_name: "Draft Piece"
+  short_description: "Draft one piece from its brief with two-layer evidence"
+  default_prompt: "Use $draft-piece to write the piece in this brief folder, verify it against the reader questions and embedded code, revise once, and preview it."

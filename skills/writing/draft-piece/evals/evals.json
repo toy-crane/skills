@@ -1,0 +1,34 @@
+{
+  "skill_name": "draft-piece",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/draft-piece docs/briefs/hello-world/",
+      "expected_output": "The response writes the piece to content/posts/<slug>.md as the publication file names, runs scripts/tally.sh on docs and on content/empty while writing and matches the stated output, hands the draft and reader questions to a fresh-context agent, revises at most once, previews through scripts/preview.sh, and stops before committing.",
+      "files": [
+        "evals/fixtures/blog-monorepo"
+      ],
+      "expectations": [
+        "It writes the piece under content/posts/ with front matter, not elsewhere.",
+        "It executes both marked commands in the repository and the piece's stated output matches the real output.",
+        "It runs a reader-question check through a separate agent that receives only the draft and the questions.",
+        "It revises at most once and records other remarks without acting on them.",
+        "It runs scripts/preview.sh and reports the rendered file.",
+        "It does not commit, open a pull request, or edit the brief."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/draft-piece docs/briefs/hello-world/ 쓰다 보니 빈 폴더 케이스보다 다른 파일 타입 확장이 더 재미있는데, 그쪽으로 논지를 바꿔서 써줘.",
+      "expected_output": "The response recognizes that the request changes the thesis and scope the brief settled, preserves the current draft, and returns the decision to the user for the brief to be resettled instead of drafting the new thesis.",
+      "files": [
+        "evals/fixtures/blog-monorepo"
+      ],
+      "expectations": [
+        "It does not edit brief.md.",
+        "It does not draft the new thesis under the old brief.",
+        "It states the exact decision that needs resettling and stops."
+      ]
+    }
+  ]
+}

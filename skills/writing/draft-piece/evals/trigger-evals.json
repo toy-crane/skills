@@ -1,0 +1,34 @@
+[
+  {
+    "query": "docs/briefs/monorepo-move/ 브리프대로 글을 써줘.",
+    "should_trigger": true
+  },
+  {
+    "query": "docs/briefs/expo-smoke-test/ 폴더의 브리프로 초고를 쓰고 로컬 미리보기까지 띄워줘.",
+    "should_trigger": true
+  },
+  {
+    "query": "아까 쓰다 만 docs/briefs/skill-distribution/ 글을 이어서 완성해줘.",
+    "should_trigger": true
+  },
+  {
+    "query": "이번 주 블로그 글로 'Expo 앱의 스모크 테스트 자동화'를 쓰려고 해. 논지와 개요부터 잡자.",
+    "should_trigger": false
+  },
+  {
+    "query": "제품 블로그를 시작하려고 해. 누구를 위해 어떤 글을 쓸지 매체의 전제부터 잡자.",
+    "should_trigger": false
+  },
+  {
+    "query": "docs/specs/checkout/ 스펙을 구현해줘.",
+    "should_trigger": false
+  },
+  {
+    "query": "docs/briefs/monorepo-move/brief.md의 논지를 바꾸고 싶어. 독자를 팀 리드로 좁히자.",
+    "should_trigger": false
+  },
+  {
+    "query": "블로그 글 초고를 커밋하고 PR 올려줘.",
+    "should_trigger": false
+  }
+]
