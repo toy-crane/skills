@@ -202,6 +202,10 @@ writing pipeline. The plugin version is bumped.
   essay inside one blog is a brief-level choice.
 - Briefs and specs stay in separate folders: their fields differ and a brief
   retires when the piece is published, on a different cycle from work units.
+- The brief folder's slug is the piece's slug. `define-piece` chooses it from
+  the working title as an overridable assumption, and `draft-piece` fills the
+  `<slug>` in the publication file's content location with it, so the brief
+  and the piece stay paired without a per-piece decision from the user.
 - Verification is two-layered because prose has no runtime: reader questions
   answered by a context-free agent stand in for runtime evidence, and embedded
   code is a claim the reader will reproduce, so it must actually run.

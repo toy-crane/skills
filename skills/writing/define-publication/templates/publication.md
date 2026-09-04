@@ -34,7 +34,8 @@ other publications share.}
 ## Conventions
 
 - Form: {the shape of a typical piece and its usual length}
-- Location: {where finished pieces live in the repository}
+- Location: {where finished pieces live in the repository; `<slug>` is the
+  piece's brief folder slug, such as `content/posts/<slug>.md`}
 - Preview: {how the rendered piece is viewed locally}
 
 ## Evidence of a finished piece

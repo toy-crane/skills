@@ -21,6 +21,10 @@
   and `docs/specs/`.
 - Briefs live in `docs/briefs/<slug>/brief.md` and record what the piece must
   do, never body prose. A brief retires when its piece is published.
+- The brief folder's slug is the piece's slug: `define-piece` picks it from the
+  working title as an overridable assumption, and `draft-piece` substitutes it
+  into the publication file's content location. The user settles nothing per
+  piece; the location is fixed once per publication.
 - A finished draft is evidenced in two layers: reader questions from the brief
   answered by an agent that sees only the draft, on every piece; and execution
   of every embedded code block and command as written, on pieces carrying
@@ -74,5 +78,8 @@ writing's words stay the same words.
   move would change every skill path and brief reference; the target monorepo
   is likely to hold several media.
 - Reusing `docs/specs/` for briefs — fields and retirement timing differ.
+- Deriving the piece file's slug from the final title — it would be chosen a
+  second time at drafting and could drift from the brief folder; revisit if
+  publications need title-derived URLs that the brief slug cannot serve.
 - Unbounded revision until the reviewer is silent — the writing analogue of the
   review loops the code pipeline already rejects.

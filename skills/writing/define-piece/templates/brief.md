@@ -1,8 +1,9 @@
 # Brief Format
 
-Write one brief per piece at `docs/briefs/<slug>/brief.md`. The brief records
-what the piece must do; the outline names sections and their jobs, never
-paragraphs of the piece.
+Write one brief per piece at `docs/briefs/<slug>/brief.md`. The folder slug
+is also the piece's slug in the publication's content location. The brief
+records what the piece must do; the outline names sections and their jobs,
+never paragraphs of the piece.
 
 ```md
 # {Working title}

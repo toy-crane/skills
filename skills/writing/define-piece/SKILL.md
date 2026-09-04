@@ -77,8 +77,11 @@ publication's content location unchanged.
 ## Write the brief
 
 After the thesis, reader, reader questions, scope, and outline are settled,
-write `docs/briefs/<slug>/brief.md` with a kebab-case slug using the
-[brief format](./templates/brief.md). Record:
+write `docs/briefs/<slug>/brief.md` using the
+[brief format](./templates/brief.md). Choose the kebab-case slug from the
+working title and state it as an overridable assumption; it becomes the
+piece's own slug wherever the publication's content location uses one, so the
+brief folder and the piece file stay paired. Record:
 
 - the owning publication;
 - the thesis in one sentence;

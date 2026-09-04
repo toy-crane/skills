@@ -23,8 +23,9 @@ Confirm ownership before absorbing ambiguous dirty changes.
 
 ## Write against the brief
 
-Write the piece at the location the publication file names, section by
-section in the outline's order. After each section, check it against the
+Write the piece at the location the publication file names, filling any
+`<slug>` in that location with the brief folder's slug so the brief and the
+piece stay paired, section by section in the outline's order. After each section, check it against the
 brief: the thesis it serves, the reader question it answers, the scope it
 stays inside, the material it draws on. Use the project's terms from
 `GLOSSARY.md` and the voice the publication file and style decisions set.
