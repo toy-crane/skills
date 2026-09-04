@@ -20,6 +20,12 @@
   `prototype.html` when a surface was approved, and `tasks/` when work was split.
   Preserve any qualifying project decision, then delete the folder when the
   work ships.
+- `docs/publications/<slug>.md` is the permanent, current premise of one
+  writing medium, created and revised by `define-publication`. One file per
+  medium; it is rewritten in place and never archived beside a newer version.
+- `docs/briefs/<slug>/` carries one piece of writing: `brief.md` as the anchor
+  `define-piece` writes and `draft-piece` reads. Preserve any qualifying
+  project decision, then delete the folder when the piece is published.
 - `docs/follow-ups/<slug>.md` carries one open item a session discovered but did
   not resolve: a temporary workaround whose root cause stays open, or an
   out-of-scope defect observed with evidence. One file per item, written at the
@@ -29,8 +35,9 @@
   decision index, and compact task-time routes to current official vendor
   context. It does not cache decision content or copies of external guidance.
 - `maintain-project-context` is the periodic hygiene pass across permanent
-  product context, the glossary, decision contracts, shipped spec folders, and
-  always-loaded repository guidance. It may apply meaning already settled by an
+  product context, publication premises, the glossary, decision contracts,
+  shipped spec folders, published brief folders, and always-loaded repository
+  guidance. It may apply meaning already settled by an
   authoritative source, but it leaves ambiguous conflicts unchanged and asks
   for the missing decision.
 - Git history is the only archive. Do not create an archive folder or keep

@@ -53,3 +53,19 @@ _Avoid_: Standing-position summary, ADR list
 **Decision contract**:
 The settled current decisions for one durable subject, stored in one mutable `docs/decisions/<subject>.md` file. A decision settles when the user confirms it or it is made under authority the user explicitly delegated for that class of decision. The contract carries the rules and minimum reasons needed now, plus boundaries, reconsideration conditions, still-relevant rejected alternatives, and expensive evidence when they matter. Git history carries prior versions.
 _Avoid_: ADR, decision log, record cluster
+
+**Publication**:
+One medium the user writes for, with its own readers and promise, kept as the standing premise in `docs/publications/<slug>.md`: readers and situations, promised change, voice, coverage, medium conventions such as form, content location, and preview, and how a finished piece is evidenced. Splits on readers and promise, not on form; a tutorial and an essay in one blog share a publication.
+_Avoid_: Channel, site, medium as the file's name
+
+**Piece**:
+One unit of writing for a publication, from topic to draft: a blog post, a newsletter issue, a page of copy. The object `define-piece` briefs and `draft-piece` writes.
+_Avoid_: Post, article, content
+
+**Brief**:
+The per-piece contract `define-piece` writes to `docs/briefs/<slug>/brief.md` for drafting: owning publication, thesis, reader and prior knowledge, reader questions, scope and exclusions, source material, outline, execution-checked code, assumptions, deferred points, and risks. Records what the piece must do, never body prose. Retires when the piece is published.
+_Avoid_: Spec, outline, plan as the whole document
+
+**Reader question**:
+A question the target reader must be able to answer from the piece alone, three to five per brief. Drafting proves them by handing only the draft to an agent with no conversation context; a question it cannot answer fails. The writing analogue of runtime evidence.
+_Avoid_: Acceptance criterion, takeaway, learning objective

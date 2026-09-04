@@ -44,6 +44,14 @@
   they are already the standard user-facing Git operations. Their object is the
   current repository change or branch, and longer verb-object aliases would be
   less predictable in both Claude Code and Codex.
+- `define-publication`, `define-piece`, and `draft-piece` name the writing
+  pipeline. `define` keeps this repository's meaning of an interview that
+  settles meaning with the user, for a medium and for one piece respectively.
+  `draft-piece` says the handoff is a draft the user judges, not a finished
+  piece. `shape-*` was rejected as a code-side term with no writing meaning;
+  `post`, `article`, and other medium words were rejected so the names stay
+  valid when a newsletter or brand site joins the same repository; `brief` as a
+  one-word name was rejected because it reads as a noun as often as a verb.
 - `update-project-skills` names the outcome a user asks for: every skill
   installed in the project brought to its latest published version. The object
   is the project's installed set from every source, and the Toycrane-specific
