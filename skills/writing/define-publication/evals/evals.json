@@ -1,0 +1,43 @@
+{
+  "skill_name": "define-publication",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/define-publication 제품 블로그를 시작하려고 한다",
+      "expected_output": "The response treats the medium name as enough to begin the interview but not enough to write the premise, asks one open question about a concrete reading scene, and creates no file.",
+      "files": [],
+      "expectations": [
+        "It asks one open question about who meets the writing, in what situation, and what they read instead today.",
+        "It does not recommend readers, a promise, or a voice before the user supplies them.",
+        "It does not create docs/publications/ or any file.",
+        "It does not brief or draft a piece."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/define-publication 우리 CLI를 쓰는 개발자를 위한 짧은 기술 블로그야. 터미널을 열어 둔 채 작업 사이에 읽고, 글 하나를 읽고 나면 전에 못 하던 명령 하나를 직접 돌릴 수 있어야 해. 어조는 담백한 1인칭 복수 현재형, 과장 없이. 회사 소식과 마케팅은 안 다뤄. 글은 400–900자 수준의 H2 절 구조로 content/posts/<slug>.md에 두고 scripts/preview.sh로 미리 봐. 완료 증거는 독자 질문 통과와 실린 명령 실행 확인. 이 내용으로 docs/publications/blog.md를 써줘.",
+      "expected_output": "The response recognizes the explicit premise and write request as sufficient, asks no new question, and writes one docs/publications/blog.md covering every approved area without inventing meaning.",
+      "files": [],
+      "expectations": [
+        "It writes docs/publications/blog.md rather than only proposing content.",
+        "It represents readers and situations, promised change, voice, coverage, conventions with form, location, and preview, evidence of a finished piece, and success signals or assumptions.",
+        "It asks no additional question.",
+        "It does not copy product facts into the file and does not create a brief."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/define-publication 첨부한 docs/publications/blog.md가 현재 전제야. 독자를 개인 개발자에서 팀 리드까지 넓히기로 했어. 나머지는 유지하면서 파일을 갱신해줘.",
+      "expected_output": "The response revises the same file in place, changes only the confirmed reader meaning, preserves the rest, and makes the consequential change explicit.",
+      "files": [
+        "../../draft-piece/evals/fixtures/blog-monorepo/docs/publications/blog.md"
+      ],
+      "expectations": [
+        "It updates docs/publications/blog.md rather than creating a dated or parallel file.",
+        "It incorporates the team-lead readers.",
+        "It preserves the voice, coverage, conventions, and evidence sections found only in the attached file.",
+        "It leaves no change log or obsolete reader statement in the file."
+      ]
+    }
+  ]
+}

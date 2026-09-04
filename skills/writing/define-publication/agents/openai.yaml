@@ -1,0 +1,4 @@
+interface:
+  display_name: "Define Publication"
+  short_description: "Draw out and preserve a publication's premise"
+  default_prompt: "Use $define-publication to interview me about this publication and write docs/publications/<slug>.md after I confirm its premise."
