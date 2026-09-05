@@ -1,6 +1,6 @@
 ---
 name: draft-piece
-description: Draft or resume one piece of writing from a selected brief folder. Use when the user provides a `docs/briefs/SLUG/` folder and wants its confirmed brief written into the publication's content location, verified against the brief's reader questions and any embedded code, revised once, and previewed locally when the repository serves the publication. Do not use to change the brief, to define a publication, or to commit or publish the piece.
+description: Draft or resume a piece from a selected docs/briefs/SLUG/ folder, or apply user corrections to an existing article. Verify reader understanding, embedded code, and confirmed writing criteria; preserve reusable feedback and preview locally when supported. Do not use to change the brief, define a publication, or commit or publish the piece.
 ---
 
 # Draft Piece
@@ -21,6 +21,12 @@ Repository evidence outranks remembered conversation; a draft on disk is
 compared against the brief before continuing, not rewritten from memory.
 Confirm ownership before absorbing ambiguous dirty changes.
 
+For a correction to an existing article, locate its brief when available. When
+none exists, use the article and the explicit correction as the bounded
+contract, read the relevant publication and writing decisions, and preserve
+unaffected content. Do not invent a missing brief or past intent. If publication
+ownership is ambiguous and affects the edit, resolve it before applying a voice.
+
 ## Write against the brief
 
 Write the piece section by section in the outline's order, at the location
@@ -28,8 +34,22 @@ the publication file names; fill any `<slug>` in that location with the brief
 folder's slug so the brief and the piece stay paired. After each section,
 check it against the brief: the thesis it serves, the reader question it
 answers, the scope it stays inside, the material it draws on. Use the
-project's terms from `GLOSSARY.md` and the voice the publication file and
-style decisions set.
+project's terms from `GLOSSARY.md` and the confirmed voice and structure criteria
+in the publication and style decisions. Apply their accepted examples as
+references for writing qualities, without importing another piece's claims.
+
+## Handle user corrections
+
+Apply the bundled [feedback capture guidance](./references/feedback.md) during
+each user correction, including after the initial handoff. It covers recording
+confirmed criteria, maintaining examples, and preserving meaning across related
+parts of the piece.
+
+Continue to use the brief's authority boundary below. With no brief, a requested
+change of meaning needs an explicit new claim from the user; an unclear one
+returns a focused question while preserving the article.
+
+## Preserve evidence and scope
 
 Embedded code and commands are claims the reader will reproduce. Run each one
 in this repository at the time it is written, and match any stated output to
@@ -65,24 +85,32 @@ When the draft is complete, run both checks before revising anything:
 
 Add any medium-specific check the publication file names.
 
+Separately compare the draft with the applicable confirmed voice and structure
+criteria and accepted examples, respecting any explicit piece-only exception.
+Locate concrete violations; a reader-question pass is not evidence of style
+alignment. Treat a new taste suggestion as an unconfirmed remark.
+
+For a bounded article correction without a brief, check preservation of meaning
+and confirmed writing criteria, and run affected code. Do not manufacture reader
+questions or claim the full brief-based check ran. Report that coverage limit.
+
 ## Revise once, then record
 
-Revise exactly once. Repair a failed reader question by changing the part of
-the piece that should have answered it, and repair a factual error the
-execution check exposed. When a repair changes embedded code, rerun that code.
-Everything else the checks or your own reading surfaces, such as stylistic
-remarks, a better structure outside the outline, or an idea the scope leaves
-out, is recorded in the handoff rather than acted on; further editing is the
-user's call after reading.
-
-Reusable style or structure choices made while drafting go through
-`project-knowledge` when available; otherwise note them in the handoff.
+Use at most one automatic revision pass. Repair a failed reader question by
+changing the part of the piece that should have answered it, and repair a factual error the
+execution check exposed, along with violations of confirmed applicable writing
+criteria. Keep repairs within the brief's meaning and outline. Rerun changed
+code and check the affected criteria after the repair; record remaining failures
+without starting another automatic revision cycle. Unconfirmed taste suggestions,
+structure outside the outline, and out-of-scope ideas stay in the handoff.
+This limit bounds autonomous revision, not later corrections the user requests.
 
 ## Hand off the draft
 
 Report the piece's location, the result of each verification layer, what the
-single revision changed, and what was recorded without action. Retirement of
-the brief folder happens when the piece is published, not here.
+automatic revision changed, where confirmed feedback was preserved, and what
+was recorded without action. Retirement of the brief folder happens when the
+piece is published, not here.
 
 When the repository serves the publication through a local server, run it
 through the supported development or preview path, reuse a healthy server

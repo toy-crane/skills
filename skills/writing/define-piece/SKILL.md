@@ -20,11 +20,11 @@ remaining risk; do not create the publication file here.
 Read `GLOSSARY.md` and the relevant subjects from `docs/decisions/README.md`
 when present, and use the project's terms and settled style decisions. Read
 root `PRODUCT.md` when the topic concerns the product, taking only the facts
-this piece needs. When a term wobbles, is overloaded, or conflicts with the
-glossary, or when a style or structure choice made here is one future pieces
-should reuse, invoke `project-knowledge` when available; otherwise resolve the
-term with the user and record it in `GLOSSARY.md`, and keep the style choice in
-the brief.
+this piece needs. Apply the relevant confirmed writing criteria and accepted
+examples when proposing headings and prose variants; transfer their writing
+qualities, not their subject matter. Resolve an ambiguous term with the user
+and record it through `project-knowledge`, or directly in `GLOSSARY.md` when
+that skill is unavailable.
 
 Resolve what evidence can answer before asking the user. When the piece makes
 a claim about how code, a tool, or a package behaves, read the source or run
@@ -62,17 +62,22 @@ for the user to declare completion. An initial request counts as confirmation
 only when it explicitly asks for the brief and states the thesis, reader,
 reader questions, scope, and outline, so that nothing material is guessed.
 
+On a user correction or accepted variant, apply the bundled
+[feedback capture guidance](./references/feedback.md) during that turn.
+
 ## Keep the brief free of prose
 
 The brief records what the piece must do. The outline carries section headings
-and what each section does, never paragraphs of the piece. Variants shown to
-settle tone or opening are disposable comparison material, not the draft;
-record the settled choice in the brief in one line and leave the variants
-behind.
+and what each section does, never paragraphs of the piece. Preserve an accepted
+reusable example in its owning writing context and reference it from the brief
+when relevant. Record piece-only choices or exceptions in one line; the unused
+comparison variants need no permanent record.
 
 Durable writes are limited to the brief folder, `GLOSSARY.md`, and current
-decision contracts. Leave publication files, product code, and the
-publication's content location unchanged.
+decision contracts, plus maintenance of an accepted example in its existing
+publication context as described in the feedback guidance. Changes to the
+standing publication voice belong to `define-publication`. Leave product code
+and the publication's content location unchanged.
 
 ## Write the brief
 

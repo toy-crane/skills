@@ -281,15 +281,20 @@ brand site later adds a file rather than a skill.
 - **[define-publication](./skills/writing/define-publication/SKILL.md)**: Interview
   the user about one medium's readers, promised change, voice, coverage,
   conventions, and evidence, then preserve the confirmed premise in
-  `docs/publications/<slug>.md`, one file per medium.
+  `docs/publications/<slug>.md`, one file per medium. Recommend voice with a
+  short sample paragraph and retain the accepted example.
 - **[define-piece](./skills/writing/define-piece/SKILL.md)**: Turn one topic into a
   confirmed brief through correctable candidates: thesis, titles, outline,
   three to five checkable reader questions, scope, material, and which code is
-  execution-checked. Writes no body prose.
+  execution-checked. Reuse confirmed writing criteria and preserve feedback as
+  it is settled. Writes no body prose into the brief.
 - **[draft-piece](./skills/writing/draft-piece/SKILL.md)**: Write the piece from its
   brief folder section by section, running embedded code as it is written.
   Verify with a fresh-context agent answering the reader questions and with
-  every marked command, revise once, preview locally, and stop before commit.
+  every marked command, and compare confirmed writing criteria. Use one bounded
+  automatic revision, preview locally, and stop before commit. Later user
+  corrections, including edits to an article without a brief, preserve scoped
+  reusable feedback in the repository for either Claude or Codex to read.
 
 Claude Code:
 

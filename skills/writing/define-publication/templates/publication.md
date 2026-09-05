@@ -22,9 +22,10 @@ promises.}
 
 ## Voice
 
-{How the writing sounds: register, person, stance, what it never does. Point to
-a shared style subject in `docs/decisions/` instead of repeating voice that
-other publications share.}
+{Confirmed voice characteristics and where they apply. Retain the accepted
+sample paragraph with the user's confirming choice, when one was accepted.
+Keep proposals out of the current premise. Point to the owning style subject
+in `docs/decisions/` instead of repeating a shared rule or example.}
 
 ## Coverage
 
