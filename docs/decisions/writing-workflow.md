@@ -26,6 +26,18 @@
   that pass the reuse gate become their own decision subjects in the shared
   index. The premise file and the brief folder are separate from `PRODUCT.md`
   and `docs/specs/`.
+- Writing feedback that explicitly settles a reusable style or structure choice
+  is preserved during that correction, without a separate request to remember
+  it. Keep the rule, reason, scope, useful contrast examples, and evidence of
+  user confirmation in its current canonical context; merge with an existing
+  rule rather than accumulating duplicates. Unconfirmed generalizations remain
+  proposals. A local edit or repeated occurrence does not by itself authorize
+  an author-wide preference.
+- Later planning and drafting apply the relevant confirmed rules and accepted
+  examples. Keep shared context readable by both Claude and Codex, including
+  when a writing skill is installed without `project-knowledge`. Update an
+  example when later user feedback replaces or rejects it; Git retains the
+  correction history, not a second active feedback log.
 - Briefs live in `docs/briefs/<slug>/brief.md` and record what the piece must
   do, never body prose. A brief retires when its piece is published.
 - The brief folder's slug is the piece's slug: `define-piece` picks it from the
@@ -36,9 +48,12 @@
   answered by an agent that sees only the draft, on every piece; and execution
   of every embedded code block and command as written, on pieces carrying
   code.
-- Drafting revises once, repairing only failed reader questions and factual
-  errors, records the rest, and stops before commit, pull request, or
-  publication. Publishing goes through the `git` skills after the user reads
+- Drafting checks confirmed style and structure separately from comprehension.
+  Its single automatic revision repairs failed reader questions, factual
+  errors, and violations of confirmed applicable writing criteria; unresolved
+  taste suggestions remain remarks. The limit bounds autonomous revision, not
+  later edits the user requests. Drafting stops before commit, pull request,
+  or publication. Publishing goes through the `git` skills after the user reads
   the draft.
 - A discovery during drafting that changes the thesis, reader, scope, or a
   reader question returns to `define-piece`; drafting does not edit the brief.
@@ -51,6 +66,12 @@
 - The shared glossary assumes the publication writes about the product that
   shares its repository. A blog unrelated to that product is a reason to
   reopen the sharing decision.
+- Simplifying wording preserves the piece's thesis, actors, and causal claims.
+  Corrections to those meanings stay with the piece's contract rather than
+  becoming writing preferences. A clearly scoped exception affects its piece;
+  changing a standing preference requires the user's intent to change it.
+- Personal writing preferences belong in the consuming project's context, not
+  in the published skill's universal instructions.
 
 ## Why
 
@@ -70,14 +91,25 @@ sample gives later drafting a concrete reference alongside the voice's wording.
 This recommendation concerns voice only; it does not supply missing readers or
 invent a promise for the publication.
 
+The toycrane-blog writing and proofreading sessions preserved reusable
+corrections only after separate user requests near their ends. The proofreading
+session had already loaded the writing decisions and still needed related
+corrections. This supports addressing capture timing and application together;
+it does not establish an improvement rate. A comprehension pass can coexist
+with writing the user rejects, so confirmed writing criteria need their own
+comparison within the bounded revision rather than being treated as new taste.
+
 ## Reconsider when
 
 - A second publication appears and common author voice starts repeating across
   publication files; move it to a style subject then.
 - A real multi-part series makes a piece too large to brief and draft as one
   unit.
-- The reader-question check passes drafts the user rejects on reading; the
-  questions, not the mechanism, are the first suspect.
+- Reader-question checks pass while users reject meaning or confirmed writing
+  criteria; inspect which check failed to expose the problem instead of treating
+  comprehension as evidence of voice alignment.
+- Narrow corrections repeatedly become unwanted standing preferences, or
+  accumulated examples make unrelated writing copy their content or voice.
 
 ## Still-rejected alternatives
 
@@ -99,6 +131,11 @@ invent a promise for the publication.
 - Requiring a tone preset or adjectives before recommending voice — labels
   such as "friendly and calm" leave the actual prose for the user to imagine.
   Labels may describe a sample, but do not replace it.
+- Saving every correction as a new global rule — it loses scope and can make
+  later writing imitate one piece. Preserve confirmed reusable meaning and its
+  representative examples in existing current context.
+- Relying on reading the rules or answering reader questions alone — neither
+  proves that a draft follows confirmed style and structure criteria.
 
 ## Evidence worth preserving
 
