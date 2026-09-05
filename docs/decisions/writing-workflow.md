@@ -14,6 +14,13 @@
 - One publication file per medium from the first medium, under
   `docs/publications/`. A publication splits on readers and promise, not on
   form.
+- Recommend a publication's voice through one short sample paragraph and a
+  concise reason grounded in its known readers and purpose. The user reacts to
+  the writing; they need not define tone adjectives or choose a preset first.
+  Add alternatives when comparison would help. Keep the recommendation
+  unsettled until accepted or corrected, and preserve the accepted sample with
+  its confirmed characteristics in the publication's voice context. Shared
+  author voice retains its existing style-subject owner.
 - Writing context shares `GLOSSARY.md`, `docs/decisions/README.md`, and
   `project-knowledge` with the code workflow. Style and structure decisions
   that pass the reuse gate become their own decision subjects in the shared
@@ -57,6 +64,12 @@ documentation, and every copy-in install. Sharing the glossary and decision
 index is the concrete benefit of the monorepo: the product's words and the
 writing's words stay the same words.
 
+Tone labels do not show what an AI will write. A short sample makes the
+recommendation readable before the user accepts it, and retaining that accepted
+sample gives later drafting a concrete reference alongside the voice's wording.
+This recommendation concerns voice only; it does not supply missing readers or
+invent a promise for the publication.
+
 ## Reconsider when
 
 - A second publication appears and common author voice starts repeating across
@@ -83,6 +96,9 @@ writing's words stay the same words.
   publications need title-derived URLs that the brief slug cannot serve.
 - Unbounded revision until the reviewer is silent — the writing analogue of the
   review loops the code pipeline already rejects.
+- Requiring a tone preset or adjectives before recommending voice — labels
+  such as "friendly and calm" leave the actual prose for the user to imagine.
+  Labels may describe a sample, but do not replace it.
 
 ## Evidence worth preserving
 
