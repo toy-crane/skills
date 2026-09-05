@@ -57,6 +57,11 @@
   the draft.
 - A discovery during drafting that changes the thesis, reader, scope, or a
   reader question returns to `define-piece`; drafting does not edit the brief.
+- `draft-piece` also applies bounded user corrections to an existing article.
+  When it has no brief, the article and explicit correction supply the scope;
+  it preserves unaffected meaning and reports that the full brief-based
+  reader-question check was unavailable. It does not invent a brief or prior
+  editorial intent.
 
 ## Boundaries
 

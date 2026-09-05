@@ -65,7 +65,8 @@ reading scene. Ask who meets the writing, in what situation, and what they read
 instead today. Ask one or two closely related questions in a round; when one
 answer determines the next question, ask only that one and wait.
 
-Ask open questions when drawing out meaning the user may already have in mind.
+Ask open questions when drawing out meaning the user may already have in mind,
+except for the sample-based voice recommendation below.
 Do not recommend an answer or supply leading choices in those questions. If an
 answer stays broad, ask for a concrete reader or an observable change rather
 than translating words such as "developers", "friendly", or "useful" into
@@ -75,7 +76,25 @@ After each answer, reflect only what became newly clear and move to the next
 meaningful gap. Keep the full list of missing areas internal until the final
 draft, and do not ask again for meaning the user already supplied.
 
-## Handle choices the user has not made
+## Recommend voice through prose
+
+Once the readers and purpose are known, propose one short illustrative paragraph
+and a concise reason it suits them. The user need not choose tone adjectives or
+presets first. A personal record may serve recollection without promising to
+change its readers. Keep illustrative details distinguishable from known facts.
+
+Invite a reaction to the actual sentences. When the user corrects the feeling,
+revise the prose; when comparison would help, add an alternative with the same
+content and claims. Describe the difference briefly. The sample remains a
+proposal until accepted or settled within explicit delegation.
+
+Retain the accepted sample and the characteristics the user confirmed, including
+its intended scope and the choice that confirmed it. Update or remove that
+example when later feedback replaces or rejects it. Preserve an already settled
+voice, including concrete instructions in a complete explicit write request;
+do not invent an accepted example or reopen it just to obtain one.
+
+## Handle other choices the user has not made
 
 When the user says a choice has not been made, ask whether to leave it unknown
 for now or decide it together. Offer options and a recommendation only after
@@ -120,7 +139,7 @@ without repeating questions or asking for another approval.
 
 ## Write the current premise
 
-Create or update only `docs/publications/<slug>.md`, one file per medium with a
+Create or update `docs/publications/<slug>.md`, one file per medium with a
 kebab-case slug, using the [publication format](./templates/publication.md).
 Rewrite the current premise in place; do not append chronology, create dated
 versions, or preserve obsolete meaning beside the current one.
@@ -128,11 +147,14 @@ versions, or preserve obsolete meaning beside the current one.
 Keep the file about this medium:
 
 - Reference `PRODUCT.md` for product facts instead of copying them.
-- Voice that every publication of the same author shares belongs in a style
-  subject under `docs/decisions/` once it is settled and reusable; route it
-  through `project-knowledge` when that skill is available, and otherwise
-  leave a one-line pointer in the file rather than repeating the voice per
-  publication.
+- Put the medium's accepted sample and confirmed voice in its Voice section.
+  Voice explicitly shared across the author's publications belongs in the
+  existing style subject under `docs/decisions/`; link to it instead of copying
+  the rule or sample. Use `project-knowledge` when available, or update that
+  subject directly with the rule, reason, scope, representative example, and
+  confirmation evidence. When no subject exists, create one and link it once
+  from `docs/decisions/README.md`. A pointer to an unwritten record is not
+  preservation. Durable writes stay within these premise and style owners.
 - Leave individual pieces, their theses, outlines, and briefs to the per-piece
   workflow.
 

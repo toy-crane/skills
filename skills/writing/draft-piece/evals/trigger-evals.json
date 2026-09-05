@@ -30,5 +30,17 @@
   {
     "query": "블로그 글 초고를 커밋하고 PR 올려줘.",
     "should_trigger": false
+  },
+  {
+    "query": "content/posts/backup.md 글의 소제목이 너무 밋밋해. 핵심 주장이 보이게 고쳐줘.",
+    "should_trigger": true
+  },
+  {
+    "query": "브리프 없이 썼던 지난 블로그 글을 읽기 쉽게 교정해줘.",
+    "should_trigger": true
+  },
+  {
+    "query": "우리 뉴스레터의 기본 말투를 다시 정하자.",
+    "should_trigger": false
   }
 ]

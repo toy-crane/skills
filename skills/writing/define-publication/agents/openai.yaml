@@ -1,4 +1,4 @@
 interface:
   display_name: "Define Publication"
-  short_description: "Draw out and preserve a publication's premise"
-  default_prompt: "Use $define-publication to interview me about this publication and write docs/publications/<slug>.md after I confirm its premise."
+  short_description: "Settle a publication with voice samples"
+  default_prompt: "Use $define-publication to settle this publication's readers, purpose, coverage, conventions, and evidence, recommend its voice through sample prose, and preserve the confirmed premise."
