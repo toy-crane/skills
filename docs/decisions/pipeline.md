@@ -97,9 +97,9 @@
   focused on the stated risk, before substantial dependent work continues. The
   same mode, triage, and single-pass rule as the final review apply.
 - After every outcome is implemented, rerun the complete deterministic
-  verification, then run the active harness's automated code-review process
-  exactly once over the entire implementation diff against the selected spec
-  and acceptance criteria. The pass applies to split and unsplit specs and
+  verification, then complete one pass of the active harness's automated
+  code-review process over the entire implementation diff against the selected
+  spec and acceptance criteria. The pass applies to split and unsplit specs and
   covers cross-task interactions and omitted requirements. It stays inside
   `implement` because must-fix findings return to implementation; it neither
   invokes nor replaces the explicitly requested human judgment owned by
@@ -111,7 +111,9 @@
   nothing argues either way. The run stays single at any depth. The reviewer
   receives the spec's approved scope, off-limits areas, remaining risks, and
   relevant decision contracts wherever the harness accepts review context. A
-  pass that did not review the intended scope is not spent.
+  pass counts only when the reviewer finishes inspecting the intended scope
+  and returns findings or an explicit no-findings result. Failed, partial,
+  silent, and mistargeted attempts are not completed passes.
 - `implement` fixes a finding only when it shows an approved acceptance
   criterion failing, or is a defect or caused regression in the changed
   behavior that reproduction confirms on a path ordinary use reaches. It then
@@ -123,13 +125,31 @@
   follow-up, an already-disposed trade-off is noted as disposed, and a material
   consequence the spec leaves open is named in the handoff as a decision the
   user owns.
-- The automated review is evidence attached to the handoff rather than a
-  completion condition. Verified work whose reviewer is user-only, rejected,
-  errored, timed out, or absent is complete, and its handoff records the review
-  outcome, the mode used, what was fixed, what was recorded and where, and any
-  decision left to the user.
-- After the review pass and any must-fix repairs, `implement` runs the actual
-  product when the repository exposes it through a user-reviewable local
+- Completion requires each required automated review to finish and be triaged,
+  or an explicit user waiver for that scope, alongside passing acceptance
+  criteria, reconciliation, verification, and reverified must-fix repairs.
+  Recorded findings can remain; zero findings is not the gate.
+- Review execution reuses applicable user authorization without asking again.
+  A service-backed request identifies the actual destination and diff, spec,
+  and related source context, and carries that authorization accurately.
+  Read-only file access does not imply local-only processing. The skill cannot
+  grant permission for a new service or wider source scope.
+- Recoverable command, compatibility, environment, and transient errors are
+  resolved within the authorized scope and retried without consuming the pass.
+  An explicit policy denial instead requires a materially safer permitted
+  alternative or the specific missing authority, with its rationale preserved;
+  switching tools or services to bypass the same denial is not recovery.
+  When a model-invocable reviewer lacks user permission, establish the service
+  and source scope and ask for that permission; a confirmed manual command does
+  not resolve the authorization blocker.
+- A user-only or absent reviewer, missing permission, or unresolved execution
+  failure leaves overall completion pending. A blocked intermediate checkpoint
+  also blocks dependent work. Preserve verified outcomes and provide their
+  evidence, exact review blocker, and next required action. Name a user command
+  only when the active harness confirms it. Only the user can waive review.
+- After the review pass and any must-fix repairs, or while review is pending,
+  `implement` runs the actual product when the repository exposes it through a
+  user-reviewable local
   server, verifies the changed routes and essential states, and shares a
   reachable address while keeping the current checkout's server available until
   review finishes or later delivery cleanup.
@@ -217,8 +237,9 @@
   adequately settle a security, data, permission, migration, recovery, or
   external-contract risk. The existence of a task alone is not sufficient.
 - The active harness is authoritative for reviewer topology and mechanics.
-  `implement` requires one attempted review pass and its triage without
-  prescribing a universal reviewer process, and never repeats the pass to reach
+  `implement` requires one completed review pass and its triage, unless the
+  user explicitly waives that review, without prescribing a universal reviewer
+  process, and never repeats the pass to reach
   a quiet result.
 - The runnable handoff applies only to an actual product result exposed by a
   repository-supported local server. Preserve other checkouts and unrelated
@@ -227,9 +248,9 @@
   human approval or an automatic `human-review` invocation.
 - A harness-specific review command may be named only when the active
   installation confirms it for that reviewer. Such guidance remains conditional
-  and must preserve the portable completion contract: complete the verified
-  work, record what the review produced or why it produced nothing, and offer a
-  confirmed command as an optional next step without inventing one.
+  and preserves the portable completion contract: deliver verified outcomes and
+  record the completed review or explicit waiver; otherwise keep the review
+  pending with its blocker and next required action, without inventing a command.
 - Conversation history is useful while available but is not durable evidence.
   After a real interruption, repository artifacts determine what remains. A
   discovery reported only in the closing message is therefore not preserved.
@@ -295,9 +316,10 @@ Repeating that pass is a different mechanism from running it. Reviewers report
 candidates, so a rule that ends only at zero findings has no reachable stopping
 point and spends its later rounds re-arguing settled trade-offs. Reproduction
 decides what returns to implementation, the recorded remainder keeps the rest
-visible, and the user keeps the judgments that need product intent. Treating the
-result as evidence rather than a gate also keeps a verified product from being
-reported as unfinished when the reviewer is simply unavailable.
+visible, and the user keeps the judgments that need product intent. Requiring a
+completed review preserves that independent look; accepting recorded findings
+prevents a return to the zero-findings loop. An execution failure supplies no
+review evidence, so verified implementation and pending review stay distinct.
 
 The runnable handoff lets the user inspect the verified implementation without
 turning server mechanics into a separate pipeline phase. Keeping the outcome in
@@ -341,6 +363,9 @@ state keep automation reviewable without turning follow-up files into a queue.
 - A harness ships a reviewer designed to converge, such as a mode that
   re-verifies only named findings, or gives a cheap mode independent reviewer
   context.
+- Authorized reviews still fail repeatedly after accurate destination and
+  source-scope requests and supported execution paths; revisit the integration
+  with current evidence rather than silently relaxing completion.
 - The minimal task state cannot reconstruct real interrupted runs safely.
 - Outcome reconciliation repeatedly misses downstream contract changes or its
   reread and task-revision cost exceeds the rework it prevents.
@@ -427,8 +452,11 @@ state keep automation reviewable without turning follow-up files into a queue.
 - Fixing one review mode for every change — no observed failure justifies it,
   the single pass already bounds the cost of a deeper mode, and a fixed level
   removes judgment the implementer is better placed to apply.
-- A separate completion state for work whose reviewer was unavailable — it
-  reintroduces the incomplete report the evidence rule exists to remove.
+- Counting an invocation or failed attempt as completed review — it allows a
+  finished handoff without the independent inspection the workflow promises.
+- Treating a skill's review requirement as user authorization, describing
+  service-backed review as no transmission, or requesting the same already
+  granted authority again — these obscure the real execution boundary.
 - Review after every task or edit — it adds fixed cost without requiring a
   material risk boundary.
 - Forbidding every intermediate review — a late permission, migration, or
@@ -494,8 +522,26 @@ state keep automation reviewable without turning follow-up files into a queue.
 - A second session ended when the user interrupted a third repair round for a
   pathological-input defect the orchestrator itself judged not to affect
   ordinary use. A third reported a fully working, runtime-verified product as
-  incomplete because its reviewer was user-only. Both are the completion-gate
-  framing rather than reviewer quality.
+  incomplete because its reviewer was user-only. These originally motivated
+  the completion fallback; the 2026-09-07 decision below replaces that fallback
+  while retaining the one-pass triage rule.
+- On 2026-09-07, task `01a079b9-b926-77d3-8332-3f8e522150d5` requested
+  `codex review --uncommitted` as read-only with no transmission. Automatic
+  approval review rejected it because sending the diff and related context to
+  the model service lacked explicit authorization. No code-review result was
+  produced, but the skill allowed completion. A separate model evaluation also
+  failed because Codex CLI 0.147.0 did not support the selected model. The user
+  approved requiring completed review, distinguishing execution failures from
+  a spent pass, and accurately reusing existing authorization. This replaces
+  completion-on-review-failure, not the prohibition on automatic review loops.
+- Three simulated handoff scenarios compared the old and revised instructions.
+  Both recovered supplied execution failures and reused supplied authorization.
+  Under a denial, the old wording reported completion; the revision kept review
+  pending but handed off a manual command instead of asking for permission.
+  The explicit permission-request sentence addresses that observed failure. A
+  new scenario with a named service and source scope passed with both the
+  pre-clarification and final wording. These are instruction-behavior checks
+  with supplied tool outcomes, not proof that live approval policy permits a run.
 - The `resolve-follow-ups` dispatcher test exercises fetched remote ordering,
   atomic claims, stale and changed bases, dirty checkout hooks, interrupted
   claim recovery, terminal evidence, exact worktree ownership, unpublished

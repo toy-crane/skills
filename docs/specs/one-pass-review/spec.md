@@ -3,16 +3,21 @@
 ## User-visible outcomes
 
 - A user who runs `implement` gets one automated code review at the end, over
-  the whole implementation diff, and then a finished handoff. The review is
-  evidence attached to that handoff. It is not a completion gate that repeats
-  until it reports nothing.
+  the whole implementation diff, and then a finished handoff. Completion requires
+  the review to finish and return a result, unless explicitly waived by the
+  user. It never requires repeated reviews until no findings remain.
 - The implementer picks the review depth the change warrants and names it. Its
   findings are triaged: only findings that break an approved
   acceptance criterion or are confirmed defects on an ordinary-use path are
   fixed. Everything else is recorded, not fixed, and no second review runs.
-- When the reviewer is user-only, rejected, errors, times out, or does not
-  exist, the verified work is still complete. The handoff says the review did
-  not run and why, and names a confirmed user command as an optional step.
+- Execution failures are recovered within the authorized scope without using
+  up the review pass. Missing permissions, unavailable reviewers, and unresolved
+  failures leave review and overall completion pending while the verified
+  implementation, evidence, and runnable result remain available.
+- Review requests accurately identify the model service and source context,
+  reuse applicable user authorization without asking again, and request only
+  missing authority. An explicit denial is handled separately from an ordinary
+  execution error.
 - A finding that needs product judgment or risk acceptance reaches the user as
   a named decision in the handoff, with `human-review` available on request,
   instead of driving fix rounds.
@@ -28,11 +33,12 @@
 
 After every outcome passes reconciliation and the complete required
 verification passes, `implement` invokes the current harness's automated
-code-review process exactly once, on the entire implementation diff, against
-the selected spec and acceptance criteria. It prefers a model-invocable
-reviewer and tries it once in the active session even when an earlier session
-recorded a rejection. It names the effort mode explicitly rather than relying
-on a mode the harness remembers from an earlier invocation.
+code-review process on the entire implementation diff against the selected
+spec and acceptance criteria. One pass means the reviewer finished inspecting
+that scope and returned findings or an explicit no-findings result. An
+invocation, partial output, silent exit, or review of another target does not
+count. It uses a currently model-invocable reviewer; an earlier session's
+user-only restriction does not establish current availability.
 
 The depth is `implement`'s judgment for the change at hand, weighing what the
 change touches against what verification already settles. It names the mode
@@ -45,6 +51,31 @@ depth, and a pass that did not review the intended scope is not spent.
 The reviewer is given the spec's approved scope, off-limits areas, remaining
 risks, and the relevant decision contracts wherever the harness accepts review
 instructions or context, so already-disposed trade-offs are not re-litigated.
+
+### Execution authority and recovery
+
+A review backed by a model service identifies its actual destination and the
+diff, spec, and necessary related source context it will receive. Applicable
+user authorization accompanies the execution request and is reused without
+another approval question. Read-only file access does not imply that processing
+stays local. A different service or wider source scope requires any missing
+authority; the skill does not create that authority itself.
+
+Command, compatibility, environment, and transient failures are diagnosed and
+resolved within authorized scope, then retried. An explicit policy denial
+preserves its reason and permits only a materially safer allowed alternative
+or a request for the specific authority needed before retrying. Changing tools
+or services to bypass the same denial is not recovery. Mistargeted reviews are
+retargeted, with no repairs taken from their unrelated findings.
+When a model-invocable reviewer lacks user permission, the agent establishes
+the destination and source scope and requests that authority. A confirmed
+manual command does not replace this permission request.
+
+An unavailable or user-only reviewer, missing permission, or unresolved
+execution failure leaves the review pending with an exact blocker and next
+required action. Only an explicit user waiver for that review scope permits
+completion without its result. A waiver is recorded and never inferred from
+silence, a timeout, or a request to finish the implementation.
 
 ### Triage
 
@@ -76,26 +107,29 @@ Every other finding is not fixed in this run:
 ### Completion and handoff
 
 Completion requires every acceptance criterion, the reconciliation gates, and
-the complete verification, including runtime verification, to pass; the single
-review pass to have been attempted; must-fix findings to be repaired and
-reverified; and the review outcome to be recorded in the handoff. The runnable
+the complete verification, including runtime verification, to pass; each
+required review to have completed or been explicitly waived; must-fix findings
+to be repaired and reverified; and the review outcome to be recorded in the
+handoff. The runnable
 product handoff follows as today.
 
-The handoff carries one review evidence entry: the mode used, how many findings
-came back, which were fixed, which were recorded and where, and which await a
-user decision. When the reviewer did not produce a result, the entry states
-that fact and the reason. When the active harness confirms a user command for
-that reviewer, the entry names it as an optional step; when the reviewer exists
-but no command is confirmed, or no review facility exists, the entry says so.
-No command is invented. None of these states leaves the work incomplete.
+The handoff records the reviewed scope and mode, result or explicit waiver,
+which findings were fixed, which were recorded and where, and which await a
+user decision. Recorded findings can remain after completion; zero findings
+is not the gate. While review is pending, preserve completed outcomes and
+provide their verification evidence, runnable result, review blocker, and next
+required action. A confirmed user command may supply that action; an
+unconfirmed command is never invented. This delivery does not claim overall
+completion or silently waive the remaining review.
 
 ### Intermediate checkpoints
 
-A task-declared intermediate review checkpoint uses the same rule: one review
-of the declared cumulative scope, focused on the declared risk, at the same
+A task-declared intermediate review checkpoint uses the same rule: one completed
+review of the declared cumulative scope, focused on the declared risk, at the same
 project-dialed mode, then triage, affected reverification, and no second
 round. `split-into-tasks` keeps declaring checkpoints only where risk
-justifies them and states that the checkpoint is one bounded pass.
+justifies them and states that the checkpoint is one bounded pass. Its dependent
+work waits until the review is completed and triaged or explicitly waived.
 
 ### Aligned surfaces
 
@@ -105,14 +139,13 @@ justifies them and states that the checkpoint is one bounded pass.
   above; the loop-until-clean gate and removing the review entirely enter the
   rejected alternatives; the measured evidence below enters the preserved
   evidence.
-- `docs/decisions/skill-design.md`: the runnable-handoff sentence no longer says
-  the review gate must pass first.
+- `docs/decisions/skill-design.md`: completed review is distinguished from
+  zero findings, and runnable results remain available during a review blocker.
 - `skills/workflow/implement/SKILL.md`, its evals, and its Codex metadata
-  describe one pass, triage, review-as-evidence, and the unavailable-review
-  handoff.
+  describe completed review, triage, authorization reuse, recovery, explicit
+  waiver, and the pending-review handoff.
 - `README.md`: the pipeline diagram and prose show one review pass with triage
-  instead of a loop, and the `implement` entry no longer implies review must
-  pass.
+  instead of a zero-findings loop, and show pending review and explicit waiver.
 - `skills/workflow/tdd/SKILL.md`: refactoring after green keeps tests green and
   opens no review round of its own; review belongs to the enclosing workflow's
   single pass or to an explicit user request, so the rule stands when `tdd` is
@@ -135,11 +168,19 @@ justifies them and states that the checkpoint is one bounded pass.
 - Given a finding that needs risk acceptance the spec does not settle,
   `implement` records it, names it as a user decision in the handoff, offers
   `human-review`, does not open a fix round, and still reports completion.
-- Given the active session's reviewer is user-only, rejected, errors, or times
-  out, `implement` reports completion, states that no review result exists and
-  why, and names only a command the active harness confirms for that reviewer.
-- Given no review facility, `implement` reports completion, states that the
-  facility is absent, and invents no command.
+- Given a recoverable command, compatibility, or transient failure, `implement`
+  resolves it within authorized scope and retries without counting the attempt
+  as a pass. A timeout or partial output without a completed result is not review.
+- Given a user-only or absent reviewer or an unresolved failure, `implement`
+  leaves overall completion pending and delivers verified outcomes with the
+  exact blocker and next action, naming only confirmed commands.
+- Given prior user authorization for the same model service and source scope,
+  the execution request carries it accurately without another approval question.
+- Given missing authorization or an explicit denial, the agent states the
+  destination, source scope, and missing authority, preserves the denial reason,
+  and requests only what is needed. It does not bypass the denied action.
+- Given an explicit user waiver for the required review, `implement` records
+  that scope and completes if all other criteria pass, without fabricating review.
 - Given a change whose risk argues for more or less depth than the standard
   mode, `implement` selects that depth, names it, and still runs once.
 - Given a review that returned findings about a different diff than the intended
@@ -148,19 +189,18 @@ justifies them and states that the checkpoint is one bounded pass.
 - Given a task with a declared checkpoint, `implement` runs one review of the
   declared scope with the same triage and no second round.
 - Given `tdd` in use, refactoring after green triggers no review invocation.
-- No remaining text in the aligned surfaces says that completion requires the
-  review to pass, that the review repeats until clean, or that an unavailable
-  reviewer leaves the work incomplete.
+- No active rule in the aligned surfaces counts failed attempts as completed
+  review, permits implicit waiver, or repeats completed reviews until clean.
 - `claude plugin validate . --strict` passes and the plugin version is higher
-  than 0.39.1.
+  than 0.49.0.
 - A forward check on a held-out scenario prompt whose reviewer returns mixed
   findings shows exactly one review invocation, must-fix repairs with
   reverification, recorded non-fixes, and a completion report.
 
 ## Settled constraints and rationale
 
-- The gate semantics — one pass, triage, review as evidence — hold for every
-  user and harness. The depth stays the implementer's judgment because no
+- The gate semantics — completed review or explicit waiver, then triage — hold
+  for every user and harness. The depth stays the implementer's judgment because no
   observed failure justifies fixing it, and one pass already bounds its cost.
   This is a convergence fix, not an accommodation for a subscription tier.
 - The single review pass stays because first passes caught user-visible bugs
@@ -188,6 +228,9 @@ justifies them and states that the checkpoint is one bounded pass.
   reintroduces the measured non-convergence.
 - Skills stay harness-neutral. Commands appear only as examples the active
   harness confirms, and each skill restates what it needs inline.
+- A service-backed read-only review can transmit source context. Accurate
+  authorization requests and execution recovery address blocked runs; changing
+  completion wording alone cannot grant permission or repair an incompatible CLI.
 - The revised wording is checked on a held-out control, because it corrects an
   observed failure.
 
@@ -216,15 +259,24 @@ justifies them and states that the checkpoint is one bounded pass.
   round for a pathological-input defect the orchestrator itself judged not to
   affect ordinary use, and the user interrupted.
 - A Sonnet 5 session (2026-08-10) ended with a working product reported as
-  incomplete because the reviewer was user-only.
+  incomplete because the reviewer was user-only. This originally motivated a
+  completion fallback, replaced by the decision below.
+- On 2026-09-07, task `01a079b9-b926-77d3-8332-3f8e522150d5` requested
+  `codex review --uncommitted` with a justification claiming no transmission.
+  Automatic approval review rejected it for missing authorization to send the
+  source context to the model service. A separate evaluation failed because
+  the installed CLI did not support its selected model. No code-review result
+  existed, but the old skill still permitted completion. The user approved
+  requiring a completed review, separating execution failures from a spent
+  pass, and accurately reusing existing user authorization.
 
 ## Assumptions
 
 - A1. The skill states depth-selection criteria with the harness's standard
   mode as the fallback, rather than fixing one level. `code-review medium` and
   Codex's dial-free `review` appear as examples of that fallback.
-- A2. Completion is reported normally with the review evidence entry; there is
-  no separate "completed without review" status.
+- A2. No new durable review state file is needed. Existing task evidence and
+  the handoff distinguish verified outcomes from pending review or explicit waiver.
 - A3. Intermediate checkpoints follow the same one-pass triage at the same
   project-dialed mode, with the declared risk as the reviewer's focus. If the
   user prefers to keep a stricter loop at checkpoints, only the checkpoint
@@ -238,8 +290,10 @@ justifies them and states that the checkpoint is one bounded pass.
 - Removing the automated review pass or making it opt-in.
 - A second automated review in the same `implement` run, including a review of
   only the fixes.
-- Treating review as a completion condition or leaving verified work incomplete
-  because a reviewer is unavailable.
+- Requiring zero findings, counting failed attempts as review, or silently
+  waiving a required review because its execution is blocked.
+- Changing global permissions, disabling approval checks, or treating this
+  skill as permission to transmit context to an unapproved model service.
 - Invoking `human-review` automatically, or treating the review or the runnable
   handoff as human approval.
 - Weakening runtime verification or reconciliation.
@@ -272,5 +326,7 @@ justifies them and states that the checkpoint is one bounded pass.
   `review` accepts a prompt.
 - Reviewer prompts and modes change across harness versions; the evidence is
   version-pinned.
+- A required review can remain blocked by platform policy or missing authority;
+  the user receives the verified result and exact prerequisite while it is pending.
 - Follow-up volume may grow because more findings are recorded than fixed.
 - A3 is applied without direct confirmation.
