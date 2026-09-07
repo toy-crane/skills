@@ -105,8 +105,11 @@
   the current harness and share an address the user can open. This delivery
   contract is separate from browser verification and each skill carries it
   directly.
-- `implement` owns the runnable product handoff after its acceptance criteria
-  pass and its single review pass has been triaged. When the repository exposes
+- `implement` requires one completed and triaged automated review, unless the
+  user explicitly waives it. Failed execution supplies no review evidence.
+  It also owns the runnable product handoff after its acceptance criteria pass,
+  including while review is pending with a named blocker. When the repository
+  exposes
   the actual result through a user-reviewable local server, run and verify the
   changed routes and states, share an address, and keep the current checkout's
   server available until review finishes or later delivery cleanup, without
@@ -244,9 +247,9 @@ approval alone is insufficient evidence of better review.
   invoked `code-review medium` once and got a review of the session's working
   directory rather than its own repository; it detected the mismatch, repaired
   nothing from it, reported the review as producing no evidence about its diff,
-  and still reported the verified work complete. The wording therefore separates
-  repair from record, and treats an unusable review as evidence rather than an
-  open gate.
+  and still reported the verified work complete. That earlier wording separated
+  repair from record but also allowed an unusable review to satisfy completion.
+  The 2026-09-07 pipeline decision replaces that completion fallback.
 - Compressing that review text from 54 lines to 37 kept every behavior eight
   Sonnet runs checked — counting a declared checkpoint and the final pass as
   two reviews and no more, handing off a user-only reviewer with only the

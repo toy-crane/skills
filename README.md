@@ -113,10 +113,14 @@ flowchart LR
     MATCH -- "app premise changed" --> DP
     MATCH -- "yes" --> MORE{"more outcomes?"}
     MORE -- "yes" --> ONE
-    MORE -- "no" --> FINAL["full checks + changed/core loop<br/>+ one code review pass"]
-    FINAL --> TRIAGE{"breaks a criterion or<br/>reproduces as a defect?"}
+    MORE -- "no" --> FINAL["full checks + changed/core loop"]
+    FINAL --> REVIEW["complete one code review"]
+    REVIEW -- "result for intended diff" --> TRIAGE{"breaks a criterion or<br/>reproduces as a defect?"}
+    REVIEW -- "no completed result" --> PENDING["review pending<br/>share verified result + blocker"]
+    PENDING -- "failure resolved or authority granted" --> REVIEW
+    PENDING -- "explicit user waiver" --> DONE
     TRIAGE -- "yes" --> FIX["repair, recheck<br/>(no second review)"]
-    FIX --> DONE["verified and runnable,<br/>with the review as evidence"]
+    FIX --> DONE["verified and runnable<br/>reviewed or explicitly waived"]
     TRIAGE -- "no" --> REC["record: follow-up,<br/>note, or user decision"]
     REC --> DONE
     IM -. "uses at pre-agreed public seams" .-> TDD[tdd]
@@ -171,9 +175,16 @@ and acceptance criteria. `implement` picks the depth that change warrants, and
 its findings are triaged rather than looped: `implement` repairs only what
 breaks an approved acceptance criterion or reproduces as a defect on an
 ordinary path, then records the rest as follow-ups, disposed trade-offs, or
-decisions the user owns. The review is evidence attached to the handoff, so a
-reviewer that is unavailable, user-only, or silent does not turn verified work
-into unfinished work. When the repository exposes the result through a
+decisions the user owns. Completion requires a finished review of the intended
+diff or an explicit user waiver; it does not require zero findings. Failed,
+partial, silent, or mistargeted attempts do not count as the one pass.
+`implement` recovers execution errors within the authorized scope and retries.
+It accurately identifies any model service and source context, reuses existing
+user authorization without asking again, and requests only missing authority.
+An explicit policy denial requires a permitted safer path or the needed
+authority before retrying. If review cannot finish, overall completion stays
+pending while verified outcomes, the blocker, and the next action are provided.
+When the repository exposes the result through a
 user-reviewable local server, `implement` verifies the changed surface and
 shares an address while leaving that server available until the user finishes
 review or later delivery cleanup. `implement` uses `tdd` where behavior can be
@@ -241,8 +252,10 @@ new session or a closing-message handoff is not required for correctness.
   reconcile verified behavior with the product contract and active unfinished
   tasks, ignore superseded history unless current evidence implicates it, reopen
   invalidated work, and return to shaping when a product decision must change.
-  Then finish with full verification, one triaged automated code-review pass,
-  and a verified runnable product address when the repository provides one.
+  Then finish with full verification and one completed, triaged automated
+  review, unless explicitly waived by the user. Recover review execution
+  failures and reuse granted authority; blocked review leaves completion pending
+  while the verified result and runnable product address remain available.
 - **[tdd](./skills/workflow/tdd/SKILL.md)**: Implement one red → green slice at a time at
   pre-agreed public seams. Includes rules for stable seams and behavioral tests.
   Adapted from
