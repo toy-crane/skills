@@ -62,6 +62,22 @@
   inspection understandable. The zero-to-three active-question limit applies
   to unresolved product decisions, not to the scope of inspection or discussion
   needed to understand the work.
+- `human-review` reduces the effort of reconstructing context, finding evidence,
+  and connecting changes so the human can spend attention on understanding and
+  judgment across sessions. On entry, reconnect the work to the request and
+  settled intent, and distinguish what changed since the human's known prior
+  context. Present a coherent behavior with its before-and-after relationship
+  and supporting evidence, while keeping its place in the whole change visible.
+  Let the human explore beyond the AI's suggested focus and adjust depth to
+  unfamiliar parts. Use questions at consequential assumptions or boundaries
+  rather than requiring an acknowledgment after every explanation.
+- A review that is interrupted preserves the inspected scope, open questions,
+  and next useful action. When the underlying change advances, identify which
+  prior observations need revisiting. Keep inspected scope separate from
+  acceptance, and derive prior understanding or acceptance only from what the
+  human actually expressed. Evaluate the workflow through the human's ability
+  to explain behavior, notice unflagged assumptions, and resume after a switch,
+  alongside the effort it takes to review.
 - Before `human-review` compresses a change, it accounts for every changed
   commitment with a review disposition of summary, human question, or mechanical
   issue and an evidence status of observed, inferred, or unverified. Material
@@ -121,6 +137,15 @@ without understanding the work. Limiting the review to AI-selected unresolved
 decisions can leave that failure intact even when the user explicitly agrees.
 Actual results and evidence support this understanding as well as decisions
 about product intent, local context, and acceptable risk.
+
+The user switches between AI work sessions and reports that reconstructing
+context consumes attention and lowers review quality. The review therefore
+needs continuity as well as an understandable explanation. Research on
+[programming task resumption](https://www.microsoft.com/en-us/research/publication/evaluating-cues-for-resuming-interrupted-programming-tasks/)
+and [the cost of verifying AI predictions](https://arxiv.org/html/2212.06823v2)
+motivates this direction; the resulting multi-session review experience still
+needs evaluation with the user on actual changes. Easier reading or an explicit
+approval alone is insufficient evidence of better review.
 
 ## Reconsider when
 
