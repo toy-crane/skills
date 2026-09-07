@@ -51,13 +51,17 @@
   preserves dirty work rather than silently committing, stashing, or discarding
   it. PR and merge requests authorize the in-scope commits needed to complete
   their larger outcomes.
-- `human-review` routes human attention by the commitment a change introduces,
-  not by file type or technical layer. It activates when the user explicitly
-  asks to inspect actual outcomes and judge unresolved commitments or material
-  consequences; completion, size, or consequence alone does not trigger an
-  automatic handoff. AI handles mechanically checkable defects and presents a
-  concise change summary, zero to three active human questions, the actual
-  result, and evidence only on demand.
+- `human-review` helps the human understand AI-authored repository work, inspect
+  actual results and supporting evidence, and independently examine assumptions
+  or implementation choices, including those the AI considers settled. Human
+  understanding is a central review outcome; resolving open product decisions
+  is one possible result. It activates when the user explicitly asks to
+  understand and inspect the work; completion, size, or consequence alone does
+  not trigger an automatic handoff. AI handles mechanically checkable defects
+  and makes the behavior, mechanisms, and consequences needed for human
+  inspection understandable. The zero-to-three active-question limit applies
+  to unresolved product decisions, not to the scope of inspection or discussion
+  needed to understand the work.
 - Before `human-review` compresses a change, it accounts for every changed
   commitment with a review disposition of summary, human question, or mechanical
   issue and an evidence status of observed, inferred, or unverified. Material
@@ -110,9 +114,13 @@ make a skill brittle across capable models.
 
 AI output can grow faster than human review capacity. Prioritizing API, database,
 UI, or another layer categorically misses both harmless changes in a sensitive
-layer and consequential commitments elsewhere. The remaining human value is to
-validate intent, supply project context, and accept or reject risks that automated
-checks cannot decide.
+layer and consequential commitments elsewhere. Human review needs enough
+understanding of the work to uncover mistaken assumptions and mismatches with
+intent, including ones the AI did not flag. The user reported granting approval
+without understanding the work. Limiting the review to AI-selected unresolved
+decisions can leave that failure intact even when the user explicitly agrees.
+Actual results and evidence support this understanding as well as decisions
+about product intent, local context, and acceptable risk.
 
 ## Reconsider when
 
@@ -140,7 +148,8 @@ checks cannot decide.
   can lose executable meaning even when its argument is correct.
 - Exhaustive diff summaries, review-time estimates, severity codes, and
   layer-based review queues for `human-review` — they spend the limited attention
-  the skill exists to protect without identifying the decision a human owns.
+  the skill exists to protect without making behavior, mechanisms, or
+  consequences easier for the human to understand and inspect.
 
 ## Evidence worth preserving
 
