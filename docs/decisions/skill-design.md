@@ -79,25 +79,32 @@
   to explain behavior, notice unflagged assumptions, and resume after a switch,
   alongside the effort it takes to review.
 - Before `human-review` compresses a change, it accounts for every changed
-  commitment with a review disposition of summary, human question, or mechanical
-  issue and an evidence status of observed, inferred, or unverified. Material
-  implementation choices and consequences left open by the governing request or
-  decisions remain unresolved. The complete coverage stays behind the evidence
-  path; release blockers and material unknowns remain visible in the overview.
+  behavior: what to explain, what needs a product decision, and any confirmed
+  defect. Separately record what was observed, inferred from source, or remains
+  unverified. Important choices and consequences left open by the request or
+  project decisions remain unresolved. The complete list of changes stays
+  accessible; release blockers and important unknowns remain visible in the
+  overview.
   This fixed check prevents compression from making an omitted change invisible.
 - A result labeled observed must come from the named change in a real runnable
   environment and retain its change reference, route or command, and environment.
   A mock or intended UI cannot stand in for the product result. Missing evidence
   alone does not become a human question. When more than three human questions
-  remain, the current surface names every deferred commitment and brings them
+  remain, the current surface names every deferred decision and brings them
   forward as earlier questions are resolved.
 - Browser verification completes the temporary review surface, not the product
   change. Human choices become resolved only through an explicit conversational
   response; the temporary surface is not a canonical project decision record.
-- `build-prototype` and `human-review` use the same host-independent HTML
-  handoff: run the finished HTML using a method supported by the current harness
-  and share an address the user can open. This user-delivery contract is separate
-  from browser verification and each skill carries it directly.
+- `human-review` chooses the smallest useful representation. Simple reviews
+  can stay in conversation; comparison, navigation, or continued review may
+  warrant HTML. Its template keeps behavior explanations available even when no
+  product decision is open. Use concrete actions and outcomes in instructions
+  and visible labels, keeping necessary technical names in context.
+- `build-prototype` and HTML output from `human-review` use the same
+  host-independent handoff: run the finished HTML using a method supported by
+  the current harness and share an address the user can open. This delivery
+  contract is separate from browser verification and each skill carries it
+  directly.
 - `implement` owns the runnable product handoff after its acceptance criteria
   pass and its single review pass has been triaged. When the repository exposes
   the actual result through a user-reviewable local server, run and verify the
@@ -178,6 +185,11 @@ approval alone is insufficient evidence of better review.
 
 ## Evidence worth preserving
 
+- Executing the human-review Todo fixture showed that clearing writes storage
+  but reloading restores the hardcoded list. Its old evaluation expected local
+  persistence and irreversible clearing without establishing either. The
+  revised case requires the reload observation and keeps the demonstrated
+  defect separate from the choice about undo behavior.
 - A trigger eval showed the phase-based `project-knowledge` description missing
   all plan-mode decision queries; activity-based wording improved routing while
   remaining imperfect, so trigger prompts stay in the repository.

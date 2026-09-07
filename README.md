@@ -387,10 +387,10 @@ one is available for an affected product surface.
 - **[explain-visually](./skills/workflow/explain-visually/SKILL.md)**: Render explanations
   with the best available tool. Use one sentence instead when one sentence fully
   answers the question.
-- **[human-review](./skills/workflow/human-review/SKILL.md)**: Turn a completed, substantial
-  or consequential repository change into a minimal visual handoff when the user
-  asks to inspect actual outcomes and judge unresolved commitments. Show the
-  whole outcome, then focus one review set on at most three active questions.
+- **[human-review](./skills/workflow/human-review/SKILL.md)**: Help a human understand
+  AI-authored work through before-and-after behavior and nearby evidence. Keep
+  the whole change available to inspect, surface unsettled choices, and leave
+  a clear place to resume after switching tasks.
 - **[maintain-project-context](./skills/workflow/maintain-project-context/SKILL.md)**:
   Periodically reconcile `PRODUCT.md`, the glossary, decision contracts, shipped
   specs, and agent instructions after work accumulates. Apply only meaning that
