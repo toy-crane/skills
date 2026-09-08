@@ -61,7 +61,10 @@
   the whole surface and the user explicitly approved it as the prototype.
 - Separate functional verification from the user's experiential judgment.
 - Record unresolved product-change requests as deferred points and their
-  possible impact as remaining risks.
+  possible impact as remaining risks. A deferred branch stays out of approved
+  scope and acceptance criteria; interim behavior the product needs to stay
+  coherent belongs with the deferred point, naming the decision that replaces
+  it.
 - Write the complete product contract to `docs/specs/<slug>/spec.md` and keep
   feature-local decisions there.
 - If code contradicts a user statement or current decision contract, surface
@@ -83,6 +86,8 @@ shaping session from sliding into implementation.
   conditions without the instruction.
 - Product-code edits during shaping stop recurring, allowing the explicit write
   boundary to be pruned.
+- Deferred branches stop appearing in approved scope and acceptance criteria
+  without the instruction.
 
 ## Still-rejected alternatives
 
@@ -110,6 +115,16 @@ shaping session from sliding into implementation.
 
 ## Evidence worth preserving
 
+- A 32-run suite over 22 cases (24 runs on the revised wording, 8 of them
+  repeated on the previous one) recorded no write outside the allowed paths in
+  any run, including two cases whose fixtures are runnable apps: neither
+  version touched product source or added a dependency, and both kept
+  experiments outside the working tree. Two findings drove further changes. One
+  run deferred an unsettled last-owner policy yet still wrote its interim guard
+  into approved scope and two acceptance criteria, which the deferred-branch
+  rule now forbids. The cases relying on a runnable surface and a component
+  preview could not exercise those assertions against empty fixtures, so both
+  now ship runnable apps.
 - Product-code edits recurred with stronger models under the earlier wording,
   which limited only "durable" writes and asked to keep experiments
   "temporary". Read together, those two sentences permitted editing source with

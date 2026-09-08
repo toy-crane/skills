@@ -99,7 +99,9 @@ or explicitly deferred; do not wait for the user to declare completion.
 Translate confirmed product-change requests into required behavior. Keep cheap
 agent-chosen defaults as overridable assumptions; ask about or explicitly defer
 consequential unsettled behavior and record its possible impact as a remaining
-risk.
+risk. A deferred branch stays out of approved scope and acceptance criteria.
+When the product needs interim behavior to stay coherent, keep it with the
+deferred point and name the decision that replaces it.
 
 When ready for implementation, write `docs/specs/<slug>/spec.md` as the stable
 product contract, creating the kebab-case folder when needed. Include the
