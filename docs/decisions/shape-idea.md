@@ -39,9 +39,10 @@
   dependencies do not change during shaping, including edits meant to be
   reverted. Experiments, benchmarks, dependency checks, and previews run in a
   scratch directory outside the working tree; when none can answer a question,
-  the choice is recorded as an assumption with its risk. Before `spec.md` is
-  written, the working tree is checked and any change outside the allowed
-  paths is reverted.
+  the choice is recorded as an assumption with its risk. The working tree is
+  checked at the start and again before `spec.md` is written; only changes the
+  session made outside the allowed paths are reverted, and uncommitted work
+  that predates the session is left alone.
 - When a framework or hosted service settles during shaping, establish its
   current agent context through `add-stack-context` when available. Keep the
   outcome self-contained when it is absent: discover official skills, preserve

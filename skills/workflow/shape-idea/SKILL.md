@@ -17,8 +17,9 @@ outside the working tree. If no experiment can answer a question, record an
 assumption and its risk. If code contradicts the user or a decision, surface the
 conflict; do not fix the code.
 
-Before writing `spec.md`, check the working tree. Revert any change outside the
-allowed paths and keep only what you learned.
+Check the working tree when you start and again before writing `spec.md`.
+Revert what this session changed outside the allowed paths and keep only what
+you learned. Leave uncommitted work that predates the session alone.
 
 ## Ground decisions in project truth
 
