@@ -7,11 +7,18 @@ description: Turn a chosen problem and broad direction into shared decisions and
 
 ## Keep alignment separate from delivery
 
-Limit durable project writes to the spec folder, glossary, current decision
-contracts, and current vendor agent context. Leave product code unchanged.
-Keep technical experiments, benchmarks, variants, comparison renders, and
-component previews temporary. Preserve `prototype.html` only when it covers the
-whole surface and the user explicitly approves it as the prototype.
+Shaping settles decisions; implementation applies them. Do not change product
+source, configuration, or dependencies, even for an edit you plan to revert. A
+changed line mixes alignment with delivery and leaves unreviewed code behind.
+
+Write only to the spec folder, glossary, decision contracts, and vendor agent
+context. Run every experiment, benchmark, and preview in a scratch directory
+outside the working tree. If no experiment can answer a question, record an
+assumption and its risk. If code contradicts the user or a decision, surface the
+conflict; do not fix the code.
+
+Before writing `spec.md`, check the working tree. Revert any change outside the
+allowed paths and keep only what you learned.
 
 ## Ground decisions in project truth
 
@@ -30,9 +37,9 @@ Resolve what available evidence can answer before asking the user.
 
 Ground any conclusion about a third-party package or tool in evidence of how it
 actually behaves — its own source, documentation, releases, and maintainer
-statements — and confirm it in this project before building on it or working
-around it. Record what was checked, what fell short, and the upstream change
-that would reopen the decision.
+statements — and confirm it against this project's versions in a scratch copy
+before building on it or working around it. Record what was checked, what fell
+short, and the upstream change that would reopen the decision.
 
 When a decision selects a framework or hosted service, invoke
 `add-stack-context` when available and let it own discovery, source acceptance,

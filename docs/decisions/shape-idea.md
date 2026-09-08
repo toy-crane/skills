@@ -34,9 +34,14 @@
   Use a runnable candidate when available; otherwise render a sufficient
   substitute. Verify only the states needed for a trustworthy comparison before
   the user judges one unresolved experiential decision.
-- Durable project writes are limited to the spec folder, glossary, current
-  decision contracts, and current vendor agent context. Do not edit product
-  source during shaping.
+- Writes are limited to the spec folder, glossary, current decision contracts,
+  and current vendor agent context. Product source, configuration, and
+  dependencies do not change during shaping, including edits meant to be
+  reverted. Experiments, benchmarks, dependency checks, and previews run in a
+  scratch directory outside the working tree; when none can answer a question,
+  the choice is recorded as an assumption with its risk. Before `spec.md` is
+  written, the working tree is checked and any change outside the allowed
+  paths is reverted.
 - When a framework or hosted service settles during shaping, establish its
   current agent context through `add-stack-context` when available. Keep the
   outcome self-contained when it is absent: discover official skills, preserve
@@ -44,9 +49,9 @@
   account for the technology before continuing.
 - Ground any conclusion about a third-party package or tool in evidence of how
   it actually behaves — its own source, documentation, releases, and maintainer
-  statements — and confirm it in this project before building on it or working
-  around it. Record what was checked, what fell short, and the upstream change
-  that would reopen the decision.
+  statements — and confirm it against this project's versions in a scratch copy
+  before building on it or working around it. Record what was checked, what
+  fell short, and the upstream change that would reopen the decision.
 
 ## Boundaries
 
@@ -88,6 +93,11 @@ shaping session from sliding into implementation.
   very difference the session needs them to judge.
 - Editing product code while shaping — it mixes alignment and implementation
   and leaves unreviewed source changes behind.
+- Enforcing the write boundary with a Claude Code hook — a mechanical block is
+  the wrong axis as models improve, reaches only one client, misses writes made
+  through the shell, and outlives the shaping turn for the rest of the session.
+  The observed edits followed gaps in the instruction rather than ignoring it,
+  so the instruction was the thing to fix.
 - Building a custom workaround before establishing how the dependency behaves —
   it repeats solved work, loses the provenance of the answer, and defends the
   workaround with reasoning the evidence would have corrected.
@@ -99,6 +109,15 @@ shaping session from sliding into implementation.
 
 ## Evidence worth preserving
 
+- Product-code edits recurred with stronger models under the earlier wording,
+  which limited only "durable" writes and asked to keep experiments
+  "temporary". Read together, those two sentences permitted editing source with
+  the intent to revert, and "confirm it in this project" invited installing a
+  dependency into the project. The wording also gave no reason for the boundary
+  and no alternative when an experiment seemed to need a code change. The
+  revision names the reason, sends experiments to a scratch directory outside
+  the working tree, falls back to a recorded assumption and risk, and adds a
+  working-tree check before `spec.md`.
 - Across fourteen recorded sessions, the decisive source was the installed
   package's own source or type definitions, confirmed by local reproduction;
   official docs and issue threads explained or corroborated. Maintainer
