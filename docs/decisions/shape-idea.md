@@ -61,10 +61,10 @@
   the whole surface and the user explicitly approved it as the prototype.
 - Separate functional verification from the user's experiential judgment.
 - Record unresolved product-change requests as deferred points and their
-  possible impact as remaining risks. A deferred branch stays out of approved
-  scope and acceptance criteria; interim behavior the product needs to stay
-  coherent belongs with the deferred point, naming the decision that replaces
-  it.
+  possible impact as remaining risks. A deferred branch is never a settled
+  constraint. Interim behavior the product needs while it stays open is written
+  under the deferred point, naming the decision that replaces it, and marked
+  interim wherever the contract restates it so it can be built and tested.
 - Write the complete product contract to `docs/specs/<slug>/spec.md` and keep
   feature-local decisions there.
 - If code contradicts a user statement or current decision contract, surface
@@ -122,7 +122,13 @@ shaping session from sliding into implementation.
   experiments outside the working tree. Two findings drove further changes. One
   run deferred an unsettled last-owner policy yet still wrote its interim guard
   into approved scope and two acceptance criteria, which the deferred-branch
-  rule now forbids. The cases relying on a runnable surface and a component
+  rule now forbids. Two attempts to fix this by placement failed: told to keep
+  the branch out of scope and criteria, and then told to write interim behavior
+  only under the deferred point, reruns both stated the interim guard in scope
+  and criteria anyway, producing specs whose deferred section contradicted
+  their own criteria list. The pressure is real, since an implementer needs the
+  guard stated to build and test it, so the rule now governs labelling and the
+  settled-constraint list rather than placement. The cases relying on a runnable surface and a component
   preview could not exercise those assertions against empty fixtures, so both
   now ship runnable apps.
 - Product-code edits recurred with stronger models under the earlier wording,
