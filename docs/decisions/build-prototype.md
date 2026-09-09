@@ -2,23 +2,6 @@
 
 ## Decisions
 
-- `build-prototype` owns both rendered UI-alternative comparisons and complete
-  product-surface reviews. When a UI choice needs seeing or trying, render the
-  alternatives without waiting for a separate request to draw them. Choose the
-  scope from the decision: include the surrounding screen context needed to
-  judge one question, or every relevant screen when reviewing a whole flow.
-  Comparing one detail does not require building the whole product.
-- For comparisons, hold data, viewport, confirmed elements, and unrelated
-  behavior fixed. Show layout alternatives together when useful and make
-  interaction alternatives runnable. Keep alternative labels and comparison
-  controls outside product pixels. Fold the chosen result into an existing
-  canonical prototype when one exists; comparisons remain disposable.
-- Ground comparison review in the existing shell. Preserve screen navigation,
-  contextual state selection, and explicit viewport control so users can judge
-  alternatives across product screens and display sizes. Reduce cognitive load
-  through consistent controls and a small extension of the familiar shell;
-  removing those review capabilities or replacing the shell with a separate
-  presentation is not the intended simplification.
 - Accept `effort=standard` and `effort=high`, with `standard` as the recommended
   default. Hold one base completion gate fixed across both values: finished
   visual quality, complete requested screen and relevant-state coverage,
@@ -34,13 +17,13 @@
   plus candidate artifact without the builder's findings. Report when reviewer
   independence or model effort is unavailable. Without an inspectable reference
   it strengthens layout robustness but does not claim visual equivalence.
-- For a complete surface review, build every screen in one self-contained HTML
-  file with shared design tokens, realistic dummy data, relevant edge states,
-  and the pinned review shell.
-- Keep the complete-surface review shell to a screen selector, the selected
-  screen's state selector, and the viewport cycle. Keep product pixels limited
-  to UI an end user could see; review notes, rationale, and change summaries stay
-  in the conversation. Each selector option names one product destination or distinct
+- Build every screen of the surface in one self-contained HTML file with shared
+  design tokens, realistic dummy data, relevant edge states, and the pinned
+  review shell.
+- Keep the review shell to a screen selector, the selected screen's state
+  selector, and the viewport cycle. Keep product pixels limited to UI an end
+  user could see; review notes, rationale, and change summaries stay in the
+  conversation. Each selector option names one product destination or distinct
   surface without current/proposed labels, variants, steps, counts, or indexes;
   screen order is not product progress.
 - Treat states as representative direct-entry presets. Supply `Default`
@@ -61,11 +44,10 @@
 - Treat confirmed component relationships as fixed constraints. An overlay,
   drawer, or modal remains attached to its source screen unless the user is
   explicitly reconsidering that relationship.
-- For a complete surface review, propose the screen inventory as a correctable
-  draft and begin building without an approval gate. For a contested detail,
-  render variants that change only that detail outside the product screen and
-  state selectors, then fold the user's choice back into the single canonical
-  prototype.
+- Propose the screen inventory as a correctable draft and begin building without
+  an approval gate. For a contested detail, render variants that change only
+  that detail outside the product screen and state selectors, then fold the
+  user's choice back into the single canonical prototype.
 - Keep real APIs, production routing, latency, frameworks, and network
   dependencies out of the prototype.
 - Treat screen approval as evidence for the visible surface, not as authority to
@@ -88,9 +70,9 @@
 
 ## Boundaries
 
-- Keep the complete-surface shell's screen selector, current-screen state
-  selector, viewport cycle, contract comment, and token funnel. State names
-  remain contextual rather than following a fixed global taxonomy.
+- Keep the shell's screen selector, current-screen state selector, viewport
+  cycle, contract comment, and token funnel. State names remain contextual
+  rather than following a fixed global taxonomy.
 - Drive simulated narrow-view styles from the shell's viewport classes rather
   than browser media queries alone.
 - Web, mobile web, and native app mockups in a phone frame are in scope; CLI,
@@ -103,16 +85,6 @@
   `shape-idea`, `project-knowledge`, or a pre-existing spec to run to completion.
 
 ## Why
-
-UI alternatives require a concrete comparison even when only one part of a
-screen is unsettled. Giving the same skill responsibility for both scopes closes
-the gap between a shaping instruction to render variants and a builder whose
-entry condition previously required the whole surface. Comparison approval
-settles only the question shown; it does not approve an unrendered whole product.
-
-Screen, state, and viewport controls are part of the review task. Keeping their
-meaning and familiar shell structure lets the user inspect multiple coordinates
-without learning a separate comparison interface.
 
 A full surface exposes missing screens and cross-screen inconsistencies that no
 one knew to mention in prose. One portable file keeps the review cheap and the
@@ -168,10 +140,9 @@ states that evidence boundary directly.
   learn a meta-model instead of navigating screens and representative states.
 - Project-stack components or a real API — wiring cost and production behavior
   distract from alignment and break self-containment.
-- Review notes inside product pixels, or baseline and variant labels treated as
-  product destinations or states — they mix product and review semantics.
-  Alternative labels and controls belong outside product pixels when comparing
-  alternatives.
+- In-prototype notes, baseline or variant screens, review badges, stamps, and
+  change tracking — they mix product and review semantics, duplicate the
+  reviewing medium, and create chrome that needs explanation.
 
 ## Evidence worth preserving
 
