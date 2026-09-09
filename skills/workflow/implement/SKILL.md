@@ -49,8 +49,12 @@ file.
 
 ## Implement and reconcile one outcome
 
-Use the `tdd` skill at a pre-agreed public seam when available. Otherwise retain
-the same observable seam and implement one red-to-green behavior at a time.
+Select a public test seam from the agreed behavior and existing interfaces.
+Briefly state the seam and the behavior it will verify, then use the `tdd` skill
+when available. Otherwise implement one red-to-green behavior at a time through
+the selected seam. Resolve technical uncertainty through repository evidence;
+ask the user only when expected behavior remains unclear or proceeding would
+change the agreed product contract.
 
 Derive the runtime evidence the active outcome owes from its acceptance
 criteria, affected surfaces, claimed platforms, and any claim about a deeper

@@ -58,8 +58,11 @@
   names both sources and the affected behavior or screen-state coordinate,
   blocks that outcome and its dependents, and returns the decision to shaping;
   neither source silently overrides the other.
-- `implement` uses `tdd` where behavior can be verified through a pre-agreed
-  public seam.
+- `implement` selects public test seams from the agreed behavior and existing
+  interfaces under its implementation authority. It briefly states what the
+  seam will verify, then uses `tdd` when available. Technical uncertainty is
+  resolved through repository evidence; only unresolved expected behavior or a
+  change to the agreed product contract requires a user decision.
 - For each affected product surface, `implement` uses an available matching
   runtime-verification skill. When none is available, implementation authority
   covers investigating the repository and current environment, selecting the
