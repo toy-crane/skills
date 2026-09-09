@@ -15,11 +15,14 @@
   gate enters a decision contract; feature-local choices remain in the spec.
 - Ask one consequential question at a time with a recommended answer and concise
   reason when a branch is expensive to get wrong.
-- Settle experiential questions through two or three rendered variants that
-  differ only on the governing choice. When the question is a whole surface,
-  invoke `build-prototype`; if it is unavailable, defer the decision rather than
-  treating a partial render as approval. When the user asks for explanation,
-  invoke `explain-visually`.
+- Settle experiential questions through a rendered candidate or two or three
+  variants that differ only on the governing choice. Invoke `build-prototype`
+  for UI-alternative comparisons as well as whole-surface reviews, without
+  waiting for a separate request to draw the alternatives. Limit a comparison
+  to the screen context and states needed to judge its question. If the skill
+  is unavailable, use a sufficient renderer for a local comparison; defer a
+  whole-surface decision rather than treating a partial render as approval.
+  When the user asks for explanation, invoke `explain-visually`.
 - Mirror flows, state models, and relationships with one diagram when they have
   multiple branches, transitions, or links before moving to a downstream
   decision. Ask at most one question about an unresolved part of the diagram and
