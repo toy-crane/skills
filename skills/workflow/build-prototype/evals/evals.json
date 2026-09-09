@@ -281,6 +281,43 @@
         "It discards the temporary comparison after recording the choice and resumes the enclosing work.",
         "It does not claim integration or runtime verification in a prototype that does not exist."
       ]
+    },
+    {
+      "id": 21,
+      "type": "multi_turn",
+      "prompt": "/build-prototype 글 상세에서 저장을 누른 직후 표현만 비교해줘. A는 버튼을 '저장됨'으로 바꾸고, B는 버튼 아래에 '보관함에 저장했어요.'와 '실행 취소'를 계속 보여주고, C는 같은 안내와 실행 취소가 있는 토스트를 4초 보여줘. B와 C의 버튼 문구는 '저장'으로 유지해. 아직 전체 프로토타입은 필요 없고 이 상황만 눌러보고 싶어.",
+      "expected_output": "Across three separately dispatched turns, the agent creates a bounded comparison, records the user's B choice and removes the comparison without creating a prototype, then a fresh agent builds a new canonical prototype from only the surviving project files. The new detail screen preserves B's persistent inline feedback and working undo, and the library reflects saving and undoing.",
+      "files": ["evals/fixtures/compare-to-prototype/project.md"],
+      "turns": [
+        {
+          "id": "compare",
+          "context": "fresh",
+          "prompt_source": "prompt",
+          "checkpoint": "Verify the runnable comparison and all three feedback treatments before delivering the choice. No prototype.html or docs/specs exists. Keep an evidence snapshot outside the executor's project."
+        },
+        {
+          "id": "choose",
+          "context": "same_agent",
+          "prompt": "B로 할게. 저장 안내와 실행 취소가 버튼 아래에 계속 남는 게 좋겠어. 이 비교는 여기서 마무리해줘. 전체 프로토타입은 나중에 만들자.",
+          "checkpoint": "The actual generated project files record B's concrete behavior. compare.html is deleted, and no prototype.html or docs/specs has been created. Preserve the executor's files exactly for the next turn."
+        },
+        {
+          "id": "prototype",
+          "context": "fresh_agent_files_only",
+          "prompt": "/build-prototype 프로젝트에 남아 있는 메모를 기준으로 읽을거리 앱 전체 프로토타입을 만들어줘. 보관함, 글 상세, 설정 화면이 필요해. 보관함이 비어 있을 때도 확인하고 싶고, 저장과 실행 취소가 보관함에 반영되는지도 직접 눌러보고 싶어. 이전 대화는 볼 수 없으니 현재 파일을 확인해서 이어서 진행해줘.",
+          "checkpoint": "Run a genuinely fresh agent with the skill, current project files, and only this prompt. Do not supply earlier prompts, responses, deleted HTML, or the chosen behavior. Exercise the new prototype and compare the observed behavior against the external evidence from the earlier turns."
+        }
+      ],
+      "expectations": [
+        "The first turn creates only the requested comparison with A/B/C alternatives and working save and undo, without whole-product screens or a companion prototype.",
+        "The choice turn records B as persistent inline confirmation below the unchanged save button, with working undo; recording only the option letter does not pass.",
+        "After the choice turn, compare.html is absent and no prototype or durable spec has been created just to close the comparison.",
+        "The final turn runs in a fresh agent that receives only surviving project files and the final prompt; the evaluator does not inject or repair the decision record.",
+        "The new prototype contains one canonical library, article detail, and settings screen with product screen, state, and viewport controls; comparison alternatives and controls do not reappear.",
+        "Saving in the new detail screen keeps the button label unchanged and shows the chosen inline confirmation and undo below it. The confirmation remains after more than four seconds; neither a changed-label alternative nor a transient toast replaces it.",
+        "Undo removes the confirmation and saved article; saving again adds the article to the library, and navigation preserves the resulting saved state.",
+        "The executor verifies the requested screens, the empty-library preset and recovery, and the 390, 768, and full viewports, then supplies a runnable address while keeping the product review open and docs/specs absent."
+      ]
     }
   ]
 }

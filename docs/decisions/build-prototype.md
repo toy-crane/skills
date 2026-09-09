@@ -175,6 +175,16 @@ states that evidence boundary directly.
 
 ## Evidence worth preserving
 
+- Multi-turn eval 21 exercised comparison creation, user choice, and a later
+  new prototype build. The choice turn left only the executor-authored project
+  note; a fresh agent received that file and the final request, without earlier
+  conversation or comparison HTML. It preserved the selected persistent inline
+  confirmation and undo across detail and library navigation. The run passed
+  42 browser checks after repairing a missing cancellation path and an
+  overlapping empty toast container in the generated comparison. These were
+  artifact repairs within verification; the skill and templates were unchanged.
+  This is one sequential execution, not a pass of every eval or a model-quality
+  benchmark.
 - A focused pruning check used two isolated internal agents, one per version,
   to answer the same six requests. In the template-only resumption case, the
   old contract prompted a new prototype despite its absence; the revised
