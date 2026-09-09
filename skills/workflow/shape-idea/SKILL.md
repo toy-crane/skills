@@ -70,10 +70,12 @@ that makes the decision judgeable.
 - For a choice judged by looking or trying, inspect the current surface as
   evidence and show it only when the decision requires a baseline comparison.
   Render a candidate or two or three controlled variants, verify the relevant
-  states, and wait for the user's reaction. Invoke `build-prototype` when the
-  question spans the whole surface; that skill owns the artifact and review
-  contract. If no sufficient renderer is available, defer the decision and
-  record the resulting risk.
+  states, and wait for the user's reaction. Invoke `build-prototype` for a
+  whole-surface review or a temporary comparison of one screen's alternatives.
+  For the latter, pass only the target decision and relevant context, integrate
+  the chosen result into the existing prototype when present, discard the
+  comparison, and resume shaping. If no sufficient renderer is available, defer
+  the decision and record the resulting risk.
 - When a flow, state model, or relationship has multiple branches, transitions,
   or links, render one diagram before a downstream decision. Ask at most one
   question about its unresolved part and wait. Keep a linear structure that fits

@@ -26,6 +26,10 @@ _Avoid_: Mockup, option
 The full-surface build: every screen a feature needs in one self-contained HTML file with shared design tokens, dummy data, and per-screen state toggles, rendered in the project's own design system from the first screen and minimally where there is none. Where a variant settles one question, the prototype surfaces the questions nobody knew to ask; the approved file survives beside the spec as its visual half.
 _Avoid_: Mockup, wireframe, demo
 
+**Comparison**:
+A temporary `compare.html` showing up to three variants of one target screen to settle one decision. It contains only the context and states needed for that choice. The chosen result is integrated into the canonical prototype, then the comparison is discarded; it is not a second full-surface build or a final deliverable.
+_Avoid_: Prototype
+
 **Spec**:
 The durable product contract a shape-idea or build-prototype session writes for later implementation: user-visible outcomes, approved scope, observable acceptance criteria, settled constraints and rationale, assumptions, off-limits areas and reasons, deferred points, and remaining risks. It records behavior rather than predicted implementation. Visuals are disposable except an approved prototype, preserved beside the spec as its visual half.
 _Avoid_: Alignment brief, summary

@@ -49,12 +49,21 @@
   that detail outside the product screen and state selectors, then fold the
   user's choice back into the single canonical prototype.
 - Keep `templates/shell.html` unchanged for the canonical prototype. Add
-  `templates/comparison-shell.html` based on that shell for up to three
-  alternatives per screen. Preserve the existing design, screen and state
-  selectors, and viewport cycle; add one variant selector for All or an
-  individual alternative. Apply state and viewport choices across the compared
-  alternatives. Keep explicit viewport widths when horizontal scrolling is
-  needed, and hide the variant selector when a screen has only one alternative.
+  `templates/comparison-shell.html` based on that shell for a temporary
+  `compare.html` containing up to three alternatives for exactly one target
+  screen and one decision. Include only the context, states, and interactions
+  needed to judge that choice; whole-product coverage belongs in the prototype.
+  Preserve the existing design, state selector, and viewport cycle. The screen
+  control identifies the one target; the variant selector chooses All or an
+  individual alternative. Keep explicit viewport widths when horizontal
+  scrolling is needed, and hide the variant selector for a single alternative.
+- A local comparison request enters this bounded workflow directly, without a
+  whole-product inventory or review. Once the user chooses, integrate the result
+  into the corresponding screen in the existing prototype, verify it there, and
+  delete `compare.html`. Resume the enclosing review or shaping session; the next
+  decision gets a fresh comparison. If the prototype does not yet exist, retain
+  the choice for its later build. Preserve only the approved full prototype as
+  the visual deliverable, never the intermediate comparison.
 - Keep real APIs, production routing, latency, frameworks, and network
   dependencies out of the prototype.
 - Treat screen approval as evidence for the visible surface, not as authority to
@@ -95,8 +104,10 @@
 
 The comparison needs one additional choice: which alternative to inspect.
 Extending the existing shell's menus keeps its familiar controls and design
-available across screens and viewport sizes without introducing a separate
-review interface.
+available for the target screen's states and viewport sizes without introducing
+a separate review interface. Limiting each comparison to one decision makes it
+quick to build and finish, while integrating the winner keeps one authoritative
+prototype instead of a growing collection of partial alternatives.
 
 A full surface exposes missing screens and cross-screen inconsistencies that no
 one knew to mention in prose. One portable file keeps the review cheap and the

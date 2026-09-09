@@ -1,12 +1,18 @@
 ---
 name: build-prototype
-description: Build a self-contained dummy-data HTML prototype covering every screen and relevant state of a web, mobile-web, or native-app surface. Use when the user wants to review and settle a complete screen-based product or feature before implementation, especially when prose or isolated variants cannot resolve cross-screen structure. Do not use for production implementation or CLI, terminal, or voice interfaces.
+description: Build a complete dummy-data HTML prototype or a temporary comparison of up to three alternatives for one screen. Use to settle a screen-based product before implementation or resolve one screen decision during shaping or prototype review. Do not use for production implementation or CLI, terminal, or voice interfaces.
 ---
 
 # Build Prototype
 
 Build a disposable but finished-looking model of the whole surface so the user
 can settle structure, relationships, and behavior before implementation.
+
+Keep the artifacts distinct: `prototype.html` holds the canonical full surface;
+a temporary `compare.html` resolves one decision about one screen along the way.
+For a local comparison request, go directly to **Compare one decision** and
+limit building and verification to that decision. The whole-surface inventory,
+review, and preservation gates apply to the prototype, not to this intermediate.
 
 ## Set the effort
 
@@ -101,15 +107,28 @@ After a correction, re-render its coordinate and the other screens or states
 that share the changed token, component, or shell behavior. Report the audited
 coverage and any unverified coordinates or fidelity claims in the conversation.
 
-For an unresolved detail, copy
-[templates/comparison-shell.html](./templates/comparison-shell.html) to render
-up to three variants that differ only on that question. It retains the original
-shell's design, screen and state selectors, and viewport cycle, adding one
-variant selector for All or an individual alternative. Hold content, data,
-surrounding layout, behavior, and every confirmed element fixed. Keep these
-disposable comparisons outside the canonical product screen and state selectors.
-Let the user choose, fold the winner into the canonical file, and discard the
-other variants.
+## Compare one decision
+
+For one unresolved screen decision, copy
+[templates/comparison-shell.html](./templates/comparison-shell.html) into a
+temporary `compare.html`. Include only that screen or the relevant part with
+enough surrounding context to judge up to three variants. Leave unrelated
+screens in the canonical prototype; this comparison is not a second full build.
+
+Keep the original shell's design. The screen control identifies the one target;
+the variant selector shows All or an individual alternative, and state and
+viewport controls let the user inspect the comparison. Hold content, data,
+surrounding layout, behavior, and confirmed elements fixed except for the
+governing choice. Render and verify only the interactions, states, and sizes
+needed to judge it, then share the runnable comparison and ask for the choice.
+
+Once the user chooses, apply that result to the corresponding screen in the
+same `prototype.html` and verify the affected behavior there. Delete the
+temporary comparison after integration, then resume the prototype review or
+shaping session. Create a fresh comparison for the next decision; do not collect
+past comparisons or promote `compare.html` into the final deliverable. If the
+prototype has not been built yet, retain the chosen behavior for its later build
+without expanding this local comparison into the whole product.
 
 ## Preserve the approved result
 

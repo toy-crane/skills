@@ -1,19 +1,20 @@
 <!--
-  prototype comparison shell: the existing review chrome plus one variant menu.
+  prototype comparison shell: one screen, one decision, up to three alternatives.
 
-  Keep this comment in the prototype you grow from here: it is the contract,
-  and later turns work from that file rather than from this one.
+  Copy this template to a temporary compare.html and keep this comment in it.
+  Once the user chooses, integrate that choice into the canonical prototype.html,
+  verify it there, and delete the temporary comparison. Start fresh for the next
+  decision; the full screen inventory belongs only in the canonical prototype.
 
-  Contract (extend product screens; keep the review shell):
+  Contract (compare one screen; keep the review shell):
   - Product:  Each .sh-stage contains only end-user product UI. Keep review notes,
                rationale, instructions, and approval controls in conversation.
-  - Screens:  <section data-screen="slug" data-title="Label"> inside .sh-workspace.
-               The selector, arrow keys, and #hash routing build themselves.
-               Use one option per product destination or distinct surface,
-               named by its product role. Keep baselines, variants, comparison
-               labels, steps, indexes, and progress out of names and states.
-               Links may use href="#slug".
-  - Variants: Each screen contains one .sh-options row with one to three direct
+  - Screen:   Exactly one <section data-screen="slug" data-title="Label"> inside
+               .sh-workspace. Include only the target screen or the part and
+               surrounding context needed for this decision. The disabled screen
+               selector identifies that target using its product name. Keep
+               unrelated screens and cross-screen navigation in prototype.html.
+  - Variants: The target contains one .sh-options row with one to three direct
                children carrying unique data-variant="a" and data-title="A".
                Put each alternative's product UI in its own .sh-stage. The
                shell adds labels outside product pixels and an All / A / B / C
@@ -21,7 +22,7 @@
                Scope interactions to their alternative and keep DOM IDs unique.
                Use prototypeShell.setVariant("a") or setVariant("all") to switch.
                Switching alternatives preserves the selected state and viewport.
-  - States:   "Default" is automatic. A screen declares only representative
+  - States:   "Default" is automatic. The target declares only representative
                presets in data-states="Empty,Error". Use natural, screen-specific
                names. Reserve presets for important multi-step results, forced
                data or errors, or materially different structure; keep one-click
@@ -29,7 +30,7 @@
                preset-only elements. Call prototypeShell.setState("Name") on
                entry and setState("Default") on exit, including when repeated
                actions cross a preset condition.
-               Declare comparable presets on the screen; a selected preset
+               Declare only presets needed for this decision; a selected preset
                applies to all its alternatives, including hidden ones.
   - Viewport: "vp (m)" cycles full / 390 / 768. The 390 preset is a
                fixed-height, internally scrolling phone frame. Start a
@@ -135,7 +136,7 @@
 </header>
 
 <main class="sh-workspace">
-  <!-- Replace with real screens. One section per screen, up to three alternatives: -->
+  <!-- Replace this one target with the screen being decided, up to three alternatives: -->
   <section data-screen="placeholder" data-title="placeholder">
     <div class="sh-options">
       <div data-variant="a" data-title="A">
@@ -168,16 +169,26 @@
   const variantSelect = document.getElementById('sh-variant');
   const variantControl = document.getElementById('sh-variant-control');
   const vpBtn = document.getElementById('sh-vp');
-  let current = null;
   let currentStates = [];
   let currentVariants = [];
-  let preferredVariant = 'all';
+
+  if (screens.length !== 1) {
+    const message = 'Compare HTML contains exactly one target screen. Keep the full screen inventory in prototype.html.';
+    const notice = document.createElement('p');
+    notice.setAttribute('role', 'alert');
+    notice.textContent = message;
+    stage.replaceChildren(notice);
+    document.querySelectorAll('.sh-bar select, .sh-bar button').forEach(control => control.disabled = true);
+    throw new Error(message);
+  }
+  const current = screens[0];
+  screenSelect.disabled = true;
 
   screens.forEach(screen => {
     const variants = [...screen.querySelectorAll('.sh-options > [data-variant]')];
     const ids = variants.map(variant => variant.dataset.variant);
     if (variants.length < 1 || variants.length > 3 || new Set(ids).size !== ids.length || ids.includes('all') || ids.includes('')) {
-      const message = 'Each comparison screen needs 1–3 alternatives with unique, nonempty data-variant values other than "all".';
+      const message = 'The target screen needs 1–3 alternatives with unique, nonempty data-variant values other than "all".';
       const notice = document.createElement('p');
       notice.setAttribute('role', 'alert');
       notice.textContent = message;
@@ -193,22 +204,7 @@
     });
   });
 
-  screens.forEach(s => {
-    const option = document.createElement('option');
-    option.textContent = s.dataset.title || s.dataset.screen;
-    option.value = s.dataset.screen;
-    screenSelect.append(option);
-  });
-  screenSelect.onchange = () => show(screenSelect.value);
-
-  function show(slug) {
-    current = screens.find(s => s.dataset.screen === slug) || screens[0];
-    screens.forEach(s => s.hidden = s !== current);
-    screenSelect.value = current.dataset.screen;
-    history.replaceState(null, '', '#' + current.dataset.screen);
-    buildStates();
-    buildVariants();
-  }
+  screenSelect.add(new Option(current.dataset.title || current.dataset.screen, current.dataset.screen));
 
   function buildVariants() {
     currentVariants = [...current.querySelectorAll('.sh-options > [data-variant]')];
@@ -220,8 +216,7 @@
       title: variant.dataset.title || variant.dataset.variant
     })));
     choices.forEach(choice => variantSelect.add(new Option(choice.title, choice.id)));
-    const available = choices.some(choice => choice.id === preferredVariant);
-    applyVariant(available ? preferredVariant : choices[0].id);
+    applyVariant(choices[0].id);
   }
 
   function applyVariant(id) {
@@ -233,11 +228,7 @@
     });
     variantSelect.value = active;
   }
-  function setVariant(id) {
-    applyVariant(id);
-    preferredVariant = variantSelect.value;
-  }
-  variantSelect.onchange = () => setVariant(variantSelect.value);
+  variantSelect.onchange = () => applyVariant(variantSelect.value);
 
   function buildStates() {
     const declared = (current.dataset.states || '').split(',').map(x => x.trim()).filter(Boolean);
@@ -262,11 +253,10 @@
   stateSelect.onchange = () => applyState(stateSelect.value);
 
   window.prototypeShell = {
-    showScreen: show,
     setState: applyState,
     getScreen: () => current?.dataset.screen,
     getState: () => stateSelect.value,
-    setVariant,
+    setVariant: applyVariant,
     getVariant: () => variantSelect.value
   };
 
@@ -282,12 +272,9 @@
 
   addEventListener('keydown', e => {
     if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
-    const i = screens.indexOf(current);
-    if (e.key === 'ArrowRight') show(screens[(i + 1) % screens.length].dataset.screen);
-    if (e.key === 'ArrowLeft') show(screens[(i - 1 + screens.length) % screens.length].dataset.screen);
     if (e.key === 'm') vpBtn.click();
   });
 
-  addEventListener('hashchange', () => show(location.hash.slice(1)));
-  show(location.hash.slice(1));
+  buildStates();
+  buildVariants();
 </script>

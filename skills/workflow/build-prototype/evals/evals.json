@@ -51,12 +51,12 @@
       "files": [],
       "expectations": [
         "It renders two or three variants differing only on the contested treatment.",
-        "It uses templates/comparison-shell.html, keeping the original shell styling and screen, state, and viewport controls while adding only the All-or-individual variant selector.",
-        "Each compared screen has at most three alternatives; state and viewport controls apply consistently across them, and choosing an individual alternative preserves those settings.",
+        "It uses templates/comparison-shell.html for one temporary compare.html containing only the home screen context needed for the grid-versus-list decision, without rebuilding the full product or collecting other screen comparisons.",
+        "It keeps the original shell styling: the screen control identifies the single target, and variant, state, and viewport controls operate on up to three alternatives.",
         "Confirmed screens, content, data, surrounding layout, and behavior stay fixed across the variants.",
         "The variants remain disposable comparisons outside the product screen and state selectors; the canonical prototype keeps one version of the home screen.",
         "It requests the user's reaction as the answer instead of arguing the choice in prose.",
-        "It folds the chosen variant back into the single prototype file."
+        "Once the user chooses, it integrates the result into the existing prototype, verifies the affected behavior there, deletes the temporary comparison, and resumes the enclosing review."
       ]
     },
     {
