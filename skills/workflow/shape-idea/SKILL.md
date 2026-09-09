@@ -71,8 +71,9 @@ that makes the decision judgeable.
   evidence and show it only when the decision requires a baseline comparison.
   Render a candidate or two or three controlled variants, verify the relevant
   states, and wait for the user's reaction. Invoke `build-prototype` for a
-  whole-surface review or a temporary comparison of one screen's alternatives.
-  For the latter, pass only the target decision and relevant context, integrate
+  whole-surface review or a temporary comparison for the user's specific
+  situation. Scope that decision layer independently of product screen count:
+  pass only the question and context needed to judge it, integrate
   the chosen result into the existing prototype when present, discard the
   comparison, and resume shaping. If no sufficient renderer is available, defer
   the decision and record the resulting risk.

@@ -50,20 +50,25 @@
   user's choice back into the single canonical prototype.
 - Keep `templates/shell.html` unchanged for the canonical prototype. Add
   `templates/comparison-shell.html` based on that shell for a temporary
-  `compare.html` containing up to three alternatives for exactly one target
-  screen and one decision. Include only the context, states, and interactions
-  needed to judge that choice; whole-product coverage belongs in the prototype.
-  Preserve the existing design, state selector, and viewport cycle. The screen
-  control identifies the one target; the variant selector chooses All or an
-  individual alternative. Keep explicit viewport widths when horizontal
+  `compare.html` containing up to three alternatives for the user's current
+  situation and decision. Separate this decision layer from the product layer:
+  its scope can be a component, a screen, or several related views in a short
+  flow. Scope by what the question needs, not by screen count or an obligation
+  to compare every product screen. Whole-product coverage belongs in the
+  prototype.
+  Preserve the existing styling, state selector, and viewport cycle. Replace
+  the product screen selector with the situation label and variant selector;
+  All shows the alternatives together. Any required product navigation stays
+  inside its alternative. Keep explicit viewport widths when horizontal
   scrolling is needed, and hide the variant selector for a single alternative.
 - A local comparison request enters this bounded workflow directly, without a
   whole-product inventory or review. Once the user chooses, integrate the result
-  into the corresponding screen in the existing prototype, verify it there, and
-  delete `compare.html`. Resume the enclosing review or shaping session; the next
-  decision gets a fresh comparison. If the prototype does not yet exist, retain
-  the choice for its later build. Preserve only the approved full prototype as
-  the visual deliverable, never the intermediate comparison.
+  into the affected product UI and flow in the existing prototype, verify it
+  there, and delete `compare.html`. Resume the enclosing review or shaping
+  session; the next decision gets a fresh comparison. If the prototype does not yet exist, record
+  the choice and discard the comparison without building an unrelated full
+  prototype merely to demonstrate integration. Preserve only the approved full
+  prototype as the visual deliverable, never the intermediate comparison.
 - Keep real APIs, production routing, latency, frameworks, and network
   dependencies out of the prototype.
 - Treat screen approval as evidence for the visible surface, not as authority to
@@ -86,9 +91,10 @@
 
 ## Boundaries
 
-- Keep the shell's screen selector, current-screen state selector, viewport
-  cycle, contract comment, and token funnel. State names remain contextual
-  rather than following a fixed global taxonomy.
+- Keep the product shell's screen selector, current-screen state selector,
+  viewport cycle, contract comment, and token funnel. The comparison shell
+  selects alternatives for a situation independently of product screens. State
+  names remain contextual rather than following a fixed global taxonomy.
 - Drive simulated narrow-view styles from the shell's viewport classes rather
   than browser media queries alone.
 - Web, mobile web, and native app mockups in a phone frame are in scope; CLI,
@@ -102,12 +108,12 @@
 
 ## Why
 
-The comparison needs one additional choice: which alternative to inspect.
-Extending the existing shell's menus keeps its familiar controls and design
-available for the target screen's states and viewport sizes without introducing
-a separate review interface. Limiting each comparison to one decision makes it
-quick to build and finish, while integrating the winner keeps one authoritative
-prototype instead of a growing collection of partial alternatives.
+Product navigation and decision alternatives serve different roles. Keeping
+those layers separate lets a comparison follow the user's actual question,
+while the familiar shell styling and state and viewport controls remain useful.
+Limiting each comparison to the context that decision needs makes it quick to
+build and finish. Integrating only the chosen outcome keeps one authoritative
+prototype without accumulating the comparison process in its screen inventory.
 
 A full surface exposes missing screens and cross-screen inconsistencies that no
 one knew to mention in prose. One portable file keeps the review cheap and the

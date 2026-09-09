@@ -52,7 +52,7 @@
       "expectations": [
         "It renders two or three variants differing only on the contested treatment.",
         "It uses templates/comparison-shell.html for one temporary compare.html containing only the home screen context needed for the grid-versus-list decision, without rebuilding the full product or collecting other screen comparisons.",
-        "It keeps the original shell styling: the screen control identifies the single target, and variant, state, and viewport controls operate on up to three alternatives.",
+        "It keeps the original shell styling while separating the decision layer: the situation label supplies context and variant, state, and viewport controls operate independently of the product's screen inventory.",
         "Confirmed screens, content, data, surrounding layout, and behavior stay fixed across the variants.",
         "The variants remain disposable comparisons outside the product screen and state selectors; the canonical prototype keeps one version of the home screen.",
         "It requests the user's reaction as the answer instead of arguing the choice in prose.",
@@ -242,6 +242,32 @@
         "It does not present the device-time-zone default as a confirmed outcome, settled constraint, or observable acceptance criterion.",
         "It preserves the approved activity-log outcomes, scope, acceptance criteria, and linked prototype.",
         "It keeps deferrals and remaining risks distinct from the labeled assumption."
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "/build-prototype 기존 글 상세 화면에서 저장 버튼을 누른 직후 피드백만 비교해줘. 버튼 문구를 바꾸는 안, 토스트를 띄우는 안, 버튼 아래 안내를 넣는 안 중에 고르려는 거야. 다른 화면이나 전체 프로토타입은 만들지 말고 이 상황만 보여줘.",
+      "expected_output": "The response builds one temporary compare.html for the save-feedback decision, using only the action area and enough article context to judge the three treatments. It keeps the decision layer independent of product screens and makes save and undo work in each alternative.",
+      "files": [],
+      "expectations": [
+        "The comparison contains only the requested save-feedback situation with A/B/C alternatives; it does not generate a full article screen, library, settings, or a companion full prototype just to explain the layers.",
+        "The shell uses a situation label and variant, state, and viewport controls rather than a product screen inventory or a disabled one-screen selector.",
+        "Each alternative changes only the feedback treatment, and saving and undoing are working interactions rather than one-click state presets.",
+        "The selected outcome remains unconfirmed until the user chooses; it does not fabricate a winner or perform an illustrative integration without a request.",
+        "After an actual choice, it integrates that outcome into the existing product prototype, verifies the affected behavior, and discards the comparison."
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "/build-prototype 초대 링크를 처음 열었는데 로그인하지 않은 상황만 비교하자. A는 로그인 후 초대 내용을 보여주고 B는 초대 내용을 먼저 보여준 다음 수락할 때 로그인해. 각각 이 짧은 흐름을 직접 눌러 보고 싶어. 나머지 서비스 화면은 필요 없어.",
+      "expected_output": "The response builds one comparison for the invitation-entry decision. Each alternative contains the related invitation and sign-in views needed for its short flow without expanding to the service's full screen set or enforcing an exactly-one-screen rule.",
+      "files": [],
+      "expectations": [
+        "The comparison hierarchy is the situation and its alternatives, not product screens each containing their own variants.",
+        "Each alternative can navigate between only the related sign-in and invitation views and recover to its start.",
+        "It neither rejects the multi-view situation nor flattens it into a static single screen to satisfy a fixed screen-count constraint.",
+        "It holds invitation content and confirmed behavior fixed while varying only when sign-in occurs.",
+        "It leaves unrelated service screens out and keeps comparison choices out of the canonical prototype's screen inventory."
       ]
     }
   ]
