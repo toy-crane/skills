@@ -13,6 +13,12 @@
   interaction alternatives runnable. Keep alternative labels and comparison
   controls outside product pixels. Fold the chosen result into an existing
   canonical prototype when one exists; comparisons remain disposable.
+- Ground comparison review in the existing shell. Preserve screen navigation,
+  contextual state selection, and explicit viewport control so users can judge
+  alternatives across product screens and display sizes. Reduce cognitive load
+  through consistent controls and a small extension of the familiar shell;
+  removing those review capabilities or replacing the shell with a separate
+  presentation is not the intended simplification.
 - Accept `effort=standard` and `effort=high`, with `standard` as the recommended
   default. Hold one base completion gate fixed across both values: finished
   visual quality, complete requested screen and relevant-state coverage,
@@ -103,6 +109,10 @@ screen is unsettled. Giving the same skill responsibility for both scopes closes
 the gap between a shaping instruction to render variants and a builder whose
 entry condition previously required the whole surface. Comparison approval
 settles only the question shown; it does not approve an unrendered whole product.
+
+Screen, state, and viewport controls are part of the review task. Keeping their
+meaning and familiar shell structure lets the user inspect multiple coordinates
+without learning a separate comparison interface.
 
 A full surface exposes missing screens and cross-screen inconsistencies that no
 one knew to mention in prose. One portable file keeps the review cheap and the
