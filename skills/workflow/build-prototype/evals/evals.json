@@ -51,6 +51,8 @@
       "files": [],
       "expectations": [
         "It renders two or three variants differing only on the contested treatment.",
+        "It uses templates/comparison-shell.html, keeping the original shell styling and screen, state, and viewport controls while adding only the All-or-individual variant selector.",
+        "Each compared screen has at most three alternatives; state and viewport controls apply consistently across them, and choosing an individual alternative preserves those settings.",
         "Confirmed screens, content, data, surrounding layout, and behavior stay fixed across the variants.",
         "The variants remain disposable comparisons outside the product screen and state selectors; the canonical prototype keeps one version of the home screen.",
         "It requests the user's reaction as the answer instead of arguing the choice in prose.",

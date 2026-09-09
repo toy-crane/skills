@@ -101,11 +101,15 @@ After a correction, re-render its coordinate and the other screens or states
 that share the changed token, component, or shell behavior. Report the audited
 coverage and any unverified coordinates or fidelity claims in the conversation.
 
-For an unresolved detail, render two or three variants that differ only on that
-question. Hold content, data, surrounding layout, behavior, and every confirmed
-element fixed. Keep these disposable comparisons outside the product screen and
-state selectors. Let the user choose, fold the winner into the canonical file,
-and discard the other variants.
+For an unresolved detail, copy
+[templates/comparison-shell.html](./templates/comparison-shell.html) to render
+up to three variants that differ only on that question. It retains the original
+shell's design, screen and state selectors, and viewport cycle, adding one
+variant selector for All or an individual alternative. Hold content, data,
+surrounding layout, behavior, and every confirmed element fixed. Keep these
+disposable comparisons outside the canonical product screen and state selectors.
+Let the user choose, fold the winner into the canonical file, and discard the
+other variants.
 
 ## Preserve the approved result
 

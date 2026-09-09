@@ -20,8 +20,8 @@
 - Build every screen of the surface in one self-contained HTML file with shared
   design tokens, realistic dummy data, relevant edge states, and the pinned
   review shell.
-- Keep the review shell to a screen selector, the selected screen's state
-  selector, and the viewport cycle. Keep product pixels limited to UI an end
+- Keep the canonical prototype's review shell to a screen selector, the selected
+  screen's state selector, and the viewport cycle. Keep product pixels limited to UI an end
   user could see; review notes, rationale, and change summaries stay in the
   conversation. Each selector option names one product destination or distinct
   surface without current/proposed labels, variants, steps, counts, or indexes;
@@ -48,6 +48,13 @@
   an approval gate. For a contested detail, render variants that change only
   that detail outside the product screen and state selectors, then fold the
   user's choice back into the single canonical prototype.
+- Keep `templates/shell.html` unchanged for the canonical prototype. Add
+  `templates/comparison-shell.html` based on that shell for up to three
+  alternatives per screen. Preserve the existing design, screen and state
+  selectors, and viewport cycle; add one variant selector for All or an
+  individual alternative. Apply state and viewport choices across the compared
+  alternatives. Keep explicit viewport widths when horizontal scrolling is
+  needed, and hide the variant selector when a screen has only one alternative.
 - Keep real APIs, production routing, latency, frameworks, and network
   dependencies out of the prototype.
 - Treat screen approval as evidence for the visible surface, not as authority to
@@ -85,6 +92,11 @@
   `shape-idea`, `project-knowledge`, or a pre-existing spec to run to completion.
 
 ## Why
+
+The comparison needs one additional choice: which alternative to inspect.
+Extending the existing shell's menus keeps its familiar controls and design
+available across screens and viewport sizes without introducing a separate
+review interface.
 
 A full surface exposes missing screens and cross-screen inconsistencies that no
 one knew to mention in prose. One portable file keeps the review cheap and the
