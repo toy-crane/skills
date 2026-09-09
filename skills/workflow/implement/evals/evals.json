@@ -72,7 +72,7 @@
       "expected_output": "The response implements the approved spec through the tdd skill at the pre-agreed Checkout API seam, then completes verification and one final automated review pass.",
       "files": [],
       "expectations": [
-        "It uses the tdd skill because the behavior has a pre-agreed public seam.",
+        "It uses the tdd skill because the behavior can be verified through a public seam.",
         "It uses the approved Checkout API seam without inventing an implementation-only test boundary.",
         "It still completes the required verification and one automated review pass.",
         "It does not open a review round after each refactor."

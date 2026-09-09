@@ -123,7 +123,7 @@ flowchart LR
     FIX --> DONE["verified and runnable<br/>reviewed or explicitly waived"]
     TRIAGE -- "no" --> REC["record: follow-up,<br/>note, or user decision"]
     REC --> DONE
-    IM -. "uses at pre-agreed public seams" .-> TDD[tdd]
+    IM -. "uses at public seams" .-> TDD[tdd]
     IM -. "proves affected surfaces" .-> RV["matching runtime skill<br/>or strongest usable path"]
     IM -. "open workaround or<br/>out-of-scope defect" .-> FU["follow-up"]
 ```
@@ -188,7 +188,8 @@ When the repository exposes the result through a
 user-reviewable local server, `implement` verifies the changed surface and
 shares an address while leaving that server available until the user finishes
 review or later delivery cleanup. `implement` uses `tdd` where behavior can be
-verified through pre-agreed public seams. For an affected product surface, it
+verified through public seams it selects from the agreed behavior and existing
+interfaces. For an affected product surface, it
 uses an available matching runtime-verification skill. When none is available,
 it autonomously investigates the repository and current environment and builds
 the strongest usable runtime path instead of asking the user to approve the
@@ -256,8 +257,9 @@ new session or a closing-message handoff is not required for correctness.
   review, unless explicitly waived by the user. Recover review execution
   failures and reuse granted authority; blocked review leaves completion pending
   while the verified result and runnable product address remain available.
-- **[tdd](./skills/workflow/tdd/SKILL.md)**: Implement one red → green slice at a time at
-  pre-agreed public seams. Includes rules for stable seams and behavioral tests.
+- **[tdd](./skills/workflow/tdd/SKILL.md)**: Select public test seams from the agreed
+  behavior and existing interfaces, then implement one red → green slice at a
+  time. Includes rules for stable seams and behavioral tests.
   Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 
