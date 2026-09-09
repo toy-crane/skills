@@ -115,6 +115,13 @@
   server available until review finishes or later delivery cleanup, without
   disrupting another checkout or unrelated process. This access is not
   `human-review` and does not imply human approval.
+- A skill that drives an external CLI takes its runner from the target
+  project's package manager. `update-project-skills` runs the `skills.sh` CLI
+  as `<runner> skills@latest`, and the Expo skills name `expo run:ios` and
+  `expo run:android` without a runner prefix, because npm aborts `npx` with
+  `EBADDEVENGINES` in a project whose `package.json` pins another package
+  manager through `devEngines`. A global `npm install -g` reads no project pin
+  and stays as written.
 
 ## Boundaries
 
@@ -292,3 +299,14 @@ approval alone is insufficient evidence of better review.
   remain concise and direct invocation is the reliable route. The worktree
   server helper passed seven isolated ownership and failure cases, then
   preserved a live Portless process owned by another repository worktree.
+- Running `update-project-skills` in a bun-pinned Expo project on 2026-09-09
+  aborted every `npx -y skills@latest` call. npm 11.17.0 refused the project's
+  `devEngines.packageManager` pin of bun 1.3.6 with `EBADDEVENGINES`. npm's
+  `package-json` documentation gives an undefined `onFail` the value `error`,
+  and `--engine-strict=false` does not bypass the check, while both `bunx` and
+  `pnpm dlx` ran the CLI. `npx` aborts the same way on a locally installed
+  binary, which is the `npx expo run:*` case, while `npm install -g` keeps
+  working from inside the same project. That session recovered on its own by
+  switching to `bunx`, so the instruction saves one failed call rather than a
+  stuck run. Neither the `update-project-skills` nor the Expo wording has been
+  tested on a held-out control.
