@@ -65,9 +65,9 @@ content, hierarchy, containment, placement and visibility, and the relevant
 transitions and recovery; element existence and successful navigation alone do
 not establish that match. Apply the reference within its stated limits, and use
 runtime evidence for native behavior or other claims it does not cover. Every
-platform named in the result owes actual-screen comparison against the same
-applicable reference coordinates; evidence from one platform does not establish
-another.
+platform named in the result owes actual-screen comparison for the same
+applicable screens and states, using that platform's intended layout and native
+conventions; evidence from one platform does not establish another.
 
 When none is available, investigate the repository and current environment and
 construct the strongest usable runtime path yourself. Consult current

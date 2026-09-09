@@ -596,6 +596,7 @@
         "It treats the prototype as the concrete visual and state reference without allowing it to silently replace an explicit product contract.",
         "It compares the actual detail cover, the containment of `계속 읽기` inside its card, and every applicable screen state rather than checking only that those elements exist or that navigation succeeds.",
         "It obtains separate actual-screen evidence from iOS and Android at the same applicable prototype screens and states before claiming both platforms.",
+        "It preserves each platform's intended layout and native conventions instead of requiring pixel-identical iOS and Android rendering.",
         "It supplies the whole-diff reviewer with the spec, active task contract, linked decisions, and approved prototype or their repository paths.",
         "It does not report completion while a required handoff source remains uninspected or an applicable acceptance or prototype criterion remains uncompared."
       ]

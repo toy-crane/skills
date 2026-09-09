@@ -71,9 +71,9 @@
   screen, state, and viewport coordinate. It checks composition, content,
   hierarchy, containment, placement, visibility, and relevant transitions and
   recovery rather than treating element presence or navigation alone as a
-  match. Every claimed platform supplies its own actual-screen comparison to
-  the same applicable reference coordinates. A non-visual handoff adds no
-  prototype or screen gate.
+  match. Every claimed platform supplies its own actual-screen comparison for
+  the same applicable screens and states through that platform's intended layout
+  and native conventions. A non-visual handoff adds no prototype or screen gate.
 - Each specialized runtime-verification skill owns its runtime preflight and
   separates readiness, known initial state, and observed behavior. It uses the
   least destructive state profile that proves the scenario: app-scoped known
