@@ -20,8 +20,8 @@
 - Build every screen of the surface in one self-contained HTML file with shared
   design tokens, realistic dummy data, relevant edge states, and the pinned
   review shell.
-- Keep the review shell to a screen selector, the selected screen's state
-  selector, and the viewport cycle. Keep product pixels limited to UI an end
+- Keep the canonical prototype's review shell to a screen selector, the selected
+  screen's state selector, and the viewport cycle. Keep product pixels limited to UI an end
   user could see; review notes, rationale, and change summaries stay in the
   conversation. Each selector option names one product destination or distinct
   surface without current/proposed labels, variants, steps, counts, or indexes;
@@ -48,6 +48,27 @@
   an approval gate. For a contested detail, render variants that change only
   that detail outside the product screen and state selectors, then fold the
   user's choice back into the single canonical prototype.
+- Keep the design and behavior of `templates/shell.html` for the canonical prototype. Use
+  `templates/comparison-shell.html` based on that shell for a temporary
+  `compare.html` containing up to three alternatives for the user's current
+  situation and decision. Separate this decision layer from the product layer:
+  its scope can be a component, a screen, or several related views in a short
+  flow. Scope by what the question needs, not by screen count or an obligation
+  to compare every product screen. Whole-product coverage belongs in the
+  prototype.
+  Preserve the existing styling, state selector, and viewport cycle. Replace
+  the product screen selector with the situation label and variant selector;
+  All shows the alternatives together. Any required product navigation stays
+  inside its alternative. Keep explicit viewport widths when horizontal
+  scrolling is needed, and hide the variant selector for a single alternative.
+- A local comparison request enters this bounded workflow directly, without a
+  whole-product inventory or review. Once the user chooses, integrate the result
+  into the affected product UI and flow in the existing prototype, verify it
+  there, and delete `compare.html`. Resume the enclosing review or shaping
+  session; the next decision gets a fresh comparison. If the prototype does not yet exist, record
+  the choice and discard the comparison without building an unrelated full
+  prototype merely to demonstrate integration. Preserve only the approved full
+  prototype as the visual deliverable, never the intermediate comparison.
 - Keep real APIs, production routing, latency, frameworks, and network
   dependencies out of the prototype.
 - Treat screen approval as evidence for the visible surface, not as authority to
@@ -70,9 +91,10 @@
 
 ## Boundaries
 
-- Keep the shell's screen selector, current-screen state selector, viewport
-  cycle, contract comment, and token funnel. State names remain contextual
-  rather than following a fixed global taxonomy.
+- Keep the product shell's screen selector, current-screen state selector,
+  viewport cycle, contract comment, and token funnel. The comparison shell
+  selects alternatives for a situation independently of product screens. State
+  names remain contextual rather than following a fixed global taxonomy.
 - Drive simulated narrow-view styles from the shell's viewport classes rather
   than browser media queries alone.
 - Web, mobile web, and native app mockups in a phone frame are in scope; CLI,
@@ -85,6 +107,13 @@
   `shape-idea`, `project-knowledge`, or a pre-existing spec to run to completion.
 
 ## Why
+
+Product navigation and decision alternatives serve different roles. Keeping
+those layers separate lets a comparison follow the user's actual question,
+while the familiar shell styling and state and viewport controls remain useful.
+Limiting each comparison to the context that decision needs makes it quick to
+build and finish. Integrating only the chosen outcome keeps one authoritative
+prototype without accumulating the comparison process in its screen inventory.
 
 A full surface exposes missing screens and cross-screen inconsistencies that no
 one knew to mention in prose. One portable file keeps the review cheap and the
@@ -146,6 +175,27 @@ states that evidence boundary directly.
 
 ## Evidence worth preserving
 
+- Multi-turn eval 21 exercised comparison creation, user choice, and a later
+  new prototype build. The choice turn left only the executor-authored project
+  note; a fresh agent received that file and the final request, without earlier
+  conversation or comparison HTML. It preserved the selected persistent inline
+  confirmation and undo across detail and library navigation. The run passed
+  42 browser checks after repairing a missing cancellation path and an
+  overlapping empty toast container in the generated comparison. These were
+  artifact repairs within verification; the skill and templates were unchanged.
+  This is one sequential execution, not a pass of every eval or a model-quality
+  benchmark.
+- A focused pruning check used two isolated internal agents, one per version,
+  to answer the same six requests. In the template-only resumption case, the
+  old contract prompted a new prototype despite its absence; the revised
+  contract recorded the choice and closed the comparison. The other five
+  response probes retained the requested scope and completion conditions.
+  A separate execution pass recorded and closed a comparison without a
+  prototype, integrated a choice into an existing prototype before deletion,
+  and built a two-alternative authentication flow. The latter two artifacts
+  passed 29 browser checks. These bounded checks support the local pruning;
+  they do not establish general model equivalence or execute the high-effort
+  review itself. The preserved-state and standalone-install rules remain.
 - A fresh `standard` control run after fixing the shared gate produced all three
   requested screens, exercised them at 390, 768, and full width, and tested the
   requested interaction and reset paths. Its browser pass found and corrected
