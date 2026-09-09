@@ -29,18 +29,14 @@ share an address the user can open. Hold this gate fixed at `standard`.
 
 - `standard` uses the base gate as its complete result.
 - `high` passes the same base gate, then adds close visual matching to an
-  inspectable current product or reference. Broaden the search for mismatches,
-  independently reproduce each material candidate, correct verified mismatches,
-  and recheck affected screens until none remain. When the host supports
-  subagents, delegate the audit to one fresh reviewer subagent at high model
+  inspectable current product or reference through **Review and converge**.
+  When the host supports subagents, delegate the audit to one fresh reviewer
+  subagent at high model
   effort and give it the reference and candidate artifact without the builder's
   findings. Otherwise separate the build and verification passes and report
   that reviewer independence or model effort was unavailable. If no reference
   can be inspected, report that visual equivalence is unverified and use the
   extra pass only to strengthen layout robustness.
-
-The selected effort changes additional reference verification, not prototype
-completeness, interaction correctness, browser coverage, or visual finish.
 
 ## Ground the prototype
 
@@ -104,7 +100,7 @@ layout and interaction recovery with realistic long or awkward content. Give
 each material mismatch candidate its exact coordinate, observed evidence, and
 reproduction path. Have the fresh reviewer subagent reproduce candidates when
 one is available, discard those that do not reproduce, and correct the verified
-set.
+set until no reproduced material mismatches remain.
 After a correction, re-render its coordinate and the other screens or states
 that share the changed token, component, or shell behavior. Report the audited
 coverage and any unverified coordinates or fidelity claims in the conversation.
@@ -119,12 +115,9 @@ sufficient; a flow may need several related views. This scope is independent of
 the prototype's screen inventory. Build comparisons when a decision arises,
 not once per product screen, and keep unrelated product work in the prototype.
 
-Keep the original shell's styling while giving the comparison its own controls:
-the situation label supplies context, the variant selector shows All or one
-alternative, and state and viewport controls operate on those alternatives.
-Product navigation and any related views live inside each alternative only as
-needed for the question; they do not define the comparison hierarchy. Hold
-content, data, surrounding layout, behavior, and confirmed elements fixed except for the
+Preserve the template's styling and contract comment, which owns the comparison
+controls and keeps product navigation inside its alternative. Hold content,
+data, surrounding layout, behavior, and confirmed elements fixed except for the
 governing choice. Render and verify only the interactions, states, and sizes
 needed to judge it, then share the runnable comparison and ask for the choice.
 

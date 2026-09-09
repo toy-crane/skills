@@ -48,7 +48,7 @@
   an approval gate. For a contested detail, render variants that change only
   that detail outside the product screen and state selectors, then fold the
   user's choice back into the single canonical prototype.
-- Keep `templates/shell.html` unchanged for the canonical prototype. Add
+- Keep the design and behavior of `templates/shell.html` for the canonical prototype. Use
   `templates/comparison-shell.html` based on that shell for a temporary
   `compare.html` containing up to three alternatives for the user's current
   situation and decision. Separate this decision layer from the product layer:
@@ -175,6 +175,17 @@ states that evidence boundary directly.
 
 ## Evidence worth preserving
 
+- A focused pruning check used two isolated internal agents, one per version,
+  to answer the same six requests. In the template-only resumption case, the
+  old contract prompted a new prototype despite its absence; the revised
+  contract recorded the choice and closed the comparison. The other five
+  response probes retained the requested scope and completion conditions.
+  A separate execution pass recorded and closed a comparison without a
+  prototype, integrated a choice into an existing prototype before deletion,
+  and built a two-alternative authentication flow. The latter two artifacts
+  passed 29 browser checks. These bounded checks support the local pruning;
+  they do not establish general model equivalence or execute the high-effort
+  review itself. The preserved-state and standalone-install rules remain.
 - A fresh `standard` control run after fixing the shared gate produced all three
   requested screens, exercised them at 390, 768, and full width, and tested the
   requested interaction and reset paths. Its browser pass found and corrected

@@ -138,27 +138,10 @@
   <button id="sh-vp">vp: full (m)</button>
 </header>
 
-<main class="sh-workspace" data-question="Situation to decide">
-  <!-- Replace each alternative with just the context this decision needs: -->
+<main class="sh-workspace" data-question="알림을 끈 직후">
   <div class="sh-options">
-    <div data-variant="a" data-title="A">
-      <div class="sh-stage">
-        <h2>Empty shell</h2>
-        <p>Add product UI for alternative A.</p>
-      </div>
-    </div>
-    <div data-variant="b" data-title="B">
-      <div class="sh-stage">
-        <h2>Empty shell</h2>
-        <p>Add product UI for alternative B.</p>
-      </div>
-    </div>
-    <div data-variant="c" data-title="C">
-      <div class="sh-stage">
-        <h2>Empty shell</h2>
-        <p>Add product UI for alternative C.</p>
-      </div>
-    </div>
+    <div data-variant="a" data-title="A · 버튼 문구"><div class="sh-stage"><h1>알림 설정</h1><button onclick="this.textContent=this.textContent==='알림 끄기'?'알림 꺼짐':'알림 끄기'">알림 끄기</button></div></div>
+    <div data-variant="b" data-title="B · 버튼 아래 안내"><div class="sh-stage"><h1>알림 설정</h1><button aria-pressed="false" onclick="const off=this.getAttribute('aria-pressed')!=='true';this.setAttribute('aria-pressed',String(off));this.nextElementSibling.hidden=!off">알림 끄기</button><p role="status" hidden>알림을 껐어요. 이 설정에서 다시 켤 수 있어요.</p></div></div>
   </div>
 </main>
 

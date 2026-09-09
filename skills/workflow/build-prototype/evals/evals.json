@@ -269,6 +269,18 @@
         "It holds invitation content and confirmed behavior fixed while varying only when sign-in occurs.",
         "It leaves unrelated service screens out and keeps comparison choices out of the canonical prototype's screen inventory."
       ]
+    },
+    {
+      "id": 20,
+      "prompt": "compare.html에서 알림을 끄는 순간의 확인 표현을 비교했고 B로 확정했어. 이제 이 비교를 마무리해줘. 현재 프로젝트에는 compare.html만 있고 prototype.html은 아직 없어. 이전 대화는 남아 있지 않으니 compare.html에 보존된 계약을 기준으로 처리해줘.",
+      "expected_output": "Using the contract preserved in compare.html, the response records the chosen behavior for the later prototype build and discards the finished comparison. It neither invents an existing integration target nor builds a complete prototype just to close this decision.",
+      "files": ["evals/fixtures/compare-resume/compare.html"],
+      "expectations": [
+        "The comparison contract independently handles the absence of prototype.html without relying on a remembered SKILL.md exception.",
+        "It records the confirmed B behavior and closes the local comparison without creating unrelated product screens or a new prototype.",
+        "It discards the temporary comparison after recording the choice and resumes the enclosing work.",
+        "It does not claim integration or runtime verification in a prototype that does not exist."
+      ]
     }
   ]
 }
