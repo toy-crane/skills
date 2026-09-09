@@ -41,10 +41,23 @@
   the work unit's shallow roadmap: non-superseded tasks preserve current
   outcomes, acceptance criteria, blockers, and task-specific constraints
   without predicting file-level implementation work.
-- `implement` receives one selected `docs/specs/<slug>/` folder. When approved
-  task files exist, it implements them sequentially in dependency order;
-  otherwise it implements `spec.md` directly. It derives the active outcome's
-  implementation approach just in time from the current repository state.
+- `implement` receives one selected `docs/specs/<slug>/` folder as a single
+  handoff bundle anchored by `spec.md`. Before implementation it loads the spec,
+  active tasks, implicated task history, explicitly linked decision contracts,
+  any other decision contract implicated by repository evidence, and every
+  prototype or screen-state artifact the handoff identifies as an approved or
+  selected implementation reference. It reads textual sources and renders or
+  otherwise inspects visual artifacts; mere presence in the folder does not
+  establish approval. When approved task files
+  exist, it implements them sequentially in dependency order; otherwise it
+  implements `spec.md` directly. It derives the active outcome's implementation
+  approach just in time from the current repository state.
+- Explicit product contracts and approved references complement one another:
+  the former retain their stated product meaning, while an approved visual
+  reference supplies the concrete composition and states it covers. A conflict
+  names both sources and the affected behavior or screen-state coordinate,
+  blocks that outcome and its dependents, and returns the decision to shaping;
+  neither source silently overrides the other.
 - `implement` uses `tdd` where behavior can be verified through a pre-agreed
   public seam.
 - For each affected product surface, `implement` uses an available matching
@@ -53,6 +66,14 @@
   strongest usable runtime observation path, and carrying out that verification
   without pausing for approval of the technical method. Behavior not verified
   in the running product remains incomplete; static checks do not replace it.
+- For a screen-based outcome with an approved visual or state reference,
+  runtime verification compares the actual implementation at every applicable
+  screen, state, and viewport coordinate. It checks composition, content,
+  hierarchy, containment, placement, visibility, and relevant transitions and
+  recovery rather than treating element presence or navigation alone as a
+  match. Every claimed platform supplies its own actual-screen comparison to
+  the same applicable reference coordinates. A non-visual handoff adds no
+  prototype or screen gate.
 - Each specialized runtime-verification skill owns its runtime preflight and
   separates readiness, known initial state, and observed behavior. It uses the
   least destructive state profile that proves the scenario: app-scoped known
@@ -70,10 +91,11 @@
   second review pass.
 - Each outcome is complete after its acceptance criteria and focused
   deterministic verification pass, followed by reconciliation of the observed
-  behavior with the spec and every active unfinished task. Task files hold only
-  durable status plus concise verification, blocker, or revision evidence. When
-  repository policy calls for commits, code, tests, and the task update form
-  one meaningful checkpoint.
+  behavior with every required handoff source and applicable acceptance or
+  approved-reference criterion. Task files hold only durable status plus
+  concise verification, blocker, or revision evidence. When repository policy
+  calls for commits, code, tests, and the task update form one meaningful
+  checkpoint.
 - During reconciliation, `implement` may update technical assumptions,
   active unfinished task boundaries and order, blockers, task-specific
   constraints, verification, and acceptance wording while preserving the
@@ -108,12 +130,14 @@
   what the change touches against what verification already settles. It names
   the mode explicitly where the harness offers modes, because one given no mode
   may reuse an earlier invocation's, and takes the harness's standard mode when
-  nothing argues either way. The run stays single at any depth. The reviewer
-  receives the spec's approved scope, off-limits areas, remaining risks, and
-  relevant decision contracts wherever the harness accepts review context. A
-  pass counts only when the reviewer finishes inspecting the intended scope
-  and returns findings or an explicit no-findings result. Failed, partial,
-  silent, and mistargeted attempts are not completed passes.
+  nothing argues either way. The run stays single at any depth. Wherever the
+  harness accepts review context, the reviewer receives the required handoff
+  sources or their repository paths: the spec's approved scope, off-limits
+  areas and remaining risks, the active task contract, linked decision
+  contracts, and applicable approved reference artifacts. A pass counts only
+  when the reviewer finishes inspecting the intended scope and returns findings
+  or an explicit no-findings result. Failed, partial, silent, and mistargeted
+  attempts are not completed passes.
 - `implement` fixes a finding only when it shows an approved acceptance
   criterion failing, or is a defect or caused regression in the changed
   behavior that reproduction confirms on a path ordinary use reaches. It then
@@ -125,10 +149,13 @@
   follow-up, an already-disposed trade-off is noted as disposed, and a material
   consequence the spec leaves open is named in the handoff as a decision the
   user owns.
-- Completion requires each required automated review to finish and be triaged,
-  or an explicit user waiver for that scope, alongside passing acceptance
-  criteria, reconciliation, verification, and reverified must-fix repairs.
-  Recorded findings can remain; zero findings is not the gate.
+- Completion requires every required handoff source to have been inspected and
+  every applicable acceptance and approved-reference criterion to be reconciled with
+  the executable revision, alongside passing verification, reverified must-fix
+  repairs, and each required automated review finishing and being triaged or
+  explicitly waived for that scope. An unread source or uncompared criterion
+  keeps the result incomplete. Recorded findings can remain; zero findings is
+  not the gate.
 - Review execution reuses applicable user authorization without asking again.
   A service-backed request identifies the actual destination and diff, spec,
   and related source context, and carries that authorization accurately.
@@ -226,9 +253,11 @@
   session plan.
 - `split-into-tasks` ends when the approved task handoff is current;
   implementation begins through `implement`.
-- `implement` follows the selected folder's existing handoff while preserving
-  its approved product contract. Verified discoveries may revise unfinished
-  task structure without silently changing that contract.
+- `implement` follows only the selected folder's formal handoff and material it
+  explicitly links or current repository evidence implicates; it does not read
+  every sibling file merely because it is present. Verified discoveries may
+  revise unfinished task structure without silently changing an approved
+  product contract or reference.
 - The standard task workflow is sequential. Parallel bulk migrations or
   explicitly independent queues require a separately chosen execution model
   rather than implicit task fan-out.
@@ -478,6 +507,16 @@ state keep automation reviewable without turning follow-up files into a queue.
 
 ## Evidence worth preserving
 
+- A Flyn work unit linked an approved `prototype.html` from `spec.md` and
+  recorded 25 screen-state cases checked at three widths, with 98 prototype
+  checks passing. The later implementation session listed the artifact but
+  never inspected or rendered it, then used device checks of element presence
+  and navigation to claim conformance. It missed a detail cover, placed a continue
+  action outside its conversation card, omitted location copy, and diverged
+  from approved screen compositions. This supports loading the formal handoff
+  before source changes, comparing actual screens at the approved coordinates,
+  and making unread or uncompared handoff criteria block completion; another
+  always-on producer-side review would not address this consumer failure.
 - A held-constant four-task Todo implementation eval completed in 31m43s with
   five meaningful commits and no state-only commits. The previous fixed
   fresh-worker protocol was still incomplete after 57m49s with 23 commits and
