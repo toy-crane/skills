@@ -40,8 +40,10 @@ Classify the whole change before launching the app:
   native modules or dependencies, permissions, entitlements, icons or splash
   configuration, native project files, SDK or React Native upgrades, and
   startup behavior. Use the repository-supported build command, normally
-  `npx expo run:ios` or `npx expo run:android`, install the resulting
-  development build, and relaunch it.
+  `expo run:ios` or `expo run:android` through the project's own package
+  manager, install the resulting development build, and relaunch it. `npx`
+  aborts with `EBADDEVENGINES` where `package.json` pins another package
+  manager through `devEngines`.
 
 Use the native path for a mixed change or when native impact remains uncertain.
 Both paths run on a development build of the project, so the classification

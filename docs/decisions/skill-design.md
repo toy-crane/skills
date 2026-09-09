@@ -117,9 +117,11 @@
   `human-review` and does not imply human approval.
 - A skill that drives an external CLI takes its runner from the target
   project's package manager. `update-project-skills` runs the `skills.sh` CLI
-  as `<runner> skills@latest`, because npm aborts `npx` with `EBADDEVENGINES`
-  in a project whose `package.json` pins another package manager through
-  `devEngines`.
+  as `<runner> skills@latest`, and the Expo skills name `expo run:ios` and
+  `expo run:android` without a runner prefix, because npm aborts `npx` with
+  `EBADDEVENGINES` in a project whose `package.json` pins another package
+  manager through `devEngines`. A global `npm install -g` reads no project pin
+  and stays as written.
 
 ## Boundaries
 
@@ -302,6 +304,9 @@ approval alone is insufficient evidence of better review.
   `devEngines.packageManager` pin of bun 1.3.6 with `EBADDEVENGINES`. npm's
   `package-json` documentation gives an undefined `onFail` the value `error`,
   and `--engine-strict=false` does not bypass the check, while both `bunx` and
-  `pnpm dlx` ran the CLI. That session recovered on its own by switching to
-  `bunx`, so the instruction saves one failed call rather than a stuck run.
-  The revised wording has not yet been tested on a held-out control.
+  `pnpm dlx` ran the CLI. `npx` aborts the same way on a locally installed
+  binary, which is the `npx expo run:*` case, while `npm install -g` keeps
+  working from inside the same project. That session recovered on its own by
+  switching to `bunx`, so the instruction saves one failed call rather than a
+  stuck run. Neither the `update-project-skills` nor the Expo wording has been
+  tested on a held-out control.

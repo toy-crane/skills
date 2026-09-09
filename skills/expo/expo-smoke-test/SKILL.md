@@ -108,7 +108,9 @@ permissions, and entitlements. Expo Go is a fixed prebuilt shell: passing there
 proves the JavaScript behaved inside a different binary than the one being
 delivered, which is not the evidence this check exists to produce. When no
 development build is installed, build one with the repository-supported command,
-normally `npx expo run:ios` or `npx expo run:android`, before verifying.
+normally `expo run:ios` or `expo run:android` through the project's own package
+manager, before verifying. `npx` aborts with `EBADDEVENGINES` where
+`package.json` pins another package manager through `devEngines`.
 
 Give each platform its own named session, so both apps can run at once. Target
 devices by the names `agent-device devices` reports, which are not adb serials
