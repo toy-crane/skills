@@ -19,13 +19,15 @@
 ### The control
 
 The prototype shell's review bar carries a fourth control that switches the
-product surface between light and dark. It belongs beside the viewport cycle:
-both vary how the whole surface renders, while the screen and state selectors
-choose what it shows. It answers to a single-key shortcut in the same family as
-the viewport cycle's key.
+product surface between light and dark. It sits after the viewport cycle: both
+vary how the whole surface renders, while the screen and state selectors choose
+what it shows. It answers to a single-key shortcut in the same family as the
+viewport cycle's key.
 
-The control has two positions, light and dark. There is no position that
-follows the reviewer's system preference.
+The control shows its two positions, light and dark, as a switch rather than a
+cycling button, so the reviewer can read the current theme and reach the other
+one directly. There is no position that follows the reviewer's system
+preference. Confirmed by the user during implementation.
 
 ### When the control appears
 
@@ -76,7 +78,8 @@ chrome.
 ## Observable acceptance criteria
 
 - A prototype declaring both a light and a dark token set renders a theme
-  control in the review bar.
+  control after the viewport cycle, showing light and dark with the active one
+  marked.
 - A prototype declaring only a light token set renders no theme control, and
   its surface renders light.
 - Activating the control repaints every token-driven color on the product
@@ -121,12 +124,11 @@ chrome.
 
 ## Assumptions
 
-Agent-chosen defaults, overridable. Each is cheap to reverse and visible on the
-first render, so no variant was rendered for review: placing a control beside an
-existing one is routine presentation rather than a decision judged by looking.
+Agent-chosen defaults, overridable and visible on the first render. No variant
+was rendered to settle them, since a control's placement and form beside an
+existing one are routine presentation. The user corrected the control's form on
+first sight; that outcome is recorded under Approved scope rather than here.
 
-- The control is a button beside the viewport cycle rather than a select,
-  matching the viewport control's form and width.
 - Its shortcut is a single letter alongside the viewport cycle's key.
 - The theme is absent from the address because the viewport cycle is absent
   from it too.
