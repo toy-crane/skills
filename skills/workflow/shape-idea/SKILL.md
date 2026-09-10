@@ -119,6 +119,8 @@ their canonical product context rather than duplicating its full contents.
 Link the approved `prototype.html` when one exists and each decision contract
 this work depends on, so implementation loads them as required sources instead
 of judging them optional. Preserve a link an earlier `build-prototype` close-out
-already wrote. Point at every linked source rather than restating its contents,
-and keep the links beside the contract's fields rather than inside them.
+already wrote. Say what each linked source governs here, and leave its own
+rules, thresholds, and screen compositions in that source instead of copying
+them back into a constraint the spec states; keep the links beside the
+contract's fields rather than turning them into one.
 Summarize the same contract and do not prompt for another action.
