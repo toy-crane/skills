@@ -9,6 +9,13 @@
   settled constraints and rationale, assumptions, off-limits areas and reasons,
   deferred points, and remaining risks. Record behavior rather than predicted
   files, functions, code structure, technical layers, or implementation steps.
+- Link from `spec.md` the approved `prototype.html` when one exists and each
+  decision contract the work depends on, because `implement` loads what the
+  handoff explicitly links and does not read a sibling file merely because it is
+  present. Preserve a link `build-prototype` wrote at its own close-out. Linked
+  sources are pointed at rather than restated, and a link sits beside the
+  product contract's fields rather than becoming one of them, so the enumeration
+  above is unchanged.
 - Treat low-risk, reversible choices made by the AI as assumptions. A choice is
   settled when the user confirms it or it is made under explicitly delegated
   authority. Only a settled outcome that meets the reusable project-decision
