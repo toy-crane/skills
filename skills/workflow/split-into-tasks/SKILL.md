@@ -33,7 +33,8 @@ from the then-current repository, so omit predicted files, functions, code
 structure, technical-layer steps, context boundaries, and internal sequences.
 Under a task's constraints record only the references scoped to that task: the
 approved prototype screens and states it delivers, and a decision contract only
-it depends on. Point at them without copying their contents.
+it depends on. Name what each governs and leave its rules and screen
+compositions in the source itself.
 
 Add an intermediate review checkpoint only when a material error could compound
 through substantial dependent work, or when deterministic checks cannot
