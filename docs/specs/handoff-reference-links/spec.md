@@ -48,9 +48,9 @@ this change does not touch.
 relevant without copying its implementation, but gives that reference no home
 and no shape. The wording is sharpened to say what and where: a task records
 in its Constraints the prototype screens and states it delivers, and any
-decision contract only that task depends on. Spec-level links are not repeated
-in task files, and a task never links `spec.md` itself: the spec is the anchor
-`implement` loads before any task. The task template gains no new section.
+decision contract only that task depends on. Scoping the reference to the task
+is what keeps the spec's own links, and `spec.md` itself, out of a task file, so
+no separate prohibition states it. The task template gains no new section.
 
 ### The producer rule sits beside the consumer rule
 
@@ -104,10 +104,10 @@ section.
   says not to restate the linked contents.
 - `docs/decisions/shape-idea.md` states the same link obligation, and its
   existing enumeration of the product contract's fields is unchanged.
-- `split-into-tasks` says a task records, in its Constraints, the prototype
-  screens and states it delivers and any decision contract only that task
-  depends on, and that links the spec already carries, and `spec.md` itself,
-  are not repeated in a task.
+- `split-into-tasks` says a task records, in its Constraints, only the
+  references scoped to that task: the prototype screens and states it delivers
+  and any decision contract only that task depends on, pointed at without
+  copying their contents.
 - `templates/task.md` in `split-into-tasks` has the same sections before and
   after this change.
 - `pipeline.md` states the producer-side rule in its Decisions, and the

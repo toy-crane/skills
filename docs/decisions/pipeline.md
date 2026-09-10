@@ -54,11 +54,11 @@
   approach just in time from the current repository state.
 - The spec-writing skills own the producer side of that loading rule. A spec
   links the approved prototype and the decision contracts its work unit depends
-  on; a task adds only references scoped to that task, the prototype screens and
-  states it delivers and a contract only it depends on, and repeats neither the
-  spec's links nor `spec.md` itself. Linked sources are pointed at rather than
-  restated, and a link names a complementary source beside the product contract
-  rather than adding a field to it.
+  on; a task adds only the references scoped to that task, the prototype screens
+  and states it delivers and a contract only it depends on, which leaves the
+  spec's own links and `spec.md` out of it. Linked sources are pointed at
+  rather than restated, and a link names a complementary source beside the
+  product contract rather than adding a field to it.
 - Explicit product contracts and approved references complement one another:
   the former retain their stated product meaning, while an approved visual
   reference supplies the concrete composition and states it covers. A conflict
