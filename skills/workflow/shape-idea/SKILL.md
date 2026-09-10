@@ -115,4 +115,10 @@ points, and remaining risks. Record behavior and decisions without predicting
 files, functions, code structure, technical layers, or implementation steps.
 Carry only applicable app-level constraints from `PRODUCT.md`; keep the file as
 their canonical product context rather than duplicating its full contents.
+
+Link the approved `prototype.html` when one exists and each decision contract
+this work depends on, so implementation loads them as required sources instead
+of judging them optional. Preserve a link an earlier `build-prototype` close-out
+already wrote. Point at every linked source rather than restating its contents,
+and keep the links beside the contract's fields rather than inside them.
 Summarize the same contract and do not prompt for another action.
