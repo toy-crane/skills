@@ -70,9 +70,12 @@ forced data or errors, and structures that are not trivial to reach. Synchronize
 the selector when interactions enter or leave a declared preset.
 
 Copy project tokens verbatim into `:root`, or extract the existing design
-language when no token file exists. Style every screen through those tokens and
-mark elements with the design system's component names in `data-component`;
-use `new:Name` only when no component exists.
+language when no token file exists. When the project ships a dark palette, copy
+it under `.sh-theme-dark` so the shell's theme switch appears; a project without
+one leaves the prototype with no theme control rather than an invented dark
+mode. Style every screen through those tokens and mark elements with the design
+system's component names in `data-component`; use `new:Name` only when no
+component exists.
 
 Use realistic dummy content with real-length names, plausible copy, awkward
 numbers, and only relevant edge conditions. Never use lorem ipsum. Keep out real

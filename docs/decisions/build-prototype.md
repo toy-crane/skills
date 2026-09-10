@@ -21,17 +21,30 @@
   design tokens, realistic dummy data, relevant edge states, and the pinned
   review shell.
 - Keep the canonical prototype's review shell to a screen selector, the selected
-  screen's state selector, and the viewport cycle. Keep product pixels limited to UI an end
-  user could see; review notes, rationale, and change summaries stay in the
-  conversation. Each selector option names one product destination or distinct
-  surface without current/proposed labels, variants, steps, counts, or indexes;
-  screen order is not product progress.
+  screen's state selector, the viewport cycle, and a theme toggle. The first two
+  choose what the surface shows; the last two vary how the whole surface
+  renders. Admit a further control only when it varies the whole surface that
+  same way, holds its width as the surface grows, and carries no review
+  semantics. Keep product pixels limited to UI an end user could see; review
+  notes, rationale, and change summaries stay in the conversation. Each selector
+  option names one product destination or distinct surface without
+  current/proposed labels, variants, steps, counts, or indexes; screen order is
+  not product progress.
 - Treat states as representative direct-entry presets. Supply `Default`
   automatically and add only important multi-step results, forced data or error
   conditions, and materially different screen structures. Keep obvious
   one-click-entry and transient interaction states in the prototype itself even
   when they look substantially different. Synchronize the selector both when an
   interaction enters a declared preset and when it returns to `Default`.
+- Show the theme toggle only when the prototype declares a dark token set beside
+  its light one. Without one the prototype carries no theme control, and the
+  shell's minimal palette ships no dark counterpart. Copying a project's dark
+  tokens is evidence; authoring a dark palette the project never chose is
+  invention. The toggle changes the product surface only, including its
+  placeholders; the review bar keeps its fixed dark styling so it still reads as
+  chrome. Load light rather than the reviewer's system preference, and keep the
+  selected theme across screen, state, and viewport changes without encoding it
+  in the address.
 - Keep the skill independently invokable. Use the current request and
   conversation as its primary context, read project truth directly, and read an
   existing work-unit spec only when the request or a prior handoff identifies
@@ -56,9 +69,9 @@
   flow. Scope by what the question needs, not by screen count or an obligation
   to compare every product screen. Whole-product coverage belongs in the
   prototype.
-  Preserve the existing styling, state selector, and viewport cycle. Replace
-  the product screen selector with the situation label and variant selector;
-  All shows the alternatives together. Any required product navigation stays
+  Preserve the existing styling, state selector, viewport cycle, and theme
+  toggle. Replace the product screen selector with the situation label and
+  variant selector; All shows the alternatives together. Any required product navigation stays
   inside its alternative. Keep explicit viewport widths when horizontal
   scrolling is needed, and hide the variant selector for a single alternative.
 - A local comparison request enters this bounded workflow directly, without a
@@ -92,9 +105,10 @@
 ## Boundaries
 
 - Keep the product shell's screen selector, current-screen state selector,
-  viewport cycle, contract comment, and token funnel. The comparison shell
-  selects alternatives for a situation independently of product screens. State
-  names remain contextual rather than following a fixed global taxonomy.
+  viewport cycle, theme toggle, contract comment, and token funnel. The
+  comparison shell selects alternatives for a situation independently of
+  product screens. State names remain contextual rather than following a fixed
+  global taxonomy.
 - Drive simulated narrow-view styles from the shell's viewport classes rather
   than browser media queries alone.
 - Web, mobile web, and native app mockups in a phone frame are in scope; CLI,
@@ -114,6 +128,15 @@ while the familiar shell styling and state and viewport controls remain useful.
 Limiting each comparison to the context that decision needs makes it quick to
 build and finish. Integrating only the chosen outcome keeps one authoritative
 prototype without accumulating the comparison process in its screen inventory.
+
+Theme joins the shell because it varies the whole product surface the way the
+viewport cycle does, not because the bar had room. The chrome rejected before
+it — notes, badges, change tracking, screen tabs, state pills — either carried
+review semantics or grew wider as the surface grew. Naming that criterion lets
+the next proposal be judged without reopening this one. Gating the toggle on a
+declared dark token set keeps the shell reporting what the project decided
+instead of inventing a second palette on its behalf, and a fixed light start
+keeps one address producing one rendering for every reviewer.
 
 A full surface exposes missing screens and cross-screen inconsistencies that no
 one knew to mention in prose. One portable file keeps the review cheap and the
@@ -169,6 +192,17 @@ states that evidence boundary directly.
   learn a meta-model instead of navigating screens and representative states.
 - Project-stack components or a real API — wiring cost and production behavior
   distract from alignment and break self-containment.
+- A theme toggle that is always present, backed by a shell-supplied dark palette
+  when the project has none — reviewers of a project without a design system
+  would approve a dark mode nobody chose, and it would become an implicit
+  requirement.
+- A theme toggle that is always present, with the builder deriving a dark palette
+  from the project's light one — it makes every prototype owe a dark palette and
+  invents colors the project never decided.
+- Following the reviewer's system color-scheme preference on load, or persisting
+  the choice across reloads — the same address would render differently for two
+  reviewers, breaking the shared screen, state, and viewport coordinate the
+  review depends on.
 - In-prototype notes, baseline or variant screens, review badges, stamps, and
   change tracking — they mix product and review semantics, duplicate the
   reviewing medium, and create chrome that needs explanation.
