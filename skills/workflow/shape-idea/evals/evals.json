@@ -307,7 +307,11 @@
       "id": 23,
       "prompt": "/shape-idea 결제 실패 안내 화면은 build-prototype으로 전체 화면을 승인받아 docs/specs/billing-retry/prototype.html로 저장했어. 재시도 간격과 한도는 docs/decisions/billing.md에 확정된 규칙을 그대로 따르고. 남은 제품 결정은 없으니 spec으로 마무리해줘.",
       "expected_output": "The response closes without another question and writes spec.md, naming the approved prototype and the decision contract the work depends on as linked sources so implementation loads them, while recording the product contract's own fields and restating neither linked source.",
-      "files": [],
+      "files": [
+        "evals/fixtures/billing-retry/docs/decisions/README.md",
+        "evals/fixtures/billing-retry/docs/decisions/billing.md",
+        "evals/fixtures/billing-retry/docs/specs/billing-retry/prototype.html"
+      ],
       "expectations": [
         "It links the approved docs/specs/billing-retry/prototype.html from spec.md instead of leaving it unnamed beside the spec.",
         "It links docs/decisions/billing.md as a decision contract the work depends on.",
