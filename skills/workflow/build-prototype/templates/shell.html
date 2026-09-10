@@ -32,7 +32,9 @@
                --font afterwards; replace network fonts with a system stack and
                note that substitution. Without a design system, keep this
                palette as the finished style. When the project ships dark
-               tokens, copy them under .sh-theme-dark; a .dark class or a
+               tokens, copy them under .sh-theme-dark, which the shell sets
+               on both the root element and body, so :root.sh-theme-dark and
+               body.sh-theme-dark work too. A .dark class or a
                prefers-color-scheme media query copied verbatim would follow
                the reviewer's system instead of the toggle.
   - Theme:    the light / dark switch (t) changes the product surface only.
@@ -202,11 +204,14 @@
   applyVp();
 
   const hasDark = [...document.styleSheets].some(sheet => {
-    try { return [...sheet.cssRules].some(rule => rule.selectorText === '.sh-theme-dark') }
-    catch { return false }
+    try {
+      return [...sheet.cssRules].some(rule => (rule.selectorText || '')
+        .split(',').some(part => /\.sh-theme-dark$/.test(part.trim())));
+    } catch { return false }
   });
   let dark = false;
   function applyTheme() {
+    document.documentElement.classList.toggle('sh-theme-dark', dark);
     document.body.classList.toggle('sh-theme-dark', dark);
     themeBtns.forEach(b => b.classList.toggle('on', (b.dataset.theme === 'dark') === dark));
   }
