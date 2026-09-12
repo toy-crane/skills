@@ -60,10 +60,11 @@ another skill by name but must never assume knowledge of another skill's text
 
 ## Project decisions
 
-Before changing document lifecycles, skill naming or design, the pipeline,
-shape-idea, build-prototype, explain-visually, or the writing workflow, read
-[docs/decisions/README.md](docs/decisions/README.md) and only the linked subject
-files relevant to the change. Do not duplicate their content here.
+Settled decisions that future work should reuse live in
+`docs/decisions/<subject>.md`. Before changing anything one of those subjects
+covers, read [docs/decisions/README.md](docs/decisions/README.md) and open only
+the subjects its routing lines send you to. Do not duplicate or enumerate their
+content here.
 
 ## Versioning is manual
 
