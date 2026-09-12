@@ -634,6 +634,16 @@ state keep automation reviewable without turning follow-up files into a queue.
   discovered mid-way that its spec was stale and discarded every change it had
   made. This supports an owner for cross-work-unit revision and a staleness
   check before the first source change, where the same discovery costs nothing.
+- A blind three-way routing run on 2026-09-13 separated `babysit-specs` from
+  `shape-idea` and `maintain-project-context` on 22 cases at 2 repeats, with
+  `shape-idea` loaded as a distractor. `babysit-specs` scored 10 of 10: all five
+  revise-after-ship prompts activated it, and its five negatives went to the
+  right neighbour or to none. `shape-idea` captured no revise prompt, which is
+  why its description keeps no redirect clause and stays unchanged. The one
+  failure was a pre-existing `maintain-project-context` retirement prompt that
+  activates no skill; a controlled 6-run before-and-after scored 1 of 6 both
+  with and without the redirect clause added that day, so the clause is not its
+  cause.
 - The `resolve-follow-ups` dispatcher test exercises fetched remote ordering,
   atomic claims, stale and changed bases, dirty checkout hooks, interrupted
   claim recovery, terminal evidence, exact worktree ownership, unpublished
