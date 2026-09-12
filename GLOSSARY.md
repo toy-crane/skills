@@ -6,10 +6,6 @@ Canonical language for the decisions and artifacts produced by these agent skill
 A concrete candidate put forward for the user to correct, rather than a blank question for them to answer: a stated assumption under standing veto, a recommended answer, rendered variants, a mirrored structure. The interview's every move; the user's correction is the unit of progress.
 _Avoid_: Straw man, proposal as umbrella terms
 
-**Opportunity**:
-An application direction discovered in the user's experience, access, interests, or capabilities before detailed product behavior is chosen. It connects something the user knows firsthand with a person or situation it could help and a change it might enable.
-_Avoid_: Idea, feature, solution
-
 **Experiential question**:
 A question judged by looking or trying (layout, hierarchy, interaction flow, tone) and settled by reacting to something rendered rather than argued in prose. Its complement, a propositional question, settles in prose.
 _Avoid_: Perceptual decision
