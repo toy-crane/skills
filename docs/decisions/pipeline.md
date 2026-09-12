@@ -18,7 +18,22 @@
 - `shape-idea` remains independent. It starts from a concrete problem and broad
   direction, reads app-level context when one exists, closes or defers material
   work-unit decisions, and writes the implementation-ready spec. Missing
-  app-level context neither blocks shaping nor makes `shape-idea` create it.
+  app-level context neither blocks shaping nor makes `shape-idea` create it. It
+  owns new specs only; revising an existing one against later work belongs to
+  `babysit-specs`.
+- `babysit-specs` owns cross-work-unit spec revision. It takes one or more
+  spec folders, or every folder under `docs/specs/` when none is named, takes
+  each spec's last commit as its baseline, and compares the contract with the
+  Git history since it plus the current behavior of the surfaces the spec
+  names, including its linked prototype rendered against the current surface.
+  It triages by meaning rather than by cost: a correction that preserves the
+  approved meaning is applied in place as an overridable assumption, while one
+  that would change an approved outcome, criterion, constraint, off-limits
+  area, or deferred point is settled by one question with a recommendation. It
+  rewrites `spec.md` in place with no change log, never edits product source,
+  names affected task files rather than editing them, routes prototype drift to
+  `build-prototype` or records it as a risk, and reports a fully delivered spec
+  as a retirement candidate instead of deleting it.
 - `maintain-project-context` periodically reconciles the durable context left by
   the workflow, including `PRODUCT.md`. It can reflect already-settled meaning
   and remove stale or duplicated wording without becoming a pipeline gate or a
@@ -52,6 +67,16 @@
   exist, it implements them sequentially in dependency order; otherwise it
   implements `spec.md` directly. It derives the active outcome's implementation
   approach just in time from the current repository state.
+- Before changing source for an outcome, `implement` compares the spec's
+  assumptions, settled constraints, and acceptance criteria with the current
+  code and the Git history since the spec folder's last commit; its own
+  code-plus-task checkpoints advance that baseline. A mismatch that would
+  change an approved outcome, acceptance criterion, off-limits area, or product
+  constraint stops that outcome before any source change, names the stale point
+  and its evidence, and routes it to `babysit-specs` when available or to the
+  same inline shaping decision when not. The check reads the selected spec
+  against the repository, so `implement` still never reads sibling spec
+  folders.
 - The spec-writing skills own the producer side of that loading rule. A spec
   links the approved prototype and the decision contracts its work unit depends
   on; a task adds only the references scoped to that task, the prototype screens
@@ -434,15 +459,26 @@ state keep automation reviewable without turning follow-up files into a queue.
 - Making `shape-idea` create or own app-level context — it couples a permanent
   app artifact to a work-unit shaping lifecycle and makes independent use
   ambiguous.
+- Folding spec revision into `shape-idea` as a second entry point — it reuses
+  the shaping rules without restating them, but grows a skill whose text
+  already competes with the user's task for context. The user chose the
+  separate skill on that ground.
+- Having `implement` scan sibling spec folders at its close-out — it would
+  cross the boundary that keeps `implement` on one selected folder, and the
+  scan is speculative because a sibling may be reshaped before it is built.
 - Durable `plan.md` and a plan-writing skill — implementation predictions age,
   while decision-level corrections already have homes in specs, tasks, project
   decisions, or repository instructions.
 - A separate roadmap, execution ledger, or run-state file — the spec and shallow
   task set already carry the authoritative contract and current work frontier;
   duplicating them creates another artifact that can drift.
-- A separately invoked reconciliation or convergence skill — alignment is part
-  of outcome completion and becomes optional if correctness depends on another
-  installed skill or user invocation.
+- A separately invoked reconciliation skill for alignment inside one work unit
+  — that alignment is part of outcome completion and becomes optional if
+  correctness depends on another installed skill or user invocation, so it
+  stays in `implement`. Revision across work units is different: it happens
+  between implementations rather than inside one, and `implement`'s load-time
+  staleness check keeps correctness from depending on anyone remembering to
+  invoke `babysit-specs`.
 - Session duration as the task boundary — predicted limits fragment coherent
   outcomes prematurely.
 - Separate `implement-spec` and `implement-tasks` entry points — the spec folder
@@ -591,6 +627,23 @@ state keep automation reviewable without turning follow-up files into a queue.
   new scenario with a named service and source scope passed with both the
   pre-clarification and final wording. These are instruction-behavior checks
   with supplied tool outcomes, not proof that live approval policy permits a run.
+- A user queued nine spec folders in this repository and implemented them one
+  at a time. Three of the nine were edited after they were written, always
+  inside the implementation commit that changed the code, so no interview
+  settled those edits and no skill owned them. One later implementation session
+  discovered mid-way that its spec was stale and discarded every change it had
+  made. This supports an owner for cross-work-unit revision and a staleness
+  check before the first source change, where the same discovery costs nothing.
+- A blind three-way routing run on 2026-09-13 separated `babysit-specs` from
+  `shape-idea` and `maintain-project-context` on 22 cases at 2 repeats, with
+  `shape-idea` loaded as a distractor. `babysit-specs` scored 10 of 10: all five
+  revise-after-ship prompts activated it, and its five negatives went to the
+  right neighbour or to none. `shape-idea` captured no revise prompt, which is
+  why its description keeps no redirect clause and stays unchanged. The one
+  failure was a pre-existing `maintain-project-context` retirement prompt that
+  activates no skill; a controlled 6-run before-and-after scored 1 of 6 both
+  with and without the redirect clause added that day, so the clause is not its
+  cause.
 - The `resolve-follow-ups` dispatcher test exercises fetched remote ordering,
   atomic claims, stale and changed bases, dirty checkout hooks, interrupted
   claim recovery, terminal evidence, exact worktree ownership, unpublished

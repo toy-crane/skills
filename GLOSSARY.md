@@ -31,7 +31,7 @@ A temporary `compare.html` forming a decision layer separate from the product pr
 _Avoid_: Prototype
 
 **Spec**:
-The durable product contract a shape-idea or build-prototype session writes for later implementation: user-visible outcomes, approved scope, observable acceptance criteria, settled constraints and rationale, assumptions, off-limits areas and reasons, deferred points, and remaining risks. It records behavior rather than predicted implementation. Visuals are disposable except an approved prototype, preserved beside the spec as its visual half.
+The durable product contract a shape-idea or build-prototype session writes for later implementation: user-visible outcomes, approved scope, observable acceptance criteria, settled constraints and rationale, assumptions, off-limits areas and reasons, deferred points, and remaining risks. It records behavior rather than predicted implementation. Visuals are disposable except an approved prototype, preserved beside the spec as its visual half. It is revised in place by `babysit-specs` when later work ships and leaves it stale; Git carries the previous versions.
 _Avoid_: Alignment brief, summary
 
 **Spec folder**:

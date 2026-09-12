@@ -18,6 +18,9 @@
   [app-context](app-context.md).
 - `docs/specs/<slug>/` carries one unit of work: `spec.md` as the anchor,
   `prototype.html` when a surface was approved, and `tasks/` when work was split.
+  `shape-idea` and `build-prototype` write the contract; `babysit-specs`
+  revises an active one in place when later work ships and makes it stale,
+  keeping the same slug and adding no change log because Git is the archive.
   Preserve any qualifying project decision, then delete the folder when the
   work ships.
 - `docs/publications/<slug>.md` is the permanent, current premise of one

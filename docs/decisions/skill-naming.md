@@ -31,6 +31,15 @@
   object is the selected spec folder and changes on every invocation. It names
   the complete responsibility without exposing task, agent, or orchestrator
   mechanics.
+- `babysit-specs` names keeping queued specs current as other work ships, in
+  ordinary verb-object form. The user chose it over `revise-spec` because
+  babysitting names a recurring watch rather than one rewrite, and the
+  "babysit-something" grammar is one Claude Code users have already seen.
+  Claude Code 2.1.267 carries `babysit-prs` only as
+  the placeholder example in its `/loop` skill description and input field, not
+  as a shipped command, and Codex 0.147.0 carries nothing under the name, so
+  the name collides with no built-in. The object is plural because the default
+  run takes every folder under `docs/specs/`.
 - `resolve-follow-ups` names the user-visible outcome of clearing recorded
   follow-up work. Worktrees, workers, schedules, and pull requests remain
   execution details rather than the skill name.
@@ -86,6 +95,9 @@ repository.
   users naturally ask each skill to do.
 - `write-spec` for shaping — it overstates document production and hides the
   investigation and decision work.
+- `revise-spec` or `update-spec` for keeping queued specs current — `revise`
+  reads as one deliberate rewrite rather than the recurring pass the skill
+  performs, and `update` reads as a mechanical sync that asks nothing.
 - `create-one-pager` for app context — it names the output format rather than
   the product-definition work.
 - `start-app` for app context — it implies scaffolding or implementation beyond
