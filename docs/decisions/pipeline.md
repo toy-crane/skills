@@ -364,6 +364,11 @@ not: it makes observed implementation facts update unfinished work before stale
 assumptions compound downstream, while preserving user authority over product
 outcomes and acceptance.
 
+Cross-work-unit revision triages by meaning because the cheap-and-reversible
+rule governs new choices during shaping. Applied to revising approved text it
+would raise a question on almost every touch, which removes the reason to
+invoke `babysit-specs` at all.
+
 The spec folder is the stable implementation address. It already says whether
 the work remains one coherent spec or has approved tasks, so `implement` needs
 one input contract and one deterministic branch instead of separate invocation
