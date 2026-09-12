@@ -61,6 +61,12 @@ work already satisfies, a constraint the current code contradicts, a term or
 pattern the shipped work introduced that this spec should now use, and a
 linked prototype that no longer matches the current surface.
 
+The prototype is compared as screens, not as code. The skill renders the
+linked `prototype.html` and compares its screens and states with the current
+product surface, running the product when the repository exposes it. When no
+runnable surface exists, it compares against the current code and design
+system files instead and says in the report that the comparison was weaker.
+
 ### Staleness is triaged by meaning, not by cost
 
 A point whose correction preserves what the user approved is updated in place,
@@ -209,6 +215,11 @@ work. The new skill carries no companion agents.
   the run updating the meaning-preserving points without a question, asking
   exactly one question for the meaning-changing point, writing no product
   source, and ending with that report.
+- In that fixture the stale sibling links a `prototype.html` with one screen
+  the shipped work changed. The run renders the prototype, names the drifted
+  screen and state, and either regenerates that screen through
+  `build-prototype` or, when the skill is absent, records the drift as a
+  remaining risk in the spec.
 - `implement`'s text says that before changing source for an outcome it
   compares the spec's assumptions, constraints, and acceptance criteria against
   the current repository and Git history since the spec folder's last commit, and
@@ -335,3 +346,6 @@ Agent-chosen defaults, overridable.
   the run.
 - A spec that was never committed has no baseline, so the comparison falls back
   to the current state alone and may miss a change.
+- Prototype comparison needs a visible current surface. In a repository with
+  no runnable product, the comparison rests on code and design system files
+  and can miss drift that only a rendered screen shows.
