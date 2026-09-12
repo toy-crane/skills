@@ -446,6 +446,13 @@ state keep automation reviewable without turning follow-up files into a queue.
 - Codex provides native per-subagent worktree roots with equivalent fresh-base,
   ownership, and cleanup guarantees, making the external worker adapter
   unnecessary.
+- Users repeatedly forget to invoke `babysit-specs` and `implement`'s load-time
+  check keeps catching stale specs only at the next implementation, justifying
+  a closing mention of remaining spec folders despite `implement`'s
+  sibling-unaware boundary.
+- `implement`'s load-time staleness check repeatedly stops an outcome on Git
+  history that does not touch the spec's meaning, justifying a narrower scope
+  for it.
 
 ## Still-rejected alternatives
 
