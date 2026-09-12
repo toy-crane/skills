@@ -59,20 +59,22 @@
 
 <script>
   const buttons = document.querySelectorAll('.bar button');
+  const events = document.getElementById('events');
+  const populated = events.innerHTML;
+  const emptyState = '<p class="empty">Nothing happened since your last digest.</p>';
   function show(id) {
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
-    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.screen === id)));
+    buttons.forEach((b) => {
+      if (b.dataset.screen) b.setAttribute('aria-pressed', String(b.dataset.screen === id));
+    });
   }
   buttons.forEach((b) => {
     b.addEventListener('click', () => {
       if (b.dataset.screen) return show(b.dataset.screen);
       const on = b.getAttribute('aria-pressed') !== 'true';
       b.setAttribute('aria-pressed', String(on));
-      document.getElementById('events').innerHTML = on
-        ? '<p class="empty">Nothing happened since your last digest.</p>'
-        : '<div class="event"><div>Rin mentioned you in "Launch checklist"</div><div class="target">Mentions</div></div>';
+      events.innerHTML = on ? emptyState : populated;
       show('digest');
-      b.setAttribute('aria-pressed', String(on));
     });
   });
 </script>

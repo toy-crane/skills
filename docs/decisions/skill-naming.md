@@ -31,10 +31,11 @@
   object is the selected spec folder and changes on every invocation. It names
   the complete responsibility without exposing task, agent, or orchestrator
   mechanics.
-- `babysit-specs` names keeping queued specs current as other work ships. It
-  is a deliberate exception to verb-object grammar: the user chose the name
-  over `revise-spec`, and the "babysit-something" grammar is one Claude Code
-  users have already seen. Claude Code 2.1.267 carries `babysit-prs` only as
+- `babysit-specs` names keeping queued specs current as other work ships, in
+  ordinary verb-object form. The user chose it over `revise-spec` because
+  babysitting names a recurring watch rather than one rewrite, and the
+  "babysit-something" grammar is one Claude Code users have already seen.
+  Claude Code 2.1.267 carries `babysit-prs` only as
   the placeholder example in its `/loop` skill description and input field, not
   as a shipped command, and Codex 0.147.0 carries nothing under the name, so
   the name collides with no built-in. The object is plural because the default

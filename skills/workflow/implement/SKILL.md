@@ -49,8 +49,10 @@ baseline, so each check covers only what happened since the previous outcome.
 A mismatch that would change an approved outcome, acceptance criterion,
 off-limits area, or other product constraint stops that outcome before any
 source change: name the stale point and its evidence, then route it to
-`babysit-specs` when that skill is available, or present the exact decision for
-the user to settle through shaping when it is not. A stale spec caught here
+`babysit-specs` for this spec folder alone when that skill is available, or
+present the exact decision for the user to settle through shaping when it is
+not. Naming the folder keeps the revision on the selected work unit; you still
+never read a sibling spec folder. A stale spec caught here
 costs nothing, while the same discovery made mid-implementation discards work
 already done.
 
