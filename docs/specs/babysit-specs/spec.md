@@ -46,8 +46,9 @@
 
 `babysit-specs` takes one or more `docs/specs/<slug>/` folders. With none
 named, it takes every folder present under `docs/specs/`. For each spec it
-reads `spec.md`, the active task files, and the prototype and decision
-contracts the spec links.
+reads `spec.md`, the active task files, the prototype and decision contracts
+the spec links, and `GLOSSARY.md` when it exists, since that is where a term
+the shipped work renamed now lives.
 
 The baseline for "what changed" is the spec's last commit, including a
 previous `babysit-specs` revision. The skill establishes what changed since
@@ -82,7 +83,7 @@ about new choices. Applied to revision it would ask on almost every touch of
 approved text and defeat the purpose of the skill, so the triage axis here is
 whether the meaning survives, not whether the edit is cheap.
 
-### Writes stay inside the spec folder
+### Writes stay inside the spec folder and project knowledge
 
 The skill rewrites `spec.md` in place under the same slug. It adds no change
 log section or revision file; Git holds the history. It never edits product
@@ -121,7 +122,9 @@ It refers to no other skill's text.
 
 Before changing source for an outcome, `implement` compares the spec's
 assumptions, settled constraints, and acceptance criteria against the current
-repository state and the Git history since the spec's last revision. A
+repository state and the Git history since the spec folder's last commit. That
+baseline advances with `implement`'s own code-plus-task checkpoints, so each
+check covers only what happened since the previous outcome. A
 mismatch that would change an approved outcome, acceptance criterion,
 off-limits area, or product constraint stops the outcome before any source
 change, names the stale point, and routes it to `babysit-specs` when that
@@ -208,7 +211,7 @@ work. The new skill carries no companion agents.
   source, and ending with that report.
 - `implement`'s text says that before changing source for an outcome it
   compares the spec's assumptions, constraints, and acceptance criteria against
-  the current repository and Git history since the spec's last revision, and
+  the current repository and Git history since the spec folder's last commit, and
   that a meaning-changing mismatch stops before source changes, names the
   point, and routes to `babysit-specs` with the inline shaping fallback. Its
   mid-implementation preserve-and-block text is unchanged.
@@ -278,8 +281,8 @@ Agent-chosen defaults, overridable.
 - Section order and length of the new skill text, and its Codex UI metadata
   wording, are implementation's call as long as the obligations above are
   present.
-- The `implement` check reads the Git range since the spec's last revision;
-  how it summarizes that range is implementation's call.
+- The `implement` check reads the Git range since the spec folder's last
+  commit; how it summarizes that range is implementation's call.
 
 ## Off-limits
 
@@ -303,6 +306,15 @@ Agent-chosen defaults, overridable.
   `implement` stays unaware of siblings and the load-time check is the safety
   net. Reopen if users repeatedly forget to run `babysit-specs` and the check
   keeps catching stale specs only at the next implementation.
+- Whether `shape-idea`'s description gains a one-clause redirect sending
+  "revise this spec against what shipped" prompts to `babysit-specs`. Its
+  description already claims "clarify behavior or scope" and "align before
+  implementation", and the recorded routing evidence says the closing redirect
+  sentence is what decides routing. `shape-idea` is off-limits in this work, so
+  implementation cannot add the clause on its own. Interim behavior: no
+  clause; `babysit-specs` carries the redirects on its side only. Reopen if
+  the trigger eval shows `shape-idea` capturing revise prompts, in which case
+  the user lifts the off-limits for that one clause.
 
 ## Remaining risks
 
@@ -313,7 +325,8 @@ Agent-chosen defaults, overridable.
 - Routing between three neighboring skills is unreliable when the user does
   not invoke by name; the recorded routing suite activated only 25 of 56
   positive prompts implicitly. Direct invocation is the reliable route, and
-  the trigger eval measures the rest.
+  the trigger eval measures the rest. If `shape-idea` captures revise prompts,
+  the fix sits behind the deferred point above rather than in this work.
 - The `implement` check reads Git history on every outcome. In a busy
   repository it may stop on changes that do not touch the spec's meaning.
   Reconsider the check's scope if it repeatedly stops on non-issues.
