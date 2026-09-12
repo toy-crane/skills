@@ -248,6 +248,12 @@ new session or a closing-message handoff is not required for correctness.
   state, and only risk-justified intermediate review checkpoints, each one
   bounded review pass.
   Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
+- **[babysit-specs](./skills/workflow/babysit-specs/SKILL.md)**: Bring queued spec
+  folders back in line with what shipped since their last commit. Fix the
+  staleness that preserves the approved meaning as an overridable assumption,
+  ask one question about each point that would change it, and hand affected
+  tasks, drifted prototypes, and retirement candidates to their owners without
+  editing product source.
 - **[implement](./skills/workflow/implement/SKILL.md)**: Implement an approved spec
   folder one outcome at a time. Reload repository evidence before each outcome,
   reconcile verified behavior with the product contract and active unfinished
