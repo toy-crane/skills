@@ -165,8 +165,13 @@ this unit's required list; see "Deferred".
 - **Codex's summary comment format is undocumented.** The gate parses a table
   Codex may change. A format change turns the gate red everywhere, not green,
   so the failure is visible rather than silent.
-- **Codex can miss a review request** (service outage, quota). The gate stays
-  red until the owner re-requests or disables the ruleset.
+- **Codex can miss a review request** (service outage, quota, or a missing
+  Codex cloud environment). Observed on PR #107, opened twenty minutes after
+  #106 was reviewed: no review, no summary comment, only a bot comment reading
+  "To use Codex here, create an environment for this repo". The gate treats
+  that as unreviewed and stays red until the owner restores the environment
+  and re-requests, or disables the ruleset. The gate must never read such a
+  comment as completion.
 - **"Codex ignores bot comments"** comes from community write-ups, not OpenAI
   documentation. If wrong, the gate could request reviews itself, removing the
   first risk.
