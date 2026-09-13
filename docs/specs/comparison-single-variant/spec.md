@@ -49,8 +49,8 @@ identical and the reviewer has to hunt for the difference across them.
 - The variant selector offers exactly the alternative titles, with no option
   that shows more than one alternative, and programmatic switching to a
   nonexistent alternative falls back to the first alternative.
-- Switching alternatives with the selector or the shortcut preserves the
-  selected state preset, the viewport preset, and the selected theme.
+- Switching alternatives with the selector preserves the selected state
+  preset, the viewport preset, and the selected theme.
 - After scrolling one alternative, switching shows the next alternative at the
   same scroll offset: the phone frame's internal offset at the 390 preset and
   the page offset at the full and 768 presets. An offset beyond the next
@@ -60,8 +60,8 @@ identical and the reviewer has to hunt for the difference across them.
   scrolls horizontally at the 390 or 768 presets when the pane is at least
   that wide.
 - A single-alternative comparison hides the variant selector.
-- Every shell shortcut still works: the existing viewport and theme keys, plus
-  the new alternative-switching key.
+- The existing viewport and theme shortcuts still work, and no key is bound
+  to alternative switching.
 - The skill's guidance and its automated checks no longer describe or expect
   a combined view, and the existing comparison checks still pass their other
   assertions.
@@ -80,12 +80,12 @@ identical and the reviewer has to hunt for the difference across them.
 - Per-alternative navigation, state semantics, and layer separation from the
   product prototype are unchanged; this work touches only how alternatives
   are presented.
+- No dedicated switching shortcut. The user chose to keep switching on the
+  selector alone; reviewers reach it themselves, and the shell adds no key to
+  learn.
 
 ## Assumptions
 
-- Switching shortcut: `v` cycles to the next alternative, mirroring `m` for
-  viewport and `t` for theme, and `1`, `2`, `3` select an alternative directly.
-  Cheap to change if the user prefers other keys.
 - The first alternative in document order is the one shown on open, which
   keeps the author's ordering meaningful.
 - The alternative's title still appears in the selector but not as a label

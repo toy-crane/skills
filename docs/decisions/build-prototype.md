@@ -72,8 +72,8 @@
   Preserve the existing styling, state selector, viewport cycle, and theme
   toggle. Replace the product screen selector with the situation label and
   variant selector. Show exactly one alternative at a time, starting with the
-  first, and switch between them in place with the selector and a shortcut
-  while the selected state, viewport, and theme carry over, so the reviewer
+  first, and switch between them in place with the selector while the
+  selected state, viewport, and theme carry over, so the reviewer
   sees only the governing difference at the same coordinate. There is no
   combined view. Any required product navigation stays inside its alternative.
   Keep explicit viewport widths when horizontal scrolling is needed, and hide
