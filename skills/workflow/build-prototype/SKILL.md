@@ -121,8 +121,11 @@ not once per product screen, and keep unrelated product work in the prototype.
 Preserve the template's styling and contract comment, which owns the comparison
 controls and keeps product navigation inside its alternative. Hold content,
 data, surrounding layout, behavior, and confirmed elements fixed except for the
-governing choice. Render and verify only the interactions, states, and sizes
-needed to judge it, then share the runnable comparison and ask for the choice.
+governing choice. The reviewer sees one alternative at a time and switches
+between them, so verify each alternative at the same state and viewport
+coordinate rather than only the one the comparison opens on. Render and verify
+only the interactions, states, and sizes needed to judge it, then share the
+runnable comparison and ask for the choice.
 
 Once the user chooses, apply that result to the affected product UI and flow in
 the same `prototype.html` and verify the affected behavior there. Delete the

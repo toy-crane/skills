@@ -71,9 +71,13 @@
   prototype.
   Preserve the existing styling, state selector, viewport cycle, and theme
   toggle. Replace the product screen selector with the situation label and
-  variant selector; All shows the alternatives together. Any required product navigation stays
-  inside its alternative. Keep explicit viewport widths when horizontal
-  scrolling is needed, and hide the variant selector for a single alternative.
+  variant selector. Show exactly one alternative at a time, starting with the
+  first, and switch between them in place with the selector while the
+  selected state, viewport, and theme carry over, so the reviewer
+  sees only the governing difference at the same coordinate. There is no
+  combined view. Any required product navigation stays inside its alternative.
+  Keep explicit viewport widths when horizontal scrolling is needed, and hide
+  the variant selector for a single alternative.
 - A local comparison request enters this bounded workflow directly, without a
   whole-product inventory or review. Once the user chooses, integrate the result
   into the affected product UI and flow in the existing prototype, verify it
@@ -126,7 +130,12 @@ Product navigation and decision alternatives serve different roles. Keeping
 those layers separate lets a comparison follow the user's actual question,
 while the familiar shell styling and state and viewport controls remain useful.
 Limiting each comparison to the context that decision needs makes it quick to
-build and finish. Integrating only the chosen outcome keeps one authoritative
+build and finish. Because a comparison holds everything fixed except the
+governing choice, the alternatives are near-identical, and switching them in
+place at one coordinate shows that difference directly; placing them side by
+side asked the reviewer to hunt for it across copies squeezed below product
+width, and in the narrow preview panes where reviews actually happen it
+degenerated into horizontal scrolling. Integrating only the chosen outcome keeps one authoritative
 prototype without accumulating the comparison process in its screen inventory.
 
 Theme joins the shell because it varies the whole product surface the way the
@@ -165,6 +174,9 @@ states that evidence boundary directly.
 - A closed rendering surface can no longer run the self-contained shell.
 - Real production wiring becomes necessary to settle an interaction that dummy
   state cannot represent.
+- Reviewers of a multi-view flow comparison repeatedly report that switching
+  alternatives in place hides a structural difference they needed to see at
+  once; a wide-pane-only combined view would be the first candidate.
 - Individually installed skills gain a reliable dependency mechanism that can
   share project-knowledge rules without making this skill unavailable alone.
 
@@ -203,6 +215,11 @@ states that evidence boundary directly.
   the choice across reloads — the same address would render differently for two
   reviewers, breaking the shared screen, state, and viewport coordinate the
   review depends on.
+- A combined "All" view showing every alternative side by side, whether as the
+  default or as an opt-in — it needed a width no review pane provides, showed
+  alternatives below their real viewport width, and duplicated what in-place
+  switching already shows; stacking them vertically was rejected with it
+  because it only trades horizontal scrolling for vertical.
 - In-prototype notes, baseline or variant screens, review badges, stamps, and
   change tracking — they mix product and review semantics, duplicate the
   reviewing medium, and create chrome that needs explanation.
