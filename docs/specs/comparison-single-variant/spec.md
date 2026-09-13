@@ -19,8 +19,10 @@ identical and the reviewer has to hunt for the difference across them.
 - Opening a comparison shows the first alternative alone, at its full
   viewport width, with no other alternative visible.
 - The reviewer switches alternatives in place; the selected state, viewport,
-  and theme stay the same across the switch, so the same coordinate is shown
-  with only the governing difference changed.
+  theme, and scroll position stay the same across the switch, so the same
+  coordinate is shown with only the governing difference changed. At the
+  phone preset that is the frame's internal scroll offset; at the other
+  presets it is the page scroll offset.
 - The variant selector lists only the alternatives by their titles. No
   combined option exists anywhere in the shell.
 - A comparison with a single alternative shows no variant selector, as today.
@@ -31,11 +33,14 @@ identical and the reviewer has to hunt for the difference across them.
 
 ## Approved scope
 
-- The comparison template shipped with `build-prototype`.
-- The `build-prototype` skill text where it describes the comparison controls.
-- Skill evaluation fixtures and expectations that assert or exercise the
-  combined view, so they match the new behavior.
-- The plugin version bump that lets installed plugin users receive the change.
+- How a comparison built by `build-prototype` presents its alternatives:
+  the default view, the variant selector's options, and switching behavior.
+- The guidance the skill gives about comparison controls, so a fresh session
+  builds comparisons with the new behavior.
+- The skill's own automated checks, so none still expects or exercises a
+  combined view.
+- Users of the installed plugin and copy-in skill receive the change through
+  their normal update path.
 
 ## Acceptance criteria
 
@@ -46,6 +51,10 @@ identical and the reviewer has to hunt for the difference across them.
   nonexistent alternative falls back to the first alternative.
 - Switching alternatives with the selector or the shortcut preserves the
   selected state preset, the viewport preset, and the selected theme.
+- After scrolling one alternative, switching shows the next alternative at the
+  same scroll offset: the phone frame's internal offset at the 390 preset and
+  the page offset at the full and 768 presets. An offset beyond the next
+  alternative's height lands at its end.
 - At each viewport preset the visible alternative has the same width the
   product prototype shell gives a single screen at that preset; nothing
   scrolls horizontally at the 390 or 768 presets when the pane is at least
@@ -53,16 +62,18 @@ identical and the reviewer has to hunt for the difference across them.
 - A single-alternative comparison hides the variant selector.
 - Every shell shortcut still works: the existing viewport and theme keys, plus
   the new alternative-switching key.
-- The skill text, template contract comment, and evals no longer describe or
-  expect a combined view, and the existing comparison evals still pass their
-  other assertions.
+- The skill's guidance and its automated checks no longer describe or expect
+  a combined view, and the existing comparison checks still pass their other
+  assertions.
 
 ## Settled constraints and rationale
 
 - One alternative at a time, switched in place. Alternatives differ only on
   the governing choice, so showing them at the same coordinate is the fastest
   way to see that difference; a combined view has no width to live in and
-  adds nothing switching does not.
+  adds nothing switching does not. Scroll offset is part of that coordinate:
+  without carrying it over, a long alternative would reopen at its top and
+  the reviewer would lose the spot they were comparing.
 - No combined view remains as an opt-in and no vertical stacking replaces it.
   The user chose removal over retention because the combined view has not
   been used; stacking only trades horizontal for vertical scrolling.
@@ -101,6 +112,8 @@ identical and the reviewer has to hunt for the difference across them.
   structure loses the ability to glance at both structures at once. The
   reviewer switches instead. If this proves costly in practice, the decision
   contract names it as the condition to reconsider a combined view.
-- Existing eval fixtures that embed the combined view are updated by hand;
-  an assertion that silently depended on it could pass for the wrong reason.
-  Rerunning the comparison evals after the change is the guard.
+- Existing automated checks that embed the combined view are updated by
+  hand; an assertion that silently depended on it could pass for the wrong
+  reason. Rerunning the comparison checks after the change is the guard.
+- Alternatives of different heights cannot share every offset; landing at the
+  end of a shorter alternative is the accepted degradation.
