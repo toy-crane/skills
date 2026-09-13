@@ -37,8 +37,11 @@ Two pieces of work:
    whenever Codex creates or edits its comments, so the check turns green on
    its own once Codex finishes. It never checks out or executes pull request
    code and needs no secrets beyond the workflow token.
-2. **A ruleset on `main`** carrying the required items listed below, enabled
-   only after the gate workflow exists on `main`.
+2. **A manifest validation check.** A GitHub Actions job that runs
+   `claude plugin validate . --strict` and fails the pull request when the
+   plugin manifest is broken.
+3. **A ruleset on `main`** carrying the required items listed below, enabled
+   only after both workflows exist on `main`.
 
 ## Required items for the `main` ruleset
 
@@ -47,7 +50,7 @@ These are the items to add, in the order they matter:
 | Item | Setting | Why |
 | --- | --- | --- |
 | Require a pull request before merging | on; required approvals **0** | The gate is a pull request check, so direct pushes must be impossible. Codex never approves, and the repository has one maintainer, so any approval count above zero blocks every merge. |
-| Require status checks to pass | on; required check: the Codex gate check | This is the gate itself. Leave "require branches to be up to date" **off**: Codex reviews the head commit, not the merge result, and the setting would force a re-push and a fresh Codex round on every base change. |
+| Require status checks to pass | on; two required checks: the Codex gate check and the manifest validation check | The Codex gate is this unit's point. The manifest check is independent: `AGENTS.md` already demands `claude plugin validate . --strict` after any manifest change and nothing enforces it (verified runnable headless, see "Evidence checked"). Leave "require branches to be up to date" **off**: Codex reviews the head commit, not the merge result, and the setting would force a re-push and a fresh Codex round on every base change. |
 | Require conversation resolution before merging | on | Codex posts findings as review threads. This makes every one of them block merge until a human resolves it, without the gate having to parse severities. |
 | Block force pushes | on | Protects the reviewed history and the gate workflow file itself. |
 | Restrict deletions | on | Same. |
@@ -57,9 +60,9 @@ Deliberately not required: an approval count of one or more, code owner
 review, signed commits, linear history, and deployment environments. See
 "Off-limits".
 
-A second required check, `claude plugin validate . --strict`, is a candidate
-because `AGENTS.md` already demands it after any manifest change. It is not in
-this unit's required list; see "Deferred".
+The manifest check is a second, independent required check: it catches a broken
+`plugin.json` before it reaches `main`, where both distribution channels read
+it. It does not overlap the Codex gate and does not depend on it.
 
 ## Acceptance criteria
 
@@ -75,11 +78,14 @@ this unit's required list; see "Deferred".
    thread is resolved and the gate is green.
 4. A summary comment or review posted by any account other than the Codex
    GitHub app (`chatgpt-codex-connector[bot]`) does not turn the gate green.
-5. A push directly to `main`, a force-push to `main`, and a deletion of `main`
+5. A pull request that adds a `skills` entry in `plugin.json` pointing at a
+   path that does not exist fails the manifest check and cannot merge. The
+   same pull request with the path corrected passes it.
+6. A push directly to `main`, a force-push to `main`, and a deletion of `main`
    are all rejected by GitHub.
-6. A pull request with the gate green, no unresolved threads, and zero
+7. A pull request with both checks green, no unresolved threads, and zero
    approvals can be merged by the owner.
-7. A draft pull request is not gated; Codex does not review drafts and drafts
+8. A draft pull request is not gated; Codex does not review drafts and drafts
    cannot merge anyway.
 
 ## Settled constraints and rationale
@@ -144,14 +150,12 @@ this unit's required list; see "Deferred".
 
 ## Deferred
 
-- **A manifest check as a second required check.** Running
-  `claude plugin validate . --strict` in CI needs the Claude Code CLI installed
-  headless; whether validation runs without sign-in is unverified. Decide after
-  the Codex gate lands. Interim behavior: the validate command stays a manual
-  step per `AGENTS.md`.
-- **Symlink and README consistency check.** `AGENTS.md` requires each published
-  skill to be in `plugin.json`, symlinked twice, and linked from the README.
-  No script exists; out of this unit.
+- **Symlink, README, and manifest-omission consistency check.** `AGENTS.md`
+  requires each published skill to be in `plugin.json`, symlinked twice, and
+  linked from the README. `claude plugin validate` catches none of these:
+  verified that removing `shape-idea` from the manifest's `skills` array still
+  passes. No script exists; out of this unit. Interim behavior: those three
+  obligations stay manual per `AGENTS.md`.
 - **Gate behavior for pull requests from forks.** Workflow tokens are read-only
   there. No forks contribute today. Interim: unspecified.
 
@@ -191,3 +195,8 @@ this unit's required list; see "Deferred".
   commits in the pull request.
 - `JoeyTeng/codex-review-gate-action` v2 and `mikelward/codex-review`: both
   exist because Codex publishes no check; both poll the same signals.
+- `claude plugin validate . --strict`, Claude Code 2.1.270, run in a scratch
+  copy of this repository with no API key and no sign-in: exits 0 on the
+  current manifest and exits 1 naming the offending entry when a `skills` path
+  does not exist. It passes when an existing skill is simply absent from the
+  `skills` array, so it enforces manifest validity, not manifest completeness.
