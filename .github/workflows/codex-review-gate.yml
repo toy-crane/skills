@@ -1,0 +1,202 @@
+# Codex publishes no check run of its own: a clean review is only a reaction on
+# the pull request body, and its findings are review threads. This workflow reads
+# the review summary comment Codex edits in place and republishes it as the
+# `codex-review-gate` check run on the pull request's current head commit, so a
+# ruleset can require it. The check run is the required signal; the `evaluate`
+# job beside it only reports whether this workflow itself ran.
+#
+# The job never checks out or runs pull request code, and takes no secret beyond
+# the workflow token. Comment text reaches the shell only inside the script's own
+# API responses, never through a workflow expression.
+name: Codex review gate
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  checks: write
+  contents: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: codex-review-gate-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  evaluate:
+    # Drafts are not gated, and only Codex's own comments are worth a re-read.
+    if: >-
+      (github.event_name == 'pull_request' && !github.event.pull_request.draft)
+      || (github.event_name == 'issue_comment'
+          && github.event.issue.pull_request
+          && github.event.comment.user.login == 'chatgpt-codex-connector[bot]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Publish the Codex review gate check run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          import sys
+
+          CHECK_NAME = "codex-review-gate"
+          CODEX_APP = "chatgpt-codex-connector[bot]"
+          SUMMARY_MARKER = "<!-- codex-pull-request-review-summary -->"
+          REVIEW_HINT = (
+              "Comment `@codex review` from a personal account; Codex ignores requests "
+              "from bots. If Codex answers that this repository needs an environment, "
+              "create one at https://chatgpt.com/codex/cloud/settings/environments first."
+          )
+
+
+          def gh(args, body=None):
+              proc = subprocess.run(
+                  ["gh", "api", "-H", "Accept: application/vnd.github+json"] + args,
+                  input=body,
+                  capture_output=True,
+                  text=True,
+              )
+              if proc.returncode != 0:
+                  sys.stderr.write(proc.stderr)
+                  raise SystemExit("gh api " + " ".join(args) + " failed")
+              return json.loads(proc.stdout) if proc.stdout.strip() else None
+
+
+          def gh_paged(path):
+              items = []
+              page = 1
+              while True:
+                  sep = "&" if "?" in path else "?"
+                  batch = gh([path + sep + "per_page=100&page=" + str(page)])
+                  items.extend(batch)
+                  if len(batch) < 100:
+                      return items
+                  page += 1
+
+
+          def codex_summary_body(comments):
+              """The Codex review summary comment, which Codex edits in place, or None."""
+              body = None
+              for comment in comments:
+                  user = comment.get("user") or {}
+                  if user.get("login") != CODEX_APP or user.get("type") != "Bot":
+                      continue
+                  text = comment.get("body") or ""
+                  if SUMMARY_MARKER in text:
+                      body = text
+              return body
+
+
+          def completed_code_review_commits(body):
+              """Commits whose code review the summary table reports as completed."""
+              commits = []
+              for line in body.splitlines():
+                  line = line.strip()
+                  if not line.startswith("|"):
+                      continue
+                  cells = [cell.strip() for cell in line.strip("|").split("|")]
+                  if len(cells) < 3:
+                      continue
+                  label, status, commit = cells[0], cells[1], cells[2]
+                  if "code review" not in label.lower():
+                      continue
+                  if "completed" not in status.lower():
+                      continue
+                  found = re.search(r"`([0-9a-f]{7,40})`", commit)
+                  if found:
+                      commits.append(found.group(1))
+              return commits
+
+
+          def decide(head_sha, comments):
+              """Return (conclusion, title, summary) for the gate check on head_sha."""
+              short = head_sha[:7]
+              body = codex_summary_body(comments)
+              if body is None:
+                  return (
+                      "failure",
+                      "No Codex review of " + short,
+                      "Codex has not reported a review on this pull request.\n\n" + REVIEW_HINT,
+                  )
+              commits = completed_code_review_commits(body)
+              if any(head_sha.startswith(commit) for commit in commits):
+                  return (
+                      "success",
+                      "Codex reviewed " + short,
+                      "Codex reports a completed code review of the head commit `"
+                      + short
+                      + "`.\n\nIts findings, if any, are review threads on this pull "
+                      "request and block the merge until they are resolved.",
+                  )
+              if commits:
+                  reviewed = ", ".join("`" + commit + "`" for commit in sorted(set(commits)))
+                  return (
+                      "failure",
+                      "No Codex review of " + short,
+                      "Codex reviewed "
+                      + reviewed
+                      + ", but the head commit is `"
+                      + short
+                      + "`. Codex does not re-review a pull request when new commits "
+                      "are pushed.\n\n" + REVIEW_HINT,
+                  )
+              return (
+                  "failure",
+                  "No Codex review of " + short,
+                  "Codex's review summary reports no completed code review.\n\n" + REVIEW_HINT,
+              )
+
+
+          def publish(repo, head_sha, conclusion, title, summary):
+              output = {"title": title, "summary": summary}
+              runs = gh(["repos/" + repo + "/commits/" + head_sha + "/check-runs?check_name=" + CHECK_NAME])
+              mine = [run for run in runs["check_runs"] if run["name"] == CHECK_NAME]
+              if mine:
+                  target = max(mine, key=lambda run: run["id"])
+                  gh(
+                      ["-X", "PATCH", "repos/" + repo + "/check-runs/" + str(target["id"]), "--input", "-"],
+                      body=json.dumps({"status": "completed", "conclusion": conclusion, "output": output}),
+                  )
+              else:
+                  gh(
+                      ["-X", "POST", "repos/" + repo + "/check-runs", "--input", "-"],
+                      body=json.dumps(
+                          {
+                              "name": CHECK_NAME,
+                              "head_sha": head_sha,
+                              "status": "completed",
+                              "conclusion": conclusion,
+                              "output": output,
+                          }
+                      ),
+                  )
+
+
+          def main():
+              repo = os.environ["GH_REPO"]
+              number = os.environ["PR_NUMBER"]
+              pull = gh(["repos/" + repo + "/pulls/" + number])
+              if pull.get("draft"):
+                  print("Pull request #" + number + " is a draft; the gate does not apply.")
+                  return
+              head_sha = pull["head"]["sha"]
+              comments = gh_paged("repos/" + repo + "/issues/" + number + "/comments")
+              conclusion, title, summary = decide(head_sha, comments)
+              publish(repo, head_sha, conclusion, title, summary)
+              print(CHECK_NAME + ": " + conclusion + " - " + title)
+
+
+          if __name__ == "__main__":
+              main()
+          PY

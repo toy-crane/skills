@@ -71,6 +71,20 @@ content here.
 Bump `.claude-plugin/plugin.json`'s `version` when installed plugin users should
 see an update. No changeset or CI automation.
 
+## Merging into `main`
+
+`.github/workflows/` holds the two checks a pull request must pass.
+`plugin-manifest` runs the same `claude plugin validate . --strict` this file
+already asks for, so a broken manifest cannot reach `main`.
+`codex-review-gate` republishes Codex's review summary as a check run on the
+pull request's current head commit, because Codex itself publishes no check.
+
+Codex reviews a pull request when it opens and when a draft is marked ready,
+not when commits are pushed, so every push after that needs a fresh
+`@codex review` comment from a person; Codex ignores requests from bots.
+Its findings arrive as review threads, and each one blocks the merge until it
+is resolved.
+
 ## Going live
 
 Both channels read the `main` branch on GitHub, so changes are installable

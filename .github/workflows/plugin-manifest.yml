@@ -1,0 +1,31 @@
+# AGENTS.md requires `claude plugin validate . --strict` after any change to a
+# manifest under .claude-plugin/, and nothing enforced it. Both distribution
+# channels read those manifests from main, so a broken one ships.
+#
+# The CLI is installed unpinned so the check validates against the same rules a
+# contributor gets locally. It runs without sign-in, an API key, or network
+# access to a model.
+name: Plugin manifest
+
+on: pull_request
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plugin-manifest-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: plugin-manifest
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install the Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Validate the plugin and marketplace manifests
+        run: claude plugin validate . --strict
