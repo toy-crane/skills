@@ -2,40 +2,49 @@
 # the pull request body, and its findings are review threads. This workflow reads
 # the review summary comment Codex edits in place and republishes it as the
 # `codex-review-gate` check run on the pull request's current head commit, so a
-# ruleset can require it. The check run is the required signal; the `evaluate`
-# job beside it only reports whether this workflow itself ran.
+# ruleset can require it.
+#
+# The trigger is `pull_request_target`, not `pull_request`, so the gate always
+# runs the copy of this file on the base branch. Under `pull_request` a pull
+# request could edit this workflow and publish its own green check, which is the
+# one thing the gate exists to prevent. `issue_comment` already runs from the
+# base branch. The trade-off is that neither trigger fires until the file is on
+# the default branch.
 #
 # The job never checks out or runs pull request code, and takes no secret beyond
-# the workflow token. Comment text reaches the shell only inside the script's own
-# API responses, never through a workflow expression.
+# the workflow token, so the write-capable token `pull_request_target` grants is
+# never exposed to anything the pull request controls. Comment text reaches the
+# shell only inside the script's own API responses, never through a workflow
+# expression.
 name: Codex review gate
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, reopened, synchronize, ready_for_review]
   issue_comment:
     types: [created, edited]
 
 permissions:
   checks: write
-  contents: read
   issues: read
   pull-requests: read
-
-concurrency:
-  group: codex-review-gate-${{ github.event.pull_request.number || github.event.issue.number }}
-  cancel-in-progress: true
 
 jobs:
   evaluate:
     # Drafts are not gated, and only Codex's own comments are worth a re-read.
     if: >-
-      (github.event_name == 'pull_request' && !github.event.pull_request.draft)
+      (github.event_name == 'pull_request_target' && !github.event.pull_request.draft)
       || (github.event_name == 'issue_comment'
           && github.event.issue.pull_request
           && github.event.comment.user.login == 'chatgpt-codex-connector[bot]')
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # Held at the job, not the workflow: a run whose job the `if` skips would
+    # otherwise join the group and cancel a live evaluation, leaving the head
+    # commit with no check at all instead of the actionable red below.
+    concurrency:
+      group: codex-review-gate-${{ github.event.pull_request.number || github.event.issue.number }}
+      cancel-in-progress: true
     steps:
       - name: Publish the Codex review gate check run
         env:
@@ -53,6 +62,19 @@ jobs:
           CHECK_NAME = "codex-review-gate"
           CODEX_APP = "chatgpt-codex-connector[bot]"
           SUMMARY_MARKER = "<!-- codex-pull-request-review-summary -->"
+          # A status cell has to say the review finished, and say nothing that walks it
+          # back: "Not completed" and "could not be completed" both contain "completed".
+          STATUS_DISQUALIFIERS = (
+              "not ",
+              "in progress",
+              "pending",
+              "queued",
+              "fail",
+              "cancel",
+              "error",
+              "skip",
+              "timed out",
+          )
           REVIEW_HINT = (
               "Comment `@codex review` from a personal account; Codex ignores requests "
               "from bots. If Codex answers that this repository needs an environment, "
@@ -98,6 +120,11 @@ jobs:
               return body
 
 
+          def plain(cell):
+              """Cell text with HTML tags, emphasis and code marks removed."""
+              return re.sub(r"[*`]", "", re.sub(r"<[^>]*>", " ", cell)).strip().lower()
+
+
           def completed_code_review_commits(body):
               """Commits whose code review the summary table reports as completed."""
               commits = []
@@ -108,12 +135,14 @@ jobs:
                   cells = [cell.strip() for cell in line.strip("|").split("|")]
                   if len(cells) < 3:
                       continue
-                  label, status, commit = cells[0], cells[1], cells[2]
-                  if "code review" not in label.lower():
+                  label, status = plain(cells[0]), plain(cells[1])
+                  if "code review" not in label or "security" in label:
                       continue
-                  if "completed" not in status.lower():
+                  if "completed" not in status:
                       continue
-                  found = re.search(r"`([0-9a-f]{7,40})`", commit)
+                  if any(word in status for word in STATUS_DISQUALIFIERS):
+                      continue
+                  found = re.search(r"`([0-9a-f]{7,40})`", cells[2])
                   if found:
                       commits.append(found.group(1))
               return commits
