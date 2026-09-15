@@ -117,13 +117,15 @@
   migration, or returning-user behavior. Client reset never implies host or
   backend reset, and destructive preparation has one owner before concurrent
   observation begins.
-- Before final completion, `implement` re-verifies the changed flow and the
+- After the whole-diff review and any must-fix repairs, or an explicit review
+  waiver, `implement` re-verifies the changed flow and the
   representative core-loop journey from `PRODUCT.md` on every platform its
   result claims. When no core loop is defined, it verifies the changed flow and
   reports the missing regression coverage rather than inventing a journey. A
-  review repair that changes executable product behavior invalidates the earlier
-  runtime evidence, so this gate repeats on the repaired revision without a
-  second review pass.
+  later repair that changes executable product behavior invalidates earlier
+  final runtime evidence, so this gate repeats on the repaired revision without
+  a second review pass. Focused runtime checks and outcome reconciliation stay
+  before review; final core-loop verification is not a review prerequisite.
 - Each outcome is complete after its acceptance criteria and focused
   deterministic verification pass, followed by reconciliation of the observed
   behavior with every required handoff source and applicable acceptance or
@@ -169,16 +171,19 @@
   harness accepts review context, the reviewer receives the required handoff
   sources or their repository paths: the spec's approved scope, off-limits
   areas and remaining risks, the active task contract, linked decision
-  contracts, and applicable approved reference artifacts. A pass counts only
+  contracts, applicable approved reference artifacts, and the focused
+  verification evidence already collected. A pass counts only
   when the reviewer finishes inspecting the intended scope and returns findings
   or an explicit no-findings result. Failed, partial, silent, and mistargeted
   attempts are not completed passes.
 - `implement` fixes a finding only when it shows an approved acceptance
   criterion failing, or is a defect or caused regression in the changed
   behavior that reproduction confirms on a path ordinary use reaches. It then
-  reruns the affected verification; when the repair changes executable product
-  behavior, it also repeats the final changed-flow and core-loop runtime gate on
-  every claimed platform. It sends no scope through the reviewer twice in that
+  reruns the affected verification, then performs the final changed-flow and
+  core-loop runtime gate on every claimed platform after triage and repairs.
+  A failure at that final gate returns to repair and affected verification,
+  followed by final verification of the repaired revision. It sends no scope
+  through the reviewer twice in that
   run, including repairs made to an already-reviewed scope. Every other finding
   is recorded instead: an evidenced defect or open workaround becomes a
   follow-up, an already-disposed trade-off is noted as disposed, and a material
