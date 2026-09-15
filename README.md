@@ -113,16 +113,20 @@ flowchart LR
     MATCH -- "app premise changed" --> DP
     MATCH -- "yes" --> MORE{"more outcomes?"}
     MORE -- "yes" --> ONE
-    MORE -- "no" --> FINAL["full checks + changed/core loop"]
-    FINAL --> REVIEW["complete one code review"]
+    MORE -- "no" --> FULL["full deterministic checks"]
+    FULL --> REVIEW["complete one code review"]
     REVIEW -- "result for intended diff" --> TRIAGE{"breaks a criterion or<br/>reproduces as a defect?"}
     REVIEW -- "no completed result" --> PENDING["review pending<br/>share verified result + blocker"]
     PENDING -- "failure resolved or authority granted" --> REVIEW
-    PENDING -- "explicit user waiver" --> DONE
+    PENDING -- "explicit user waiver" --> FINAL
     TRIAGE -- "yes" --> FIX["repair, recheck<br/>(no second review)"]
-    FIX --> DONE["verified and runnable<br/>reviewed or explicitly waived"]
+    FIX --> FINAL["final changed/core loop<br/>on every claimed platform"]
     TRIAGE -- "no" --> REC["record: follow-up,<br/>note, or user decision"]
-    REC --> DONE
+    REC --> FINAL
+    FINAL -- "in-scope defect" --> FIX
+    FINAL -- "blocked" --> BLOCKED["runtime pending<br/>share evidence + prerequisite"]
+    BLOCKED -- "prerequisite restored" --> FINAL
+    FINAL -- "passes" --> DONE["verified and runnable<br/>reviewed or explicitly waived"]
     IM -. "uses at public seams" .-> TDD[tdd]
     IM -. "proves affected surfaces" .-> RV["matching runtime skill<br/>or strongest usable path"]
     IM -. "open workaround or<br/>out-of-scope defect" .-> FU["follow-up"]
@@ -193,10 +197,13 @@ interfaces. For an affected product surface, it
 uses an available matching runtime-verification skill. When none is available,
 it autonomously investigates the repository and current environment and builds
 the strongest usable runtime path instead of asking the user to approve the
-method. After focused checks, it re-verifies the changed flow and the
-`PRODUCT.md` core loop on every claimed platform; missing core-loop coverage is
-reported rather than invented. If a review repair changes executable behavior,
-it repeats that runtime gate on the repaired revision without a second review.
+method. After focused checks and reconciliation, it runs the complete
+deterministic checks, then the whole-diff review and any must-fix repairs with
+affected verification. It finally verifies the changed flow and the
+`PRODUCT.md` core loop on every claimed platform, including when review is
+explicitly waived; missing core-loop coverage is reported rather than invented.
+An in-scope defect found at that final gate returns to repair, affected checks,
+and final verification of the repaired revision without a second review.
 Current-scope gaps stay in implementation. A workaround with an open root cause
 or an evidenced out-of-scope defect becomes a durable follow-up.
 
