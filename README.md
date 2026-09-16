@@ -371,10 +371,13 @@ the merged worktree.
 - **[push](./skills/git/push/SKILL.md)**: Publish existing commits on a named branch,
   reconciling remote state and using lease protection for intentional rewrites.
 - **[pr](./skills/git/pr/SKILL.md)**: Turn the current change into a ready-for-review
-  GitHub pull request and return its URL without merging it.
+  GitHub pull request with a proportionate behavior explanation, verification
+  evidence, and attached before-and-after screen comparisons when applicable;
+  return its URL without merging it.
 - **[merge](./skills/git/merge/SKILL.md)**: Carry a change through verified pull
-  request merge, choose squash or rebase by commit meaning, then safely clean up
-  the merged worktree and its owned development server.
+  request merge with the same self-contained body and visual-evidence guidance,
+  choose squash or rebase by commit meaning, then safely clean up the merged
+  worktree and its owned development server.
 
 ## Supporting workflows
 
