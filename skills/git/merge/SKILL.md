@@ -37,8 +37,11 @@ results from source inference and unverified states; a prototype is not runtime
 evidence. When updating an existing PR, bring its explanation and evidence into
 line with the final change, replacing outdated visual claims.
 
-Upload media as GitHub attachments, using a supported mechanism in the current
-environment. For GitHub CLI, check attachment support: `gh pr create` and
+Before uploading, inspect screenshots and videos for credentials, personal
+data, and private information. Use safe seeded data or redact those details
+throughout the media, keeping comparison conditions and the relevant change
+visible. Upload only the inspected, safe media as GitHub attachments, using a
+supported mechanism in the current environment. For GitHub CLI, check attachment support: `gh pr create` and
 `gh pr edit` accept repeatable `--attach` on supported versions and rewrite
 matching local image references in `--body-file` to uploaded URLs. A Markdown
 table can place the two images side by side. Keep review captures outside
