@@ -116,6 +116,12 @@ files, functions, code structure, technical layers, or implementation steps.
 Carry only applicable app-level constraints from `PRODUCT.md`; keep the file as
 their canonical product context rather than duplicating its full contents.
 
+When this work depends on another spec folder finishing first, add a
+`Blocked by: docs/specs/<other>/` line beside the linked sources, one per
+folder, with that exact English label whatever language the spec uses. It is
+repository information that later coordination reads, so write it whether or
+not an issue tracker is set up.
+
 Link the approved `prototype.html` when one exists and each decision contract
 this work depends on, so implementation loads them as required sources instead
 of judging them optional. Preserve a link an earlier `build-prototype` close-out

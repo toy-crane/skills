@@ -14,6 +14,10 @@ request's changes as logical Conventional Commits, resolve the named base or
 the remote's advertised default branch, and create or reuse a ready-for-review
 pull request based on its fetched state. If the change or its pull request is
 already merged, verify and report that outcome instead of creating another one.
+When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
+section and the branch's commits carry a `Spec-Folder: docs/specs/<slug>/`
+trailer, find that folder's issue by the section's key and put the section's
+closing reference in the pull request body you create.
 
 ## Make the body understandable
 
@@ -70,6 +74,36 @@ preserve other worktrees, processes, and user changes, then bring the canonical
 base checkout to the merged remote state using whatever safe mechanism the
 current host provides.
 
+## Reconcile spec folders with the issue tracker
+
+After the remote reports `MERGED`, and only when the repository's `AGENTS.md`
+or `CLAUDE.md` carries an `## Issue tracker` section, bring the tracker into
+line with the spec folders now on the base branch, using the section's tool,
+key, and operations. Read both files and use the first section found. Without
+the section, skip this entirely.
+
+Diff the merge range for `docs/specs/<slug>/` folders. Publish one issue for
+each folder the merge added, regenerate the body of each issue whose `spec.md`
+changed, update blocking edges when its `Blocked by` lines changed, and close
+the open issue of each folder the merge deleted. Then catch up: publish an
+issue for every folder on the base branch that has no issue at all, open or
+closed, so merges made outside this skill and folders that predate the section
+are covered without duplicating a folder whose issue already closed. A folder
+the merge range added gets a new issue even when only a closed one exists.
+
+Derive the body from `spec.md` by structure, never by section name, so any
+language works: the first heading as the title after the key, the text of the
+first section, the remaining section headings as a list, the folder path, and
+the issue of each `Blocked by: docs/specs/<other>/` line as a blocking edge.
+Overwrite the body whole; nobody edits it by hand. Match the key exactly,
+`spec:<slug>` followed by a space or the end of the title, so a slug never
+matches a longer one. When the tracker lacks automatic closing on merge, close
+the issue named by the merged commits' `Spec-Folder` trailer here.
+
+A tracker failure never undoes the verified merge: report which operation
+failed and why, and let the next `merge` catch up.
+
 Finish with the merged pull request URL, merge strategy, verified remote state,
-and cleanup result. Keep a cleanup failure visible without misreporting the
-already verified merge.
+cleanup result, and the tracker issues published, updated, or closed. Keep a
+cleanup or tracker failure visible without misreporting the already verified
+merge.

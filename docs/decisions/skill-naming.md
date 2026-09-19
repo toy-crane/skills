@@ -61,6 +61,12 @@
   `post`, `article`, and other medium words were rejected so the names stay
   valid when a newsletter or brand site joins the same repository; `brief` as a
   one-word name was rejected because it reads as a noun as often as a verb.
+- `setup-issue-tracker` names the one-time act of recording which tracker a
+  repository uses, in verb-object form. The user invokes it by hand, so it
+  carries no trigger clause. Matt Pocock's `setup-matt-pocock-skills` bundles
+  the same act with a source name; naming the source in a skill name was
+  rejected here because a user should predict the command from the work, not
+  from where the skills came from.
 - `update-project-skills` names the outcome a user asks for: every skill
   installed in the project brought to its latest published version. The object
   is the project's installed set from every source, and the Toycrane-specific

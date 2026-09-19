@@ -16,6 +16,11 @@
   sources are pointed at rather than restated, and a link sits beside the
   product contract's fields rather than becoming one of them, so the enumeration
   above is unchanged.
+- When the work depends on another spec folder finishing first, write a
+  `Blocked by: docs/specs/<other>/` line beside those links, one per folder,
+  with that exact English label in a spec of any language. It sits with the
+  links, not in the contract's field list, and is repository information that
+  `merge` mirrors into tracker blocking edges when a tracker is set up.
 - Treat low-risk, reversible choices made by the AI as assumptions. A choice is
   settled when the user confirms it or it is made under explicitly delegated
   authority. Only a settled outcome that meets the reusable project-decision
