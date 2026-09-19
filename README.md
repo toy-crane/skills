@@ -381,18 +381,25 @@ the merged worktree.
 
 ## Supporting workflows
 
-Nine additional skills can run independently. They handle stack setup, Expo
-runtime verification, pre-delivery both-platform checks, cross-client skill and
-agent synchronization, incremental project knowledge, verified follow-up
-resolution, visual explanation, final human judgment, and periodic context
-maintenance. `implement` also uses a matching runtime-verification skill when
-one is available for an affected product surface.
+Ten additional skills can run independently. They handle stack setup, issue
+tracker coordination for parallel spec work, Expo runtime verification,
+pre-delivery both-platform checks, cross-client skill and agent
+synchronization, incremental project knowledge, verified follow-up resolution,
+visual explanation, final human judgment, and periodic context maintenance.
+`implement` also uses a matching runtime-verification skill when one is
+available for an affected product surface.
 
 - **[add-stack-context](./skills/workflow/add-stack-context/SKILL.md)**: Audit the
   technologies that define a project's stack, discover vendor-controlled skills,
   keep changing official guidance live, and surface community skills for
   approval. Runs during agent setup, after stack changes, or on entering an
   unaudited project.
+- **[setup-issue-tracker](./skills/workflow/setup-issue-tracker/SKILL.md)**: Record
+  once per repository which issue tracker coordinates its spec folders. With
+  the recorded convention, `merge` publishes one pointer issue per
+  `docs/specs/<slug>/` folder when it lands on the default branch, `implement`
+  claims the folder's issue before changing source, and `pr` and `merge` close
+  it when the implementation merges. Without it every skill behaves as before.
 - **[expo-dev-loop](./skills/expo/expo-dev-loop/SKILL.md)**: Verify Expo and React
   Native changes in a running app with `agent-device`, first proving target
   readiness and the scenario's required state, then selecting Metro reload or

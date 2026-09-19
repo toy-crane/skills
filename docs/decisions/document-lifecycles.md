@@ -116,7 +116,11 @@ without turning it into feature scope or implementation prediction.
 - A hosted issue tracker as the follow-up carrier — it survives worktree
   deletion but adds a remote dependency to a record the repository can hold
   itself; reconsider if follow-ups routinely need assignment or cross-repository
-  visibility.
+  visibility. Spec folders are the exception: the [pipeline](pipeline.md)
+  contract lets an opt-in tracker hold the claim and blocking edges for a
+  `docs/specs/<slug>/` folder, because a claim must be visible across
+  branches and a file in the folder is not. The folder remains the contract
+  and its lifecycle above is unchanged.
 - A single `docs/follow-ups.md` backlog list — parallel worktree sessions
   appending to one file collide on merge, the same failure that sequential
   record numbers produced.

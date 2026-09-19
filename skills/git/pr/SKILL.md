@@ -21,8 +21,12 @@ base; when the change is already represented on that remote base, report the
 state instead of duplicating it.
 
 Create the pull request ready for review with a title and body describing the
-actual change. Leave merging, required reviews, and release decisions outside
-this skill's authority.
+actual change. When the repository's `AGENTS.md` or `CLAUDE.md` carries an
+`## Issue tracker` section and the branch's commits carry a
+`Spec-Folder: docs/specs/<slug>/` trailer, find that folder's issue by the
+section's key and put the section's closing reference in the body so the merge
+closes it; without the section, the body is unchanged. Leave merging, required
+reviews, and release decisions outside this skill's authority.
 
 ## Make the body understandable
 
