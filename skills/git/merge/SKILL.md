@@ -15,9 +15,11 @@ the remote's advertised default branch, and create or reuse a ready-for-review
 pull request based on its fetched state. If the change or its pull request is
 already merged, verify and report that outcome instead of creating another one.
 When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
-section and the branch's commits carry a `Spec-Folder: docs/specs/<slug>/`
-trailer, find that folder's issue by the section's key and put the section's
-closing reference in the pull request body you create.
+section, read the `Spec-Folder: docs/specs/<slug>/` trailers from the branch's
+commits before merging, while the branch still exists and before a squash can
+drop them, and keep those folders for the steps below. Find each folder's
+issue by the section's key and put the section's closing reference in any
+pull request body you create.
 
 ## Make the body understandable
 
@@ -83,13 +85,15 @@ key, and operations. Read both files and use the first section found. Without
 the section, skip this entirely.
 
 Diff the merge range for `docs/specs/<slug>/` folders. Publish one issue for
-each folder the merge added, regenerate the body of each issue whose `spec.md`
-changed, update blocking edges when its `Blocked by` lines changed, and close
-the open issue of each folder the merge deleted. Then catch up: publish an
-issue for every folder on the base branch that has no issue at all, open or
-closed, so merges made outside this skill and folders that predate the section
-are covered without duplicating a folder whose issue already closed. A folder
-the merge range added gets a new issue even when only a closed one exists.
+each folder the merge added that has no open issue yet, regenerate the body of
+each issue whose `spec.md` changed, update blocking edges when its `Blocked by`
+lines changed, and close the open issue of each folder the merge deleted. Then
+catch up: publish an issue for every folder on the base branch that has no
+issue at all, open or closed, so merges made outside this skill and folders
+that predate the section are covered without duplicating a folder whose issue
+already closed. A folder the merge range added gets a new issue when only a
+closed one exists; an open one is reused, so reporting an already merged pull
+request never publishes twice.
 
 Derive the body from `spec.md` by structure, never by section name, so any
 language works: the first heading as the title after the key, the text of the
@@ -97,8 +101,11 @@ first section, the remaining section headings as a list, the folder path, and
 the issue of each `Blocked by: docs/specs/<other>/` line as a blocking edge.
 Overwrite the body whole; nobody edits it by hand. Match the key exactly,
 `spec:<slug>` followed by a space or the end of the title, so a slug never
-matches a longer one. When the tracker lacks automatic closing on merge, close
-the issue named by the merged commits' `Spec-Folder` trailer here.
+matches a longer one. Then close the issue of every folder the branch's
+`Spec-Folder` trailers named if it is still open, whatever the tracker's
+automatic closing does: a merge into a non-default base, a squash message
+without the trailer, a tracker with no closing reference, or a pull request
+that added and implemented the same folder all leave it open otherwise.
 
 A tracker failure never undoes the verified merge: report which operation
 failed and why, and let the next `merge` catch up.

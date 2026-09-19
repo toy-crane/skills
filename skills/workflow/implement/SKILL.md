@@ -5,6 +5,25 @@ description: Implement or resume settled work from a selected spec folder as one
 
 # Implement
 
+## Claim the folder when a tracker coordinates it
+
+The input is always the spec folder. When the repository's `AGENTS.md` or
+`CLAUDE.md` carries an `## Issue tracker` section, read both files and use the
+first found, then find this folder's issue by the section's key before
+anything else. Claiming is the first write of the run, ahead of any edit to
+source, task files, or the spec: assign the issue to the current tracker
+account with the section's claim operation. Proceed when the assignee
+is already that account, since this is a resumption. Stop without changing
+source and report when the assignee is another account or a blocking issue is
+still open, and likewise when the section's tool is unavailable in this
+session; the claim exists to keep two sessions off one folder, so continue
+unclaimed only when the user explicitly says to. A folder with no issue yet
+proceeds as usual. Without the section, nothing here applies.
+
+End every commit's message with a `Spec-Folder: docs/specs/<slug>/` trailer so
+the pull request that follows can name and close the issue; this trailer is
+repository information and is written whether or not a tracker exists.
+
 ## Load the current handoff
 
 Treat the selected spec folder as one handoff bundle anchored by `spec.md`.
@@ -61,24 +80,6 @@ boundary requires this reload; it does not by itself require a new session,
 worker, or reviewer. Keep the spec folder as the single handoff instead of
 adding a roadmap, execution ledger, durable implementation plan, or run-state
 file.
-
-## Claim the folder when a tracker coordinates it
-
-The input is always the spec folder. When the repository's `AGENTS.md` or
-`CLAUDE.md` carries an `## Issue tracker` section, read both files and use the
-first found, then find this folder's issue by the section's key before any
-source change. Claiming is the first write: assign the issue to the current
-tracker account with the section's claim operation. Proceed when the assignee
-is already that account, since this is a resumption. Stop without changing
-source and report when the assignee is another account or a blocking issue is
-still open, and likewise when the section's tool is unavailable in this
-session; the claim exists to keep two sessions off one folder, so continue
-unclaimed only when the user explicitly says to. A folder with no issue yet
-proceeds as usual. Without the section, nothing here applies.
-
-End every commit's message with a `Spec-Folder: docs/specs/<slug>/` trailer so
-the pull request that follows can name and close the issue; this trailer is
-repository information and is written whether or not a tracker exists.
 
 ## Implement and reconcile one outcome
 

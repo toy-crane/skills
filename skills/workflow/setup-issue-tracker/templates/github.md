@@ -6,8 +6,10 @@ or the end of the title; match it exactly.
 
 - Find the issue for `docs/specs/<slug>/`: `gh issue list --state all
   --search 'in:title "spec:<slug>"' --json number,title,state,assignees` and
-  keep the entry whose title matches the key exactly; read open blockers from
-  `gh api repos/{owner}/{repo}/issues/<n> --jq .issue_dependencies_summary`.
+  keep the entry whose title matches the key exactly; list open blockers with
+  `gh api repos/{owner}/{repo}/issues/<n>/dependencies/blocked_by --jq
+  '[.[] | select(.state == "open") | .number]'`, and read any
+  `Blocked by: #<n>` body line where dependencies are unavailable.
 - Publish: `gh issue create --title "spec:<slug> <spec title>" --body-file -`
   with the body derived from `spec.md`.
 - Update body: `gh issue edit <n> --body-file -` with the regenerated body.
@@ -18,4 +20,5 @@ or the end of the title; match it exactly.
 - Claim: `gh issue edit <n> --add-assignee @me`; the current account is
   `gh api user --jq .login`.
 - Close: `Closes #<n>` in the implementation pull request body closes it on
-  merge.
+  merge into the default branch; `gh issue close <n>` when it is still open
+  after the merge.
