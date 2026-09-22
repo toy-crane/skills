@@ -15,11 +15,17 @@ the remote's advertised default branch, and create or reuse a ready-for-review
 pull request based on its fetched state. If the change or its pull request is
 already merged, verify and report that outcome instead of creating another one.
 When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
-section, read the `Spec-Folder: docs/specs/<slug>/` trailers from the branch's
+section, read its linked detailed convention when present; legacy inline
+conventions also work, without a separate setup skill installation. For a
+configured tracker, read the
+`Spec-Folder: docs/specs/<slug>/` trailers from the branch's
 commits before merging, while the branch still exists and before a squash can
 drop them, and keep those folders for the steps below. Find each folder's
-issue by the section's key and put the section's closing reference in any
+issue by the convention's key and put the convention's closing reference in any
 pull request body you create.
+
+If a linked convention cannot be read, report the missing information rather
+than guessing issue operations or claiming that the issue was linked or closed.
 
 ## Make the body understandable
 
@@ -80,9 +86,9 @@ current host provides.
 
 After the remote reports `MERGED`, and only when the repository's `AGENTS.md`
 or `CLAUDE.md` carries an `## Issue tracker` section, bring the tracker into
-line with the spec folders now on the base branch, using the section's tool,
-key, and operations. Read both files and use the first section found. Without
-the section, skip this entirely.
+line with the spec folders now on the base branch, using the convention's tool,
+key, and operations. Read both files and use the first section found and its
+linked detailed convention when present. Without the section, skip this entirely.
 
 Diff the merge range for `docs/specs/<slug>/` folders. Publish one issue for
 each folder the merge added that has no open issue yet, regenerate the body of

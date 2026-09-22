@@ -1,4 +1,23 @@
+# Github tracker convention template
+
+## Agent instructions
+
+```markdown
 ## Issue tracker
+
+- Manage spec state in GitHub Issues in `<owner>/<repo>`.
+- Resume an issue already in progress only when the user explicitly requests it.
+- Link the issue through its PR and close it when the PR merges.
+
+For issue work, read [the tracker convention](docs/issue-tracker.md).
+```
+
+## Detailed convention: `docs/issue-tracker.md`
+
+Adapt the guidance below to the repository and the currently available tool.
+Keep repository-specific choices; consult current tool help for argument details.
+Record how active work is recognized and claimed. An issue already in progress
+requires an explicit user request to resume, even with the same assignee.
 
 Tracker: GitHub Issues through the `gh` CLI, on the repository `git remote`
 points at. Key: the issue title starts with `spec:<slug>` followed by a space

@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Set up the issue tracker
 
 Give this repository one issue tracker convention that the other skills read
-from its agent instructions. Nothing else changes: the spec folder under
+through a short route in its agent instructions. The spec folder under
 `docs/specs/<slug>/` stays the only contract, and an issue is a pointer to one
 folder that carries the claim, the blocking edges, and a body derived from
 `spec.md`. Repositories without this section keep every skill's current
@@ -33,7 +33,9 @@ Settle these items:
   matched exactly so `spec:checkout` never matches `spec:checkout-v2`.
 - **Tool**: the command or server the skills use, verified to exist in this
   session rather than assumed.
-- **Seven operations**, each written as what to run: list every managed issue in
+- **Repository conventions**: how work in progress is recognized, when a user
+  must explicitly request resumption, and how a PR links and closes its issue.
+- **Seven operations**, documented for issue work: list every managed issue in
   every state, find the issue for a folder (returning whether it is open, its
   assignee, and its open blockers), publish an issue, update its derived title
   and body, replace its blockers by removing stale edges and adding missing
@@ -62,12 +64,23 @@ title-and-body operation and replace an additive-only blocker update with the
 complete stale-removal and missing-addition operation; otherwise the upgraded
 section still cannot support full reconciliation.
 
-Keep the section compact enough to stay in an always-loaded file: the tracker,
-the key, the tool, and the seven operations. When the user's free-form
-description runs past a paragraph, move it to `docs/issue-tracker.md` and leave
-a one-line route in the section.
+Keep the always-loaded section focused on purpose: where spec state lives,
+require an explicit user request before resuming an issue already in progress,
+and link issues through PRs and close them on merge. Add a task-time link to
+`docs/issue-tracker.md`; write the repository's key, verified tool, state and
+claim conventions, closing reference, and seven operations there. Load that
+file only for issue work. Preserve repository-specific choices and non-obvious
+behavior; use the current tool schema or CLI help for exact arguments instead
+of copying exhaustive field lists into either document. General tool guidance
+belongs in this skill's references, not in always-loaded instructions.
 
-Show the drafted section before writing it, then write it and report which
-file carries it. Do not publish issues for existing spec folders here: the
-next `merge` incrementally publishes missing folders, and the next
-`maintain-project-context` run can perform a full reconciliation.
+On rerun, move existing operational detail into that document without losing
+custom keys, team settings, claim protection, or closing behavior. Reconcile an
+existing detail document instead of creating a competing source. Preserve the
+surrounding agent instructions and unrelated document content. Consumers must
+be able to use the repository documents without this skill being installed.
+
+Show the drafted section and detailed convention before writing them, then
+write both and report their paths. Do not publish issues for existing spec
+folders here: the next `merge` incrementally publishes missing folders, and
+`maintain-project-context` can perform a full reconciliation.
