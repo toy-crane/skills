@@ -266,10 +266,12 @@
   Duplicate exact keys remain unchanged and are reported because the key alone
   cannot identify the canonical issue. The tracker
   convention therefore includes a `List managed issues` operation that returns
-  every managed issue's identifier, title, and state. An older convention
-  without it supports only folder-by-folder repair; maintenance reports that
-  orphan and duplicate detection remain incomplete until setup is upgraded
-  instead of inventing tracker-specific commands.
+  every managed issue's identifier, title, and state without a fixed result
+  ceiling. An older convention without it supports only folder-by-folder
+  repair; maintenance reports that orphan and duplicate detection remain
+  incomplete until setup upgrades the listing, title-and-body replacement, and
+  complete blocker-set replacement operations instead of inventing
+  tracker-specific commands.
 - `resolve-follow-ups` sweeps the fetched remote default-branch backlog in
   discovery order and starts no more than three eligible workers. Each item gets
   its own verified fresh-base worktree, branch, commit series, and ready-for-

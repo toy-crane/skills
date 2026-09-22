@@ -56,7 +56,11 @@ When the section already exists, replace it in place and leave the surrounding
 content untouched; rerunning this skill shows the current convention and
 changes only what the user wants changed. Treat an older section without `List
 managed issues` as incomplete and include that operation in the proposed
-upgrade while preserving its tracker, key, tool, and other operations.
+upgrade while preserving its tracker, key, tool, and already-complete
+operations. At the same time replace a legacy body-only update with the derived
+title-and-body operation and replace an additive-only blocker update with the
+complete stale-removal and missing-addition operation; otherwise the upgraded
+section still cannot support full reconciliation.
 
 Keep the section compact enough to stay in an always-loaded file: the tracker,
 the key, the tool, and the seven operations. When the user's free-form
