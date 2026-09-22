@@ -4,6 +4,9 @@ Tracker: Linear, team `<team key>`, through <the Linear MCP server or CLI this
 session verified>. Key: the issue title starts with `spec:<slug>` followed by a
 space or the end of the title; match it exactly.
 
+- List managed issues: search the team for every issue in every state whose
+  title starts with an exact `spec:<slug>` key, returning its identifier, title,
+  and state.
 - Find the issue for `docs/specs/<slug>/`: search the team's issues by title,
   keep the exact key match, and read its state, assignee, and open blocking
   relations.

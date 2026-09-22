@@ -131,6 +131,20 @@
         "It preserves any qualifying reusable decision before deleting the confirmed shipped spec.",
         "It does not report absent optional files as maintenance failures."
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "/maintain-project-context 원격 default branch의 spec 폴더들과 설정된 issue tracker를 포함해 전체 맥락을 정리해줘. tracker에는 본문과 blocker가 오래된 spec:checkout 하나, 이슈가 없는 spec:payments, 폴더가 사라졌는데 열린 spec:legacy-upload, 닫혔지만 폴더가 남은 spec:profile, 그리고 같은 정확한 키를 쓰는 spec:search 두 개가 있어. 한 이슈 댓글에는 아직 확인하지 않은 새 제품 요구도 적혀 있어.",
+      "expected_output": "The response treats the fetched remote default branch as authoritative for the derived mirror, refreshes the unambiguous existing issue, creates the missing pointer, closes the open orphan, preserves the closed issue state, leaves duplicate exact keys unchanged, and does not promote tracker prose into durable context.",
+      "files": [],
+      "expectations": [
+        "It compares tracker issues with spec folders from the fetched remote default branch rather than unmerged local changes.",
+        "It regenerates spec:checkout's derived body and blockers while preserving its assignee and current open or closed state.",
+        "It publishes spec:payments and closes the open orphan spec:legacy-upload.",
+        "It does not reopen spec:profile merely because its folder remains.",
+        "It reports both spec:search issue identifiers and leaves both unchanged rather than choosing a canonical issue.",
+        "It does not copy the unconfirmed issue-comment requirement into PRODUCT.md, a spec, the glossary, or a decision contract."
+      ]
     }
   ]
 }

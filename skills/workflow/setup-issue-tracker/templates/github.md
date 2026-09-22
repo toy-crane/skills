@@ -4,6 +4,9 @@ Tracker: GitHub Issues through the `gh` CLI, on the repository `git remote`
 points at. Key: the issue title starts with `spec:<slug>` followed by a space
 or the end of the title; match it exactly.
 
+- List managed issues: `gh issue list --state all --limit 1000 --search
+  'spec: in:title' --json number,title,state`, then keep every title that starts
+  with an exact `spec:<slug>` key; return its number, title, and state.
 - Find the issue for `docs/specs/<slug>/`: `gh issue list --state all
   --search 'in:title "spec:<slug>"' --json number,title,state,assignees` and
   keep the entry whose title matches the key exactly; list open blockers with

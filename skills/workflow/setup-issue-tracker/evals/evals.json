@@ -1,0 +1,30 @@
+{
+  "skill_name": "setup-issue-tracker",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/setup-issue-tracker 이 GitHub 저장소에서 spec 폴더를 GitHub Issues로 조정하게 설정해줘. gh 로그인은 되어 있고 AGENTS.md가 있어.",
+      "expected_output": "The response proposes one compact AGENTS.md convention with the exact key and all seven operations, including a complete managed-issue inventory that supports later orphan and duplicate detection, without publishing issues during setup.",
+      "files": [],
+      "expectations": [
+        "It records List managed issues separately from finding one folder's issue.",
+        "The list operation covers open and closed managed issues and returns identifier, title, and state.",
+        "It keeps the exact spec:<slug> key boundary.",
+        "It includes find, publish, update body, update blockers, claim, and close operations in addition to listing.",
+        "It shows the proposed section before writing and does not publish existing spec folders during setup."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/setup-issue-tracker 기존 AGENTS.md의 GitHub Issues 설정을 점검해줘. tracker, key, gh tool과 find/publish/update body/update blockers/claim/close 여섯 동작은 이미 있는데 다른 tracker로 바꾸고 싶지는 않아.",
+      "expected_output": "The response preserves the existing tracker convention, proposes adding only the missing managed-issue listing operation, and explains that the upgrade enables full maintenance reconciliation.",
+      "files": [],
+      "expectations": [
+        "It identifies the missing List managed issues operation as an incomplete older convention.",
+        "It preserves the existing tracker, key, tool, and six recorded operations.",
+        "It proposes a listing operation that returns identifier, title, and state for every managed issue in every state.",
+        "It does not create a second instruction file or publish any issues."
+      ]
+    }
+  ]
+}

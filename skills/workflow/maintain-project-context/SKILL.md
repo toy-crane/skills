@@ -1,6 +1,6 @@
 ---
 name: maintain-project-context
-description: Clean, compact, and reconcile durable project context without changing established meaning. Always use this skill whenever a request cleans, audits, or checks consistency across two or more durable context sources, even when they are called product docs, glossary, decisions, specs, or agent instructions instead of PRODUCT.md, GLOSSARY.md, docs/decisions, docs/specs, AGENTS.md, or CLAUDE.md. Also use for confirmed shipped-spec retirement. Do not use to define new product intent, record one newly settled term or decision, look up context, shape a feature, implement work, or revise an active spec's behavior against work that has shipped, which belongs to `babysit-specs`.
+description: Clean, compact, and reconcile durable project context and any configured issue-tracker mirror without changing established meaning. Always use this skill whenever a request cleans, audits, or checks consistency across two or more durable context sources, even when they are called product docs, glossary, decisions, specs, or agent instructions instead of PRODUCT.md, GLOSSARY.md, docs/decisions, docs/specs, AGENTS.md, or CLAUDE.md. Also use for confirmed shipped-spec retirement or a full consistency sweep between default-branch spec folders and their tracker issues. Do not use to define new product intent, record one newly settled term or decision, look up context, shape a feature, implement work, or revise an active spec's behavior against work that has shipped, which belongs to `babysit-specs`.
 ---
 
 # Maintain Project Context
@@ -110,12 +110,50 @@ requires it. Do not merge unrelated subjects or remove necessary instructions
 to hit a size target. Report an index or always-loaded file that remains hard to
 navigate and explain why.
 
+## Reconcile the issue-tracker mirror
+
+When `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker` section, read both
+files and use the first section found. Treat its issues as a derived coordination
+surface, never as authority for product meaning, shipment, terms, or decisions.
+Do not import issue prose or comments into durable project context.
+
+Resolve and fetch the remote's advertised default branch. Compare the tracker
+with `docs/specs/<slug>/` folders on that fetched branch, not with unmerged
+changes in the current checkout. Use the section's `List managed issues`
+operation to inventory every open and closed issue whose exact key is
+`spec:<slug>`. When an older section lacks that operation, use its `Find`
+operation for each default-branch folder, complete that one-way portion of the
+reconciliation, and report that orphan and duplicate detection remain
+incomplete until the user reruns `setup-issue-tracker`. Do not invent a
+tracker-specific listing command.
+
+For each exact key with zero or one issue:
+
+- Publish a missing issue for a default-branch spec folder.
+- Regenerate the issue title and body from the fetched `spec.md`: use its first
+  heading as the title after the key, the text of its first section, the
+  remaining section headings, the folder path, and its `Blocked by:
+  docs/specs/<other>/` issue references. Replace the derived body whole and
+  synchronize its blocking edges while preserving its assignee and open or
+  closed state.
+- Close an open managed issue whose folder is absent from the fetched default
+  branch. Leave an already closed orphan unchanged.
+
+When several issues share one exact key, report every identifier and state and
+leave all of them unchanged; the key alone cannot prove which one owns the
+work. Never reopen a closed issue merely because its folder remains. If the
+configured tool is unavailable or any operation fails, finish the repository
+cleanup, report the incomplete tracker operation and reason, and preserve the
+remaining issue state for a later pass.
+
 ## Finish
 
 Finish when every safely resolvable subject has one owner and one current
 representation, confirmed shipped specs are retired, optional current surfaces
-contain no known stale duplication, and ambiguous meaning remains preserved.
+contain no known stale duplication, the configured tracker mirror is reconciled
+as far as its recorded operations allow, and ambiguous meaning remains
+preserved.
 
 Report what changed, what was deleted, what was intentionally left unchanged,
-and the exact question needed for every unresolved conflict or unclear
-shipment.
+the tracker issues published, updated, closed, or left conflicted, and the exact
+question needed for every unresolved conflict or unclear shipment.
