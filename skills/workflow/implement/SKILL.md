@@ -275,6 +275,24 @@ keeps the result incomplete. A completed review may leave recorded findings; zer
 findings is not the gate. Report the sources and reviewed scope used for the
 claim, the result or explicit waiver, what changed, and what remains open.
 
+## Make the delivered change directly reviewable
+
+Close the completion report by making the delivered product change directly
+reviewable from the user's point of view. The user should not need to ask what
+changed or request the important screens after the implementation is reported
+complete.
+
+Choose the strongest evidence the current executable revision affords and
+present enough of it for the user to understand the resulting experience,
+follow its important downstream effects, and notice a mismatch with the
+approved intent. Use actual product views when the change is best judged
+visually, observed behavior when interaction matters, and concise explanation
+for rules that cannot be seen.
+
+Do not organize this account around files or tests, although report relevant
+verification separately. Do not present a prototype or stale capture as proof
+of the delivered revision, and name anything important that could not be shown.
+
 ## Hand off the runnable product
 
 After that report, when the repository exposes the actual result through a

@@ -129,4 +129,19 @@ already wrote. Say what each linked source governs here, and leave its own
 rules, thresholds, and screen compositions in that source instead of copying
 them back into a constraint the spec states; keep the links beside the
 contract's fields rather than turning them into one.
-Summarize the same contract and do not prompt for another action.
+
+## Make the shaped change judgeable
+
+Close by summarizing the complete product contract and making the approved
+product change understandable and judgeable from the user's point of view. The
+user should not need to inspect the spec or ask separately what the resulting
+experience will look like.
+
+Choose the explanation and approved visual evidence that best reveal the
+intended change and its important downstream consequences. Give particular
+attention to consequences that are easy to miss when reviewing only the
+surface being changed.
+
+Distinguish the intended experience from implemented evidence, keep the
+close-out consistent with the product contract, and do not prompt for another
+action.
