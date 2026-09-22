@@ -21,6 +21,13 @@ review, and preservation gates apply to the prototype, not to this intermediate.
 Accept `effort=standard` or `effort=high`. Recommend and use `standard` when the
 argument is omitted.
 
+When it is unclear where the user needs to open the preview, ask once whether
+they will review it only on the computer running the work or also on another
+device. Continue building while awaiting the answer, but do not infer the
+review device from the execution host or treat no answer as a choice. Select the
+execution and hosting method from the available environment; do not prescribe a
+particular platform.
+
 Pass one base completion gate at either effort: produce a finished-looking
 surface, cover every requested screen and relevant state, make intended
 interactions and reset paths work, exercise every relevant viewport in a
