@@ -157,6 +157,19 @@
         "It leaves every blocker relation on the unique spec:results issue unchanged, including the existing #31 edge.",
         "It may still refresh spec:results's derived title and body because those fields are unambiguous."
       ]
+    },
+    {
+      "id": 13,
+      "prompt": "/maintain-project-context issue tracker가 설정돼 있지만 예전 여섯 동작 규약이야. 관리 이슈 전체 열거는 없고, update는 body만 바꾸며 blocker는 추가만 할 수 있어. 원격 default branch 기준으로 가능한 만큼 전체 맥락을 정리해줘.",
+      "expected_output": "The response uses only the recorded tracker capabilities, completes safe folder-driven repairs, and explicitly reports every guarantee the legacy convention cannot provide until setup is upgraded.",
+      "files": [],
+      "expectations": [
+        "It does not invent tracker-specific commands that are absent from the recorded convention.",
+        "It reports orphan and duplicate detection as incomplete because managed issues cannot be listed.",
+        "It reports derived title replacement as incomplete because only body updates are recorded.",
+        "It reports stale blocker removal as incomplete because blocker updates are additive-only.",
+        "It recommends rerunning setup-issue-tracker and does not claim that the tracker mirror is fully reconciled."
+      ]
     }
   ]
 }

@@ -121,11 +121,14 @@ Resolve and fetch the remote's advertised default branch. Compare the tracker
 with `docs/specs/<slug>/` folders on that fetched branch, not with unmerged
 changes in the current checkout. Use the section's `List managed issues`
 operation to inventory every open and closed issue whose exact key is
-`spec:<slug>`. When an older section lacks that operation, use its `Find`
-operation for each default-branch folder, complete that one-way portion of the
-reconciliation, and report that orphan and duplicate detection remain
-incomplete until the user reruns `setup-issue-tracker`. Do not invent a
-tracker-specific listing command.
+`spec:<slug>`. When an older section lacks that operation or records body-only
+or additive-only updates, use only the capabilities it actually records and
+complete that one-way portion of the reconciliation. Report each unavailable
+guarantee explicitly: orphan and duplicate detection without listing, derived
+title replacement without a title-capable update, and stale blocker removal
+without complete blocker-set replacement. Tell the user to rerun
+`setup-issue-tracker` for the full upgrade; do not invent tracker-specific
+commands or imply that the partial pass fully reconciled the mirror.
 
 For each exact key with zero or one issue:
 
