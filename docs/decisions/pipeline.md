@@ -21,6 +21,10 @@
   app-level context neither blocks shaping nor makes `shape-idea` create it. It
   owns new specs only; revising an existing one against later work belongs to
   `babysit-specs`.
+- `shape-idea` closes by making the approved change judgeable from the user's
+  point of view. It chooses the explanation and approved visual evidence that
+  best reveal the intended experience and important downstream consequences,
+  while distinguishing intended behavior from implemented evidence.
 - `babysit-specs` owns cross-work-unit spec revision. It takes one or more
   spec folders, or every folder under `docs/specs/` when none is named, takes
   each spec's last commit as its baseline, and compares the contract with the
@@ -199,6 +203,13 @@
   explicitly waived for that scope. An unread source or uncompared criterion
   keeps the result incomplete. Recorded findings can remain; zero findings is
   not the gate.
+- `implement` closes its completion report by making the delivered change
+  directly reviewable from the user's point of view. It chooses the strongest
+  evidence the current executable revision affords so the user can understand
+  the resulting experience, follow important downstream effects, and notice a
+  mismatch with the approved intent without having to ask what changed. The
+  presentation follows the work rather than a fixed screen or report checklist;
+  intended or stale visuals never stand in for the delivered result.
 - Review execution reuses applicable user authorization without asking again.
   A service-backed request identifies the actual destination and diff, spec,
   and related source context, and carries that authorization accurately.
