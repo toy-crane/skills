@@ -3,8 +3,9 @@
 ## Decisions
 
 - When the user's preview access needs are unclear, ask once whether they will
-  review on the computer running the work or also on another device. Continue
-  building while awaiting the answer. Keep execution and hosting choices
+  review on the computer running the work or also on another device. Use a
+  nonblocking question when the host supports one; otherwise finish the
+  access-independent build before asking. Keep execution and hosting choices
   situational rather than prescribing a platform or an instruction lookup order.
 - Accept `effort=standard` and `effort=high`, with `standard` as the recommended
   default. Hold one base completion gate fixed across both values: finished
@@ -132,9 +133,11 @@
 
 The machine running an agent does not establish where the user will review its
 output. Asking about access only when unclear resolves that uncertainty without
-repeating a choice already known from context. A prescribed hosting service or
-instruction lookup order would constrain installations without improving the
-user's ability to open the prototype.
+repeating a choice already known from context. Since some hosts pause work for
+a user answer, access-independent building precedes a blocking question rather
+than depending on concurrency the host cannot provide. A prescribed hosting
+service or instruction lookup order would constrain installations without
+improving the user's ability to open the prototype.
 
 Product navigation and decision alternatives serve different roles. Keeping
 those layers separate lets a comparison follow the user's actual question,
