@@ -20,11 +20,13 @@ or the end of the title; match it exactly.
   with the body derived from `spec.md`.
 - Update title and body: `gh issue edit <n> --title "spec:<slug> <spec title>"
   --body-file -` with the regenerated values.
-- Update blockers: read the current and desired sets, remove every stale edge
-  with `gh issue edit <n> --remove-blocked-by <old blocker>`, and add every
-  missing edge with `gh issue edit <n> --add-blocked-by <new blocker>`; where
-  dependencies are unavailable, replace the complete set of `Blocked by: #<n>`
-  body lines so stale lines are removed as well as missing lines added.
+- Update blockers: read every current relation, including closed blockers, with
+  `gh api repos/{owner}/{repo}/issues/<n>/dependencies/blocked_by --jq
+  '[.[].number]'`; compare that complete set with the desired set, remove every
+  stale edge with `gh issue edit <n> --remove-blocked-by <old blocker>`, and add
+  every missing edge with `gh issue edit <n> --add-blocked-by <new blocker>`.
+  Where dependencies are unavailable, replace the complete set of `Blocked by:
+  #<n>` body lines so stale lines are removed as well as missing lines added.
 - Claim: `gh issue edit <n> --add-assignee @me`; the current account is
   `gh api user --jq .login`.
 - Close: `Closes #<n>` in the implementation pull request body closes it on
