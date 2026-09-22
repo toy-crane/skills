@@ -12,14 +12,6 @@ Separate the product layer from the decision layer: `prototype.html` holds the
 canonical product screens and flows; a temporary `compare.html` resolves the
 user's current question in its specific situation. Scope the comparison by what
 the decision needs, whether a component, a screen, or a short flow.
-For a local comparison request, go directly to **Compare one decision** and
-limit building and verification to that decision. The whole-surface inventory,
-review, and preservation gates apply to the prototype, not to this intermediate.
-
-## Set the effort
-
-Accept `effort=standard` or `effort=high`. Recommend and use `standard` when the
-argument is omitted.
 
 When it is unclear where the user needs to open the preview, ask once whether
 they will review it only on the computer running the work or also on another
@@ -28,6 +20,15 @@ the access-independent build before asking. Do not infer the review device from
 the execution host or treat no answer as a choice. Select the execution and
 hosting method from the available environment; do not prescribe a particular
 platform.
+
+For a local comparison request, go directly to **Compare one decision** and
+limit building and verification to that decision. The whole-surface inventory,
+review, and preservation gates apply to the prototype, not to this intermediate.
+
+## Set the effort
+
+Accept `effort=standard` or `effort=high`. Recommend and use `standard` when the
+argument is omitted.
 
 Pass one base completion gate at either effort: produce a finished-looking
 surface, cover every requested screen and relevant state, make intended
