@@ -264,7 +264,10 @@
   and adds missing edges without changing assignees or reopening closed issues.
   It closes open pointers whose folders have left the remote default branch.
   Duplicate exact keys remain unchanged and are reported because the key alone
-  cannot identify the canonical issue. The tracker
+  cannot identify the canonical issue. A unique dependent issue that references
+  a duplicated blocker key keeps its complete blocker relation set unchanged;
+  reconciliation reports every candidate instead of choosing or deleting an
+  edge. The tracker
   convention therefore includes a `List managed issues` operation that returns
   every managed issue's identifier, title, and state without a fixed result
   ceiling. An older convention without it supports only folder-by-folder

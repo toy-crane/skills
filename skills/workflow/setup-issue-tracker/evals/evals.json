@@ -11,7 +11,7 @@
         "The list operation paginates all open and closed managed issues without a fixed result ceiling and returns identifier, title, and state.",
         "It keeps the exact spec:<slug> key boundary.",
         "It includes find, publish, update title and body, full blocker-set replacement, claim, and close operations in addition to listing.",
-        "Its GitHub blocker update reads open and closed current relations before removing stale edges and adding missing ones, while Find still returns only open blockers for implementation gating.",
+        "Its GitHub blocker update paginates every open and closed current relation before removing stale edges and adding missing ones, while Find still returns only open blockers for implementation gating.",
         "It shows the proposed section before writing and does not publish existing spec folders during setup."
       ]
     },

@@ -140,11 +140,16 @@ For each exact key with zero or one issue:
   branch. Leave an already closed orphan unchanged.
 
 When several issues share one exact key, report every identifier and state and
-leave all of them unchanged; the key alone cannot prove which one owns the
-work. Never reopen a closed issue merely because its folder remains. If the
-configured tool is unavailable or any operation fails, finish the repository
-cleanup, report the incomplete tracker operation and reason, and preserve the
-remaining issue state for a later pass.
+leave all of them unchanged; the key alone cannot prove which one owns the work.
+Before replacing any unique issue's blocker set, resolve every desired `Blocked
+by` folder to exactly one tracker issue. When any desired blocker key has
+several issues, report all candidate identifiers and leave that dependent
+issue's entire blocker relation set unchanged rather than choosing or removing
+an edge arbitrarily; its unambiguous title and body may still be refreshed.
+Never reopen a closed issue merely because its folder remains. If the configured
+tool is unavailable or any operation fails, finish the repository cleanup,
+report the incomplete tracker operation and reason, and preserve the remaining
+issue state for a later pass.
 
 ## Finish
 
