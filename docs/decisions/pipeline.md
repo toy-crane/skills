@@ -21,10 +21,11 @@
   app-level context neither blocks shaping nor makes `shape-idea` create it. It
   owns new specs only; revising an existing one against later work belongs to
   `babysit-specs`.
-- `shape-idea` closes by making the approved change judgeable from the user's
-  point of view. It chooses the explanation and approved visual evidence that
-  best reveal the intended experience and important downstream consequences,
-  while distinguishing intended behavior from implemented evidence.
+- `shape-idea` closes by summarizing the complete product contract and making
+  the approved change judgeable from the user's point of view. It chooses the
+  explanation and approved visual evidence that best reveal the intended
+  experience and important downstream consequences, while distinguishing
+  intended behavior from implemented evidence.
 - `babysit-specs` owns cross-work-unit spec revision. It takes one or more
   spec folders, or every folder under `docs/specs/` when none is named, takes
   each spec's last commit as its baseline, and compares the contract with the

@@ -132,9 +132,10 @@ contract's fields rather than turning them into one.
 
 ## Make the shaped change judgeable
 
-Close by making the approved product change understandable and judgeable from
-the user's point of view. The user should not need to inspect the spec or ask
-separately what the resulting experience will look like.
+Close by summarizing the complete product contract and making the approved
+product change understandable and judgeable from the user's point of view. The
+user should not need to inspect the spec or ask separately what the resulting
+experience will look like.
 
 Choose the explanation and approved visual evidence that best reveal the
 intended change and its important downstream consequences. Give particular
