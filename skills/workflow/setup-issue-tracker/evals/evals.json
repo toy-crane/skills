@@ -1,0 +1,32 @@
+{
+  "skill_name": "setup-issue-tracker",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/setup-issue-tracker 이 GitHub 저장소에서 spec 폴더를 GitHub Issues로 조정하게 설정해줘. gh 로그인은 되어 있고 AGENTS.md가 있어.",
+      "expected_output": "The response proposes one compact AGENTS.md convention with the exact key and all seven operations, including a complete managed-issue inventory that supports later orphan and duplicate detection, without publishing issues during setup.",
+      "files": [],
+      "expectations": [
+        "It records List managed issues separately from finding one folder's issue.",
+        "The list operation paginates all open and closed managed issues without a fixed result ceiling and returns identifier, title, and state.",
+        "It keeps the exact spec:<slug> key boundary.",
+        "It includes find, publish, update title and body, full blocker-set replacement, claim, and close operations in addition to listing.",
+        "Its GitHub blocker update paginates every open and closed current relation before removing stale edges and adding missing ones, while Find still returns only open blockers for implementation gating.",
+        "It shows the proposed section before writing and does not publish existing spec folders during setup."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/setup-issue-tracker 기존 AGENTS.md의 GitHub Issues 설정을 점검해줘. tracker, key, gh tool과 find/publish/update title and body/update blockers/claim/close 여섯 동작은 이미 있는데 다른 tracker로 바꾸고 싶지는 않아.",
+      "expected_output": "The response preserves the existing tracker identity while adding the missing managed-issue listing operation and modernizing legacy update operations so full maintenance reconciliation is actually possible.",
+      "files": [],
+      "expectations": [
+        "It identifies the missing List managed issues operation as an incomplete older convention.",
+        "It preserves the existing tracker, key, tool, find, publish, claim, and close operations.",
+        "It proposes a listing operation that paginates every managed issue in every state and returns identifier, title, and state.",
+        "It upgrades a body-only edit to replace both title and body and upgrades additive blocker edits to remove stale edges as well as add missing ones.",
+        "It does not create a second instruction file or publish any issues."
+      ]
+    }
+  ]
+}

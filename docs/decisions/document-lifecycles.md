@@ -40,9 +40,11 @@
 - `maintain-project-context` is the periodic hygiene pass across permanent
   product context, publication premises, the glossary, decision contracts,
   shipped spec folders, published brief folders, and always-loaded repository
-  guidance. It may apply meaning already settled by an
-  authoritative source, but it leaves ambiguous conflicts unchanged and asks
-  for the missing decision.
+  guidance. When an issue tracker convention exists, the same pass reconciles
+  its derived spec-folder mirror against the fetched remote default branch; the
+  tracker never becomes a durable authority. It may apply meaning already
+  settled by an authoritative source, but it leaves ambiguous conflicts
+  unchanged and asks for the missing decision.
 - Git history is the only archive. Do not create an archive folder or keep
   superseded decision files in the active tree.
 
@@ -120,7 +122,10 @@ without turning it into feature scope or implementation prediction.
   contract lets an opt-in tracker hold the claim and blocking edges for a
   `docs/specs/<slug>/` folder, because a claim must be visible across
   branches and a file in the folder is not. The folder remains the contract
-  and its lifecycle above is unchanged.
+  and its lifecycle above is unchanged. `merge` maintains this mirror
+  incrementally after each merge, while `maintain-project-context` periodically
+  repairs the complete mirror; neither imports tracker prose into repository
+  context.
 - A single `docs/follow-ups.md` backlog list — parallel worktree sessions
   appending to one file collide on merge, the same failure that sequential
   record numbers produced.

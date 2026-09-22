@@ -395,11 +395,13 @@ available for an affected product surface.
   approval. Runs during agent setup, after stack changes, or on entering an
   unaudited project.
 - **[setup-issue-tracker](./skills/workflow/setup-issue-tracker/SKILL.md)**: Record
-  once per repository which issue tracker coordinates its spec folders. With
-  the recorded convention, `merge` publishes one pointer issue per
+  once per repository which issue tracker coordinates its spec folders and how
+  to list every managed pointer. With the recorded convention, `merge`
+  publishes one pointer issue per
   `docs/specs/<slug>/` folder when it lands on the default branch, `implement`
   claims the folder's issue before changing source, and `pr` and `merge` close
-  it when the implementation merges. Without it every skill behaves as before.
+  it when the implementation merges. `maintain-project-context` periodically
+  repairs the full mirror. Without it every skill behaves as before.
 - **[expo-dev-loop](./skills/expo/expo-dev-loop/SKILL.md)**: Verify Expo and React
   Native changes in a running app with `agent-device`, first proving target
   readiness and the scenario's required state, then selecting Metro reload or
@@ -431,8 +433,10 @@ available for an affected product surface.
   a clear place to resume after switching tasks.
 - **[maintain-project-context](./skills/workflow/maintain-project-context/SKILL.md)**:
   Periodically reconcile `PRODUCT.md`, the glossary, decision contracts, shipped
-  specs, and agent instructions after work accumulates. Apply only meaning that
-  is already settled and leave ambiguous conflicts for explicit clarification.
+  specs, agent instructions, and any configured spec-issue mirror after work
+  accumulates. Apply only meaning that is already settled, keep tracker issues
+  derived from the remote default branch, and leave ambiguous conflicts for
+  explicit clarification.
 
 ## Output styles
 
