@@ -209,9 +209,8 @@
 - 키는 이슈 제목 앞의 `spec:<slug>`이며, 뒤에 공백이나 제목의 끝이 와야
   일치한다. `spec:checkout`은 `spec:checkout-v2`와 일치하지 않는다. 라벨을
   쓸 수 없는 트래커에서도 동작한다.
-- 규약은 별도 파일 없이 `AGENTS.md`/`CLAUDE.md` 섹션 안에 직접 둔다. 자유
-  서술이 한 문단을 넘으면 `setup-issue-tracker`가 파일로 분리하고 섹션은
-  라우트만 남긴다.
+- 상세 규약은 길이와 관계없이 `docs/issue-tracker.md`에 둔다.
+  `AGENTS.md`/`CLAUDE.md`에는 목적·작업 원칙과 해당 문서의 라우트만 남긴다.
 - 새 스킬은 `workflow` 그룹에 들어간다.
 - Linear 템플릿은 조작만 정하고, 도구(MCP 또는 CLI)는 setup이 그 세션에서
   실제로 쓸 수 있는 것을 확인해 채운다.
