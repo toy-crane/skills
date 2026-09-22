@@ -15,11 +15,13 @@ or the end of the title; match it exactly.
   `Blocked by: #<n>` body line where dependencies are unavailable.
 - Publish: `gh issue create --title "spec:<slug> <spec title>" --body-file -`
   with the body derived from `spec.md`.
-- Update body: `gh issue edit <n> --body-file -` with the regenerated body.
-- Update blockers: GitHub native dependencies, `gh api --method POST
-  repos/{owner}/{repo}/issues/<n>/dependencies/blocked_by -F
-  issue_id=<blocker database id>`; fall back to a `Blocked by: #<n>` line in
-  the body where dependencies are unavailable.
+- Update title and body: `gh issue edit <n> --title "spec:<slug> <spec title>"
+  --body-file -` with the regenerated values.
+- Update blockers: read the current and desired sets, remove every stale edge
+  with `gh issue edit <n> --remove-blocked-by <old blocker>`, and add every
+  missing edge with `gh issue edit <n> --add-blocked-by <new blocker>`; where
+  dependencies are unavailable, replace the complete set of `Blocked by: #<n>`
+  body lines so stale lines are removed as well as missing lines added.
 - Claim: `gh issue edit <n> --add-assignee @me`; the current account is
   `gh api user --jq .login`.
 - Close: `Closes #<n>` in the implementation pull request body closes it on

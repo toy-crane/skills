@@ -139,7 +139,7 @@
       "files": [],
       "expectations": [
         "It compares tracker issues with spec folders from the fetched remote default branch rather than unmerged local changes.",
-        "It regenerates spec:checkout's derived body and blockers while preserving its assignee and current open or closed state.",
+        "It regenerates spec:checkout's derived title and body, removes stale blockers, and adds missing blockers while preserving its assignee and current open or closed state.",
         "It publishes spec:payments and closes the open orphan spec:legacy-upload.",
         "It does not reopen spec:profile merely because its folder remains.",
         "It reports both spec:search issue identifiers and leaves both unchanged rather than choosing a canonical issue.",

@@ -133,9 +133,9 @@ For each exact key with zero or one issue:
 - Regenerate the issue title and body from the fetched `spec.md`: use its first
   heading as the title after the key, the text of its first section, the
   remaining section headings, the folder path, and its `Blocked by:
-  docs/specs/<other>/` issue references. Replace the derived body whole and
-  synchronize its blocking edges while preserving its assignee and open or
-  closed state.
+  docs/specs/<other>/` issue references. Use the recorded update operations to
+  replace the derived title and body whole, remove stale blocking edges, and add
+  missing edges while preserving its assignee and open or closed state.
 - Close an open managed issue whose folder is absent from the fetched default
   branch. Leave an already closed orphan unchanged.
 

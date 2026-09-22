@@ -260,10 +260,11 @@
   `Blocked by: docs/specs/<other>/` line in `spec.md`, written whether or not a
   tracker exists, and `implement` leaves a `Spec-Folder` commit trailer so `pr`
   and `merge` can name the issue to close. Full reconciliation creates missing
-  pointers, refreshes derived bodies and edges without changing assignees or
-  reopening closed issues, and closes open pointers whose folders have left the
-  remote default branch. Duplicate exact keys remain unchanged and are reported
-  because the key alone cannot identify the canonical issue. The tracker
+  pointers, refreshes derived titles and bodies, removes stale blocking edges,
+  and adds missing edges without changing assignees or reopening closed issues.
+  It closes open pointers whose folders have left the remote default branch.
+  Duplicate exact keys remain unchanged and are reported because the key alone
+  cannot identify the canonical issue. The tracker
   convention therefore includes a `List managed issues` operation that returns
   every managed issue's identifier, title, and state. An older convention
   without it supports only folder-by-folder repair; maintenance reports that

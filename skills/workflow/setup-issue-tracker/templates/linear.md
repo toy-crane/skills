@@ -12,8 +12,10 @@ space or the end of the title; match it exactly.
   relations.
 - Publish: create an issue titled `spec:<slug> <spec title>` with the body
   derived from `spec.md`.
-- Update body: replace the issue description with the regenerated body.
-- Update blockers: set "blocked by" relations to the blocker issues.
+- Update title and body: replace the issue title and description with the
+  regenerated values.
+- Update blockers: replace the complete "blocked by" relation set, removing
+  stale blocker issues and adding missing ones.
 - Claim: assign the issue to the current Linear user.
 - Close: Linear does not close on merge by itself, so `merge` moves the issue
   to the team's done state after the implementation pull request merges; the

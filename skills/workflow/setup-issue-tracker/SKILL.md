@@ -35,8 +35,9 @@ Settle these items:
   session rather than assumed.
 - **Seven operations**, each written as what to run: list every managed issue in
   every state, find the issue for a folder (returning whether it is open, its
-  assignee, and its open blockers), publish an issue, update its body, update
-  its blockers, claim it, and close it. The list operation returns each issue's
+  assignee, and its open blockers), publish an issue, update its derived title
+  and body, replace its blockers by removing stale edges and adding missing
+  ones, claim it, and close it. The list operation returns each issue's
   identifier, title, and state so a maintenance pass can find orphan and
   duplicate exact keys.
 

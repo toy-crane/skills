@@ -13,7 +13,8 @@ below.>
 - Find the issue for `docs/specs/<slug>/`: <command; returns open state,
   assignee, open blockers>
 - Publish: <command>
-- Update body: <command>
-- Update blockers: <command>
+- Update title and body: <command; replaces both derived values>
+- Update blockers: <command; replaces the complete relation set by removing
+  stale edges and adding missing ones>
 - Claim: <command>
 - Close: <command, or the pull request body reference that closes it on merge>
