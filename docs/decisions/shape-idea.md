@@ -9,6 +9,11 @@
   settled constraints and rationale, assumptions, off-limits areas and reasons,
   deferred points, and remaining risks. Record behavior rather than predicted
   files, functions, code structure, technical layers, or implementation steps.
+- Make that close-out understandable and judgeable from the user's point of
+  view. Choose the explanation and approved visual evidence that best reveal
+  the intended experience and important downstream consequences, while keeping
+  intended behavior distinct from implemented evidence. The presentation
+  follows the shaped change rather than a fixed screen or report checklist.
 - Link from `spec.md` the approved `prototype.html` when one exists and each
   decision contract the work depends on, because `implement` loads what the
   handoff explicitly links and does not read a sibling file merely because it is
