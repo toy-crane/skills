@@ -2,6 +2,10 @@
 
 ## Decisions
 
+- When the user's preview access needs are unclear, ask once whether they will
+  review on the computer running the work or also on another device. Continue
+  building while awaiting the answer. Keep execution and hosting choices
+  situational rather than prescribing a platform or an instruction lookup order.
 - Accept `effort=standard` and `effort=high`, with `standard` as the recommended
   default. Hold one base completion gate fixed across both values: finished
   visual quality, complete requested screen and relevant-state coverage,
@@ -125,6 +129,12 @@
   `shape-idea`, `project-knowledge`, or a pre-existing spec to run to completion.
 
 ## Why
+
+The machine running an agent does not establish where the user will review its
+output. Asking about access only when unclear resolves that uncertainty without
+repeating a choice already known from context. A prescribed hosting service or
+instruction lookup order would constrain installations without improving the
+user's ability to open the prototype.
 
 Product navigation and decision alternatives serve different roles. Keeping
 those layers separate lets a comparison follow the user's actual question,
