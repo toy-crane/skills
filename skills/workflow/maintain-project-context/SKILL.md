@@ -113,15 +113,18 @@ navigate and explain why.
 ## Reconcile the issue-tracker mirror
 
 When `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker` section, read both
-files and use the first section found. Treat its issues as a derived coordination
+files and use the first section found and its linked detailed convention when
+present. Existing inline conventions remain valid; the setup skill need not be
+installed. If the linked document cannot be read, report that tracker work is
+blocked and continue repository context maintenance. Treat its issues as a derived coordination
 surface, never as authority for product meaning, shipment, terms, or decisions.
 Do not import issue prose or comments into durable project context.
 
 Resolve and fetch the remote's advertised default branch. Compare the tracker
 with `docs/specs/<slug>/` folders on that fetched branch, not with unmerged
-changes in the current checkout. Use the section's `List managed issues`
+changes in the current checkout. Use the convention's `List managed issues`
 operation to inventory every open and closed issue whose exact key is
-`spec:<slug>`. When an older section lacks that operation or records body-only
+`spec:<slug>`. When an older convention lacks that operation or records body-only
 or additive-only updates, use only the capabilities it actually records and
 complete that one-way portion of the reconciliation. Report each unavailable
 guarantee explicitly: orphan and duplicate detection without listing, derived

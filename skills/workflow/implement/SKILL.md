@@ -9,15 +9,17 @@ description: Implement or resume settled work from a selected spec folder as one
 
 The input is always the spec folder. When the repository's `AGENTS.md` or
 `CLAUDE.md` carries an `## Issue tracker` section, read both files and use the
-first found, then find this folder's issue by the section's key before
-anything else. Claiming is the first write of the run, ahead of any edit to
-source, task files, or the spec: assign the issue to the current tracker
-account with the section's claim operation. Proceed when the assignee
-is already that account, since this is a resumption. Stop without changing
-source and report when the assignee is another account or a blocking issue is
-still open, and likewise when the section's tool is unavailable in this
-session; the claim exists to keep two sessions off one folder, so continue
-unclaimed only when the user explicitly says to. A folder with no issue yet
+first found and its linked detailed convention before finding this folder's
+issue. Existing inline conventions remain valid. Use the convention's key,
+tool, and claim operation without requiring `setup-issue-tracker` to be installed.
+Claiming is the first write of the run, ahead of source, task, or spec edits.
+Check the convention's active-work signal before claiming: an issue already in
+progress requires the user's explicit request to resume, even when its assignee
+is the current account. Assign eligible work to the current tracker account and
+apply the convention's active state. Stop without changing source and report
+another account's claim, open blockers, an unreadable linked convention, or an
+unavailable tracker tool; continue unclaimed only on explicit user instruction.
+A folder with no issue yet
 proceeds as usual. Without the section, nothing here applies.
 
 End every commit's message with a `Spec-Folder: docs/specs/<slug>/` trailer so

@@ -1,4 +1,23 @@
+# Linear tracker convention template
+
+## Agent instructions
+
+```markdown
 ## Issue tracker
+
+- Manage spec state in Linear team `<team>`.
+- Resume an issue already in progress only when the user explicitly requests it.
+- Link the issue through its PR and close it when the PR merges.
+
+For issue work, read [the tracker convention](docs/issue-tracker.md).
+```
+
+## Detailed convention: `docs/issue-tracker.md`
+
+Adapt the guidance below to the repository and the currently available tool.
+Keep repository-specific choices; consult current tool help for argument details.
+Record how active work is recognized and claimed. An issue already in progress
+requires an explicit user request to resume, even with the same assignee.
 
 Tracker: Linear, team `<team key>`, through <the Linear MCP server or CLI this
 session verified>. Key: the issue title starts with `spec:<slug>` followed by a
@@ -16,7 +35,9 @@ space or the end of the title; match it exactly.
   regenerated values.
 - Update blockers: replace the complete "blocked by" relation set, removing
   stale blocker issues and adding missing ones.
-- Claim: assign the issue to the current Linear user.
-- Close: Linear does not close on merge by itself, so `merge` moves the issue
-  to the team's done state after the implementation pull request merges; the
-  pull request body still names the issue identifier.
+- Claim: assign the issue to the current Linear user and move it to the
+  team's in-progress state. Record which states count as active, including
+  review states when applicable. The same assignee does not prove resumption.
+- Close: record the PR closing reference and the team's verified integration
+  behavior. After merge, move the issue to the team's done state if the
+  integration has not closed it.

@@ -22,11 +22,16 @@ state instead of duplicating it.
 
 Create the pull request ready for review with a title and body describing the
 actual change. When the repository's `AGENTS.md` or `CLAUDE.md` carries an
-`## Issue tracker` section and the branch's commits carry a
+`## Issue tracker` section, read it and its linked detailed convention when
+present; legacy inline conventions also work without the setup skill installed.
+With a tracker configured and branch commits carrying a
 `Spec-Folder: docs/specs/<slug>/` trailer, find that folder's issue by the
-section's key and put the section's closing reference in the body so the merge
-closes it; without the section, the body is unchanged. Leave merging, required
+convention's key and put its closing reference in the body so the merge closes
+it; without the section, the body is unchanged. Leave merging, required
 reviews, and release decisions outside this skill's authority.
+
+If a linked convention cannot be read, report the missing information rather
+than guessing issue operations or claiming that the issue was linked or closed.
 
 ## Make the body understandable
 
