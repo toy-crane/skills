@@ -164,6 +164,31 @@
         "It inspects the sanitized media and preserves comparable state and the relevant visual change.",
         "It does not upload the supplied raw sensitive captures or treat publication permission as disclosure permission."
       ]
+    },
+    {
+      "id": 15,
+      "name": "recover-rebase-rejection",
+      "prompt": "기존 PR #72를 rebase merge로 마무리해줘. GitHub가 'This branch cannot be rebased due to conflicts'라며 머지를 거부했다. base는 main이고 PR 원격 head는 h111이다. 작업 checkout은 깨끗하다. 충돌은 base에서 바뀐 문서 링크와 PR의 설명 문장으로, 두 의도를 함께 보존할 근거가 있다. 로컬에서 rebase하면 새 head는 h222가 된다. 이전 h111의 CI는 통과했지만 h222의 빌드는 아직 pending이다. PR 브랜치에는 다른 사람이 push할 수도 있다. 머지 요청의 나머지 검증과 정리는 정상적으로 진행할 수 있다.",
+      "expected_output": "The response recovers the existing PR from GitHub's rebase rejection and merges only after the updated head passes its own checks.",
+      "files": [],
+      "expectations": [
+        "It fetches current base and PR head, resolves the established conflict through a rebase, and updates the existing PR branch only if the remote head has not changed unexpectedly.",
+        "It waits for h222's build to finish successfully instead of using h111's green CI or ending the task at the merge error.",
+        "It checks actual required reviews and checks without imposing an unconditional personal @codex review request.",
+        "It rechecks PR head and base before retrying the merge and verifies remote MERGED before cleanup."
+      ]
+    },
+    {
+      "id": 16,
+      "name": "head-changes-during-ci-wait",
+      "prompt": "PR #73은 GitHub rebase merge 실패 후 충돌을 해결해 h222로 갱신했다. h222의 빌드가 끝나기를 기다리는 동안 다른 기여자가 PR head를 h333으로 바꿨고 base도 한 커밋 진행했다. h222 빌드는 성공했지만 h333의 비필수 빌드는 아직 pending이다. GitHub의 필수 체크와 리뷰는 모두 통과로 보인다. PR을 끝까지 머지해줘.",
+      "expected_output": "The response reevaluates the changed PR and waits for CI on the current head before any merge attempt.",
+      "files": [],
+      "expectations": [
+        "It does not use h222's successful build as proof for h333 or merge immediately because required checks appear green.",
+        "It reevaluates mergeability against the changed base and waits for h333's relevant CI to finish successfully.",
+        "It verifies the current head, base, required gates, and remote MERGED state before cleanup."
+      ]
     }
   ]
 }
