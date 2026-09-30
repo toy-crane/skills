@@ -77,8 +77,22 @@ with an honest limitation if recovery fails.
 Preserve multiple commits with a rebase merge only when they are meaningful,
 independent units worth retaining in the base branch; use a squash merge
 otherwise.
-Respect required checks and reviews, and treat the remote pull request state as
-the authority for whether the merge succeeded.
+If GitHub cannot rebase-merge the pull request because its commits conflict
+with the base, continue the same merge request by rebasing the PR branch onto
+the freshly fetched base. Resolve conflicts when the intended combined result
+is established, preserve unrelated local work, and publish rewritten history
+only against the PR branch state just observed. If intent is unclear or the
+remote branch changed unexpectedly, keep the PR open and report the blocker.
+
+After updating the PR head, wait for its relevant CI to finish successfully;
+earlier head results do not verify the new commit. Recheck the current head,
+base, and repository-required checks and reviews before retrying the merge. If
+the head or base changes during that wait, reassess mergeability and repeat
+the CI wait for the current head.
+Keep the PR open and report any failing CI or unmet requirement rather than
+bypassing it. Respect required checks and reviews without imposing a review
+request that the repository does not require, and treat the remote pull request
+state as the authority for whether the merge succeeded.
 
 Clean up only after the remote reports `MERGED`. Before removing a linked
 worktree, run the bundled [server cleanup helper](scripts/stop-worktree-server.sh)
