@@ -33,7 +33,9 @@ the convention's closing reference in the body only when the PR actually
 delivers that folder's implementation, as established by the diff and
 verification; a trailer alone does not establish delivery. A spec-only PR
 links the original source issue without a closing reference, even if a trailer
-is present.
+is present. A direct implementation PR with a known `Source-Issue` but no spec
+folder also gets the convention's closing reference when its diff and
+verification establish delivery.
 Without the tracker section, the body is unchanged. Leave merging, required
 reviews, and release decisions outside this skill's authority.
 

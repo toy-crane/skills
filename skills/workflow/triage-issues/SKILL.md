@@ -79,8 +79,10 @@ evidence. Choose the smallest outcome that actually resolves the request:
   whole diff. Repair confirmed ordinary-path defects and rerun affected checks.
   Raise a ready-for-review implementation PR with the evidence and link the
   original issue. Record `Source-Issue: <tracker-qualified-ID>` in the PR body
-  so later reconciliation can find it after the branch is gone. Do not claim
-  runtime proof from static checks.
+  so later reconciliation can find it after the branch is gone. Include the
+  convention's closing reference because the verified PR delivers the direct
+  implementation, even without a spec folder or `Spec-Folder` trailer. Do not
+  claim runtime proof from static checks.
 - If the result is clear but spans substantial behavior or requires a durable
   design choice, write `docs/specs/<slug>/spec.md` as the implementation
   contract and raise a spec PR. Record `Source-Issue: <tracker-qualified-ID>`
@@ -134,7 +136,9 @@ maintenance must reuse it rather than publish a `spec:<slug>` duplicate.
 After publishing either PR, clear triage and waiting labels and apply the
 convention's review or in-progress signal. An open PR keeps the issue out of
 later triage runs; if it closes unmerged, restore triage eligibility when no
-other active work remains.
+other active work remains. After a spec-only PR merges, `merge` returns its
+source issue to the convention's non-active, ready-for-implementation state;
+do not leave the PR review signal blocking `implement`.
 
 ## Report only new decisions to the person
 
