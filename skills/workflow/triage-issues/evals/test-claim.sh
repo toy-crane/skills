@@ -15,11 +15,20 @@ git -C "$scratch/seed" push -q origin HEAD:main
 git -C "$scratch/remote.git" symbolic-ref HEAD refs/heads/main
 git clone -q "$scratch/remote.git" "$scratch/one"
 git clone -q "$scratch/remote.git" "$scratch/two"
+printf 'unpublished content\n' > "$scratch/one/local-only.txt"
+git -C "$scratch/one" add local-only.txt
+git -C "$scratch/one" -c user.name=Test -c user.email=test@example.com commit -q -m local-only
 
 read -r first token <<< "$("$script" claim --repo "$scratch/one" --issue 'linear:TEAM-12')"
 [[ "$first" =~ ^[0-9a-f]{40,64}$ && -n "$token" ]]
 [[ "$(git -C "$scratch/one" rev-parse "$first^{tree}")" == \
-  "$(git -C "$scratch/one" rev-parse 'HEAD^{tree}')" ]]
+  "$(git -C "$scratch/one" rev-parse 'origin/main^{tree}')" ]]
+[[ "$(git -C "$scratch/one" rev-parse "$first^")" == \
+  "$(git -C "$scratch/one" rev-parse origin/main)" ]]
+if git -C "$scratch/remote.git" cat-file -e "$first:local-only.txt" 2>/dev/null; then
+  echo 'claim ref exposed an unpublished local file' >&2
+  exit 1
+fi
 
 if "$script" claim --repo "$scratch/two" --issue 'linear:TEAM-12' >/dev/null 2>&1; then
   echo 'second claimant acquired an owned issue' >&2
@@ -36,7 +45,7 @@ fi
 renewed=$("$script" renew --repo "$scratch/one" --issue 'linear:TEAM-12' --expected "$first" --token "$token")
 [[ "$renewed" != "$first" ]]
 [[ "$(git -C "$scratch/one" rev-parse "$renewed^{tree}")" == \
-  "$(git -C "$scratch/one" rev-parse 'HEAD^{tree}')" ]]
+  "$(git -C "$scratch/one" rev-parse 'origin/main^{tree}')" ]]
 if "$script" release --repo "$scratch/one" --issue 'linear:TEAM-12' --expected "$first" --token "$token" >/dev/null 2>&1; then
   echo 'stale owner revision released a renewed claim' >&2
   exit 1
