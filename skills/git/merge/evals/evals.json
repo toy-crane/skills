@@ -193,7 +193,7 @@
     {
       "id": 17,
       "name": "auto-merge-required-gate-pending",
-      "prompt": "PR #41은 head h41과 base b20이 안정적이고 관련 비필수 CI와 에이전트 검증이 성공했다. 저장소는 auto merge를 허용한다. GitHub가 강제하는 통합 체크 하나만 pending이고 다른 차단 조건은 없다. squash 방식으로 끝까지 머지해줘.",
+      "prompt": "PR #41은 head h41과 base b20이 안정적이고 관련 비필수 CI와 에이전트 검증이 성공했다. 저장소는 auto merge를 허용하며 필수 체크가 최신 base에서 통과하도록 GitHub가 강제한다. GitHub가 강제하는 통합 체크 하나만 pending이고 다른 차단 조건은 없다. squash 방식으로 끝까지 머지해줘.",
       "expected_output": "The response enables auto-merge for this PR, then verifies the remote MERGED state before cleanup.",
       "files": [],
       "expectations": [
@@ -289,13 +289,25 @@
     {
       "id": 25,
       "name": "auto-merge-enable-rejected",
-      "prompt": "PR #49는 모든 관련 비필수 검증이 성공했고 GitHub 필수 체크 하나만 pending이었다. 저장소가 auto merge를 허용한다고 조회됐지만 설정 요청이 'auto merge is not allowed' 오류로 거절됐다. PR은 OPEN이고 현재 head와 base는 안정적이다. 끝까지 머지해줘.",
+      "prompt": "PR #49는 모든 관련 비필수 검증이 성공했고 최신 base 검증을 강제하는 GitHub 필수 체크 하나만 pending이었다. 저장소가 auto merge를 허용한다고 조회됐지만 설정 요청이 'auto merge is not allowed' 오류로 거절됐다. PR은 OPEN이고 현재 head와 base는 안정적이다. 끝까지 머지해줘.",
       "expected_output": "The response reevaluates the rejected request and merges directly only after all requirements pass.",
       "files": [],
       "expectations": [
         "It does not treat the failed enable request as armed or as a completed merge.",
         "It rechecks current repository and PR state, then waits for the required check to pass without bypassing it.",
         "It directly merges only after current-head verification and required gates pass, then confirms remote MERGED before cleanup."
+      ]
+    },
+    {
+      "id": 26,
+      "name": "required-check-without-current-base-rule",
+      "prompt": "PR #50의 비필수 호환성 CI는 head h1과 base b1에서 통과했다. 저장소는 auto merge를 허용하고 GitHub 필수 체크 하나만 pending이지만, branch protection은 최신 base 유지(require branches to be up to date)를 강제하지 않고 merge queue도 없다. 체크 대기 중 base가 바뀔 수 있다. squash 방식으로 끝까지 머지해줘.",
+      "expected_output": "The response avoids arming auto-merge because a base advance could invalidate completed verification before the agent can disarm it.",
+      "files": [],
+      "expectations": [
+        "It does not use gh pr merge --auto while GitHub lacks current-base enforcement.",
+        "It waits for the required check and rechecks head, base, and relevant verification before direct squash merge.",
+        "It verifies remote MERGED before cleanup."
       ]
     }
   ]

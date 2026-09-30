@@ -86,12 +86,15 @@ remote branch changed unexpectedly, keep the PR open and report the blocker.
 
 After updating the PR head, use only verification of the current head; earlier
 CI results do not verify the new commit. Finish relevant checks that GitHub
-does not require before allowing a merge. When the repository permits auto-merge
-and only GitHub-enforced requirements remain pending, enable auto-merge for this
-PR with the chosen merge method, verify that it is enabled, and wait for the
-remote to report `MERGED`. If auto-merge is unavailable or the PR is already
-mergeable, finish its relevant CI and required checks and reviews, then merge
-directly. `gh pr merge --auto` can merge an already-mergeable PR immediately;
+does not require before allowing a merge. Enable auto-merge only when the
+repository permits it, GitHub enforces checks against the current base (for
+example, by requiring branches to be up to date or using a merge queue), and
+only GitHub-enforced requirements remain pending. Verify that it is enabled,
+then wait for the remote to report `MERGED`. If current-base verification is
+not enforced, auto-merge is unavailable, or the PR is already mergeable, finish
+its relevant CI and required checks and reviews, then merge directly with the
+chosen method after rechecking the current head and base. `gh pr merge --auto`
+can merge an already-mergeable PR immediately;
 it is not a general wait flag. If enabling auto-merge fails, reassess the PR
 and use direct merge only after its verification and requirements pass.
 
