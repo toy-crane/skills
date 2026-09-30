@@ -23,8 +23,12 @@ most three eligible issues inspected in one run, and raise at most one PR.
 Continue to the next candidate after leaving an information or decision request.
 Stop selecting PR-producing work after the first PR.
 
-Exclude exact `spec:<slug>` pointer issues, issues with active work or any
-linked PR, and issues whose source identity already belongs to a spec folder.
+Exclude exact `spec:<slug>` pointer issues, issues with active work or an
+open linked PR, and issues whose source identity already belongs to a merged
+spec folder. A closed, unmerged PR does not finish the issue: inspect its
+branch, comments, and attempted changes, then requeue the issue when no active
+work remains. Reuse useful work rather than creating a duplicate PR. A merged
+implementation PR follows the tracker close or reconciliation path, not triage.
 A waiting `needs-info` or `needs-decision` issue becomes eligible when a person
 comments or edits its report after the question. Changes to the AI-managed
 sections do not count as human edits. Read the newest body and all comments
@@ -53,7 +57,7 @@ refs cannot be created or conditionally updated, skip writes and report the
 missing atomic claim capability. Do not replace it with a label or assignee.
 
 Recheck eligibility and the issue's human-written content after claiming and
-again before publishing an outcome. A newly linked PR or changed request can
+again before publishing an outcome. A newly opened PR or changed request can
 invalidate the planned action. Preserve existing dirty checkout work; use an
 isolated branch or worktree from the fetched remote default branch for a PR.
 
@@ -68,12 +72,15 @@ evidence. Choose the smallest outcome that actually resolves the request:
   product when one exists, and obtain one completed automated review of the
   whole diff. Repair confirmed ordinary-path defects and rerun affected checks.
   Raise a ready-for-review implementation PR with the evidence and link the
-  original issue. Do not claim runtime proof from static checks.
+  original issue. Record `Source-Issue: <tracker-qualified-ID>` in the PR body
+  so later reconciliation can find it after the branch is gone. Do not claim
+  runtime proof from static checks.
 - If the result is clear but spans substantial behavior or requires a durable
   design choice, write `docs/specs/<slug>/spec.md` as the implementation
   contract and raise a spec PR. Record `Source-Issue: <tracker-qualified-ID>`
   and the issue URL beside the spec's source links. Do not start implementation
-  in this triage run. An unmerged spec is a draft, and its PR remains linked to
+  in this triage run. Put the same `Source-Issue` ID in the PR body without a
+  closing reference. An unmerged spec is a draft, and its PR remains linked to
   the original issue.
 - If a missing fact prevents either path, ask for precisely that fact in a
   comment and set `needs-info` through the configured convention.
@@ -119,8 +126,9 @@ state. Link PRs without closing the original issue on a spec PR. Once a spec
 folder has this source issue, `merge`, `implement`, PR creation, and context
 maintenance must reuse it rather than publish a `spec:<slug>` duplicate.
 After publishing either PR, clear triage and waiting labels and apply the
-convention's review or in-progress signal; the linked PR keeps the issue out
-of later triage runs.
+convention's review or in-progress signal. An open PR keeps the issue out of
+later triage runs; if it closes unmerged, restore triage eligibility when no
+other active work remains.
 
 ## Report only new decisions to the person
 
