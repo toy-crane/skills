@@ -49,6 +49,9 @@ which include Backlog. Map `needs-triage` to native Triage or a label as
 appropriate, and verify the selected `needs-info` and `needs-decision` labels.
 Record comment and human-edit detection, linked PR lookup, evidence attachments,
 and duplicate disposition. Exclude exact `spec:<slug>` pointers from triage.
+Choose the team's non-active ready state for implementation after a spec-only
+PR merge (for example, a verified Todo or Backlog state), and record the move
+that clears any review or active signal without returning the issue to Triage.
 Record an operation that re-reads the latest description and updates only
 bounded AI-managed sections while preserving human content. Record whether
 the available tool conditionally updates descriptions; otherwise re-read and

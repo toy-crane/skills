@@ -124,6 +124,13 @@ implementation PR may have no spec folder or trailer: inspect the current PR's
 exact `Source-Issue` marker, diff, and verification, then close that issue now
 when they establish implementation delivery. A marker alone never closes an
 issue. Verify the resulting tracker state and report a failed close for retry.
+After a spec-only PR merges, leave its human-written source issue open and
+clear the PR review or in-progress signal through the convention's recorded
+post-spec-merge transition to a non-active, ready-for-implementation state.
+Check for newer active implementation first; never demote work that has already
+started. Verify the resulting state so `implement` can claim it without a
+special resume request. If the convention lacks this operation or the update
+fails, report the blocked handoff instead of assuming the issue is ready.
 
 A tracker failure never undoes the verified merge: report which operation
 failed and why. On later runs, search merged PR bodies for the exact

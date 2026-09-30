@@ -55,7 +55,9 @@ Settle these items:
   and how the latest body is re-read and verified afterward. Record the source
   ID and URL form that lets a spec
   find the same original issue. Do not add a decision-maker field or treat an
-  assignee or label as an atomic lock.
+  assignee or label as an atomic lock. Record a post-spec-merge transition that
+  clears the PR review or active-work signal and leaves the source issue open
+  in a state eligible for `implement`, without returning it to general triage.
 
 Start from the matching template and adjust it to what exploration found:
 [templates/github.md](templates/github.md),

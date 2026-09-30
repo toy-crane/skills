@@ -282,7 +282,9 @@
   excludes the source issue from triage; a closed unmerged PR permits retry
   after checking for other active work. Source-linked PR bodies retain the
   exact `Source-Issue` ID so a later maintenance pass can find merged delivery
-  even if the branch or spec folder is gone.
+  even if the branch or spec folder is gone. A spec-only merge returns the
+  source issue to a non-active, implementation-ready tracker state; it never
+  returns to general triage or closes the issue.
 - The repository's `spec.md` remains the implementation contract. A generated
   spec section in a human-written issue makes that contract readable alongside
   the preserved original report and AI triage summary; it is not a separately

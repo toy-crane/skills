@@ -64,7 +64,10 @@ open-issue scope (including Backlog), `needs-triage`, `needs-info`, and
 `needs-decision` label mapping, comment and human-edit detection, linked PR
 lookup, evidence attachments, and duplicate disposition. Verify the labels in
 the repository before use. Exclude PRs from the issue listing and exact
-`spec:<slug>` pointers from triage. Record an operation that re-reads the latest
+`spec:<slug>` pointers from triage. Record an operation that, after a spec-only
+PR merges, re-reads the latest issue state, clears review or in-progress labels,
+and leaves the source issue open in a non-active ready state for implementation;
+do not add `needs-triage` again. Record an operation that re-reads the latest
 body and updates only bounded AI-managed sections while preserving human
 content. GitHub REST conditional `PATCH` is not generally supported: verify
 the body after writing, recover an observed concurrent edit when possible, and

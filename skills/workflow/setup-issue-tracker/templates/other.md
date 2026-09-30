@@ -45,6 +45,8 @@ Backlog; `needs-triage`, `needs-info`, and `needs-decision` state/label mapping;
 human comment and body-edit detection; active work and linked PR lookup; comment
 and evidence publishing; duplicate disposition; and a bounded AI-section body
 update that preserves the latest human report and verifies the result. Record
-whether the tracker supports conditional updates; if not, report the remaining
+the post-spec-merge transition to an open, non-active state eligible for
+implementation, clearing PR review signals without re-entering general triage.
+Record whether the tracker supports conditional updates; if not, report the remaining
 human-edit race. Fetch `Source-Issue` issues by ID and list generated pointers
 by their title key.
