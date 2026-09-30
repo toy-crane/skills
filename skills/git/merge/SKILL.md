@@ -84,15 +84,34 @@ is established, preserve unrelated local work, and publish rewritten history
 only against the PR branch state just observed. If intent is unclear or the
 remote branch changed unexpectedly, keep the PR open and report the blocker.
 
-After updating the PR head, wait for its relevant CI to finish successfully;
-earlier head results do not verify the new commit. Recheck the current head,
-base, and repository-required checks and reviews before retrying the merge. If
-the head or base changes during that wait, reassess mergeability and repeat
-the CI wait for the current head.
-Keep the PR open and report any failing CI or unmet requirement rather than
-bypassing it. Respect required checks and reviews without imposing a review
-request that the repository does not require, and treat the remote pull request
-state as the authority for whether the merge succeeded.
+After updating the PR head, use only verification of the current head; earlier
+CI results do not verify the new commit. Finish relevant checks that GitHub
+does not require before allowing a merge. Enable auto-merge only when the
+repository permits it, GitHub enforces checks against the current base (for
+example, by requiring branches to be up to date or using a merge queue), and
+only GitHub-enforced requirements remain pending. Verify that it is enabled,
+then wait for the remote to report `MERGED`. If current-base verification is
+not enforced, auto-merge is unavailable, or the PR is already mergeable, finish
+its relevant CI and required checks and reviews, then merge directly with the
+chosen method after rechecking the current head and base. `gh pr merge --auto`
+can merge an already-mergeable PR immediately;
+it is not a general wait flag. If enabling auto-merge fails, reassess the PR
+and use direct merge only after its verification and requirements pass.
+
+While waiting, recheck the current head, base, relevant CI, and required checks
+and reviews. If the head or base changes, reassess mergeability and repeat
+verification for the current head. A head-match option on the enable request
+does not pin later auto-merge to that head; a push by someone with write access
+can leave auto-merge armed. Whenever new agent-side or non-required verification
+is needed, including after a base-only change or a late check on the same head,
+disable pending auto-merge while the PR is still open and verify its removal
+before waiting for that verification. Also disable it if merge intent can no
+longer be established and work must stop. Before ending with an open PR because
+CI failed or a requirement remains unmet, disable any pending auto-merge and
+verify its removal. Report those blockers rather than bypassing them. Respect
+required checks and reviews without imposing a review request that the
+repository does not require, and treat the remote pull request state as the
+authority for whether the merge succeeded.
 
 Clean up only after the remote reports `MERGED`. Before removing a linked
 worktree, run the bundled [server cleanup helper](scripts/stop-worktree-server.sh)

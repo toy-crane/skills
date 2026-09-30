@@ -189,6 +189,126 @@
         "It reevaluates mergeability against the changed base and waits for h333's relevant CI to finish successfully.",
         "It verifies the current head, base, required gates, and remote MERGED state before cleanup."
       ]
+    },
+    {
+      "id": 17,
+      "name": "auto-merge-required-gate-pending",
+      "prompt": "PR #41은 head h41과 base b20이 안정적이고 관련 비필수 CI와 에이전트 검증이 성공했다. 저장소는 auto merge를 허용하며 필수 체크가 최신 base에서 통과하도록 GitHub가 강제한다. GitHub가 강제하는 통합 체크 하나만 pending이고 다른 차단 조건은 없다. squash 방식으로 끝까지 머지해줘.",
+      "expected_output": "The response enables auto-merge for this PR, then verifies the remote MERGED state before cleanup.",
+      "files": [],
+      "expectations": [
+        "It chooses squash auto-merge while only a GitHub-required gate remains pending.",
+        "It verifies auto-merge was armed but does not call that a completed merge.",
+        "It waits for remote MERGED before cleanup and issue reconciliation."
+      ]
+    },
+    {
+      "id": 18,
+      "name": "already-mergeable-is-direct",
+      "prompt": "PR #42는 현재 head의 관련 CI와 필수 체크, 리뷰가 모두 통과했고 GitHub에서 지금 바로 병합 가능하다. 저장소는 auto merge를 허용한다. squash 방식으로 머지해줘.",
+      "expected_output": "The response directly merges the verified PR without treating --auto as a wait mechanism.",
+      "files": [],
+      "expectations": [
+        "It verifies the current head and relevant checks before merging.",
+        "It chooses a direct squash merge rather than arming auto-merge.",
+        "It verifies remote MERGED before cleanup."
+      ]
+    },
+    {
+      "id": 19,
+      "name": "auto-merge-disabled",
+      "prompt": "PR #43의 필수 빌드가 pending이고 저장소 설정에서 auto merge는 꺼져 있다. 관련 비필수 검증은 완료됐다. rebase 방식으로 머지를 끝내줘.",
+      "expected_output": "The response waits for the gate and then directly merges without attempting unavailable auto-merge.",
+      "files": [],
+      "expectations": [
+        "It does not issue gh pr merge --auto while the repository disallows auto-merge.",
+        "It waits for the current head's required build to pass before direct rebase merge.",
+        "It reports a blocker rather than bypassing a failed check and cleans up only after remote MERGED."
+      ]
+    },
+    {
+      "id": 20,
+      "name": "nonrequired-ci-still-pending",
+      "prompt": "PR #44는 저장소에서 auto merge가 허용된다. GitHub 필수 체크는 모두 성공했지만 이 변경에 중요한 비필수 통합 CI가 현재 head에서 pending이다. squash 방식으로 머지해줘.",
+      "expected_output": "The response waits for relevant non-required CI and avoids early auto-merge or direct merge.",
+      "files": [],
+      "expectations": [
+        "It does not arm auto-merge while relevant non-required CI is pending.",
+        "It does not merge directly before that CI succeeds.",
+        "It rechecks the current head and merge requirements before merging and verifies remote MERGED before cleanup."
+      ]
+    },
+    {
+      "id": 21,
+      "name": "armed-auto-merge-new-head",
+      "prompt": "PR #45는 h1에서 auto merge가 설정돼 있다. 필수 체크가 끝나기 전에 쓰기 권한이 있는 기여자가 h2를 push했다. GitHub는 아직 OPEN이고 autoMergeRequest가 남아 있다. h2의 비필수 통합 CI가 pending이다. 계속 머지해줘. 처음 설정할 때 --match-head-commit h1을 썼다.",
+      "expected_output": "The response disables the still-armed auto-merge before verifying the changed head.",
+      "files": [],
+      "expectations": [
+        "It does not treat --match-head-commit h1 as a lasting pin or use h1 checks for h2.",
+        "It disables and verifies removal of pending auto-merge while PR is OPEN, then checks h2 intent and non-required CI.",
+        "It re-arms only if GitHub-required gates remain after verifying h2; if already mergeable, it directly merges, and either way waits for remote MERGED before cleanup."
+      ]
+    },
+    {
+      "id": 22,
+      "name": "armed-auto-merge-required-ci-fails",
+      "prompt": "PR #46에 auto merge가 설정돼 있지만 현재 head의 필수 CI가 실패했다. PR은 아직 OPEN이며 이번 실행에서는 실패를 고칠 수 없어 여기서 작업을 마쳐야 한다. 기존 검증을 우회할 권한은 없다. 현재 상태를 안전하게 마무리해줘.",
+      "expected_output": "The response leaves the PR open without a live auto-merge reservation and reports the failed gate.",
+      "files": [],
+      "expectations": [
+        "It disables pending auto-merge and verifies removal before ending the run.",
+        "It leaves the PR and worktree intact and reports the failed current-head CI rather than bypassing it.",
+        "It does not claim a completed merge or run post-merge cleanup."
+      ]
+    },
+    {
+      "id": 23,
+      "name": "armed-auto-merge-base-only-change",
+      "prompt": "PR #47은 head h1과 base b1에서 비필수 검증을 끝내고 auto merge를 설정했다. 필수 체크가 대기하는 사이 base만 b2로 바뀌었다. PR은 여전히 OPEN이고 예약도 남아 있다. 새 base와 합친 결과에 대해 GitHub가 요구하지 않는 호환성 검증을 다시 해야 하며 현재 pending이다. 계속 머지해줘.",
+      "expected_output": "The response disarms auto-merge before waiting for newly needed verification after a base-only change.",
+      "files": [],
+      "expectations": [
+        "It disables pending auto-merge while PR is OPEN and verifies removal before the compatibility check finishes.",
+        "It does not reuse the b1 verification as proof for the b2 combination.",
+        "It re-enables only if GitHub-required gates remain after verification, or directly merges once all conditions pass."
+      ]
+    },
+    {
+      "id": 24,
+      "name": "armed-auto-merge-late-nonrequired-check",
+      "prompt": "PR #48은 head와 base가 그대로인 채 auto merge가 설정돼 있다. GitHub 필수 체크 하나가 pending인 동안 이 변경에 중요한 비필수 보안 CI가 같은 head에서 뒤늦게 시작돼 pending이 됐다. PR은 OPEN이고 예약도 남아 있다. 계속 머지해줘.",
+      "expected_output": "The response disarms auto-merge before waiting for the late non-required check.",
+      "files": [],
+      "expectations": [
+        "It disables and verifies removal of the live auto-merge reservation even though head and base did not change.",
+        "It waits for the non-required security CI before re-enabling or directly merging.",
+        "It verifies remote MERGED before post-merge cleanup."
+      ]
+    },
+    {
+      "id": 25,
+      "name": "auto-merge-enable-rejected",
+      "prompt": "PR #49는 모든 관련 비필수 검증이 성공했고 최신 base 검증을 강제하는 GitHub 필수 체크 하나만 pending이었다. 저장소가 auto merge를 허용한다고 조회됐지만 설정 요청이 'auto merge is not allowed' 오류로 거절됐다. PR은 OPEN이고 현재 head와 base는 안정적이다. 끝까지 머지해줘.",
+      "expected_output": "The response reevaluates the rejected request and merges directly only after all requirements pass.",
+      "files": [],
+      "expectations": [
+        "It does not treat the failed enable request as armed or as a completed merge.",
+        "It rechecks current repository and PR state, then waits for the required check to pass without bypassing it.",
+        "It directly merges only after current-head verification and required gates pass, then confirms remote MERGED before cleanup."
+      ]
+    },
+    {
+      "id": 26,
+      "name": "required-check-without-current-base-rule",
+      "prompt": "PR #50의 비필수 호환성 CI는 head h1과 base b1에서 통과했다. 저장소는 auto merge를 허용하고 GitHub 필수 체크 하나만 pending이지만, branch protection은 최신 base 유지(require branches to be up to date)를 강제하지 않고 merge queue도 없다. 체크 대기 중 base가 바뀔 수 있다. squash 방식으로 끝까지 머지해줘.",
+      "expected_output": "The response avoids arming auto-merge because a base advance could invalidate completed verification before the agent can disarm it.",
+      "files": [],
+      "expectations": [
+        "It does not use gh pr merge --auto while GitHub lacks current-base enforcement.",
+        "It waits for the required check and rechecks head, base, and relevant verification before direct squash merge.",
+        "It verifies remote MERGED before cleanup."
+      ]
     }
   ]
 }
