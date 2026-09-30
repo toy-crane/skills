@@ -13,7 +13,10 @@ Start from current remote truth. Preserve unrelated work, commit only the
 request's changes as logical Conventional Commits, resolve the named base or
 the remote's advertised default branch. If the change or its pull request is
 already merged, verify and report that outcome instead of creating another one.
-Otherwise, invoke `pull` with that resolved remote and base before verification,
+For an existing open PR, fetch its current head and synchronize the checkout
+with it, preserving both the observed remote commits and in-scope local work.
+If their intended combination is unclear, report the blocker before rebasing
+or publishing. Then invoke `pull` with that resolved remote and base before verification,
 publication, and creating or updating the ready-for-review PR. If `pull` is
 unavailable, fetch that base and rebase the current checkout onto it when it is
 not already included in HEAD. Preserve unrelated local work; do not silently
