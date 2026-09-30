@@ -53,7 +53,7 @@ new_commit() {
   local parent=$1
   local owner_hash=$2
   local tree
-  tree=$(git -C "$repo" hash-object -t tree -w --stdin </dev/null)
+  tree=$(git -C "$repo" rev-parse "$parent^{tree}")
   printf 'triage claim\n\nissue-hash=%s\nowner-hash=%s\nnonce=%s\n' \
     "$issue_hash" "$owner_hash" "$(new_token)" \
     | git -C "$repo" -c user.name='Triage Agent' \
