@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Publish the current repository change as a ready-for-review GitHub pull request against the requested base, or the repository's remote default branch when none is named. Always use this skill for an actual PR publication, including requests to create, open, raise, publish, or reuse a pull request, put work up for review, or make and share a GitHub review link. Complete the needed commit, base synchronization, and branch publication, but stop before merge.
+description: Create or reuse a ready-for-review GitHub PR for the current repository change against the requested base, or the repository's remote default branch when none is named. Always use this skill for an actual PR publication, including requests to create, open, raise, publish, or reuse a pull request, put work up for review, or make and share a GitHub review link. Complete the needed commit, base synchronization, and branch publication, but stop before merge.
 ---
 
 # Create a pull request
