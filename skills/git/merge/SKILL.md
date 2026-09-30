@@ -99,15 +99,16 @@ While waiting, recheck the current head, base, relevant CI, and required checks
 and reviews. If the head or base changes, reassess mergeability and repeat
 verification for the current head. A head-match option on the enable request
 does not pin later auto-merge to that head; a push by someone with write access
-can leave auto-merge armed. If the changed head needs agent-side or non-required
-verification, disable pending auto-merge while the PR is still open and verify
-its removal before that work. Also disable it if merge intent can no longer be
-established and work must stop. Before ending with an open PR because CI failed
-or a requirement remains unmet, disable any pending auto-merge and verify its
-removal. Report those blockers rather than bypassing them. Respect required
-checks and reviews without imposing a review request that the repository does
-not require, and treat the remote pull request state as the authority for
-whether the merge succeeded.
+can leave auto-merge armed. Whenever new agent-side or non-required verification
+is needed, including after a base-only change or a late check on the same head,
+disable pending auto-merge while the PR is still open and verify its removal
+before waiting for that verification. Also disable it if merge intent can no
+longer be established and work must stop. Before ending with an open PR because
+CI failed or a requirement remains unmet, disable any pending auto-merge and
+verify its removal. Report those blockers rather than bypassing them. Respect
+required checks and reviews without imposing a review request that the
+repository does not require, and treat the remote pull request state as the
+authority for whether the merge succeeded.
 
 Clean up only after the remote reports `MERGED`. Before removing a linked
 worktree, run the bundled [server cleanup helper](scripts/stop-worktree-server.sh)
