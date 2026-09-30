@@ -7,13 +7,21 @@ description: Carry the current repository change through a verified GitHub pull 
 
 Carry the current request's change through a pull request, verified merge, and
 safe local cleanup. Complete the necessary commit, synchronization, publication,
-and PR work without depending on other skills.
+and PR work, using the available `pull` skill for base synchronization.
 
 Start from current remote truth. Preserve unrelated work, commit only the
 request's changes as logical Conventional Commits, resolve the named base or
-the remote's advertised default branch, and create or reuse a ready-for-review
-pull request based on its fetched state. If the change or its pull request is
+the remote's advertised default branch. If the change or its pull request is
 already merged, verify and report that outcome instead of creating another one.
+Otherwise, invoke `pull` with that resolved remote and base before verification,
+publication, and creating or updating the ready-for-review PR. If `pull` is
+unavailable, fetch that base and rebase the current checkout onto it when it is
+not already included in HEAD. Preserve unrelated local work; do not silently
+commit, stash, or discard it to make synchronization possible. Resolve conflicts
+only when the intended result is established; otherwise keep the work
+recoverable and report the blocker. Verify the resulting HEAD before publication,
+and publish rewritten history only against the remote PR branch state just
+observed.
 When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
 section, read its linked detailed convention when present; legacy inline
 conventions also work, without a separate setup skill installation. For a
@@ -78,8 +86,8 @@ Preserve multiple commits with a rebase merge only when they are meaningful,
 independent units worth retaining in the base branch; use a squash merge
 otherwise.
 If GitHub cannot rebase-merge the pull request because its commits conflict
-with the base, continue the same merge request by rebasing the PR branch onto
-the freshly fetched base. Resolve conflicts when the intended combined result
+with the base, repeat the `pull` synchronization above on the PR branch.
+Resolve conflicts when the intended combined result
 is established, preserve unrelated local work, and publish rewritten history
 only against the PR branch state just observed. If intent is unclear or the
 remote branch changed unexpectedly, keep the PR open and report the blocker.
