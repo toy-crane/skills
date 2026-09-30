@@ -161,11 +161,15 @@ source issue through the convention. A merged PR is durable retry evidence for
 a failed close only when its diff and verification establish implementation
 delivery for that issue; a `Spec-Folder` trailer, linked spec PR, or missing
 folder alone is insufficient. Retry the convention's close operation for an
-open source issue, then verify its state. Leave it open and report the exact
-missing PR evidence or failed operation when delivery cannot be established or
-closure still fails. This catch-up also applies when the original merge run
-reported a tracker failure; do not depend on that run's branch or commit
-trailers surviving a squash merge.
+open source issue, then verify its state. For a merged spec-only PR with no
+implementation delivery, keep the source issue open. If it still carries the
+PR review or active-work signal, check for newer implementation work, then use
+the convention's post-spec-merge transition to a non-active,
+ready-for-implementation state and verify the result. Never demote work that
+has already started. Report the exact missing PR evidence or failed operation
+when neither safe closure nor a ready transition can be established. This
+catch-up also applies when the original merge run reported a tracker failure;
+do not depend on that run's branch or commit trailers surviving a squash merge.
 
 When several issues share one exact key, report every identifier and state and
 leave all of them unchanged; the key alone cannot prove which one owns the work.

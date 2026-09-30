@@ -137,9 +137,11 @@ failed and why. On later runs, search merged PR bodies for the exact
 `Source-Issue: <tracker-qualified-ID>` marker, resolve each issue through the
 convention, and retry an open source issue's closure only when that PR's diff
 and verification establish actual implementation delivery. A linked spec PR or
-trailer alone is insufficient; report missing evidence or a failed retry. This
-catch-up works after the original branch and trailers disappear in a squash
-merge.
+trailer alone is insufficient. For a merged spec-only PR, retry the recorded
+ready-for-implementation transition when the source issue still carries its
+review or active signal and no newer implementation has started. Report
+missing evidence or a failed retry. This catch-up works after the original
+branch and trailers disappear in a squash merge.
 
 Finish with the merged pull request URL, merge strategy, verified remote state,
 cleanup result, and the tracker issues published, updated, or closed. Keep a
