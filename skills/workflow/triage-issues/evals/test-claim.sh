@@ -51,4 +51,19 @@ if "$script" renew --repo "$scratch/one" --issue 'linear:TEAM-14' \
   exit 1
 fi
 
+"$script" claim --repo "$scratch/one" --issue 'linear:TEAM-15' \
+  > "$scratch/race-one" 2> "$scratch/race-one-error" &
+first_pid=$!
+"$script" claim --repo "$scratch/two" --issue 'linear:TEAM-15' \
+  > "$scratch/race-two" 2> "$scratch/race-two-error" &
+second_pid=$!
+first_status=0
+second_status=0
+wait "$first_pid" || first_status=$?
+wait "$second_pid" || second_status=$?
+if [[ "$first_status" -eq "$second_status" ]]; then
+  echo 'simultaneous claims did not produce exactly one owner' >&2
+  exit 1
+fi
+
 echo 'claim behavior passed'
