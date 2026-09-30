@@ -27,10 +27,13 @@ present; legacy inline conventions also work without the setup skill installed.
 With a tracker configured and branch commits carrying a
 `Spec-Folder: docs/specs/<slug>/` trailer, find that folder's issue by its
 `Source-Issue` ID when present or the convention's exact `spec:<slug>` key.
-Put its closing reference in the body only when the PR actually delivers that
-folder's implementation, as established by the diff and verification; a trailer
-alone does not establish delivery. A spec-only PR links the original source
-issue without a closing reference, even if a trailer is present.
+Put `Source-Issue: <tracker-qualified-ID>` in the body when the folder records
+one, so a later reconciliation can find the PR after the branch is gone. Put
+the convention's closing reference in the body only when the PR actually
+delivers that folder's implementation, as established by the diff and
+verification; a trailer alone does not establish delivery. A spec-only PR
+links the original source issue without a closing reference, even if a trailer
+is present.
 Without the tracker section, the body is unchanged. Leave merging, required
 reviews, and release decisions outside this skill's authority.
 

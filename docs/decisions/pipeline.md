@@ -278,7 +278,11 @@
   it, and merging the spec does not create another pointer. The folder records
   the source issue identity so `implement`, `pr`, `merge`, and maintenance can
   find it without changing the person's title to a generated key. Existing
-  `spec:<slug>` pointers stay outside general-issue triage.
+  `spec:<slug>` pointers stay outside general-issue triage. An open linked PR
+  excludes the source issue from triage; a closed unmerged PR permits retry
+  after checking for other active work. Source-linked PR bodies retain the
+  exact `Source-Issue` ID so a later maintenance pass can find merged delivery
+  even if the branch or spec folder is gone.
 - The repository's `spec.md` remains the implementation contract. A generated
   spec section in a human-written issue makes that contract readable alongside
   the preserved original report and AI triage summary; it is not a separately
@@ -298,6 +302,9 @@
   content, and replaces stale blocking edges with current ones without changing
   assignees or reopening closed issues.
   It closes open pointers whose folders have left the remote default branch.
+  It also retries closing an open source issue when a linked merged PR's diff
+  and verification establish implementation delivery; a merged spec PR alone
+  never closes it.
   Duplicate exact keys remain unchanged and are reported because the key alone
   cannot identify the canonical issue. A unique dependent issue that references
   a duplicated blocker key keeps its complete blocker relation set unchanged;

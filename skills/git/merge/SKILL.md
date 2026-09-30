@@ -22,8 +22,10 @@ configured tracker, read the
 commits before merging, while the branch still exists and before a squash can
 drop them, and keep those folders for the steps below. Find each folder's
 issue by `Source-Issue` ID when the spec records one, otherwise by the
-convention's exact title key. Put the convention's closing reference in a PR
-body only when its diff and verification show implementation delivery; the
+convention's exact title key. Put the exact `Source-Issue` ID in the PR body
+when present, so later reconciliation can find the PR after a squash merge.
+Put the convention's closing reference in a PR body only when its diff and
+verification show implementation delivery; the
 trailer alone is insufficient. A spec-only PR with a source issue links it
 without closing it, even if a trailer is present.
 
@@ -120,7 +122,13 @@ closing reference can leave it open otherwise. A spec-only merge never closes
 the source issue, even when its commits carry that trailer.
 
 A tracker failure never undoes the verified merge: report which operation
-failed and why, and let the next `merge` catch up.
+failed and why. On later runs, search merged PR bodies for the exact
+`Source-Issue: <tracker-qualified-ID>` marker, resolve each issue through the
+convention, and retry an open source issue's closure only when that PR's diff
+and verification establish actual implementation delivery. A linked spec PR or
+trailer alone is insufficient; report missing evidence or a failed retry. This
+catch-up works after the original branch and trailers disappear in a squash
+merge.
 
 Finish with the merged pull request URL, merge strategy, verified remote state,
 cleanup result, and the tracker issues published, updated, or closed. Keep a

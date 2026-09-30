@@ -147,11 +147,25 @@ or use its exact `spec:<slug>` key, then apply the rules below:
   replace the derived title and body whole for a pointer. For a human-written
   source issue, preserve its title and report and refresh only its bounded
   generated spec section. Remove stale blocking edges and add missing ones
-  while preserving its assignee and open or closed state.
+  while preserving its assignee and open or closed state until delivery is
+  checked below.
 - Close an open generated pointer whose folder is absent from the fetched
   default branch. Leave an already closed orphan unchanged. Do not infer that
   a human-written source issue should close merely because its spec folder is
-  absent; only the implementation PR or recorded tracker convention settles it.
+  absent; only confirmed implementation delivery or the recorded tracker
+  convention settles it.
+
+Search merged PR bodies for exact `Source-Issue: <tracker-qualified-ID>`
+markers, including PRs whose spec folder has since been deleted. Resolve each
+source issue through the convention. A merged PR is durable retry evidence for
+a failed close only when its diff and verification establish implementation
+delivery for that issue; a `Spec-Folder` trailer, linked spec PR, or missing
+folder alone is insufficient. Retry the convention's close operation for an
+open source issue, then verify its state. Leave it open and report the exact
+missing PR evidence or failed operation when delivery cannot be established or
+closure still fails. This catch-up also applies when the original merge run
+reported a tracker failure; do not depend on that run's branch or commit
+trailers surviving a squash merge.
 
 When several issues share one exact key, report every identifier and state and
 leave all of them unchanged; the key alone cannot prove which one owns the work.
