@@ -124,7 +124,9 @@ Resolve and fetch the remote's advertised default branch. Compare the tracker
 with `docs/specs/<slug>/` folders on that fetched branch, not with unmerged
 changes in the current checkout. Use the convention's `List managed issues`
 operation to inventory every open and closed issue whose exact key is
-`spec:<slug>`. When an older convention lacks that operation or records body-only
+`spec:<slug>`; fetch each folder's `Source-Issue` by its recorded ID instead of
+requiring it to appear in the pointer inventory. When an older convention lacks
+that operation or records body-only
 or additive-only updates, use only the capabilities it actually records and
 complete that one-way portion of the reconciliation. Report each unavailable
 guarantee explicitly: orphan and duplicate detection without listing, derived
@@ -133,17 +135,23 @@ without complete blocker-set replacement. Tell the user to rerun
 `setup-issue-tracker` for the full upgrade; do not invent tracker-specific
 commands or imply that the partial pass fully reconciled the mirror.
 
-For each exact key with zero or one issue:
+For each default-branch spec folder, resolve its source issue ID when present
+or use its exact `spec:<slug>` key, then apply the rules below:
 
-- Publish a missing issue for a default-branch spec folder.
-- Regenerate the issue title and body from the fetched `spec.md`: use its first
-  heading as the title after the key, the text of its first section, the
+- Publish a missing pointer only for a folder without `Source-Issue`. Report a
+  missing source issue without replacing it with a new pointer.
+- Regenerate the pointer title and body from the fetched `spec.md`: use its
+  first heading as the title after the key, the text of its first section, the
   remaining section headings, the folder path, and its `Blocked by:
   docs/specs/<other>/` issue references. Use the recorded update operations to
-  replace the derived title and body whole, remove stale blocking edges, and add
-  missing edges while preserving its assignee and open or closed state.
-- Close an open managed issue whose folder is absent from the fetched default
-  branch. Leave an already closed orphan unchanged.
+  replace the derived title and body whole for a pointer. For a human-written
+  source issue, preserve its title and report and refresh only its bounded
+  generated spec section. Remove stale blocking edges and add missing ones
+  while preserving its assignee and open or closed state.
+- Close an open generated pointer whose folder is absent from the fetched
+  default branch. Leave an already closed orphan unchanged. Do not infer that
+  a human-written source issue should close merely because its spec folder is
+  absent; only the implementation PR or recorded tracker convention settles it.
 
 When several issues share one exact key, report every identifier and state and
 leave all of them unchanged; the key alone cannot prove which one owns the work.

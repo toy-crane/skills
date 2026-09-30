@@ -21,8 +21,10 @@ configured tracker, read the
 `Spec-Folder: docs/specs/<slug>/` trailers from the branch's
 commits before merging, while the branch still exists and before a squash can
 drop them, and keep those folders for the steps below. Find each folder's
-issue by the convention's key and put the convention's closing reference in any
-pull request body you create.
+issue by `Source-Issue` ID when the spec records one, otherwise by the
+convention's exact title key. Put the convention's closing reference in any
+implementation pull request body you create. A spec-only PR with a source
+issue links it without closing it.
 
 If a linked convention cannot be read, report the missing information rather
 than guessing issue operations or claiming that the issue was linked or closed.
@@ -90,24 +92,26 @@ line with the spec folders now on the base branch, using the convention's tool,
 key, and operations. Read both files and use the first section found and its
 linked detailed convention when present. Without the section, skip this entirely.
 
-Diff the merge range for `docs/specs/<slug>/` folders. Publish one issue for
-each folder the merge added that has no open issue yet, regenerate the body of
-each issue whose `spec.md` changed, update blocking edges when its `Blocked by`
-lines changed, and close the open issue of each folder the merge deleted. Then
-catch up: publish an issue for every folder on the base branch that has no
-issue at all, open or closed, so merges made outside this skill and folders
-that predate the section are covered without duplicating a folder whose issue
-already closed. A folder the merge range added gets a new issue when only a
-closed one exists; an open one is reused, so reporting an already merged pull
-request never publishes twice.
+Diff the merge range for `docs/specs/<slug>/` folders. For a folder with
+`Source-Issue: <tracker-qualified-ID>`, find and retain that original issue;
+never publish a second pointer. For other added folders, publish a pointer
+when no open issue exists. Refresh the managed spec content of each issue whose
+`spec.md` changed, update blocking edges when its `Blocked by` lines changed,
+and close the open generated pointer of each folder the merge deleted. A
+human-written source issue closes on confirmed implementation delivery, not
+from folder deletion alone. Then catch up:
+publish a pointer for every folder on the base branch without `Source-Issue`
+that has no issue at all, open or closed. A spec-first folder the merge range
+added gets a new issue when only a closed pointer exists; an open one is reused.
 
-Derive the body from `spec.md` by structure, never by section name, so any
-language works: the first heading as the title after the key, the text of the
-first section, the remaining section headings as a list, the folder path, and
-the issue of each `Blocked by: docs/specs/<other>/` line as a blocking edge.
-Overwrite the body whole; nobody edits it by hand. Match the key exactly,
-`spec:<slug>` followed by a space or the end of the title, so a slug never
-matches a longer one. Then close the issue of every folder the branch's
+For a generated pointer, derive title and body from `spec.md` by structure,
+never by section name: the first heading, text of its first section, remaining
+section headings, folder path, and blocking issue references. Replace its
+derived title and body whole. For an original human-written issue, keep its
+title and report and update only the bounded, generated spec section from
+`spec.md`; use the convention's bounded body-update operation and recheck human
+content. Match pointer keys exactly, `spec:<slug>` followed by a space or
+the end of the title. Then close the issue of every folder the branch's
 `Spec-Folder` trailers named if it is still open, whatever the tracker's
 automatic closing does: a merge into a non-default base, a squash message
 without the trailer, a tracker with no closing reference, or a pull request
