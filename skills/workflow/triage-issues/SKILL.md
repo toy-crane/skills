@@ -46,6 +46,12 @@ in disposable run state, never in an issue, commit, PR, or log. Verify the claim
 before each issue write, branch publication, and PR creation; renew it during
 long work and use the new SHA. If ownership is lost, stop writing and report
 the partial state. Release only the revision still owned by this run.
+At every terminal outcome after claiming—including a question, disposition,
+published PR, changed-issue skip, or failure—verify and release the current
+owned revision. Finish the issue outcome before releasing; do not wait for an
+open PR to merge. If ownership was lost, do not release another run's claim.
+If release fails, report the held ref and retry path rather than assuming the
+issue is available. Two-hour recovery is for interrupted runs only.
 
 An interrupted claim older than two hours can be recovered only after reading
 the issue's newest activity, branches, and PRs for the earlier attempt. Reuse
