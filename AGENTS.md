@@ -73,17 +73,11 @@ see an update. No changeset or CI automation.
 
 ## Merging into `main`
 
-`.github/workflows/` holds the two checks a pull request must pass.
+`.github/workflows/` holds two pull request checks.
 `plugin-manifest` runs the same `claude plugin validate . --strict` this file
-already asks for, so a broken manifest cannot reach `main`.
+already asks for and reports a broken manifest.
 `codex-review-gate` republishes Codex's review summary as a check run on the
 pull request's current head commit, because Codex itself publishes no check.
-
-Codex reviews a pull request when it opens and when a draft is marked ready,
-not when commits are pushed, so every push after that needs a fresh
-`@codex review` comment from a person; Codex ignores requests from bots.
-Its findings arrive as review threads, and each one blocks the merge until it
-is resolved.
 
 ## Going live
 
