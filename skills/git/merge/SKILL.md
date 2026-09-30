@@ -119,7 +119,11 @@ close the issue of each implemented folder named by its `Spec-Folder` trailer
 if still open, whatever the tracker's automatic closing does: a merge into a
 non-default base, a squash message without the trailer, or a tracker with no
 closing reference can leave it open otherwise. A spec-only merge never closes
-the source issue, even when its commits carry that trailer.
+the source issue, even when its commits carry that trailer. A direct small
+implementation PR may have no spec folder or trailer: inspect the current PR's
+exact `Source-Issue` marker, diff, and verification, then close that issue now
+when they establish implementation delivery. A marker alone never closes an
+issue. Verify the resulting tracker state and report a failed close for retry.
 
 A tracker failure never undoes the verified merge: report which operation
 failed and why. On later runs, search merged PR bodies for the exact
