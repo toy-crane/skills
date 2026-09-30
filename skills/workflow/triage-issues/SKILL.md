@@ -118,6 +118,9 @@ its next evaluated outcome; do not leave it in an unlabelled intermediate
 state. Link PRs without closing the original issue on a spec PR. Once a spec
 folder has this source issue, `merge`, `implement`, PR creation, and context
 maintenance must reuse it rather than publish a `spec:<slug>` duplicate.
+After publishing either PR, clear triage and waiting labels and apply the
+convention's review or in-progress signal; the linked PR keeps the issue out
+of later triage runs.
 
 ## Report only new decisions to the person
 
