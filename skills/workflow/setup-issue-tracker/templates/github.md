@@ -32,9 +32,10 @@ or the end of the title; match it exactly. A spec carrying
   ceiling.
 - Find the issue for `docs/specs/<slug>/`: when it records `Source-Issue`,
   fetch that issue number directly with `gh issue view <n> --json
-  number,title,state,assignees,body`; otherwise use `gh issue list --state all
-  --search 'in:title "spec:<slug>"' --json number,title,state,assignees` and
-  keep the entry whose title matches the key exactly; list open blockers with
+  number,title,state,assignees,body`; otherwise filter the complete paginated
+  `List managed issues` inventory above by the exact `spec:<slug>` key, then
+  fetch the matching issue by number for its assignee and body. Do not use the
+  default-limited `gh issue list` result to prove absence. List open blockers with
   `gh api repos/{owner}/{repo}/issues/<n>/dependencies/blocked_by --jq
   '[.[] | select(.state == "open") | .number]'`, and read any
   `Blocked by: #<n>` body line where dependencies are unavailable.
