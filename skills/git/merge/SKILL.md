@@ -22,9 +22,10 @@ configured tracker, read the
 commits before merging, while the branch still exists and before a squash can
 drop them, and keep those folders for the steps below. Find each folder's
 issue by `Source-Issue` ID when the spec records one, otherwise by the
-convention's exact title key. Put the convention's closing reference in any
-implementation pull request body you create. A spec-only PR with a source
-issue links it without closing it.
+convention's exact title key. Put the convention's closing reference in a PR
+body only when its diff and verification show implementation delivery; the
+trailer alone is insufficient. A spec-only PR with a source issue links it
+without closing it, even if a trailer is present.
 
 If a linked convention cannot be read, report the missing information rather
 than guessing issue operations or claiming that the issue was linked or closed.
@@ -111,11 +112,12 @@ derived title and body whole. For an original human-written issue, keep its
 title and report and update only the bounded, generated spec section from
 `spec.md`; use the convention's bounded body-update operation and recheck human
 content. Match pointer keys exactly, `spec:<slug>` followed by a space or
-the end of the title. Then close the issue of every folder the branch's
-`Spec-Folder` trailers named if it is still open, whatever the tracker's
-automatic closing does: a merge into a non-default base, a squash message
-without the trailer, a tracker with no closing reference, or a pull request
-that added and implemented the same folder all leave it open otherwise.
+the end of the title. After a PR that actually delivered implementation,
+close the issue of each implemented folder named by its `Spec-Folder` trailer
+if still open, whatever the tracker's automatic closing does: a merge into a
+non-default base, a squash message without the trailer, or a tracker with no
+closing reference can leave it open otherwise. A spec-only merge never closes
+the source issue, even when its commits carry that trailer.
 
 A tracker failure never undoes the verified merge: report which operation
 failed and why, and let the next `merge` catch up.

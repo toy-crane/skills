@@ -26,10 +26,11 @@ actual change. When the repository's `AGENTS.md` or `CLAUDE.md` carries an
 present; legacy inline conventions also work without the setup skill installed.
 With a tracker configured and branch commits carrying a
 `Spec-Folder: docs/specs/<slug>/` trailer, find that folder's issue by its
-`Source-Issue` ID when present or the convention's exact `spec:<slug>` key,
-then put its closing reference in the body so the implementation merge closes
-it. A spec-only PR that introduces a folder with `Source-Issue` links the
-original issue without a closing reference; merging a spec is not delivery.
+`Source-Issue` ID when present or the convention's exact `spec:<slug>` key.
+Put its closing reference in the body only when the PR actually delivers that
+folder's implementation, as established by the diff and verification; a trailer
+alone does not establish delivery. A spec-only PR links the original source
+issue without a closing reference, even if a trailer is present.
 Without the tracker section, the body is unchanged. Leave merging, required
 reviews, and release decisions outside this skill's authority.
 
