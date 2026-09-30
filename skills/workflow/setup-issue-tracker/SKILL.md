@@ -1,6 +1,6 @@
 ---
 name: setup-issue-tracker
-description: Record once per repository which issue tracker coordinates its spec folders, so merge, pr, implement, and maintain-project-context can publish, claim, close, and reconcile one issue per docs/specs/<slug>/ folder. Run by hand before the first parallel implementation; rerun to change trackers or upgrade an older convention.
+description: Record once per repository which issue tracker coordinates spec folders and, when requested, scheduled triage of human-written issues. Run by hand before parallel implementation or issue triage; rerun to change trackers or upgrade an older convention.
 disable-model-invocation: true
 ---
 
@@ -8,11 +8,11 @@ disable-model-invocation: true
 
 Give this repository one issue tracker convention that the other skills read
 through a short route in its agent instructions. The spec folder under
-`docs/specs/<slug>/` stays the only contract, and an issue is a pointer to one
-folder that carries the claim, the blocking edges, and a body derived from
-`spec.md`. Repositories without this section keep every skill's current
-behavior, so write it only when the user wants parallel implementation across
-spec folders.
+`docs/specs/<slug>/` stays the implementation contract. A spec-first folder
+gets a derived pointer issue after merge; when triage starts from an existing
+human-written issue, that original issue stays the only issue for the work.
+Repositories without this section keep every skill's current behavior. Write
+it when the user wants parallel implementation or scheduled general-issue triage.
 
 ## Explore, then recommend
 
@@ -30,7 +30,9 @@ Settle these items:
   one paragraph.
 - **Key**: how a spec folder maps to an issue. The default is an issue title
   that starts with `spec:<slug>` followed by a space or the end of the title,
-  matched exactly so `spec:checkout` never matches `spec:checkout-v2`.
+  matched exactly so `spec:checkout` never matches `spec:checkout-v2`. A spec
+  with `Source-Issue: <tracker-qualified-ID>` instead maps to that original
+  issue without changing its title.
 - **Tool**: the command or server the skills use, verified to exist in this
   session rather than assumed.
 - **Repository conventions**: how work in progress is recognized, when a user
@@ -42,6 +44,20 @@ Settle these items:
   ones, claim it, and close it. The list operation returns each issue's
   identifier, title, and state so a maintenance pass can find orphan and
   duplicate exact keys.
+- **General-issue triage, when requested**: record the open general-issue
+  scope including Backlog; how to read human comments and body revisions; and
+  the tracker states or labels representing `needs-triage`, `needs-info`, and
+  `needs-decision`. Use native Triage where appropriate, and verify or create
+  the selected labels. Record how to find linked PRs and active work, attach
+  evidence, leave comments, change waiting states, dispose of proven
+  duplicates, and update only bounded AI-managed body sections while
+  preserving human text. Record whether conditional body updates are supported
+  and how the latest body is re-read and verified afterward. Record the source
+  ID and URL form that lets a spec
+  find the same original issue. Do not add a decision-maker field or treat an
+  assignee or label as an atomic lock. Record a post-spec-merge transition that
+  clears the PR review or active-work signal and leaves the source issue open
+  in a state eligible for `implement`, without returning it to general triage.
 
 Start from the matching template and adjust it to what exploration found:
 [templates/github.md](templates/github.md),
@@ -66,10 +82,12 @@ section still cannot support full reconciliation.
 
 Keep the always-loaded section focused on purpose: where spec state lives,
 require an explicit user request before resuming an issue already in progress,
-and link issues through PRs and close them on merge. Add a task-time link to
+and link issues through PRs and close them when implementation merges. A spec
+PR does not close a human-written source issue. Add a task-time link to
 `docs/issue-tracker.md`; write the repository's key, verified tool, state and
-claim conventions, closing reference, and seven operations there. Load that
-file only for issue work. Preserve repository-specific choices and non-obvious
+claim conventions, closing reference, seven spec operations, and any triage
+operations there. Load that file only for issue work. Preserve
+repository-specific choices and non-obvious
 behavior; use the current tool schema or CLI help for exact arguments instead
 of copying exhaustive field lists into either document. General tool guidance
 belongs in this skill's references, not in always-loaded instructions.

@@ -25,9 +25,18 @@ actual change. When the repository's `AGENTS.md` or `CLAUDE.md` carries an
 `## Issue tracker` section, read it and its linked detailed convention when
 present; legacy inline conventions also work without the setup skill installed.
 With a tracker configured and branch commits carrying a
-`Spec-Folder: docs/specs/<slug>/` trailer, find that folder's issue by the
-convention's key and put its closing reference in the body so the merge closes
-it; without the section, the body is unchanged. Leave merging, required
+`Spec-Folder: docs/specs/<slug>/` trailer, find that folder's issue by its
+`Source-Issue` ID when present or the convention's exact `spec:<slug>` key.
+Put `Source-Issue: <tracker-qualified-ID>` in the body when the folder records
+one, so a later reconciliation can find the PR after the branch is gone. Put
+the convention's closing reference in the body only when the PR actually
+delivers that folder's implementation, as established by the diff and
+verification; a trailer alone does not establish delivery. A spec-only PR
+links the original source issue without a closing reference, even if a trailer
+is present. A direct implementation PR with a known `Source-Issue` but no spec
+folder also gets the convention's closing reference when its diff and
+verification establish delivery.
+Without the tracker section, the body is unchanged. Leave merging, required
 reviews, and release decisions outside this skill's authority.
 
 If a linked convention cannot be read, report the missing information rather

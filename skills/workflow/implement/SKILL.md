@@ -10,8 +10,11 @@ description: Implement or resume settled work from a selected spec folder as one
 The input is always the spec folder. When the repository's `AGENTS.md` or
 `CLAUDE.md` carries an `## Issue tracker` section, read both files and use the
 first found and its linked detailed convention before finding this folder's
-issue. Existing inline conventions remain valid. Use the convention's key,
-tool, and claim operation without requiring `setup-issue-tracker` to be installed.
+issue. A `Source-Issue: <tracker-qualified-ID>` line in `spec.md` names the
+original human-written issue; find that issue by ID without publishing or
+claiming a separate `spec:<slug>` pointer. Otherwise use the convention's
+exact title key. Existing inline conventions remain valid. Use the convention's
+key, tool, and claim operation without requiring `setup-issue-tracker` to be installed.
 Claiming is the first write of the run, ahead of source, task, or spec edits.
 Check the convention's active-work signal before claiming: an issue already in
 progress requires the user's explicit request to resume, even when its assignee

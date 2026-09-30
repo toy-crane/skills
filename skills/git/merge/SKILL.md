@@ -21,8 +21,13 @@ configured tracker, read the
 `Spec-Folder: docs/specs/<slug>/` trailers from the branch's
 commits before merging, while the branch still exists and before a squash can
 drop them, and keep those folders for the steps below. Find each folder's
-issue by the convention's key and put the convention's closing reference in any
-pull request body you create.
+issue by `Source-Issue` ID when the spec records one, otherwise by the
+convention's exact title key. Put the exact `Source-Issue` ID in the PR body
+when present, so later reconciliation can find the PR after a squash merge.
+Put the convention's closing reference in a PR body only when its diff and
+verification show implementation delivery; the
+trailer alone is insufficient. A spec-only PR with a source issue links it
+without closing it, even if a trailer is present.
 
 If a linked convention cannot be read, report the missing information rather
 than guessing issue operations or claiming that the issue was linked or closed.
@@ -90,31 +95,53 @@ line with the spec folders now on the base branch, using the convention's tool,
 key, and operations. Read both files and use the first section found and its
 linked detailed convention when present. Without the section, skip this entirely.
 
-Diff the merge range for `docs/specs/<slug>/` folders. Publish one issue for
-each folder the merge added that has no open issue yet, regenerate the body of
-each issue whose `spec.md` changed, update blocking edges when its `Blocked by`
-lines changed, and close the open issue of each folder the merge deleted. Then
-catch up: publish an issue for every folder on the base branch that has no
-issue at all, open or closed, so merges made outside this skill and folders
-that predate the section are covered without duplicating a folder whose issue
-already closed. A folder the merge range added gets a new issue when only a
-closed one exists; an open one is reused, so reporting an already merged pull
-request never publishes twice.
+Diff the merge range for `docs/specs/<slug>/` folders. For a folder with
+`Source-Issue: <tracker-qualified-ID>`, find and retain that original issue;
+never publish a second pointer. For other added folders, publish a pointer
+when no open issue exists. Refresh the managed spec content of each issue whose
+`spec.md` changed, update blocking edges when its `Blocked by` lines changed,
+and close the open generated pointer of each folder the merge deleted. A
+human-written source issue closes on confirmed implementation delivery, not
+from folder deletion alone. Then catch up:
+publish a pointer for every folder on the base branch without `Source-Issue`
+that has no issue at all, open or closed. A spec-first folder the merge range
+added gets a new issue when only a closed pointer exists; an open one is reused.
 
-Derive the body from `spec.md` by structure, never by section name, so any
-language works: the first heading as the title after the key, the text of the
-first section, the remaining section headings as a list, the folder path, and
-the issue of each `Blocked by: docs/specs/<other>/` line as a blocking edge.
-Overwrite the body whole; nobody edits it by hand. Match the key exactly,
-`spec:<slug>` followed by a space or the end of the title, so a slug never
-matches a longer one. Then close the issue of every folder the branch's
-`Spec-Folder` trailers named if it is still open, whatever the tracker's
-automatic closing does: a merge into a non-default base, a squash message
-without the trailer, a tracker with no closing reference, or a pull request
-that added and implemented the same folder all leave it open otherwise.
+For a generated pointer, derive title and body from `spec.md` by structure,
+never by section name: the first heading, text of its first section, remaining
+section headings, folder path, and blocking issue references. Replace its
+derived title and body whole. For an original human-written issue, keep its
+title and report and update only the bounded, generated spec section from
+`spec.md`; use the convention's bounded body-update operation and recheck human
+content. Match pointer keys exactly, `spec:<slug>` followed by a space or
+the end of the title. After a PR that actually delivered implementation,
+close the issue of each implemented folder named by its `Spec-Folder` trailer
+if still open, whatever the tracker's automatic closing does: a merge into a
+non-default base, a squash message without the trailer, or a tracker with no
+closing reference can leave it open otherwise. A spec-only merge never closes
+the source issue, even when its commits carry that trailer. A direct small
+implementation PR may have no spec folder or trailer: inspect the current PR's
+exact `Source-Issue` marker, diff, and verification, then close that issue now
+when they establish implementation delivery. A marker alone never closes an
+issue. Verify the resulting tracker state and report a failed close for retry.
+After a spec-only PR merges, leave its human-written source issue open and
+clear the PR review or in-progress signal through the convention's recorded
+post-spec-merge transition to a non-active, ready-for-implementation state.
+Check for newer active implementation first; never demote work that has already
+started. Verify the resulting state so `implement` can claim it without a
+special resume request. If the convention lacks this operation or the update
+fails, report the blocked handoff instead of assuming the issue is ready.
 
 A tracker failure never undoes the verified merge: report which operation
-failed and why, and let the next `merge` catch up.
+failed and why. On later runs, search merged PR bodies for the exact
+`Source-Issue: <tracker-qualified-ID>` marker, resolve each issue through the
+convention, and retry an open source issue's closure only when that PR's diff
+and verification establish actual implementation delivery. A linked spec PR or
+trailer alone is insufficient. For a merged spec-only PR, retry the recorded
+ready-for-implementation transition when the source issue still carries its
+review or active signal and no newer implementation has started. Report
+missing evidence or a failed retry. This catch-up works after the original
+branch and trailers disappear in a squash merge.
 
 Finish with the merged pull request URL, merge strategy, verified remote state,
 cleanup result, and the tracker issues published, updated, or closed. Keep a
