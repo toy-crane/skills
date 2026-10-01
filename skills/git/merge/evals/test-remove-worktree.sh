@@ -191,6 +191,16 @@ helper remove "$task_wt" --base origin/main
 expect_line 'result left holders'
 [ -d "$task_wt" ] || fail 'attached worktree should remain'
 ps -p "$task_attached_pid" >/dev/null || fail 'helper must not stop processes'
+task_wt="$task_main/.wt/back\\tslash"
+git -C "$task_main" worktree add -q "$task_wt" -b backslash origin/main
+start_attached "$task_wt"
+helper inspect "$task_wt"
+expect_line 'verdict attached'
+task_wt="$task_main/.wt/한글 작업"
+git -C "$task_main" worktree add -q "$task_wt" -b hangul origin/main
+start_attached "$task_wt"
+task_output=$(cd "$task_main" && LC_ALL=C bash "$task_helper" inspect "$task_wt")
+expect_line 'verdict attached'
 pass
 
 # 7. The current session inside the worktree keeps the folder: HEAD detaches
@@ -204,6 +214,27 @@ expect_line 'result kept-folder'
 expect_line 'branch deleted inside'
 [ -d "$task_wt" ] || fail 'session worktree folder should remain'
 git -C "$task_wt" symbolic-ref -q HEAD >/dev/null && fail 'HEAD should be detached'
+pass
+
+# 7b. Inside a worktree whose branch has unpushed commits, HEAD still detaches
+#     but the branch stays; a base-branch worktree is not detached at all.
+task_wt=$(add_worktree inside-ahead)
+commit_in "$task_wt" unpushed-work >/dev/null
+task_output=$(cd "$task_wt" && bash "$task_helper" remove "$task_wt" --base origin/main)
+expect_line 'result kept-folder'
+expect_line 'branch kept inside-ahead unmerged'
+git -C "$task_main" rev-parse --verify --quiet refs/heads/inside-ahead >/dev/null \
+  || fail 'unmerged branch should remain'
+git -C "$task_main" push -q origin origin/main:refs/heads/stable
+git -C "$task_main" fetch -q origin
+git -C "$task_main" worktree add -q "$task_main/.wt/stable" -b stable origin/stable
+task_output=$(cd "$task_main/.wt/stable" \
+  && bash "$task_helper" remove "$task_main/.wt/stable" --base origin/stable)
+reject_prefix detached
+expect_line 'result kept-folder'
+expect_line 'branch kept stable base-branch'
+[ "$(git -C "$task_main/.wt/stable" symbolic-ref --short HEAD)" = stable ] \
+  || fail 'base-branch worktree should stay on its branch'
 pass
 
 # 8. An ancestor working inside counts as the current session even when the
@@ -238,6 +269,10 @@ expect_line 'result removed'
 mkdir -p "$task_main/.wt/orphan-git"
 printf 'gitdir: %s/.git/worktrees/gone\n' "$task_main" >"$task_main/.wt/orphan-git/.git"
 helper remove "$task_main/.wt/orphan-git" --base origin/main
+expect_line 'result left unverifiable-git'
+mkdir -p "$task_main/.wt/orphan-link"
+ln -s "$task_main/.git/worktrees/gone" "$task_main/.wt/orphan-link/.git"
+helper remove "$task_main/.wt/orphan-link" --base origin/main
 expect_line 'result left unverifiable-git'
 git -C "$task_main" worktree add -q "$task_root/sibling" -b sibling origin/main
 mkdir -p "$task_root/notes"

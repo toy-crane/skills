@@ -132,9 +132,12 @@ per line, and text outside the block is for people. Without that section, stop
 no process.
 
 Decide with the bundled [worktree removal helper](scripts/remove-worktree.sh),
-run from a checkout of this repository, passing the fetched base and the merged
-pull request's head commit so a squashed branch can still be deleted:
-`inspect <worktree> --base <remote>/<base> --pr-head <sha>`.
+passing the fetched base and the merged pull request's head commit so a
+squashed branch can still be deleted:
+`inspect <worktree> --base <remote>/<base> --pr-head <sha>`. Run it from this
+session's own working directory; the helper counts its working directory as
+this session's, so running it after changing into the worktree reads as
+`session-inside`.
 
 - `session-inside`: this session works inside the worktree. Run the declared
   commands, then `remove` with the same arguments. The folder stays, HEAD

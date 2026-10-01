@@ -6,9 +6,12 @@
 #   remove-worktree.sh inspect <path> [--base <ref>] [--pr-head <sha>]
 #   remove-worktree.sh remove  <path>  --base <ref>  [--pr-head <sha>]
 #
-# Run it from a checkout of the repository that owns the worktree. The caller
-# runs the project's declared cleanup commands between the two steps; this
-# script never signals a process.
+# Run it from the session's own working directory in a checkout of the
+# repository that owns the worktree. Its own working directory and those of its
+# ancestor processes count as the current session, so running it after
+# changing into the target reports session-inside. The caller runs the
+# project's declared cleanup commands between the two steps; this script never
+# signals a process.
 #
 # Output, one record per line:
 #   verdict session-inside|codex-managed|attached|blocked|ready
@@ -130,7 +133,9 @@ state_reason() {
   fi
   git -C "$main_path" check-ignore --quiet -- "${target#"$main_path"/}" \
     || { echo not-ignored; return; }
-  [ -e "$target/.git" ] && echo unverifiable-git
+  if [ -e "$target/.git" ] || [ -L "$target/.git" ]; then
+    echo unverifiable-git
+  fi
 }
 
 process_cwds() {
@@ -147,16 +152,47 @@ process_cwds() {
   fi
 }
 
+# lsof escapes some characters in the names it prints: a backslash always,
+# and every non-ASCII byte outside a UTF-8 locale. The main script holds the
+# target open on descriptor 9 while classifying, so lsof can show its own
+# rendering of the target to match its listing against.
+plain_path() {
+  case $1 in *\\*) return 1 ;; esac
+  ! printf '%s' "$1" | LC_ALL=C grep -q '[^ -~]'
+}
+
+target_as_listed() {
+  local name=''
+  if ! command -v lsof >/dev/null 2>&1; then
+    printf '%s\n' "$target"
+    return
+  fi
+  name=$({ lsof -w -n -P -a -p "$$" -d 9 -Fn 2>/dev/null || true; } \
+    | sed -n 's/^n//p' | head -n 1)
+  if [ -n "$name" ]; then
+    printf '%s\n' "$name"
+  elif plain_path "$target"; then
+    printf '%s\n' "$target"
+  else
+    return 1
+  fi
+}
+
 # Prints "session" when this command or an ancestor works inside the target,
 # otherwise one "attached|leftover <pid>" line per other process inside it. A
 # process is left over when the outermost process launching it from inside the
 # target has been reparented to PID 1; otherwise its launcher is still alive.
 classify_processes() {
-  local table cwds
+  local table cwds listed
+  listed=$(target_as_listed) || return 1
   table=$(ps -A -o pid= -o ppid= 2>/dev/null) || return 1
   cwds=$(process_cwds) || return 1
   [ -n "$table" ] && [ -n "$cwds" ] || return 1
-  awk -v target="$target" -v self="$$" '
+  REMOVE_WORKTREE_TARGET=$listed REMOVE_WORKTREE_SELF=$$ awk '
+    BEGIN {
+      target = ENVIRON["REMOVE_WORKTREE_TARGET"]
+      self = ENVIRON["REMOVE_WORKTREE_SELF"] + 0
+    }
     function inside(dir) {
       return dir == target || substr(dir, 1, length(target) + 1) == target "/"
     }
@@ -243,6 +279,9 @@ delete_branch() {
 verdict=''
 reason=''
 holders=()
+if [ -n "$target" ] && [ -r "$target" ] && [ -x "$target" ]; then
+  exec 9<"$target"
+fi
 if [ -z "$target" ]; then
   verdict=blocked
   reason=missing
@@ -278,6 +317,8 @@ else
   fi
 fi
 
+exec 9<&-
+
 if [ "$mode" = inspect ]; then
   printf 'verdict %s\n' "$verdict"
   [ -n "$reason" ] && printf 'reason %s\n' "$reason"
@@ -290,7 +331,8 @@ fi
 
 case $verdict in
   session-inside)
-    if [ "$registered" = 1 ] && [ -n "$branch" ]; then
+    if [ "$registered" = 1 ] && [ -n "$branch" ] \
+      && [ "$(branch_state)" != base-branch ]; then
       if ! output=$(git -C "$target" switch --quiet --detach "$base" 2>&1); then
         printf 'result left detach-failed\n'
         print_detail "$output"
