@@ -18,7 +18,7 @@ Blocked by: docs/specs/merge-worktree-cleanup/
   1. 브랜치가 checkout된 worktree 가운데 그 브랜치의 PR이 병합됐거나 닫힌 것. squash merge에서는 병합된 브랜치의 끝이 base 이력에 없으므로, 병합 여부는 커밋 조상 관계가 아니라 GitHub의 PR 상태로 판단한다.
   2. HEAD가 분리된 worktree 가운데 그 커밋이 원격 base에 포함된 것.
   3. Git 등록이 풀린 채 남은 폴더.
-- 건드리지 않는 것: 열린 PR의 worktree, 커밋하지 않은 변경이 있는 worktree, 세션이 붙은 worktree, 기본 checkout, PR이 없고 base에도 포함되지 않은 브랜치의 worktree.
+- 건드리지 않는 것: 열린 PR의 worktree, 커밋하지 않은 변경이 있는 worktree, 세션이 붙은 worktree, 기본 checkout, PR이 없는 브랜치의 worktree. 사용자가 정한 제외 목록은 "PR이 없고 base에 포함되지 않은 브랜치"였지만, 대상 목록에 PR 없는 브랜치가 없으므로 base에 포함돼도 지우지 않는다.
 - 고른 대상을 지우는 단계는 `merge`와 같은 [worktree-cleanup](../../decisions/worktree-cleanup.md) 절차를 쓴다. 정리 섹션 실행, 현재 세션 판별, 붙음과 남음의 구분, Codex worktree, 브랜치 삭제 조건은 그 문서가 정한다. 이 Skill은 그 절차를 따로 정의하지 않는다.
 - 첫 판은 사람이 직접 부르는 Skill이다.
 - 이름은 `clean-worktrees`, 그룹은 `git`이다.
@@ -29,14 +29,14 @@ Blocked by: docs/specs/merge-worktree-cleanup/
 2. 브랜치의 PR이 squash로 병합된 worktree는 공통 절차로 제거되고, 보고에 PR 번호가 나온다.
 3. PR이 병합되지 않고 닫혔으며 로컬 브랜치 끝이 그 PR의 head와 같으면 제거된다. 그 커밋은 GitHub의 PR에 남는다.
 4. 열린 PR의 worktree는 그대로 두고 PR 번호와 함께 보고한다. 같은 브랜치 이름에 열린 PR이 하나라도 있으면 열린 것으로 본다.
-5. PR이 없고 base에도 포함되지 않은 브랜치의 worktree는 그대로 둔다.
+5. PR이 없는 브랜치의 worktree는 base에 포함되든 아니든 그대로 두고 보고한다. 막 만든 worktree처럼 고유한 커밋이 없어도 대상이 아니다.
 6. 분리된 HEAD가 원격 base에 포함되면 제거되고, 포함되지 않으면 그대로 둔다.
 7. 커밋하지 않은 변경(무시되지 않는 새 파일 포함)이 있는 worktree는 대상 조건을 만족해도 그대로 둔다.
 8. 띄운 쪽이 살아 있는 프로세스가 붙은 worktree는 정리 명령도 실행하지 않고 그대로 두며, PID와 명령을 보고한다. 남은 프로세스만 있는 worktree는 정리 명령을 실행한 뒤 지우기 직전 확인을 거친다.
 9. 기본 checkout과 base 브랜치는 어떤 경우에도 지우지 않는다.
-10. Codex worktree 루트 아래 worktree와 폴더는 그대로 두고, 따로 묶어 보고한다. 해당 채팅을 Codex에서 보관하면 Codex가 스냅숏을 남기고 지운다고 알린다.
+10. Codex worktree 루트 아래의 등록된 worktree는 그대로 두고, 따로 묶어 보고한다. 루트 아래에서 등록이 풀린 폴더는 찾지 않는다. 해당 채팅을 Codex에서 보관하면 Codex가 스냅숏을 남기고 지운다고 알린다.
 11. 등록이 풀린 폴더는 결정 문서의 조건(기본 checkout 안에서 Git이 무시하고 등록된 linked worktree도 놓인 폴더 바로 아래, `.git` 없음)을 만족할 때만 대상이 된다. 정리 명령과 지우기 직전 확인을 거쳐 폴더를 지운다. `.git`이 남아 있는 폴더는 커밋하지 않은 작업이 없는지 확인할 수 없으므로 그대로 두고 보고한다. `~/code/` 처럼 저장소 밖에서 linked worktree와 다른 폴더가 섞인 곳은 찾지 않는다.
-12. 현재 세션이 대상 worktree 안에서 실행 중이면 공통 절차대로 정리 명령을 실행하고, 폴더를 남긴 채 HEAD를 분리하고 브랜치만 지운다.
+12. 현재 세션이 커밋하지 않은 변경이 없는 대상 worktree 안에서 실행 중이면 공통 절차대로 정리 명령을 실행하고, 폴더를 남긴 채 HEAD를 분리하고 브랜치만 지운다.
 13. 실행 중에 사용자에게 묻지 않는다. 판단할 수 없는 대상은 남겨 두고 보고한다.
 14. `gh`를 쓸 수 없거나 인증이 안 되어 있으면 브랜치 worktree는 판단하지 않고 그 사실을 보고한다. 분리된 worktree와 등록이 풀린 폴더는 계속 처리한다.
 15. `merge`와 이 Skill이 싣는 삭제 절차의 사본이 같다는 것을 저장소가 검증한다.

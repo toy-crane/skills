@@ -90,11 +90,12 @@
       "id": 8,
       "name": "no-pr-branch",
       "prompt": "/clean-worktrees experiment/z 브랜치 worktree는 PR을 만든 적이 없고 커밋이 origin/main에 없어. chore/w 브랜치 worktree도 PR은 없지만 커밋이 이미 origin/main에 포함돼 있어. 둘 다 깨끗해.",
-      "expected_output": "Branches without a pull request qualify only through containment in the base.",
+      "expected_output": "A branch without a pull request never qualifies, whether or not the base contains it.",
       "files": [],
       "expectations": [
-        "It leaves experiment/z and its branch in place and reports that it has no PR and is not in the base.",
-        "It removes chore/w and deletes its branch because the base contains it."
+        "It leaves experiment/z and its branch in place and reports that it has no PR.",
+        "It also leaves chore/w and its branch in place even though origin/main contains it, because only merged or closed pull requests qualify a branch worktree.",
+        "It does not substitute commit ancestry for a missing pull request."
       ]
     }
   ]

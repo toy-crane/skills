@@ -390,9 +390,8 @@ releasing its resources through the project's declared cleanup commands.
 A project that gives each worktree its own servers, devices, or databases
 declares how to release them in `AGENTS.md` or `CLAUDE.md`. `merge` and
 `clean-worktrees` run the commands in order inside a worktree before removing
-it. Without the
-section it stops no process, and it leaves a worktree that another session or
-terminal still uses.
+it. Without the section they stop no process, and they leave a worktree that
+another session or terminal still uses.
 
 ````md
 ## Worktree cleanup

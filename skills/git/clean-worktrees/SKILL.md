@@ -25,16 +25,15 @@ A worktree is a candidate when one of these holds:
   squash merge leaves the branch tip outside the base history. Any open pull
   request for the branch name keeps the worktree; otherwise use the most
   recently created one, and keep its head commit for the helper.
-- Its checked-out branch has no pull request, and the fetched base already
-  contains the branch tip.
 - Its HEAD is detached and contained in the fetched base.
 - It is a folder whose Git registration is gone. The helper below decides
   whether such a folder is safe to remove.
 
 Leave these in place and list them in the report: the default checkout, a
 worktree on the base branch, an open pull request, a branch with no pull
-request that the base does not contain, and a branch whose tip has commits
-beyond its pull request head that the base does not contain. If `gh` is
+request even when the base contains it, a branch whose tip has commits beyond
+its pull request head that the base does not contain, and any worktree with
+uncommitted changes, including one this session works inside. If `gh` is
 missing or not authenticated, skip worktrees with a branch, say so, and keep
 going with detached worktrees and folders.
 
@@ -52,9 +51,11 @@ own working directory: `inspect <worktree> --base <remote>/<base>`, adding
 working directory as this session's, so running it after changing into a
 candidate reads as `session-inside`.
 
-- `session-inside`: this session works inside the candidate. Run the declared
-  commands, then `remove` with the same arguments. The folder stays, HEAD
-  detaches at the base, and only the branch is deleted.
+- `session-inside`: this session works inside the candidate. The helper does
+  not check for uncommitted changes here, so leave the candidate when
+  `git status --porcelain` shows any. Otherwise run the declared commands, then
+  `remove` with the same arguments. The folder stays, HEAD detaches at the
+  base, and only the branch is deleted.
 - `ready`: run the declared commands, then `remove` with the same arguments.
   It checks again and removes the worktree, or the folder, and its branch only
   when no process still works inside.
