@@ -28,13 +28,14 @@
     },
     {
       "title": "Git delivery",
-      "description": "Skills for safely recording, synchronizing, publishing, and merging repository changes.",
+      "description": "Skills for safely recording, synchronizing, publishing, and merging repository changes, then clearing the worktrees they leave behind.",
       "skills": [
         "commit",
         "pull",
         "push",
         "pr",
-        "merge"
+        "merge",
+        "clean-worktrees"
       ]
     },
     {
