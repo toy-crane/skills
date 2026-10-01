@@ -34,9 +34,9 @@
   checkout that also holds registered linked worktrees, such as
   `.claude/worktrees/`. With a `.git` entry, uncommitted work cannot be ruled
   out, so the folder stays.
-- Every skill that removes worktrees ships the same removal procedure, so each
-  one stands alone when installed by itself. The repository verifies that the
-  shipped copies stay identical.
+- `merge` and `clean-worktrees` ship the same removal helper, so each stands
+  alone when installed by itself. A pull request check fails when the shipped
+  copies differ.
 
 ## Boundaries
 

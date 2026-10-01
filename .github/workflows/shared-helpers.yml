@@ -1,0 +1,27 @@
+# Skills install one at a time, so a helper that several skills need is copied
+# into each skill folder. docs/decisions/worktree-cleanup.md keeps those copies
+# identical, and this check fails a pull request where they differ.
+name: Shared helpers
+
+on: pull_request
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shared-helpers-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  identical:
+    name: shared-helpers
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Compare the worktree removal helper copies
+        run: >-
+          cmp skills/git/merge/scripts/remove-worktree.sh
+          skills/git/clean-worktrees/scripts/remove-worktree.sh

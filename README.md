@@ -339,14 +339,16 @@ $draft-piece docs/briefs/monorepo-move/
 ## Git delivery
 
 Five standalone skills cover the repository handoff from a local change to a
-merged base branch. Invoke them directly with `/commit`, `/pull`, `/push`,
-`/pr`, or `/merge` in Claude Code and `$commit`, `$pull`, `$push`, `$pr`, or
-`$merge` in Codex.
+merged base branch, and a sixth clears the worktrees that pile up afterward.
+Invoke them directly with `/commit`, `/pull`, `/push`, `/pr`, `/merge`, or
+`/clean-worktrees` in Claude Code and `$commit`, `$pull`, `$push`, `$pr`,
+`$merge`, or `$clean-worktrees` in Codex.
 
 When Codex exposes the managed plugin namespace, or a user-level skill with the
 same short name is also installed, use `$toycrane-skills:commit`,
-`$toycrane-skills:pull`, `$toycrane-skills:push`, `$toycrane-skills:pr`, or
-`$toycrane-skills:merge` to select this bundle unambiguously.
+`$toycrane-skills:pull`, `$toycrane-skills:push`, `$toycrane-skills:pr`,
+`$toycrane-skills:merge`, or `$toycrane-skills:clean-worktrees` to select this
+bundle unambiguously.
 
 ```mermaid
 flowchart LR
@@ -378,12 +380,18 @@ releasing its resources through the project's declared cleanup commands.
   request merge with the same self-contained body and visual-evidence guidance,
   choose squash or rebase by commit meaning, then safely clean up the merged
   worktree with the project's declared cleanup commands.
+- **[clean-worktrees](./skills/git/clean-worktrees/SKILL.md)**: Sweep a
+  repository's accumulated worktrees in one pass. Remove those whose pull
+  request merged or closed, detached ones the base already contains, and
+  left-over folders that lost their Git registration; report open,
+  uncommitted, session-attached, and Codex-managed ones with the reason they
+  stayed.
 
 A project that gives each worktree its own servers, devices, or databases
-declares how to release them in `AGENTS.md` or `CLAUDE.md`. `merge` runs the
-commands in order inside the merged worktree before removing it. Without the
-section it stops no process, and it leaves a worktree that another session or
-terminal still uses.
+declares how to release them in `AGENTS.md` or `CLAUDE.md`. `merge` and
+`clean-worktrees` run the commands in order inside a worktree before removing
+it. Without the section they stop no process, and they leave a worktree that
+another session or terminal still uses.
 
 ````md
 ## Worktree cleanup

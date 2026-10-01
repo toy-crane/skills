@@ -73,9 +73,11 @@ see an update. No changeset or CI automation.
 
 ## Merging into `main`
 
-`.github/workflows/` holds two pull request checks.
+`.github/workflows/` holds three pull request checks.
 `plugin-manifest` runs the same `claude plugin validate . --strict` this file
 already asks for and reports a broken manifest.
+`shared-helpers` fails when the copies of a helper that several skills ship
+differ, since each skill must stand alone with its own copy.
 `codex-review-gate` republishes Codex's review summary as a check run on the
 pull request's current head commit, because Codex itself publishes no check.
 
