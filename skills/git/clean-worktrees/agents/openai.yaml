@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clean Worktrees"
+  short_description: "Remove merged, closed, and left-over worktrees"
+  default_prompt: "Use $clean-worktrees to remove this repository's stale worktrees and report what stayed and why."

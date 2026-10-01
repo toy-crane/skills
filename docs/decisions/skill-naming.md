@@ -67,6 +67,12 @@
   the same act with a source name; naming the source in a skill name was
   rejected here because a user should predict the command from the work, not
   from where the skills came from.
+- `clean-worktrees` names the outcome a user asks for when worktrees pile up:
+  the repository's stale worktrees cleared in one pass. The user chose it over
+  `sweep-worktrees`, whose verb `resolve-follow-ups` already uses for its run
+  unit, and `prune-worktrees`, which reads as `git worktree prune` although
+  that command only drops registrations whose folder is gone. Neither Claude
+  Code 2.1.284 nor Codex 0.159.2 carries a command by that name.
 - `update-project-skills` names the outcome a user asks for: every skill
   installed in the project brought to its latest published version. The object
   is the project's installed set from every source, and the Toycrane-specific
