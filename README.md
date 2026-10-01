@@ -360,8 +360,8 @@ flowchart LR
 Each skill is independently installable and owns its whole advertised outcome.
 `push` deliberately leaves dirty changes local. `pr` may perform the necessary
 commit, synchronization, and publication, but stops before merge. `merge`
-continues through verified remote merge and cleans up only resources owned by
-the merged worktree.
+continues through verified remote merge and cleans up only the merged worktree,
+releasing its resources through the project's declared cleanup commands.
 
 - **[commit](./skills/git/commit/SKILL.md)**: Record only the current request's
   changes as logical Conventional Commits while preserving unrelated work.
@@ -377,7 +377,24 @@ the merged worktree.
 - **[merge](./skills/git/merge/SKILL.md)**: Carry a change through verified pull
   request merge with the same self-contained body and visual-evidence guidance,
   choose squash or rebase by commit meaning, then safely clean up the merged
-  worktree and its owned development server.
+  worktree with the project's declared cleanup commands.
+
+A project that gives each worktree its own servers, devices, or databases
+declares how to release them in `AGENTS.md` or `CLAUDE.md`. `merge` runs the
+commands in order inside the merged worktree before removing it. Without the
+section it stops no process, and it leaves a worktree that another session or
+terminal still uses.
+
+````md
+## Worktree cleanup
+
+Release this worktree's development resources. Agents run these from the worktree root.
+
+```sh
+bun run dev:remove
+bun run db:remove
+```
+````
 
 ## Supporting workflows
 

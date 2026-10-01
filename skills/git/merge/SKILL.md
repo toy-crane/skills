@@ -1,6 +1,6 @@
 ---
 name: merge
-description: Carry the current repository change through a verified GitHub pull request merge into the requested base, or the repository's remote default branch when none is named, then clean up only the merged worktree and its owned development processes. Always use this skill for an actual PR merge or its post-merge cleanup, including requests to inspect, finish, land, or merge an existing PR; create a PR and merge it; preserve meaningful commits; or clean up an already-merged worktree. Report an existing merge instead of duplicating it.
+description: Carry the current repository change through a verified GitHub pull request merge into the requested base, or the repository's remote default branch when none is named, then clean up only the merged worktree, releasing its resources through the project's declared cleanup commands. Always use this skill for an actual PR merge or its post-merge cleanup, including requests to inspect, finish, land, or merge an existing PR; create a PR and merge it; preserve meaningful commits; or clean up an already-merged worktree. Report an existing merge instead of duplicating it.
 ---
 
 # Merge pull request
@@ -124,12 +124,41 @@ required checks and reviews without imposing a review request that the
 repository does not require, and treat the remote pull request state as the
 authority for whether the merge succeeded.
 
-Clean up only after the remote reports `MERGED`. Before removing a linked
-worktree, run the bundled [server cleanup helper](scripts/stop-worktree-server.sh)
-from that worktree when applicable. Remove only the merged worktree and branch,
-preserve other worktrees, processes, and user changes, then bring the canonical
-base checkout to the merged remote state using whatever safe mechanism the
-current host provides.
+Clean up only after the remote reports `MERGED`, and only the merged worktree.
+The project releases that worktree's development resources with its own
+commands. Read `AGENTS.md` and `CLAUDE.md` and use the first
+`## Worktree cleanup` section found: its fenced code block lists one command
+per line, and text outside the block is for people. Without that section, stop
+no process.
+
+Decide with the bundled [worktree removal helper](scripts/remove-worktree.sh),
+passing the fetched base and the merged pull request's head commit so a
+squashed branch can still be deleted:
+`inspect <worktree> --base <remote>/<base> --pr-head <sha>`. Run it from this
+session's own working directory; the helper counts its working directory as
+this session's, so running it after changing into the worktree reads as
+`session-inside`.
+
+- `session-inside`: this session works inside the worktree. Run the declared
+  commands, then `remove` with the same arguments. The folder stays, HEAD
+  detaches at the base, and only the branch is deleted, so the session keeps
+  working.
+- `ready`: run the declared commands, then `remove` with the same arguments.
+  It checks again and removes the worktree and branch only when no process
+  still works inside the folder.
+- `attached`, `codex-managed`, or `blocked`: leave the worktree, its processes,
+  and its branch as they are, and report the reason and any `holder` lines. A
+  live session, terminal, or app still uses an attached worktree; the Codex app
+  manages its own worktrees and snapshots them before removal.
+
+Run the declared commands in order inside the worktree folder. Stop at the
+first failure and leave the folder and branch so the commands can run again.
+Never stop a process yourself or force a removal; a process the commands did
+not stop, uncommitted work, or a lock keeps the folder in place. Report the
+helper's result lines, including a `holder leftover` process or a branch kept
+for unmerged commits, beside the verified merge. Preserve other worktrees,
+processes, and user changes, then bring the canonical base checkout to the
+merged remote state using whatever safe mechanism the current host provides.
 
 ## Reconcile spec folders with the issue tracker
 
