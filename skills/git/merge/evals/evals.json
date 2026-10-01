@@ -59,13 +59,15 @@
     },
     {
       "id": 6,
-      "prompt": "머지는 완료됐어. 이 worktree의 Portless dev server와 다른 worktree 서버가 둘 다 실행 중이니 안전하게 정리해줘.",
-      "expected_output": "The response stops only the merged worktree's owned server before removing that worktree.",
+      "name": "declared-cleanup-session-inside",
+      "prompt": "PR #64는 GitHub에서 MERGED로 확인됐어. 이 세션은 병합된 worktree 안에서 돌고 있고, AGENTS.md의 ## Worktree cleanup 섹션 코드 블록에 bun run dev:remove와 bun run db:remove가 적혀 있어. 다른 worktree의 개발 서버도 실행 중이야. 남은 정리를 해줘.",
+      "expected_output": "The response releases the merged worktree's resources with the declared commands, keeps the folder this session uses, and touches nothing else.",
       "files": [],
       "expectations": [
-        "It verifies the remote MERGED state first.",
-        "It uses the bundled helper when applicable from the worktree being removed.",
-        "It preserves the other worktree's development server and files.",
+        "It verifies the remote MERGED state before cleanup.",
+        "It runs bun run dev:remove and then bun run db:remove inside the merged worktree folder, stopping at the first failure.",
+        "Because this session works inside the worktree, it keeps the folder, detaches HEAD at the fetched base, and deletes only the merged branch.",
+        "It does not stop processes itself and leaves the other worktree's development server running.",
         "It updates the pull request's canonical base after cleanup."
       ]
     },
@@ -308,6 +310,66 @@
         "It does not use gh pr merge --auto while GitHub lacks current-base enforcement.",
         "It waits for the required check and rechecks head, base, and relevant verification before direct squash merge.",
         "It verifies remote MERGED before cleanup."
+      ]
+    },
+    {
+      "id": 27,
+      "name": "no-declaration-leftover-process",
+      "prompt": "PR #65는 MERGED야. 이 세션은 기본 checkout에서 실행 중이고, 병합된 worktree 안에는 세션이 끝난 뒤 남은 node API 서버가 부모 PID 1로 돌고 있어. AGENTS.md와 CLAUDE.md에 ## Worktree cleanup 섹션은 없어. worktree를 정리해줘.",
+      "expected_output": "Without a declared command the response stops no process, keeps the folder, and reports the remaining server.",
+      "files": [],
+      "expectations": [
+        "It does not kill, signal, or otherwise stop the left-over API server.",
+        "It does not remove the worktree folder while the process still works inside it, and it does not force removal.",
+        "It reports the remaining process's PID and command and that no cleanup section was declared, separately from the verified merge."
+      ]
+    },
+    {
+      "id": 28,
+      "name": "another-session-attached",
+      "prompt": "PR #66이 MERGED됐어. 그런데 병합된 worktree에서 다른 Claude Code 세션이 아직 열려 있어. 그 세션 프로세스의 작업 폴더가 그 worktree야. AGENTS.md에는 ## Worktree cleanup 섹션으로 bun run dev:remove가 있어. 이 세션은 기본 checkout에서 실행 중이야. 마무리해줘.",
+      "expected_output": "The response leaves a worktree another live session uses completely untouched and reports it.",
+      "files": [],
+      "expectations": [
+        "It treats the worktree as attached because the other session is still running.",
+        "It does not run the declared cleanup command, remove the folder, or delete the checked-out branch.",
+        "It reports which process holds the worktree and still updates the canonical base checkout."
+      ]
+    },
+    {
+      "id": 29,
+      "name": "declared-cleanup-fails",
+      "prompt": "PR #67은 MERGED야. AGENTS.md의 ## Worktree cleanup 섹션에 bun run dev:remove와 bun run db:remove가 있는데, 병합된 worktree에서 실행하니 dev:remove가 'script not found'로 실패했어. 이 세션은 기본 checkout에서 실행 중이야. 계속 정리해줘.",
+      "expected_output": "A failed declared command stops cleanup with the folder and branch in place, without undermining the verified merge.",
+      "files": [],
+      "expectations": [
+        "It does not run bun run db:remove after dev:remove failed.",
+        "It keeps the worktree folder and branch so the commands can run again, and it does not stop processes or force removal itself.",
+        "It reports the merge as completed and the cleanup as blocked by the failed command."
+      ]
+    },
+    {
+      "id": 30,
+      "name": "codex-managed-worktree",
+      "prompt": "PR #68이 MERGED됐어. 병합된 브랜치는 ~/.codex/worktrees/5be3/app 에 checkout돼 있고 Codex 앱에서 만든 worktree야. 이 세션은 기본 checkout에서 실행 중이고 AGENTS.md에 ## Worktree cleanup 섹션이 있어. worktree 정리까지 해줘.",
+      "expected_output": "The response leaves the Codex-managed worktree to the Codex app and says how it will be cleaned.",
+      "files": [],
+      "expectations": [
+        "It does not run the declared commands in, remove, or detach the Codex-managed worktree, and it does not delete its checked-out branch.",
+        "It explains that the Codex app manages and snapshots its own worktrees, for example when the chat is archived.",
+        "It still updates the canonical base checkout and reports the verified merge."
+      ]
+    },
+    {
+      "id": 31,
+      "name": "process-manager-without-declaration",
+      "prompt": "이 프로젝트는 개발 서버를 별도의 프로세스 관리 도구로 띄우는데 AGENTS.md나 CLAUDE.md에 ## Worktree cleanup 섹션은 없어. PR #69는 MERGED됐고 이 세션은 기본 checkout에서 실행 중이야. 병합된 worktree에서는 그 도구로 띄운 서버가 세션이 끝난 뒤에도 돌고 있어. 정리해줘. 다른 스킬은 설치되지 않았다.",
+      "expected_output": "The general skill assumes no process manager: it neither queries nor stops the tool and reports the running server.",
+      "files": [],
+      "expectations": [
+        "It does not run the process manager's commands or stop the server by matching working directories.",
+        "It keeps the worktree while the server works inside it and reports the server's PID and command.",
+        "It reports that the project declares no cleanup command rather than claiming the cleanup completed."
       ]
     }
   ]

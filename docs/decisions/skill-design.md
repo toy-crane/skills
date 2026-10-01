@@ -43,10 +43,11 @@
   installs; the broader skills never assume a separately installed skill
   supplied missing instructions.
 - Deterministic Git helpers earn their fixed procedure only where ownership is
-  unsafe to infer. The merge helper stops only active Portless route processes
-  whose operating-system working directory is inside the linked worktree, and
-  verifies their exit; host-specific worktree UI commands remain outside the
-  published contract.
+  unsafe to infer. The worktree removal helper decides whether a worktree is
+  used by the current session, an attached process, or a left-over one, and
+  removes it only when nothing works inside; it never signals a process.
+  [worktree-cleanup](worktree-cleanup.md) owns that procedure. Host-specific
+  worktree UI commands remain outside the published contract.
 - Pull request bases come from the user's request or the remote's advertised
   default branch. Git delivery skills do not assume that `main` exists when the
   repository uses `master`, `trunk`, or another default.
@@ -299,9 +300,7 @@ approval alone is insufficient evidence of better review.
   explicit failures, a fresh one-pass suite scored 81 of 112 prompts with zero
   invalid invocations: all 56 negative prompts avoided false activation, while
   only 25 of 56 positive prompts activated implicitly. Descriptions therefore
-  remain concise and direct invocation is the reliable route. The worktree
-  server helper passed seven isolated ownership and failure cases, then
-  preserved a live Portless process owned by another repository worktree.
+  remain concise and direct invocation is the reliable route.
 - Running `update-project-skills` in a bun-pinned Expo project on 2026-09-09
   aborted every `npx -y skills@latest` call. npm 11.17.0 refused the project's
   `devEngines.packageManager` pin of bun 1.3.6 with `EBADDEVENGINES`. npm's
