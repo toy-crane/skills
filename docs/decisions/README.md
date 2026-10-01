@@ -10,6 +10,7 @@ of truth. Read only the subjects relevant to the work.
 - [skill-layout](skill-layout.md) — Read when adding, moving, or categorizing a published skill or changing its distribution path.
 - [skill-design](skill-design.md) — Read when changing a skill's trigger, instructions, dependencies, or eval strategy.
 - [pr-descriptions](pr-descriptions.md) — Read when changing PR body explanations, visual comparisons, attachments, or review evidence.
+- [worktree-cleanup](worktree-cleanup.md) — Read when changing how a skill releases a worktree's resources, detects processes inside it, or removes it.
 - [companion-agent-distribution](companion-agent-distribution.md) — Read when a published skill carries, installs, updates, or retires custom agents for Claude Code and Codex.
 - [pipeline](pipeline.md) — Read when changing how discovery, shaping, specs, tasks, or implementation hand off.
 - [stack-context](stack-context.md) — Read when changing how stack technologies get current agent skills, vendor guidance, or repository instruction routes.
