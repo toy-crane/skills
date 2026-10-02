@@ -45,10 +45,11 @@
   `project-knowledge` creates the file when it first records, or changes the
   scope of, a contract that decides how something looks or behaves on screen,
   maps every existing such contract, copies values and components once from
-  the project's token and component sources with their paths, and adds one
-  read route to `AGENTS.md` or `CLAUDE.md`. After creation it maintains only
-  the map and rejected patterns; work that changes a named value or component
-  source updates that section by hand. Projects without UI never get the file.
+  the project's token and component sources with their paths. Whenever it
+  updates the file it keeps a read route in `AGENTS.md`, and in `CLAUDE.md`
+  when that file does not load `AGENTS.md`, so both agent clients find it.
+  After creation it maintains only the map and rejected patterns; work that
+  changes a named value or component source updates that section by hand. Projects without UI never get the file.
 - `AGENTS.md` or `CLAUDE.md` carries repository mechanics, the route to the
   decision index, the route to `DESIGN.md` when one exists, and compact
   task-time routes to current official vendor context. It does not cache decision content or copies of external guidance.

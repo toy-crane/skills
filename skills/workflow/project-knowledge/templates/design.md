@@ -45,7 +45,8 @@ never the rule.
 
 ## Read route
 
-Add once to `AGENTS.md`, or to `CLAUDE.md` when only that exists:
+Add once to `AGENTS.md`, and to `CLAUDE.md` when it exists and does not already
+load `AGENTS.md`:
 
 ```md
 - Work that builds or reviews screens reads `DESIGN.md` first.

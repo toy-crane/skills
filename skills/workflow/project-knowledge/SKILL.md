@@ -67,6 +67,11 @@ When you create a screen contract or change which elements one covers, update
 - Add one rejected-pattern line for each pattern the contract rejects that an
   agent would otherwise write in UI code. Process alternatives, such as
   enforcing a rule through lint, stay only in the contract.
+- Make sure both agent clients are told that work which builds or reviews
+  screens reads `DESIGN.md` first. Put that line in `AGENTS.md`, creating the
+  file when it is missing, and also in `CLAUDE.md` when it exists and does not
+  already load `AGENTS.md`. Skip a file that already carries a line with that
+  meaning.
 
 When `DESIGN.md` does not exist yet, create it at that moment:
 
@@ -75,10 +80,6 @@ When `DESIGN.md` does not exist yet, create it at that moment:
 - Copy values and shared components once from the project's token source and
   shared component directory, naming each source path in its section. Omit a
   section whose source does not exist.
-- Add one line to `AGENTS.md`, or to `CLAUDE.md` when only that exists, saying
-  that work which builds or reviews screens reads `DESIGN.md` first. Create
-  `AGENTS.md` when neither exists. Skip the line when one with that meaning is
-  already there.
 
 After creation, leave the values and components sections to the work that
 changes their named sources. When an existing `DESIGN.md` uses another layout,
