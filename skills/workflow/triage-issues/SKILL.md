@@ -19,8 +19,8 @@ missing operation without changing issues or source.
 Triage handles each issue once, when it is new. When the request names an
 issue, handle that issue alone. When it names none, take the convention's
 not-yet-judged query across the configured scope, including Backlog, in stable
-oldest-first order: open general issues with no `Triage 요약` section and none
-of the results a triage run leaves behind. Count at most three eligible issues
+oldest-first order: open general issues with no `Triage 요약` or spec section
+and none of the results a triage run leaves behind. Count at most three eligible issues
 inspected in one run, and raise at most one PR. Continue to the next candidate
 after leaving an information or decision request. Stop selecting PR-producing
 work after the first PR.
@@ -29,8 +29,13 @@ Exclude issues with active work, the convention's review signal, or an open
 linked PR, and issues named by an `Issue:` line in a spec folder on the default
 branch; those wait for review or implementation. A PR links an issue when the
 tracker links it or its body carries that issue's `Issue: <tracker>:<id>`
-line. Do not filter by title. A merged implementation PR follows the tracker
-close or reconciliation path, not triage.
+line. Do not filter by title. A review signal whose only linked PRs closed
+unmerged is stale: inspect their branches, comments, and attempted changes,
+then return the issue to the convention's non-active state, such as Backlog,
+when no active work remains. This clears the signal only; the issue keeps its
+sections, so triage does not pick it up again. Reuse useful work rather than
+creating a duplicate PR. A merged implementation PR follows the tracker close
+or reconciliation path, not triage.
 
 A waiting `needs-info` or `needs-decision` issue, or any issue an earlier run
 already triaged, is not new. A named issue in that state has been triaged:
@@ -137,9 +142,9 @@ folder's `Issue:` line names this issue, `merge`, `implement`, PR creation, and
 context maintenance reuse it by that ID and create no other issue.
 After publishing either PR, clear triage and waiting labels and apply the
 convention's review or in-progress signal. An open PR keeps the issue out of
-later triage runs; if it closes unmerged, a person decides what happens to the
-issue, because triage handles only new issues. After a spec-only PR merges, `merge` returns its
-issue to the convention's non-active, ready-for-implementation state;
+later triage runs; if it closes unmerged, clear its review signal as above
+when no other active work remains. After a spec-only PR merges, `merge` returns
+its issue to the convention's non-active, ready-for-implementation state;
 do not leave the PR review signal blocking `implement`.
 
 ## Report only new decisions to the person

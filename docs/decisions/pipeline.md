@@ -313,14 +313,17 @@
   convention's mark-ready operation to a non-active, ready-for-implementation
   state, never back to general triage. Folder deletion alone never closes an
   issue. An open linked PR excludes the issue from triage; when a spec PR
-  closes unmerged, a person decides what happens to its issue. Merged PR bodies keep the
+  closes unmerged, triage returns the issue to a non-active state such as
+  Backlog after checking for other active work. That clears a stale review
+  signal and does not make the issue new. Merged PR bodies keep the
   exact `Issue:` line so a later pass can retry a failed close or ready
   transition after the branch and trailers are gone. Blocker edges come from
   the `Issue:` lines of the folders a `Blocked by` line names; when one has no
   line, the dependent issue's blocker set stays unchanged and is reported.
 - `triage-issues` handles each issue once, when it is new: the one issue a
   request names, or otherwise only the issues the convention's not-yet-judged
-  query returns, those with no `Triage 요약` section and no triage result.
+  query returns, those with no `Triage 요약` or spec section and no triage
+  result.
   Its outcomes are unchanged: a duplicate closes, a clear small change becomes
   a verified PR, a designed change becomes a spec PR, and a missing fact or
   product choice becomes a question. It does not re-select a waiting issue on
