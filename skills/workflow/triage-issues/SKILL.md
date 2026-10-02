@@ -23,12 +23,14 @@ most three eligible issues inspected in one run, and raise at most one PR.
 Continue to the next candidate after leaving an information or decision request.
 Stop selecting PR-producing work after the first PR.
 
-Exclude issues with active work or an open linked PR, and issues named by an
-`Issue:` line in a spec folder on the default branch; those wait for
-implementation. Do not filter by title. A closed, unmerged PR does not finish
-the issue, even when the review signal it left remains: inspect its branch,
-comments, and attempted changes, then return the issue to the convention's
-re-triageable state, such as Backlog, when no active work remains. Reuse
+Exclude issues with active work, the convention's review signal, or an open
+linked PR, and issues named by an `Issue:` line in a spec folder on the default
+branch; those wait for review or implementation. A PR links an issue when the
+tracker links it or its body carries that issue's `Issue: <tracker>:<id>`
+line. Do not filter by title. A review signal whose only linked PRs closed
+unmerged does not exclude the issue: inspect their branches, comments, and
+attempted changes, then return the issue to the convention's re-triageable
+state, such as Backlog, when no active work remains. Reuse
 useful work rather than creating a duplicate PR. A merged implementation PR
 follows the tracker close or reconciliation path, not triage.
 A waiting `needs-info` or `needs-decision` issue becomes eligible when a person

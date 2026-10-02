@@ -279,8 +279,8 @@
   of a known issue with no spec folder. Every lookup fetches the issue by that
   ID; no skill lists issues or searches titles to find one. Titles carry no
   key or prefix, and no label marks a spec issue: an issue tied to a spec is
-  under review or waiting for implementation, so state alone keeps it out of
-  general triage. Without a tracker section no issue is created, no `Issue:`
+  under review or waiting for implementation, so the review signal, an open
+  linked PR, or a default-branch `Issue:` line keeps it out of general triage. Without a tracker section no issue is created, no `Issue:`
   line is written, and every skill skips its tracker steps. Skill bodies name
   no specific tracker; tools, state names, and closing references live only in
   the setup templates and the repository's `docs/issue-tracker.md`.
