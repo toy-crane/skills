@@ -1,17 +1,35 @@
 ---
 name: implement
-description: Implement or resume settled work from a selected spec folder as one handoff bundle. Use when the user provides a `docs/specs/SLUG/` folder and wants its settled spec or approved tasks completed in the current checkout with verification, one completed and triaged automated code review, and a runnable product handoff when the repository exposes one through a local server.
+description: Implement or resume settled work from a selected spec folder, or from a tracker issue or request together with its settled decisions, as one handoff bundle. Use when the user or a calling skill provides a `docs/specs/SLUG/` folder, or an issue or request whose result is already decided, and wants it completed in the current checkout with verification, one completed and triaged automated code review, and a runnable product handoff when the repository exposes one through a local server. An issue ends in a ready-for-review pull request that links it.
 ---
 
 # Implement
 
-## Claim the folder when a tracker coordinates it
+## Know which handoff you were given
 
-The input is always the spec folder. When the repository's `AGENTS.md` or
-`CLAUDE.md` carries an `## Issue tracker` section, read both files and use the
-first found and its linked detailed convention before finding this folder's
-issue. An `Issue: <tracker>:<id>` line in `spec.md` names the folder's one
-issue; fetch it by that ID and never search the tracker by title. Existing
+The input is one of three handoffs:
+
+- a spec folder, `docs/specs/<slug>/`, anchored by its `spec.md`;
+- a tracker issue named by its `<tracker>:<id>`, together with the decisions
+  settled for it, passed by the caller or recorded in the issue's bounded
+  summary section;
+- in a repository without an issue tracker, the request and settled decisions
+  a person or calling skill gives.
+
+For an issue or a request, the settled request and decisions are the contract,
+and the result they describe is its acceptance criterion. Read the issue's
+report, its summary section, and its comments. When that result is not clear
+enough to verify, or a product choice remains open, stop before changing source
+and route the open point to `shape-idea` when it is available, or present the
+exact decision for the user to settle; do not fill it by guessing.
+
+## Claim the issue when a tracker coordinates it
+
+When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
+section, read both files and use the first found and its linked detailed
+convention before finding the issue. An issue input names it directly; for a
+spec folder, an `Issue: <tracker>:<id>` line in `spec.md` names the folder's
+one issue. Fetch it by that ID and never search the tracker by title. Existing
 inline conventions remain valid. Use the convention's ID form, tool, and claim
 operation without requiring `setup-issue-tracker` to be installed.
 Claiming is the first write of the run, ahead of source, task, or spec edits.
@@ -25,15 +43,21 @@ A folder without an `Issue:` line
 proceeds unclaimed; the PR that carries it creates its issue. Without the
 section, nothing here applies.
 
-End every commit's message with a `Spec-Folder: docs/specs/<slug>/` trailer so
-the pull request that follows can find the folder and close its issue; this trailer is
-repository information and is written whether or not a tracker exists.
+For a spec folder, end every commit's message with a
+`Spec-Folder: docs/specs/<slug>/` trailer so the pull request that follows can
+find the folder and close its issue; this trailer is repository information and
+is written whether or not a tracker exists. For an issue input, end every
+commit with an `Issue: <tracker>:<id>` trailer instead, so the pull request
+finds the issue it delivers. A request without a tracker carries neither.
 
 ## Load the current handoff
 
 Treat the selected spec folder as one handoff bundle anchored by `spec.md`.
-Before deriving an implementation approach or changing source, identify and
-load its current required sources: the spec; every active unfinished task; any
+For an issue or a request, the bundle is the settled contract plus any decision
+contract or reference artifact it names or repository evidence implicates;
+there are no task files, so implement it directly. Before deriving an
+implementation approach or changing source, identify and load its current
+required sources: the spec; every active unfinished task; any
 completed or superseded task implicated by current evidence; project decision
 contracts explicitly linked by the spec or active tasks, plus any other current
 decision contract implicated by repository evidence; and every prototype,
@@ -65,8 +89,8 @@ ownership before absorbing ambiguous dirty changes. Then work sequentially from
 the current unblocked frontier; when no task files exist, implement `spec.md`
 directly.
 
-Before changing source for an outcome, check the spec against what the
-repository has done since. Compare its assumptions, settled constraints, and
+Before changing source for an outcome of a spec folder, check the spec against
+what the repository has done since. Compare its assumptions, settled constraints, and
 acceptance criteria with the current code and the Git history since the spec
 folder's last commit; your own code-plus-task checkpoints advance that
 baseline, so each check covers only what happened since the previous outcome.
@@ -183,7 +207,8 @@ must-fix repairs, so that gate observes the revision being handed off.
 After every outcome passes reconciliation and the complete deterministic
 verification, obtain one completed automated code review of the whole
 implementation diff against
-the spec and its acceptance criteria. Count a pass only when the reviewer
+the handoff contract, the spec or the settled request, and its acceptance
+criteria. Count a pass only when the reviewer
 finishes inspecting the intended scope and returns findings or an explicit
 no-findings result. An invocation, partial output, or silent exit is not that
 result. Skip a required review only when the user explicitly waives it, and
@@ -199,7 +224,7 @@ select. Take the harness's standard mode when nothing argues either way:
 `code-review medium` in Claude Code, while Codex has no dial. Wherever the
 reviewer accepts context, give it the required handoff sources or their
 repository paths: the spec's approved scope, off-limits areas and remaining
-risks, the active task contract, linked project decisions, any approved
+risks, or the settled request and decisions, the active task contract, linked project decisions, any approved
 reference artifacts whose criteria apply to the diff, and the focused
 verification evidence already collected. Check the reviewer's
 reported scope against both that handoff and the diff you meant to review.
@@ -207,7 +232,7 @@ Findings about another target require retargeting, not repairs; that pass is not
 spent.
 
 For a review backed by a model service, identify the actual service and the
-diff, spec, and related source context it will receive. Carry applicable user
+diff, handoff contract, and related source context it will receive. Carry applicable user
 authorization into the execution request and reuse it without asking again.
 Read-only describes file access, not whether context leaves the machine. If
 the service or source scope exceeds that authorization, request only the
@@ -241,9 +266,9 @@ again.
 
 Record every other finding rather than repairing it: an evidenced defect or open
 workaround through `project-knowledge`, or as `docs/follow-ups/<slug>.md` when
-that skill is absent; a trade-off the spec or a decision contract already
-disposed of, as disposed; an out-of-scope, stylistic, or unconfirmed finding, in
-the handoff; and a material consequence the spec leaves open, such as a security
+that skill is absent; a trade-off the handoff contract or a decision contract
+already disposed of, as disposed; an out-of-scope, stylistic, or unconfirmed finding, in
+the handoff; and a material consequence the handoff contract leaves open, such as a security
 trade-off or a pathological-input failure, as a decision the user owns, with
 `human-review` offered for judging it.
 
@@ -277,6 +302,19 @@ reverified. An uninspected required source or uncompared applicable criterion
 keeps the result incomplete. A completed review may leave recorded findings; zero
 findings is not the gate. Report the sources and reviewed scope used for the
 claim, the result or explicit waiver, what changed, and what remains open.
+
+## Deliver an issue through a pull request
+
+An issue input ends in a ready-for-review pull request against the remote
+default branch, because the issue closes when that pull request merges and a run
+started without a person present may leave no one to open it later. Open it once
+completion holds: invoke `pr` when it is available; otherwise commit, publish the
+branch without overwriting remote work, and open the pull request yourself. Its
+body carries the `Issue: <tracker>:<id>` line, the convention's closing
+reference, and the verification evidence. While completion is pending, keep the
+work on its branch and report the blocker instead of putting a closing reference
+on undelivered work. A spec folder or a request without a tracker leaves
+publication to the person, as before.
 
 ## Make the delivered change directly reviewable
 
