@@ -43,8 +43,9 @@
   the workflow, including `PRODUCT.md`. It can reflect already-settled meaning
   and remove stale or duplicated wording without becoming a pipeline gate or a
   product decision-maker. When an issue tracker is configured, it also repairs
-  the complete derived issue mirror against spec folders on the fetched remote
-  default branch; it never treats tracker prose or state as product authority.
+  each spec folder's issue, found by its `Issue:` line, against spec folders on
+  the fetched remote default branch; it never treats tracker prose or state as
+  product authority.
   A material ambiguity is returned to the user or `define-product` rather than
   inferred from implementation.
 - Every spec-producing path writes the same stable product contract:
@@ -269,57 +270,59 @@
   installed and continue to support existing inline conventions. This avoids
   loading MCP recipes into every task while preserving custom tracker behavior.
   When scheduled general-issue triage is enabled, the same convention records
-  its triage states and the mapping from a human-written issue to a spec folder.
+  its triage states.
   An active issue requires an explicit user request to resume even when the
   assignee is the current account: shared accounts do not identify sessions.
-- A spec folder without a source issue gets a derived `spec:<slug>` pointer
-  after merge. When scheduled triage starts from a human-written general issue,
-  that original issue remains the single issue for the work: the spec PR links
-  it, and merging the spec does not create another pointer. The folder records
-  the source issue identity so `implement`, `pr`, `merge`, and maintenance can
-  find it without changing the person's title to a generated key. Existing
-  `spec:<slug>` pointers stay outside general-issue triage. An open linked PR
-  excludes the source issue from triage; a closed unmerged PR permits retry
-  after checking for other active work. Source-linked PR bodies retain the
-  exact `Source-Issue` ID so a later maintenance pass can find merged delivery
-  even if the branch or spec folder is gone. A spec-only merge returns the
-  source issue to a non-active, implementation-ready tracker state; it never
-  returns to general triage or closes the issue.
-- The repository's `spec.md` remains the implementation contract. A generated
-  spec section in a human-written issue makes that contract readable alongside
-  the preserved original report and AI triage summary; it is not a separately
-  edited authority. For a spec-first pointer, its derived body is regenerated
-  from `spec.md` by document structure. `merge` refreshes the applicable
-  generated content on every merge that changes the folder, while
-  `maintain-project-context` periodically repairs the mirror against the
-  fetched remote default branch. Human-written content stays intact. The
-  tracker holds the claim, blocking edges, and open or closed state.
-  `implement` still takes the folder as input and finds its source issue when
-  recorded, otherwise the exact `spec:<slug>` title key. Cross-folder ordering
-  is a
+- One spec folder links to one tracker issue through a single
+  `Issue: <tracker>:<id>` line in its `spec.md`, such as `Issue: linear:FLY-145`
+  or `Issue: github:#12`. PR bodies carry the same line, including a direct fix
+  of a known issue with no spec folder. Every lookup fetches the issue by that
+  ID; no skill lists issues or searches titles to find one. Titles carry no
+  key or prefix, and no label marks a spec issue: an issue tied to a spec is
+  under review or waiting for implementation, so state alone keeps it out of
+  general triage. Without a tracker section no issue is created, no `Issue:`
+  line is written, and every skill skips its tracker steps. Skill bodies name
+  no specific tracker; tools, state names, and closing references live only in
+  the setup templates and the repository's `docs/issue-tracker.md`.
+- `pr` creates the issue. Just before opening a PR that carries a spec folder
+  (added, changed, or named by a `Spec-Folder` trailer) whose `spec.md` has no
+  `Issue:` line, it creates one issue titled with the spec title, carrying the
+  review signal and a bounded spec section as its body, commits the line on
+  the same branch, and then opens the PR. `merge` opens PRs without invoking
+  `pr`, so it restates the same step. `shape-idea` and `triage-issues` write
+  the line only for an issue ID they already know, from the user or the issue
+  triage started from; they never find one by title search. Duplicates that
+  still arise are tidied by a person in the tracker.
+- Once created, an agent-made issue is handled exactly like a human-written
+  one: its title and body stay, and only its bounded spec section is refreshed
+  from `spec.md`, so its title does not follow later spec title changes. The
+  repository's `spec.md` remains the implementation contract; the section is a
+  readable copy, not a separately edited authority. `merge` refreshes the
+  section and blocking edges for folders the merge changed, and
+  `maintain-project-context` periodically repairs every default-branch
+  folder's issue by ID. The tracker holds the claim, blocking edges, and open
+  or closed state.
+- `implement` still takes the folder as input and claims the issue its
+  `Issue:` line names; a folder without the line proceeds unclaimed until its
+  PR creates the issue. Cross-folder ordering is a
   `Blocked by: docs/specs/<other>/` line in `spec.md`, written whether or not a
   tracker exists, and `implement` leaves a `Spec-Folder` commit trailer so `pr`
-  and `merge` can name the issue to close. Full reconciliation creates missing
-  pointers only for folders without a source issue, refreshes generated issue
-  content, and replaces stale blocking edges with current ones without changing
-  assignees or reopening closed issues.
-  It closes open pointers whose folders have left the remote default branch.
-  It also retries closing an open source issue when a linked merged PR's diff
-  and verification establish implementation delivery; a merged spec PR alone
-  never closes it.
-  Duplicate exact keys remain unchanged and are reported because the key alone
-  cannot identify the canonical issue. A unique dependent issue that references
-  a duplicated blocker key keeps its complete blocker relation set unchanged;
-  reconciliation reports every candidate instead of choosing or deleting an
-  edge. The tracker
-  convention therefore includes a `List managed issues` operation that returns
-  every managed issue's identifier, title, and state without a fixed result
-  ceiling. An older convention without it supports only folder-by-folder
-  repair. Maintenance uses only its recorded capabilities and reports orphan
-  and duplicate detection, derived-title replacement, and stale-blocker removal
-  separately when any remain incomplete, until setup upgrades the listing,
-  title-and-body replacement, and complete blocker-set replacement operations
-  instead of inventing tracker-specific commands.
+  and `merge` can find the folder whose issue to close. A PR closes the issue
+  only when its diff and verification establish implementation delivery; a
+  merged spec-only PR leaves the issue open and moves it through the
+  convention's mark-ready operation to a non-active, ready-for-implementation
+  state, never back to general triage. Folder deletion alone never closes an
+  issue. An open linked PR excludes the issue from triage; when a spec PR
+  closes unmerged, triage returns the issue to a re-triageable state such as
+  Backlog after checking for other active work. Merged PR bodies keep the
+  exact `Issue:` line so a later pass can retry a failed close or ready
+  transition after the branch and trailers are gone. Blocker edges come from
+  the `Issue:` lines of the folders a `Blocked by` line names; when one has no
+  line, the dependent issue's blocker set stays unchanged and is reported.
+- The old `Source-Issue` line, `spec:<slug>` title key, and managed-issue
+  listing are not read for compatibility. Each project renames the line in its
+  active spec folders when it updates the skills, and rerunning
+  `setup-issue-tracker` replaces an outdated convention.
 - `resolve-follow-ups` sweeps the fetched remote default-branch backlog in
   discovery order and starts no more than three eligible workers. Each item gets
   its own verified fresh-base worktree, branch, commit series, and ready-for-
@@ -376,12 +379,11 @@
 - The standard task workflow inside one spec folder is sequential. Parallel
   work runs across spec folders, coordinated by an opt-in issue tracker: when
   the repository's agent instructions carry an `## Issue tracker` section,
-  `merge` publishes a pointer for a `docs/specs/<slug>/` folder without a
-  human-written source issue as it lands on the default branch; folders with
-  a source issue keep that one issue. `implement` claims the corresponding
-  issue as its first write, and the implementation pull request closes it.
-  `maintain-project-context` later repairs drift across the whole mirror using
-  the section's managed-issue listing operation. Without the section every skill
+  each `docs/specs/<slug>/` folder names its issue with an `Issue:` line that
+  `pr` writes when it creates the issue. `implement` claims that issue as its
+  first write, and the implementation pull request closes it.
+  `maintain-project-context` later repairs drift folder by folder through the
+  recorded IDs. Without the section every skill
   behaves as before. Parallel bulk migrations or independent task queues inside
   one folder still require a separately chosen execution model.
 - An intermediate review is warranted only when delayed review could compound a
@@ -578,15 +580,24 @@ state keep automation reviewable without turning follow-up files into a queue.
   does — the folder holds several documents an issue cannot carry, and a
   hand-written copy drifted in this repository, where three of nine queued
   specs were edited after they were written. A generated readable section in
-  the original human issue keeps one issue without giving it separate authority.
-- Publishing a new spec-first pointer when shaping closes — the folder is not
-  yet on the default branch, so the issue would point at nothing until the
-  spec merges. An existing human-written source issue can link its spec PR
-  before that merge without creating a new issue.
+  the issue keeps one issue without giving it separate authority.
+- Creating the issue after merge under a `spec:<slug>` title key — at that
+  point the number cannot be written back into `spec.md`, so every later
+  lookup had to list issues or search titles. Linear search ranks by meaning
+  and can miss an exact title, and flyn accumulated 13 same-title duplicates of
+  Done spec issues (FLY-96 to FLY-108). The prefix was also unwanted in titles.
+- Creating the issue when shaping closes — an abandoned shape would leave an
+  issue behind, while every path (shaping, triage, and a spec delivered with
+  its implementation) already passes through PR creation.
+- Searching the tracker by title for an existing issue before creating one —
+  that search is what produced the duplicates; only an ID a person gives is
+  trusted, and remaining duplicates are tidied by hand.
+- A `spec` label marking spec issues — review and ready states already keep
+  them out of general triage.
 - A CI workflow that mirrors spec folders to issues — it ties the convention
-  to GitHub Actions and GitHub Issues, while `merge` follows whatever tracker
-  the section names.
-- A separate full-mirror reconciliation skill — issue state is a derived surface
+  to GitHub Actions and GitHub Issues, while `pr` and `merge` follow whatever
+  tracker the section names.
+- A separate full reconciliation skill — issue state is a derived surface
   of the same spec lifecycle already inspected by `maintain-project-context`.
   Keeping the full repair in that periodic pass avoids another optional owner,
   while `merge` retains the narrow post-merge update path.
