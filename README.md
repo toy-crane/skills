@@ -100,6 +100,7 @@ flowchart LR
     PRODUCT -. "read when present" .-> SI["shape-idea<br/>(one work unit)"]
     SI --> BP["build-prototype<br/>(judge it by using it)"]
     SI --> SPEC[/spec folder/]
+    SI -- "small settled change" --> IM
     BP --> SPEC
     SPEC --> ST["split-into-tasks<br/>(shallow outcome map)"]
     SPEC --> IM["implement<br/>(spec folder)"]
@@ -243,7 +244,9 @@ new session or a closing-message handoff is not required for correctness.
 - **[shape-idea](./skills/workflow/shape-idea/SKILL.md)**: Clarify a chosen problem and
   direction through correctable drafts, project evidence, and rendered UI
   variants. Maintain project terms and write the stable product contract that
-  later task splitting and implementation must preserve.
+  later task splitting and implementation must preserve. A small settled change
+  skips the spec: its decisions go to the issue's summary when a tracker is set
+  up, and `implement` takes it from there.
 - **[build-prototype](./skills/workflow/build-prototype/SKILL.md)**: Build every screen in
   one dummy-data HTML file using the project's design system, or the shell's
   minimal style when none exists. Review the rendered screens and preserve the
@@ -262,7 +265,9 @@ new session or a closing-message handoff is not required for correctness.
   tasks, drifted prototypes, and retirement candidates to their owners without
   editing product source.
 - **[implement](./skills/workflow/implement/SKILL.md)**: Implement an approved spec
-  folder one outcome at a time. Reload repository evidence before each outcome,
+  folder one outcome at a time, or a tracker issue or request whose decisions
+  are already settled. An issue ends in a ready-for-review PR that links and
+  closes it. Reload repository evidence before each outcome,
   reconcile verified behavior with the product contract and active unfinished
   tasks, ignore superseded history unless current evidence implicates it, reopen
   invalidated work, and return to shaping when a product decision must change.
@@ -429,11 +434,12 @@ available for an affected product surface.
   the recorded ID. `implement` claims the issue, and context maintenance repairs
   drift. Without the convention every skill behaves as before.
 - **[triage-issues](./skills/workflow/triage-issues/SKILL.md)**: On a schedule or
-  by hand, inspect up to three open human-written issues, including Backlog.
-  Investigate and raise one verified implementation or spec PR when ready, or
-  ask for only the missing information or product decision with evidence.
-  Preserve the original issue throughout and prevent competing runs from
-  handling it together through an atomic remote claim.
+  by hand, judge one named issue or the new issues nobody has judged yet, once.
+  Close proven duplicates, hand a clear small change to `implement`, and hand
+  anything needing information or a decision to `shape-idea` in the same run.
+  The judgment stays in the issue's summary and labels, the original report is
+  preserved, and an atomic remote claim keeps competing runs from judging the
+  same issue.
 - **[expo-dev-loop](./skills/expo/expo-dev-loop/SKILL.md)**: Verify Expo and React
   Native changes in a running app with `agent-device`, first proving target
   readiness and the scenario's required state, then selecting Metro reload or
