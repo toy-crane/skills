@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Render one bounded AI-owned section without rewriting human issue content."""
+"""Render the bounded triage summary section without rewriting human issue content."""
 
 import argparse
 import sys
 from pathlib import Path
 
 
-TITLES = {"triage": "Triage 요약", "spec": "Spec"}
+TITLES = {"triage": "Triage 요약"}
 
 
 def upsert(body: str, section: str, content: str) -> str:

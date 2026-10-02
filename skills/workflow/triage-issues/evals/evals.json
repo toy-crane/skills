@@ -1,0 +1,67 @@
+{
+  "skill_name": "triage-issues",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/triage-issues github:#41\n\n이 저장소의 CLAUDE.md에는 GitHub Issues 규약이 있다. #41 본문: \"설정 화면의 '저장' 버튼 문구가 '저장하기'로 되어 있는데 다른 화면은 모두 '저장'이야. 맞춰줘.\" 댓글과 라벨은 없다. implement와 shape-idea Skill이 설치돼 있다.",
+      "expected_output": "The run claims #41, confirms the inconsistency in the code, writes the summary section and the ready-for-implementation signal, releases its claim, and invokes implement by name with the issue and the expected result. It neither edits source nor opens a PR itself.",
+      "files": [],
+      "expectations": [
+        "It handles #41 alone and does not list or judge other issues.",
+        "It judges the request clear and small after checking the current button labels.",
+        "It writes the bounded summary section and the convention's result signal before invoking any other skill.",
+        "It invokes implement by name with github:#41 and the result to deliver.",
+        "It does not change product source, write a spec, or open a pull request within the triage instructions.",
+        "It releases the Git claim after the judgment is written rather than after implementation finishes."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/triage-issues linear:FLY-210\n\nLinear 규약이 있다. FLY-210 본문: \"알림을 좀 덜 받고 싶어요.\" 어떤 알림인지, 줄이는 방식(묶기, 끄기, 빈도)은 적혀 있지 않다. shape-idea Skill이 설치돼 있다.",
+      "expected_output": "The run judges that a product decision is needed, records the summary section and the needs-decision (or needs-info) signal, releases its claim, and invokes shape-idea by name with the issue and the open point. It writes no question of its own.",
+      "files": [],
+      "expectations": [
+        "It does not guess which notifications to reduce or how.",
+        "It records the summary section and a waiting signal before handing off.",
+        "It invokes shape-idea by name with linear:FLY-210 and the open point that blocks the work.",
+        "It does not post a question comment on the issue itself; shape-idea writes the first question.",
+        "It does not name a messenger, an executor, or a specific tracker in its reasoning about who resumes the conversation."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/triage-issues\n\nGitHub Issues 규약이 있다. 열린 이슈:\n- #30: needs-decision 라벨, 요약 구역 있음. 질문 뒤에 사람이 \"B안으로 가요\"라고 댓글을 달았다.\n- #33: 라벨·요약 구역 없음. 이미 합쳐진 #28과 같은 요청이다.\n- #35: 라벨·요약 구역 없음. 결과가 분명한 작은 문구 수정.\n- #36: 라벨·요약 구역 없음. 결과가 분명한 작은 문구 수정.",
+      "expected_output": "The run ignores #30 because it is already judged, closes #33 as a duplicate with linked evidence, hands #35 to implement, and stops there without touching #36.",
+      "files": [],
+      "expectations": [
+        "It does not select #30 or treat the new comment as a reason to act on it.",
+        "It closes #33 through the convention's completed disposition with a link to the earlier delivery.",
+        "It continues past the duplicate and hands #35 to implement.",
+        "It stops after the first handoff and leaves #36 for a later run.",
+        "Its report names each judged issue and its result."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/triage-issues github:#30\n\n#30에는 이미 needs-decision 라벨과 요약 구역이 있다. 질문 뒤에 사람이 답 댓글을 달았다.",
+      "expected_output": "The run reports that #30 has already been judged, with its current judgment, and stops without rewriting the judgment, posting a comment, or handing off.",
+      "files": [],
+      "expectations": [
+        "It recognizes #30 as already judged from its summary section and judgment signal.",
+        "It reports the current judgment instead of judging again.",
+        "It does not interpret the person's reply or continue the decision conversation."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/triage-issues github:#44\n\n#44 본문: \"목록 정렬 기본값을 최신순으로 바꿔줘.\" 결과가 분명하고 작은 변경이다. 이 프로젝트에는 implement Skill이 설치돼 있지 않다.",
+      "expected_output": "The run records its judgment and signal on #44, releases its claim, and reports that a person should run implement on github:#44, without implementing the change itself.",
+      "files": [],
+      "expectations": [
+        "It writes the summary section and the ready-for-implementation signal.",
+        "It does not change product source or open a pull request in place of the missing skill.",
+        "It reports the exact next step a person should take with the issue ID."
+      ]
+    }
+  ]
+}
