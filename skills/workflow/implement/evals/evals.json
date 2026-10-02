@@ -711,44 +711,6 @@
         "It uses command runtime evidence rather than adding device, screenshot or Expo gates.",
         "It preserves the whole-diff review and the current executable revision completion requirements."
       ]
-    },
-    {
-      "id": 58,
-      "prompt": "/implement github:#41\n\nCLAUDE.md에 GitHub Issues 규약이 있다. #41의 요약 구역에는 \"설정 화면의 '저장하기' 버튼 문구를 다른 화면과 같은 '저장'으로 바꾼다\"는 결정이 적혀 있다. 이 저장소에는 docs/specs/ 폴더가 없다.",
-      "expected_output": "The response treats the issue and its settled decision as the contract, claims #41 through the convention before editing, implements and verifies the label change in the running product, completes one review, commits with an Issue: github:#41 trailer, and opens a ready-for-review pull request whose body carries Issue: github:#41 and the convention's closing reference.",
-      "files": [],
-      "expectations": [
-        "It accepts the issue without a spec folder and does not create one.",
-        "It claims #41 through the convention's claim operation before any source edit.",
-        "It treats the settled label change as the acceptance criterion and verifies it in the running product.",
-        "It completes one automated review of the whole diff against the settled request.",
-        "Its commits carry an Issue: github:#41 trailer rather than a Spec-Folder trailer.",
-        "It opens a ready-for-review pull request whose body carries Issue: github:#41 and the convention's closing reference."
-      ]
-    },
-    {
-      "id": 59,
-      "prompt": "/implement linear:FLY-210\n\nFLY-210 본문: \"알림을 좀 덜 받고 싶어요.\" 요약 구역에는 \"정보 필요: 어떤 알림을 어떻게 줄일지 정하지 않음\"이라고 적혀 있다. 넘겨받은 결정은 없다.",
-      "expected_output": "The response finds that the result is not clear enough to verify, makes no source change, and routes the open point to shape-idea or presents the exact decision for the user, instead of guessing which notifications to reduce.",
-      "files": [],
-      "expectations": [
-        "It does not choose which notifications to reduce or how.",
-        "It changes no product source.",
-        "It routes the open point to shape-idea when available, or states the exact decision the user must settle.",
-        "It opens no pull request."
-      ]
-    },
-    {
-      "id": 60,
-      "prompt": "/implement\n\n이 저장소에는 이슈 트래커 섹션이 없다. 방금 정한 내용: 목록 정렬 기본값을 최신순으로 바꾸고, 사용자가 고른 정렬은 지금처럼 유지한다. 이대로 구현해줘.",
-      "expected_output": "The response treats the request and its settled decisions as the contract, implements and verifies the default sort change while keeping a user-chosen sort, completes one review, and creates no issue, Issue line, or Spec-Folder trailer.",
-      "files": [],
-      "expectations": [
-        "It accepts the request and decisions as the handoff without asking for a spec folder.",
-        "It verifies both the new default and the preserved user-chosen sort in the running product.",
-        "It creates no tracker issue and writes no Issue line or trailer.",
-        "It completes one automated review of the whole diff against the settled request."
-      ]
     }
   ]
 }

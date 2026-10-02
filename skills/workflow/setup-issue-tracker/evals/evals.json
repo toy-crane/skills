@@ -11,7 +11,7 @@
         "It does not propose a `spec:<slug>` title key, a title prefix, a spec label, or a List managed issues operation.",
         "It includes find, create, refresh the spec section, full blocker-set replacement, claim, mark ready, and close operations, each addressing an issue by its number.",
         "Create uses the spec title, a bounded spec section as the body, and the recorded review signal, and returns the new number.",
-        "It records the exact markers that bound the spec section, `<!-- triage-issues:spec:start -->` and `<!-- triage-issues:spec:end -->` by default, and the summary section markers the triage body renderer writes.",
+        "It records the exact markers that bound the spec section, matching the triage body renderer's `<!-- triage-issues:spec:start -->` and `<!-- triage-issues:spec:end -->` by default.",
         "Its GitHub blocker update paginates every open and closed current relation before removing stale edges and adding missing ones, while Find still returns only open blockers for implementation gating.",
         "It shows the proposed section before writing and does not create issues for existing spec folders during setup."
       ]
@@ -28,20 +28,6 @@
         "It adds the mark-ready operation to the core operations and upgrades additive blocker edits to remove stale edges as well as add missing ones.",
         "It tells the user to rename `Source-Issue:` to `Issue:` in active spec folders and leaves existing title-key issues for the user to tidy.",
         "It does not create a second instruction file or create any issues."
-      ]
-    },
-    {
-      "id": 3,
-      "prompt": "/setup-issue-tracker 이 GitHub 저장소에 새 이슈 triage도 켜줘. gh 로그인은 되어 있고 AGENTS.md에 이미 Issue tracker 섹션이 있다. 지금 docs/issue-tracker.md에는 '질문 뒤 사람 댓글과 본문 수정을 감지해 needs-info 이슈를 다시 평가', '스펙 PR이 합쳐지지 않고 닫히면 Backlog로 복귀' 항목이 있다.",
-      "expected_output": "The response keeps the existing tracker, tool, and operations, replaces the human-reply detection and Backlog-return items with the not-yet-judged query and summary section markers, and makes the claim operation clear the waiting labels.",
-      "files": [],
-      "expectations": [
-        "It records a not-yet-judged query that returns open general issues with no summary section and none of the judgment results.",
-        "It records the summary section markers `<!-- triage-issues:triage:start -->` and `<!-- triage-issues:triage:end -->`.",
-        "It drops human comment and body-edit detection and the Backlog return for closed spec PRs.",
-        "It makes the claim operation remove `needs-info` and `needs-decision`.",
-        "It adds no source field and no decision-maker field.",
-        "It shows the drafted change before writing and preserves the rest of AGENTS.md."
       ]
     }
   ]

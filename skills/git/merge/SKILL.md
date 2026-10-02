@@ -29,10 +29,9 @@ When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
 section, read its linked detailed convention when present; legacy inline
 conventions also work, without a separate setup skill installation. Without
 the section, skip every issue step in this skill. For a configured tracker,
-read the `Spec-Folder: docs/specs/<slug>/` and `Issue: <tracker>:<id>`
-trailers from the branch's commits before merging, while the branch still
-exists and before a squash can drop them, and keep those folders and issues for
-the steps below.
+read the `Spec-Folder: docs/specs/<slug>/` trailers from the branch's commits
+before merging, while the branch still exists and before a squash can drop
+them, and keep those folders for the steps below.
 
 Before creating or updating the PR, gather the spec folders it carries: every
 `docs/specs/<slug>/` folder the branch adds or changes, and every folder a
@@ -54,8 +53,7 @@ the created ID so a rerun records it instead of creating another.
 
 Put an `Issue: <tracker>:<id>` line in the PR body for each linked issue, so
 later reconciliation can find the PR after a squash merge; a direct fix of a
-known issue without a spec folder carries the same line, for the issue the
-request or an `Issue:` commit trailer names. Put the convention's
+known issue without a spec folder carries the same line. Put the convention's
 closing reference in a PR body only when its diff and verification show
 implementation delivery; a trailer or `Issue:` line alone is insufficient. A
 spec-only PR links its issue without closing it.
@@ -205,8 +203,8 @@ the tracker's automatic closing does: a merge into a non-default base, a squash
 message without the trailer, or a tracker with no closing reference can leave
 it open otherwise. A spec-only merge never closes the issue, even when its
 commits carry that trailer. A direct small implementation PR may have no spec
-folder: its `Issue:` commit trailer or PR body line names the issue. Inspect
-that exact `Issue:` line, the diff, and verification, then close that issue now when they establish implementation
+folder or trailer: inspect the current PR's exact `Issue:` line, diff, and
+verification, then close that issue now when they establish implementation
 delivery. A line alone never closes an issue. Verify the resulting tracker
 state and report a failed close for retry. After a spec-only PR merges, leave
 its issue open and use the convention's mark-ready operation to clear the PR

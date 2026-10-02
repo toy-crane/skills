@@ -38,13 +38,5 @@
   {
     "query": "현재 앱 구현은 건드리지 말고 개발 서버만 다시 띄워줘.",
     "should_trigger": false
-  },
-  {
-    "query": "github:#41 이슈는 결정이 끝났어. 요약 구역에 적힌 대로 구현하고 PR까지 올려줘.",
-    "should_trigger": true
-  },
-  {
-    "query": "트래커는 안 써. 방금 정한 대로 목록 기본 정렬을 최신순으로 바꾸는 걸 구현하고 검증해줘.",
-    "should_trigger": true
   }
 ]

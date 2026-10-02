@@ -52,9 +52,7 @@ report the created ID so a rerun records it instead of creating another.
 
 Put an `Issue: <tracker>:<id>` line in the PR body for each linked issue, so a
 later pass can find the PR after the branch is gone. A PR with no spec folder
-that fixes a known issue directly carries the same line; that issue is the one
-the request names or an `Issue: <tracker>:<id>` commit trailer on the branch
-names. Put the convention's
+that fixes a known issue directly carries the same line. Put the convention's
 closing reference in the body only when the PR actually delivers that issue's
 implementation, as established by the diff and verification; a trailer or
 `Issue:` line alone does not establish delivery. A spec-only PR links its issue

@@ -16,13 +16,8 @@
   leaves a durable current artifact instead of handing a chosen direction to
   shaping through conversation alone.
 - `shape-idea` remains independent. It starts from a concrete problem and broad
-  direction, or a tracker issue that needs information or a decision, reads
-  app-level context when one exists, closes or defers material work-unit
-  decisions, and writes the implementation-ready spec. When every decision is
-  settled, the result is clear, and the change is small enough that no
-  contract emerges for later work to reread, it writes no spec: it records the
-  decisions in the issue's summary section when a tracker is set up and invokes
-  `implement` with the issue, or with the request when none is. Missing
+  direction, reads app-level context when one exists, closes or defers material
+  work-unit decisions, and writes the implementation-ready spec. Missing
   app-level context neither blocks shaping nor makes `shape-idea` create it. It
   owns new specs only; revising an existing one against later work belongs to
   `babysit-specs`.
@@ -71,12 +66,7 @@
   outcomes, acceptance criteria, blockers, and task-specific constraints
   without predicting file-level implementation work.
 - `implement` receives one selected `docs/specs/<slug>/` folder as a single
-  handoff bundle anchored by `spec.md`, or a tracker issue with its settled
-  decisions, or, without a tracker, a request with its settled decisions. For
-  an issue or a request the settled result is the acceptance criterion; one too
-  unclear to verify returns to shaping rather than being guessed. The rest of
-  this list describes the spec-folder handoff; verification, runtime proof,
-  and review apply to every input. Before implementation it loads the spec,
+  handoff bundle anchored by `spec.md`. Before implementation it loads the spec,
   active tasks, implicated task history, explicitly linked decision contracts,
   any other decision contract implicated by repository evidence, and every
   prototype or screen-state artifact the handoff identifies as an approved or
@@ -279,8 +269,8 @@
   Consumers read the linked convention without requiring the setup skill to be
   installed and continue to support existing inline conventions. This avoids
   loading MCP recipes into every task while preserving custom tracker behavior.
-  When general-issue triage is enabled, the same convention records its
-  judgment results, its not-yet-judged query, and the summary section markers.
+  When scheduled general-issue triage is enabled, the same convention records
+  its triage states.
   An active issue requires an explicit user request to resume even when the
   assignee is the current account: shared accounts do not identify sessions.
 - One spec folder links to one tracker issue through a single
@@ -299,9 +289,9 @@
   `Issue:` line, it creates one issue titled with the spec title, carrying the
   review signal and a bounded spec section as its body, commits the line on
   the same branch, and then opens the PR. `merge` opens PRs without invoking
-  `pr`, so it restates the same step. `shape-idea` writes the line only for an
-  issue ID it was given, by the user or by the triage run that handed the issue
-  over; it never finds one by title search. Duplicates that
+  `pr`, so it restates the same step. `shape-idea` and `triage-issues` write
+  the line only for an issue ID they already know, from the user or the issue
+  triage started from; they never find one by title search. Duplicates that
   still arise are tidied by a person in the tracker.
 - Once created, an agent-made issue is handled exactly like a human-written
   one: its title and body stay, and only its bounded spec section is refreshed
@@ -312,8 +302,8 @@
   `maintain-project-context` periodically repairs every default-branch
   folder's issue by ID. The tracker holds the claim, blocking edges, and open
   or closed state.
-- `implement` claims the issue a folder's `Issue:` line names, or the issue it
-  was given directly; a folder without the line proceeds unclaimed until its
+- `implement` still takes the folder as input and claims the issue its
+  `Issue:` line names; a folder without the line proceeds unclaimed until its
   PR creates the issue. Cross-folder ordering is a
   `Blocked by: docs/specs/<other>/` line in `spec.md`, written whether or not a
   tracker exists, and `implement` leaves a `Spec-Folder` commit trailer so `pr`
@@ -323,33 +313,12 @@
   convention's mark-ready operation to a non-active, ready-for-implementation
   state, never back to general triage. Folder deletion alone never closes an
   issue. An open linked PR excludes the issue from triage; when a spec PR
-  closes unmerged, a person decides what happens to its issue, because triage
-  judges only new issues. Merged PR bodies keep the
+  closes unmerged, triage returns the issue to a re-triageable state such as
+  Backlog after checking for other active work. Merged PR bodies keep the
   exact `Issue:` line so a later pass can retry a failed close or ready
   transition after the branch and trailers are gone. Blocker edges come from
   the `Issue:` lines of the folders a `Blocked by` line names; when one has no
   line, the dependent issue's blocker set stays unchanged and is reported.
-- `triage-issues` judges a new issue once and only judges. Given an issue ID it
-  handles that issue alone; otherwise it takes the convention's not-yet-judged
-  query oldest first, closing duplicates and already-delivered requests as it
-  goes and stopping at the first handoff, so one run carries one conversation.
-  A clear small change goes to `implement` and anything needing information, a
-  decision, or a written contract goes to `shape-idea`, both invoked by name in
-  the same run; `shape-idea` writes the first question. Before the handoff it
-  writes the issue's summary section and the convention's result signal, which
-  keep later runs away even when the handoff is absent or fails, then releases
-  its Git claim. It implements nothing, writes no spec or question, and never
-  re-reads a waiting issue for a human reply.
-- Whoever runs the skills decides when a person has answered: a person in the
-  chat, a scheduled task, or a resident executor that resumes the `shape-idea`
-  conversation with the reply. Skills name no messenger, executor, or tracker
-  and read comments only as evidence. Without an executor, a waiting issue
-  moves when a person runs `shape-idea` on it again.
-- `implement` on an issue leaves an `Issue: <tracker>:<id>` commit trailer and
-  ends in a ready-for-review PR that carries the same line and the closing
-  reference, opened through `pr` when available. `pr` and `merge` read that
-  trailer as they read `Spec-Folder`. A spec folder or a request without a
-  tracker leaves publication to the person.
 - The old `Source-Issue` line, `spec:<slug>` title key, and managed-issue
   listing are not read for compatibility. Each project renames the line in its
   active spec folders when it updates the skills, and rerunning
@@ -382,9 +351,6 @@
 
 ## Boundaries
 
-- `triage-issues` owns the first judgment of a new issue. Questions and
-  decisions belong to `shape-idea`, and code, verification, and PRs to
-  `implement`; triage hands off rather than restating either.
 - `define-product` owns deliberate app-level product definition, while
   `shape-idea` owns work-unit shaping and `maintain-project-context` owns
   periodic cross-artifact hygiene. None makes another's artifact a required
@@ -496,9 +462,7 @@ invoke `babysit-specs` at all.
 The spec folder is the stable implementation address. It already says whether
 the work remains one coherent spec or has approved tasks, so `implement` needs
 one input contract and one deterministic branch instead of separate invocation
-paths. A small settled change carries no contract later work must reread, so
-its issue and decisions stand in for the folder rather than a spec written only
-to be implemented once.
+paths.
 
 Task files carry exceptional intermediate review checkpoints, so the execution
 skill does not need to restate their procedure. Complete verification proves
@@ -589,15 +553,6 @@ state keep automation reviewable without turning follow-up files into a queue.
 
 ## Still-rejected alternatives
 
-- Triage that only labels an issue and lets an executor read the label to start
-  the next step — it adds a procedure, and in a project without an executor the
-  work stops at the label.
-- Triage that detects human answers from comment authors, timestamps, and body
-  fingerprints — the runner already knows when a person replied, and the
-  heuristics made one skill carry selection, judgment, conversation, specs, and
-  implementation together.
-- Keeping implementation, spec writing, and questions inside triage — each
-  duplicated a skill that already owns that outcome.
 - Keeping `discover-opportunity` as a separate conversational entry point — its
   handoff disappears with the session and does not provide the durable app
   premise the greenfield workflow needs.
@@ -730,11 +685,6 @@ state keep automation reviewable without turning follow-up files into a queue.
 
 ## Evidence worth preserving
 
-- On 2026-10-02 the user, moving flyn's human conversation to a messenger with
-  a resident executor, judged that `triage-issues` held too many roles and
-  settled the split above in a shaping session. The [issue-skill-roles
-  spec](../specs/issue-skill-roles/spec.md) records the decisions and the
-  assumptions chosen to fill their gaps.
 - A Flyn work unit linked an approved `prototype.html` from `spec.md` and
   recorded 25 screen-state cases checked at three widths, with 98 prototype
   checks passing. The later implementation session listed the artifact but

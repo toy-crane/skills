@@ -198,18 +198,6 @@
         "In A the PR body carries `Issue: github:#12` and the convention's closing reference, because the diff and verification establish implementation delivery.",
         "In B it creates no issue, adds no Issue line to spec.md, and leaves the PR body without tracker lines."
       ]
-    },
-    {
-      "id": 18,
-      "name": "issue-trailer-without-spec-folder",
-      "prompt": "PR 올려줘. 저장소에는 ## Issue tracker 섹션(GitHub Issues)이 있다. 브랜치는 스펙 폴더 없이 설정 화면 버튼 문구만 바꿨고, 커밋마다 `Issue: github:#41` 트레일러가 있다. 구현 검증과 리뷰는 끝났다. 다른 스킬은 설치되지 않았다.",
-      "expected_output": "The PR reuses issue #41 from the commit trailer, creates no issue, and carries `Issue: github:#41` with the convention's closing reference because the diff and verification establish delivery.",
-      "files": [],
-      "expectations": [
-        "It creates no issue and searches no titles.",
-        "It reads `github:#41` from the commit trailers.",
-        "The PR body carries `Issue: github:#41` and the convention's closing reference."
-      ]
     }
   ]
 }

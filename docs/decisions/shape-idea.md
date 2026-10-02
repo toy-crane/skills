@@ -4,8 +4,7 @@
 
 - Start from a concrete problem and broad direction, investigate available
   evidence, and present a concrete draft for the user to correct.
-- Close with `spec.md`, except for the small settled change below, as the
-  stable product contract for implementation:
+- Close with `spec.md` as the stable product contract for implementation:
   user-visible outcomes, approved scope, observable acceptance criteria,
   settled constraints and rationale, assumptions, off-limits areas and reasons,
   deferred points, and remaining risks. Record behavior rather than predicted
@@ -28,18 +27,8 @@
   with that exact English label in a spec of any language. It sits with the
   links, not in the contract's field list, and is repository information that
   `merge` mirrors into tracker blocking edges when a tracker is set up.
-- Shaping can start from a tracker issue handed over with an open point. It
-  reads the issue's report, summary section, and comments as the problem and
-  direction, and asks in the conversation rather than in issue comments; the
-  runner brings the person's answer back into that conversation.
-- When every decision is settled, the result is clear, and the change is small
-  enough that no contract emerges for later work to reread, shaping writes no
-  spec unless the user asks for one. It records the decisions in the issue's
-  summary section between the convention's markers when a tracker is set up,
-  then invokes `implement` with the issue, or with the request when no tracker
-  is. A larger change still closes with `spec.md`.
-- When a tracker is set up and the user or the invoking skill names the
-  existing issue the work comes from, write an `Issue: <tracker>:<id>` line beside the same links in
+- When a tracker is set up and the user names the existing issue the work
+  comes from, write an `Issue: <tracker>:<id>` line beside the same links in
   the convention's ID form. Shaping never searches the tracker by title and
   never creates an issue; the PR that first carries the folder creates one.
 - Treat low-risk, reversible choices made by the AI as assumptions. A choice is
@@ -72,8 +61,7 @@
   substitute. Verify only the states needed for a trustworthy comparison before
   the user judges one unresolved experiential decision.
 - Writes are limited to the spec folder, glossary, current decision contracts,
-  current vendor agent context, and the bounded summary section of the issue
-  the work came from. Product source, configuration, and
+  and current vendor agent context. Product source, configuration, and
   dependencies do not change during shaping, including edits meant to be
   reverted. Experiments, benchmarks, dependency checks, and previews run in a
   scratch directory outside the working tree; when none can answer a question,

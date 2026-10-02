@@ -27,11 +27,8 @@ or prefix. Address every issue by that identifier; never find one by title
 search, because Linear search ranks by meaning and may miss an exact title.
 
 Spec section markers: `<!-- triage-issues:spec:start -->` and
-`<!-- triage-issues:spec:end -->`. Summary section markers:
-`<!-- triage-issues:triage:start -->` and `<!-- triage-issues:triage:end -->`,
-the ones the triage body renderer writes. Every skill uses exactly these, so an
-issue never gets a second section. The summary section opens with a
-`## Triage 요약` heading inside its markers; keep it when replacing the text.
+`<!-- triage-issues:spec:end -->`, the same markers the triage body renderer
+writes. Create, refresh, and every other skill use exactly these.
 
 - Find: fetch the issue by identifier and read its state, assignee,
   description, and open blocking relations.
@@ -44,8 +41,7 @@ issue never gets a second section. The summary section opens with a
 - Update blockers: replace the complete "blocked by" relation set, removing
   stale blocker issues and adding missing ones.
 - Claim: assign the issue to the current Linear user and move it to the
-  team's in-progress state, removing any `needs-info` or `needs-decision`
-  label. Record which states count as active, including
+  team's in-progress state. Record which states count as active, including
   review states when applicable. The same assignee does not prove resumption.
 - Mark ready: after a spec-only PR merges, move the issue from the review state
   to the team's non-active ready state (for example, a verified Todo state),
@@ -57,22 +53,10 @@ issue never gets a second section. The summary section opens with a
 When general-issue triage is enabled, record which team states are open and
 which include Backlog. Map `needs-triage` to native Triage or a label as
 appropriate, and verify the selected `needs-info` and `needs-decision` labels.
-The ready-for-implementation result is the team's non-active ready state (for
-example, a verified Todo state).
-
-- Find new issues: list the team's open issues oldest first, including Triage
-  and Backlog, and keep those whose description has no summary section
-  markers, with no `needs-info` or `needs-decision` label and no review or
-  active state. Filter the returned descriptions locally rather than through
-  search.
-- Record a judgment: re-read the latest description, replace only the summary
-  section, write it back, re-read and confirm the rest is unchanged, then
-  apply the result: the ready state for a clear small change, or Backlog with
-  the `needs-info` or `needs-decision` label for a waiting result. Either
-  moves the issue out of Triage.
-- Dispose of a duplicate: link the earlier issue or delivery in a comment and
-  move the issue to the team's duplicate or done state.
-
-Record linked PR lookup. Record whether the available tool conditionally
-updates descriptions; otherwise re-read and verify after writing, recover any
-observed human edit, and report the remaining race.
+Record comment and human-edit detection, linked PR lookup, evidence attachments,
+and duplicate disposition. Record the move to Backlog for an issue whose spec
+PR closed unmerged. Record an operation that re-reads the latest description
+and updates only bounded AI-managed sections while preserving human content.
+Record whether the available tool conditionally updates descriptions;
+otherwise re-read and verify after writing, recover any observed human edit,
+and report the remaining race.

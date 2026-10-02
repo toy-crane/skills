@@ -1,123 +1,153 @@
 ---
 name: triage-issues
-description: Judge new human-written issues from a configured issue tracker once, in a scheduled or manual run, or one named issue. Close proven duplicates, hand a clear small change to implement, and hand anything needing information or a decision to shape-idea in the same run.
+description: Triage human-written general issues from a configured issue tracker in a scheduled or manual run. Investigate, ask only decisions that need a person, and raise one implementation or spec pull request when ready.
 ---
 
-# Triage new issues
+# Triage general issues
 
-Judge each new issue once so a person never has to decide where it goes. Use
-the repository's `## Issue tracker` section in `AGENTS.md` or `CLAUDE.md` and
-its linked `docs/issue-tracker.md`. Read both agent files and use the first
+Reduce the time a person spends deciding what to do with freely written issues.
+Use the repository's `## Issue tracker` section in `AGENTS.md` or `CLAUDE.md`
+and its linked `docs/issue-tracker.md`. Read both agent files and use the first
 section found; existing inline conventions work too. The convention supplies
-the tracker, project or team, issue ID form, status and label mapping, the
-not-yet-judged query, the summary section markers, issue operations, and PR
+the tracker, project/team, status and label mapping, issue operations, and PR
 links. Do not guess those values from this skill or require the setup skill to
 be installed. If the convention or its tool is unavailable, report the exact
 missing operation without changing issues or source.
 
-Triage judges; it does not implement, write specs, or ask the person
-questions. Whoever runs this skill decides when to run it again, so comments
-are evidence for the judgment, never a trigger for it.
+## Select a bounded queue
 
-## Pick the issue
+List open general issues across the configured scope, including
+Backlog. Prefer waiting issues with a new human answer or human body edit, then
+new issues, then untouched older issues in stable oldest-first order. Count at
+most three eligible issues inspected in one run, and raise at most one PR.
+Continue to the next candidate after leaving an information or decision request.
+Stop selecting PR-producing work after the first PR.
 
-When the request names an issue, handle that issue alone. When it names none,
-take the convention's not-yet-judged query in stable oldest-first order: open
-general issues with no summary section and none of the judgment results the
-convention records. Close a duplicate or already-delivered request and continue
-to the next; stop at the first issue handed to `implement` or `shape-idea`, so
-one run carries at most one handoff and its conversation stays about one issue.
+Exclude issues with active work, the convention's review signal, or an open
+linked PR, and issues named by an `Issue:` line in a spec folder on the default
+branch; those wait for review or implementation. A PR links an issue when the
+tracker links it or its body carries that issue's `Issue: <tracker>:<id>`
+line. Do not filter by title. A review signal whose only linked PRs closed
+unmerged does not exclude the issue: inspect their branches, comments, and
+attempted changes, then return the issue to the convention's re-triageable
+state, such as Backlog, when no active work remains. Reuse
+useful work rather than creating a duplicate PR. A merged implementation PR
+follows the tracker close or reconciliation path, not triage.
+A waiting `needs-info` or `needs-decision` issue becomes eligible when a person
+comments or edits its report after the question. Changes to the AI-managed
+sections do not count as human edits. Read the newest body and all comments
+before deciding whether a reply resolves the question; a clear answer needs no
+special decision-maker role. Conflicting or ambiguous replies need one focused
+follow-up in the same issue.
 
-Skip issues with active work, the convention's review signal, or an open linked
-PR, and issues named by an `Issue:` line in a spec folder on the default branch;
-those already have an owner. A PR links an issue when the tracker links it or
-its body carries that issue's `Issue: <tracker>:<id>` line. Do not filter by
-title. A named issue that already carries a summary section or judgment result
-has been judged: report its current judgment and stop, unless the person
-explicitly asks for it to be judged again.
-
-## Own the issue while writing the judgment
+## Own an issue before any write
 
 Use the bundled [claim helper](scripts/claim.sh) with the issue's stable
 `<tracker>:<id>` in the convention's ID form, the same value an `Issue:` line
-carries. It conditionally creates a remote Git claim ref, so assignment or a
-working label is never the lock. A competing run skips the issue. Keep the
-returned SHA and secret token in disposable run state, never in an issue,
-commit, PR, or log. Verify the claim before each issue write. If ownership is
-lost, stop writing and report the partial state.
-
-Release the claim once the judgment is written: after closing a duplicate, or
-after the summary section and result signal are in place and before invoking
-the next skill. The written judgment keeps later runs away from the issue, and
-`implement` claims it through the tracker on its own, so a shaping conversation
-that waits days for a person holds no Git claim. Release only the revision this
-run still owns; if ownership was lost, do not release another run's claim. If
-release fails, report the held ref and retry path rather than assuming the
+carries. It conditionally
+creates a remote Git claim ref, so assignment or a working label is never the
+lock. A competing run skips the issue. Keep the returned SHA and secret token
+in disposable run state, never in an issue, commit, PR, or log. Verify the claim
+before each issue write, branch publication, and PR creation; renew it during
+long work and use the new SHA. If ownership is lost, stop writing and report
+the partial state. Release only the revision still owned by this run.
+At every terminal outcome after claiming—including a question, disposition,
+published PR, changed-issue skip, or failure—verify and release the current
+owned revision. Finish the issue outcome before releasing; do not wait for an
+open PR to merge. If ownership was lost, do not release another run's claim.
+If release fails, report the held ref and retry path rather than assuming the
 issue is available. Two-hour recovery is for interrupted runs only.
 
 An interrupted claim older than two hours can be recovered only after reading
-the issue's newest activity, branches, and PRs for the earlier attempt. Pass the
-observed SHA to `recover`. If a worker may still be active, leave the claim in
-place. The helper uses the repository's `origin` remote by default; verify that
-the convention's repository and the selected remote are the same before
-claiming. If remote refs cannot be created or conditionally updated, skip
-writes and report the missing atomic claim capability. Do not replace it with a
-label or assignee.
+the issue's newest activity, branches, and PRs for the earlier attempt. Reuse
+an existing artifact rather than duplicating it, then pass the observed SHA to
+`recover`. If a worker may still be active, leave the claim in place. The helper
+uses the repository's `origin` remote by default; verify that the convention's
+repository and the selected remote are the same before claiming. If remote
+refs cannot be created or conditionally updated, skip writes and report the
+missing atomic claim capability. Do not replace it with a label or assignee.
 
-Recheck the skip conditions after claiming; a newly opened PR or new active
-work means the issue is no longer this run's to judge.
+Recheck eligibility and the issue's human-written content after claiming and
+again before publishing an outcome. A newly opened PR or changed request can
+invalidate the planned action. Preserve existing dirty checkout work; use an
+isolated branch or worktree from the fetched remote default branch for a PR.
 
-## Investigate and judge
+## Investigate and route
 
 Read the original report, attachments, comments, related issues, project
 context and decisions, current code and behavior, and any relevant runtime
-evidence. Resolve technical questions from that evidence. Then pick the one
-result that fits:
+evidence. Choose the smallest outcome that actually resolves the request:
 
-- **Duplicate or already delivered.** Show the linked evidence and reason, then
-  apply the convention's completed disposition. This closes the issue.
-- **Clear and small.** The requested result is clear and the change is small:
-  no product choice remains and no contract emerges that later work would need
-  to reread. Hand it to `implement`. Do not call a speculative implementation
-  clear merely to avoid a question about expected behavior.
-- **Needs information or a decision.** A fact is missing, a product choice
-  remains, the request may be declined, or the change is large enough to need
-  a written contract. Hand it to `shape-idea`, which writes the first question
-  and owns the conversation that follows.
+- If the requested result is clear and the change is small, implement it,
+  select a public test seam, verify the affected behavior in the running
+  product when one exists, and obtain one completed automated review of the
+  whole diff. Repair confirmed ordinary-path defects and rerun affected checks.
+  Raise a ready-for-review implementation PR with the evidence and link the
+  original issue. Record `Issue: <tracker>:<id>` in the PR body so later
+  reconciliation can find it after the branch is gone. Include the
+  convention's closing reference because the verified PR delivers the direct
+  implementation, even without a spec folder or `Spec-Folder` trailer. Do not
+  claim runtime proof from static checks.
+- If the result is clear but spans substantial behavior or requires a durable
+  design choice, write `docs/specs/<slug>/spec.md` as the implementation
+  contract and raise a spec PR. Record `Issue: <tracker>:<id>` for the
+  original issue beside the spec's source links, so PR creation reuses it
+  instead of creating another. Do not start implementation in this triage run.
+  Put the same `Issue:` line in the PR body without a closing reference. An unmerged spec is a draft, and its PR remains linked to
+  the original issue.
+- If a missing fact prevents either path, ask for precisely that fact in a
+  comment and set `needs-info` through the configured convention.
+- If a product choice remains, leave `needs-decision`: explain the choice,
+  viable options and their consequences, the AI recommendation and its basis.
+  Produce or attach screenshots, short video, reproduction steps, comparisons,
+  logs, or running links when they help the person decide. Distinguish observed
+  evidence, inference, and unknowns. Check media for sensitive data before
+  sharing it. Ask in a comment where the person can reply.
+- For a proven duplicate or already implemented request, show the linked
+  evidence and reason, then apply the convention's completed disposition. For
+  a new product request that may be declined, recommend proceed, defer, or
+  decline with consequences and leave the choice to a person.
 
-## Record the judgment before handing off
+Use available specialized shaping, implementation, verification, or PR skills
+when they fit, but carry the outcome above even when those skills are absent.
+Resolve technical choices from evidence; do not turn them into human questions.
+Do not treat a speculative implementation as a clear small issue merely to
+avoid writing a spec or asking about expected behavior.
 
-Write the judgment where the tracker shows it, before invoking any other skill.
-Use the bundled [body section renderer](scripts/body-sections.py) on the freshly
-fetched body to update only the bounded summary section with the confirmed
-facts, the judgment and its reason, and the next step. Preserve the human
-report. Then apply the convention's result signal and clear its untriaged
-signal: the waiting state `needs-info` for a missing fact or `needs-decision`
-for a choice or contract, the ready-for-implementation state for a clear small
-change, or the completed disposition for a duplicate. The summary section and
-signal are what keep later runs from judging the issue again, so they stay even
-when the handoff that follows is missing or fails.
+## Keep one issue readable
+
+Preserve the human report. Use the bundled
+[body section renderer](scripts/body-sections.py) on the freshly fetched body
+to update only a clearly bounded `Triage 요약` section
+with confirmed facts, current state, and next action. Keep questions and human
+answers in comments; fold settled answers into the summary. A spec PR also
+adds a bounded spec section in that same issue, marked draft until merged.
+The repository's `spec.md` is authoritative: render the issue section from it,
+and refresh that section when the merged contract changes. Never hand-edit an
+independent second spec. If a body edit or section boundary is ambiguous,
+preserve it and ask only for the missing distinction.
 
 Use the convention's body-update operation to re-read the latest body and
-replace only the summary section. Recheck the resulting body against the human
-content read immediately before the write. A Git claim serializes agents, not
-human edits; when the tracker provides no conditional body update, do not claim
-an atomic preservation guarantee. Repair any observed loss of human content
-from available revision evidence, or report the lost-edit risk. If a section
-boundary is ambiguous, preserve it and report it rather than guessing.
+replace only the AI-managed section. Recheck the resulting body against the
+human content read immediately before the write. A Git claim serializes agents,
+not human edits; when the tracker provides no conditional body update, do not
+claim an atomic preservation guarantee. Repair any observed loss of human
+content from available revision evidence, or leave the outcome incomplete and
+report the lost-edit risk. Move a newly answered waiting issue directly to
+its next evaluated outcome; do not leave it in an unlabelled intermediate
+state. Link PRs without closing the original issue on a spec PR. Once a spec
+folder's `Issue:` line names this issue, `merge`, `implement`, PR creation, and
+context maintenance reuse it by that ID and create no other issue.
+After publishing either PR, clear triage and waiting labels and apply the
+convention's review or in-progress signal. An open PR keeps the issue out of
+later triage runs; if it closes unmerged, restore triage eligibility when no
+other active work remains. After a spec-only PR merges, `merge` returns its
+issue to the convention's non-active, ready-for-implementation state;
+do not leave the PR review signal blocking `implement`.
 
-## Hand off in the same run
+## Report only new decisions to the person
 
-Invoke the next skill by name with the issue's `<tracker>:<id>` and the
-judgment: `implement` for a clear small change, with the result it must
-deliver; `shape-idea` for an issue needing information or a decision, with the
-open point that blocks it. That skill owns everything after: claiming,
-questions, specs, verification, and PRs. If it is not installed, leave the
-recorded judgment and report the exact next step a person should take, such as
-running that skill on this issue.
-
-## Report the run
-
-Report each issue judged, its result, and the handoff made. Report blocked
-claims or failed writes with their exact retry path. A scheduled run that found
-no new issue stays quiet.
+On a scheduled run, group links to issues that received a **new** decision
+request in this run, with one-line descriptions. When none did, keep the run's
+user notification quiet; issue comments, body updates, and PRs retain the
+results. Report blocked claims or failed writes with their exact retry path.

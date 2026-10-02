@@ -26,11 +26,8 @@ in `spec.md` and in PR bodies. Titles carry no key or prefix. Address every
 issue by that number; never find one by title search or by listing issues.
 
 Spec section markers: `<!-- triage-issues:spec:start -->` and
-`<!-- triage-issues:spec:end -->`. Summary section markers:
-`<!-- triage-issues:triage:start -->` and `<!-- triage-issues:triage:end -->`,
-the ones the triage body renderer writes. Every skill uses exactly these, so an
-issue never gets a second section. The summary section opens with a
-`## Triage 요약` heading inside its markers; keep it when replacing the text.
+`<!-- triage-issues:spec:end -->`, the same markers the triage body renderer
+writes. Create, refresh, and every other skill use exactly these.
 
 - Find: `gh issue view <n> --json number,title,state,assignees,labels,body`.
   List open blockers with `gh api
@@ -53,8 +50,7 @@ issue never gets a second section. The summary section opens with a
   edit <n> --add-blocked-by <new blocker>`. Where dependencies are unavailable,
   replace the complete set of `Blocked by: #<n>` body lines so stale lines are
   removed as well as missing lines added.
-- Claim: `gh issue edit <n> --add-assignee @me --add-label <active label>`,
-  adding `--remove-label needs-info,needs-decision` when triage is enabled;
+- Claim: `gh issue edit <n> --add-assignee @me --add-label <active label>`;
   the current account is `gh api user --jq .login`.
 - Mark ready: after a spec-only PR merges, `gh issue edit <n> --remove-label
   <review label>`, leaving the issue open and unassigned work for `implement`.
@@ -66,28 +62,13 @@ Record the label names chosen for the review and active signals, and verify
 they exist in the repository before use.
 
 When general-issue triage is enabled, extend this convention with the selected
-open-issue scope (including Backlog) and the `needs-triage`, `needs-info`, and
-`needs-decision` label mapping. Verify the labels in the repository before use.
-The ready-for-implementation result needs no label: the summary section marks
-the issue as judged, and an open, unassigned issue without the review or active
-label is ready for `implement`.
-
-- Find new issues: `gh issue list --state open --json
-  number,createdAt,labels,assignees,body --limit 200`, which excludes PRs;
-  keep issues whose body has no summary section markers and which carry none
-  of `needs-info`, `needs-decision`, the review label, or the active label,
-  oldest `createdAt` first. Filter the returned bodies locally rather than
-  through search.
-- Record a judgment: re-read the body with `gh issue view <n> --json body`,
-  replace only the summary section, write it back with `gh issue edit <n>
-  --body-file -`, re-read and confirm the rest is unchanged, then add
-  `needs-info` or `needs-decision` for a waiting result and remove
-  `needs-triage`.
-- Dispose of a duplicate: comment with the linked earlier issue or PR, then
-  `gh issue close <n> --reason "not planned"` for a duplicate or
-  `--reason completed` for an already delivered request.
-
-Record linked PR lookup. GitHub REST conditional `PATCH` is not generally
-supported: verify the body after writing, recover an observed concurrent edit
-when possible, and report the remaining race instead of claiming atomic
-preservation.
+open-issue scope (including Backlog), `needs-triage`, `needs-info`, and
+`needs-decision` label mapping, comment and human-edit detection, linked PR
+lookup, evidence attachments, and duplicate disposition. Verify the labels in
+the repository before use. Exclude PRs from the issue listing. Record how an
+issue whose spec PR closed unmerged loses its review label and becomes
+eligible for triage again. Record an operation that re-reads the latest body
+and updates only bounded AI-managed sections while preserving human content.
+GitHub REST conditional `PATCH` is not generally supported: verify the body
+after writing, recover an observed concurrent edit when possible, and report
+the remaining race instead of claiming atomic preservation.

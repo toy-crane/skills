@@ -318,43 +318,6 @@
         "It points at both linked sources rather than copying the retry rules or the approved screen compositions into spec.md.",
         "It still records the user-visible outcomes, approved scope, observable acceptance criteria, settled constraints, assumptions, off-limits areas, deferred points, and remaining risks, treating the links as sources beside those fields rather than as one of them."
       ]
-    },
-    {
-      "id": 24,
-      "prompt": "/shape-idea github:#52\n\nCLAUDE.md에 GitHub Issues 규약이 있다. #52 본문: \"목록에서 항목을 지울 때 확인 창이 떠야 해요.\" 판단 요약에는 \"결정 필요: 확인 방식\"이라고 적혀 있다. 이 대화에서 사용자는 이미 '기존 확인 대화상자 컴포넌트를 그대로 쓰고, 문구는 \"삭제할까요?\"'로 정했다고 답했다. 다른 결정은 남지 않았다.",
-      "expected_output": "The session recognizes that every decision is settled and the change is small, writes no spec.md, records the settled decisions only in #52's bounded summary section while preserving the rest of the body, and invokes implement by name with github:#52 and the decisions.",
-      "files": [],
-      "expectations": [
-        "It writes no docs/specs/ folder or spec.md.",
-        "It replaces only the text between the convention's summary section markers after re-reading the latest body, and leaves the human report unchanged.",
-        "It invokes implement by name with github:#52 and the settled decisions.",
-        "It changes no product source itself.",
-        "It asks no further question."
-      ]
-    },
-    {
-      "id": 25,
-      "prompt": "/shape-idea\n\n이 저장소에는 이슈 트래커 섹션이 없다. 검색창 placeholder를 '검색어 입력'에서 '무엇을 찾으세요?'로 바꾸고 싶어. 다른 화면은 건드리지 않아.",
-      "expected_output": "The session treats the change as settled and small, writes no spec, touches no tracker, and invokes implement by name with the request and the settled decision.",
-      "files": [],
-      "expectations": [
-        "It writes no spec.md.",
-        "It creates no issue and writes no Issue line.",
-        "It invokes implement by name with the request and the settled decision.",
-        "It changes no product source itself."
-      ]
-    },
-    {
-      "id": 26,
-      "prompt": "/shape-idea linear:FLY-210\n\nLinear 규약이 있다. FLY-210 본문: \"알림을 좀 덜 받고 싶어요.\" 판단 요약에는 \"결정 필요: 어떤 알림을 어떻게 줄일지\"라고 적혀 있다. 알림 종류는 여섯 가지이고, 묶기·끄기·빈도 제한이 모두 가능하다.",
-      "expected_output": "The session reads the issue as its problem and asks exactly one consequential question in this conversation with a recommended answer, without posting an issue comment or writing a spec yet.",
-      "files": [],
-      "expectations": [
-        "It reads the issue body and summary section as the problem and starts from the named open point.",
-        "It asks exactly one question with a recommended answer and reason in this conversation.",
-        "It posts no comment on the issue and does not change the issue's labels or state.",
-        "It writes no spec.md before the decisions settle."
-      ]
     }
   ]
 }
