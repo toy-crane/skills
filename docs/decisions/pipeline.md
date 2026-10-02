@@ -313,12 +313,24 @@
   convention's mark-ready operation to a non-active, ready-for-implementation
   state, never back to general triage. Folder deletion alone never closes an
   issue. An open linked PR excludes the issue from triage; when a spec PR
-  closes unmerged, triage returns the issue to a re-triageable state such as
-  Backlog after checking for other active work. Merged PR bodies keep the
+  closes unmerged, triage returns the issue to a non-active state such as
+  Backlog after checking for other active work. A separate stale-review query
+  finds those issues, because the new-issue query skips them; the cleanup
+  clears a stale review signal and does not make the issue new. Merged PR bodies keep the
   exact `Issue:` line so a later pass can retry a failed close or ready
   transition after the branch and trailers are gone. Blocker edges come from
   the `Issue:` lines of the folders a `Blocked by` line names; when one has no
   line, the dependent issue's blocker set stays unchanged and is reported.
+- `triage-issues` handles each issue once, when it is new: the one issue a
+  request names, or otherwise only the issues the convention's not-yet-judged
+  query returns, those with no `Triage 요약` or spec section and no triage
+  result.
+  Its outcomes are unchanged: a duplicate closes, a clear small change becomes
+  a verified PR, a designed change becomes a spec PR, and a missing fact or
+  product choice becomes a question. It does not re-select a waiting issue on
+  a human comment or body edit and reads comments only as evidence. Continuing
+  a waiting issue after a person answers belongs to whoever runs the skills,
+  through `shape-idea`; without a runner, a person invokes it.
 - The old `Source-Issue` line, `spec:<slug>` title key, and managed-issue
   listing are not read for compatibility. Each project renames the line in its
   active spec folders when it updates the skills, and rerunning
@@ -553,6 +565,10 @@ state keep automation reviewable without turning follow-up files into a queue.
 
 ## Still-rejected alternatives
 
+- Triage that detects human answers from comment authors, timestamps, and body
+  fingerprints and re-evaluates waiting issues — the runner already knows when
+  a person replied, and a shared skill should not guess it from tracker
+  history.
 - Keeping `discover-opportunity` as a separate conversational entry point — its
   handoff disappears with the session and does not provide the durable app
   premise the greenfield workflow needs.
@@ -685,6 +701,12 @@ state keep automation reviewable without turning follow-up files into a queue.
 
 ## Evidence worth preserving
 
+- On 2026-10-02, while moving flyn's human conversation to a messenger with a
+  resident runner, the user limited `triage-issues` to new issues and removed
+  reply detection. A wider split that would have made triage only judge and
+  hand off, let `implement` take issues, and let `shape-idea` hand small
+  changes to `implement` was deferred to keep the shared skills unchanged where
+  not needed.
 - A Flyn work unit linked an approved `prototype.html` from `spec.md` and
   recorded 25 screen-state cases checked at three widths, with 98 prototype
   checks passing. The later implementation session listed the artifact but

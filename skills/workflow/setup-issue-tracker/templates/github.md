@@ -63,11 +63,19 @@ they exist in the repository before use.
 
 When general-issue triage is enabled, extend this convention with the selected
 open-issue scope (including Backlog), `needs-triage`, `needs-info`, and
-`needs-decision` label mapping, comment and human-edit detection, linked PR
-lookup, evidence attachments, and duplicate disposition. Verify the labels in
-the repository before use. Exclude PRs from the issue listing. Record how an
-issue whose spec PR closed unmerged loses its review label and becomes
-eligible for triage again. Record an operation that re-reads the latest body
+`needs-decision` label mapping, linked PR lookup, evidence attachments, and
+duplicate disposition. Verify the labels in the repository before use. Record
+the not-yet-judged query: `gh issue list --state open --limit 1000 --json
+number,createdAt,labels,body`, which excludes PRs; raise `--limit` above the
+open-issue count, since the default of 30 drops older issues. Keep issues whose
+body has neither the `<!-- triage-issues:triage:start -->` nor the spec section
+and which carry none of `needs-info`, `needs-decision`, the review label, or the
+active label, oldest first; filter the returned bodies locally rather than through search. Record
+the stale-review query: `gh issue list --state open --label <review label>
+--limit 1000 --json number,body`, then keep issues with no open linked PR, read
+through the timeline's cross-referenced PRs and PR bodies carrying their
+`Issue:` line. Record how an issue whose spec PR closed unmerged loses its
+stale review label while keeping its sections. Record an operation that re-reads the latest body
 and updates only bounded AI-managed sections while preserving human content.
 GitHub REST conditional `PATCH` is not generally supported: verify the body
 after writing, recover an observed concurrent edit when possible, and report

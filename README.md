@@ -429,7 +429,8 @@ available for an affected product surface.
   the recorded ID. `implement` claims the issue, and context maintenance repairs
   drift. Without the convention every skill behaves as before.
 - **[triage-issues](./skills/workflow/triage-issues/SKILL.md)**: On a schedule or
-  by hand, inspect up to three open human-written issues, including Backlog.
+  by hand, handle one named issue or up to three new human-written issues no
+  earlier run triaged, including Backlog, each once.
   Investigate and raise one verified implementation or spec PR when ready, or
   ask for only the missing information or product decision with evidence.
   Preserve the original issue throughout and prevent competing runs from

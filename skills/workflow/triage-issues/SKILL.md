@@ -1,6 +1,6 @@
 ---
 name: triage-issues
-description: Triage human-written general issues from a configured issue tracker in a scheduled or manual run. Investigate, ask only decisions that need a person, and raise one implementation or spec pull request when ready.
+description: Triage new human-written general issues from a configured issue tracker once, in a scheduled or manual run, or one named issue. Investigate, ask only decisions that need a person, and raise one implementation or spec pull request when ready.
 ---
 
 # Triage general issues
@@ -14,31 +14,40 @@ links. Do not guess those values from this skill or require the setup skill to
 be installed. If the convention or its tool is unavailable, report the exact
 missing operation without changing issues or source.
 
-## Select a bounded queue
+## Select new issues
 
-List open general issues across the configured scope, including
-Backlog. Prefer waiting issues with a new human answer or human body edit, then
-new issues, then untouched older issues in stable oldest-first order. Count at
-most three eligible issues inspected in one run, and raise at most one PR.
-Continue to the next candidate after leaving an information or decision request.
-Stop selecting PR-producing work after the first PR.
+Triage handles each issue once, when it is new. When the request names an
+issue, handle that issue alone. When it names none, take the convention's
+not-yet-judged query across the configured scope, including Backlog, in stable
+oldest-first order: open general issues with no `Triage 요약` or spec section
+and none of the results a triage run leaves behind. Count at most three eligible issues
+inspected in one run, and raise at most one PR. Continue to the next candidate
+after leaving an information or decision request. Stop selecting PR-producing
+work after the first PR.
 
 Exclude issues with active work, the convention's review signal, or an open
 linked PR, and issues named by an `Issue:` line in a spec folder on the default
 branch; those wait for review or implementation. A PR links an issue when the
 tracker links it or its body carries that issue's `Issue: <tracker>:<id>`
 line. Do not filter by title. A review signal whose only linked PRs closed
-unmerged does not exclude the issue: inspect their branches, comments, and
-attempted changes, then return the issue to the convention's re-triageable
-state, such as Backlog, when no active work remains. Reuse
-useful work rather than creating a duplicate PR. A merged implementation PR
-follows the tracker close or reconciliation path, not triage.
-A waiting `needs-info` or `needs-decision` issue becomes eligible when a person
-comments or edits its report after the question. Changes to the AI-managed
-sections do not count as human edits. Read the newest body and all comments
-before deciding whether a reply resolves the question; a clear answer needs no
-special decision-maker role. Conflicting or ambiguous replies need one focused
-follow-up in the same issue.
+unmerged is stale. Each run also takes the convention's stale-review query,
+separately from new issues, to find open issues that still carry the review
+signal with no open linked PR. For each, inspect the closed PRs' branches,
+comments, and attempted changes, then return the issue to the convention's
+non-active state, such as Backlog, when no active work remains. This cleanup
+does not count toward the three issues. This clears the signal only; the issue keeps its
+sections, so triage does not pick it up again. Reuse useful work rather than
+creating a duplicate PR. A merged implementation PR follows the tracker close
+or reconciliation path, not triage.
+
+A waiting `needs-info` or `needs-decision` issue, or any issue an earlier run
+already triaged, is not new. A named issue in that state has been triaged:
+report its current state and stop, unless the person explicitly asks for it to
+be triaged again. Comments are evidence for the judgment, never a reason to
+pick an issue up again. Whoever runs the skills decides when a waiting issue
+continues after a person answers: through `shape-idea` when it is installed,
+or by naming the issue and asking this skill to triage it again, which then
+reads the answer as evidence and reaches one of the outcomes below.
 
 ## Own an issue before any write
 
@@ -67,8 +76,7 @@ repository and the selected remote are the same before claiming. If remote
 refs cannot be created or conditionally updated, skip writes and report the
 missing atomic claim capability. Do not replace it with a label or assignee.
 
-Recheck eligibility and the issue's human-written content after claiming and
-again before publishing an outcome. A newly opened PR or changed request can
+Recheck eligibility after claiming and again before publishing an outcome. A newly opened PR or changed request can
 invalidate the planned action. Preserve existing dirty checkout work; use an
 isolated branch or worktree from the fetched remote default branch for a PR.
 
@@ -133,16 +141,15 @@ human content read immediately before the write. A Git claim serializes agents,
 not human edits; when the tracker provides no conditional body update, do not
 claim an atomic preservation guarantee. Repair any observed loss of human
 content from available revision evidence, or leave the outcome incomplete and
-report the lost-edit risk. Move a newly answered waiting issue directly to
-its next evaluated outcome; do not leave it in an unlabelled intermediate
-state. Link PRs without closing the original issue on a spec PR. Once a spec
+report the lost-edit risk. Every outcome writes the `Triage 요약` section, which
+marks the issue as triaged for later runs. Link PRs without closing the original issue on a spec PR. Once a spec
 folder's `Issue:` line names this issue, `merge`, `implement`, PR creation, and
 context maintenance reuse it by that ID and create no other issue.
 After publishing either PR, clear triage and waiting labels and apply the
 convention's review or in-progress signal. An open PR keeps the issue out of
-later triage runs; if it closes unmerged, restore triage eligibility when no
-other active work remains. After a spec-only PR merges, `merge` returns its
-issue to the convention's non-active, ready-for-implementation state;
+later triage runs; if it closes unmerged, clear its review signal as above
+when no other active work remains. After a spec-only PR merges, `merge` returns
+its issue to the convention's non-active, ready-for-implementation state;
 do not leave the PR review signal blocking `implement`.
 
 ## Report only new decisions to the person

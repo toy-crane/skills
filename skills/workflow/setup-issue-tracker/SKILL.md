@@ -54,17 +54,22 @@ Settle these items:
   skill's body renderer writes, so a triaged issue never gets a second spec
   section.
 - **General-issue triage, when requested**: record the open general-issue
-  scope including Backlog; how to read human comments and body revisions; and
-  the tracker states or labels representing `needs-triage`, `needs-info`, and
-  `needs-decision`. Use native Triage where appropriate, and verify or create
-  the selected labels. Record how to find linked PRs and active work, attach
-  evidence, leave comments, change waiting states, dispose of proven
-  duplicates, and update only bounded AI-managed body sections while
-  preserving human text. Record whether conditional body updates are supported
-  and how the latest body is re-read and verified afterward. Record how an
-  issue whose spec PR closed unmerged returns to a re-triageable state such as
-  Backlog. Do not add a decision-maker field or treat an assignee or label as
-  an atomic lock.
+  scope including Backlog; the not-yet-judged query that returns open general
+  issues with no `Triage 요약` or spec section and none of the triage results;
+  and the
+  tracker states or labels representing `needs-triage`, `needs-info`, and
+  `needs-decision`. Triage handles each issue once, so record no detection of
+  human replies or body edits. Use native
+  Triage where appropriate, and verify or create the selected labels. Record
+  how to find linked PRs and active work, attach evidence, leave comments, set
+  waiting states, dispose of proven duplicates, and update only bounded
+  AI-managed body sections while preserving human text. Record whether
+  conditional body updates are supported and how the latest body is re-read
+  and verified afterward. Record the stale-review query, which returns open
+  issues carrying the review signal with no open linked PR, and how such an
+  issue whose spec PR closed unmerged returns to a non-active state such as
+  Backlog; this clears a stale review signal and does not make the issue new. Do not add a decision-maker field or
+  treat an assignee or label as an atomic lock.
 
 Start from the matching template and adjust it to what exploration found:
 [templates/github.md](templates/github.md),
@@ -84,7 +89,9 @@ folders through a `spec:<slug>` title key, a `Source-Issue` line, or a managed
 issue listing as outdated: propose replacing them with the `Issue:` line and
 ID-based operations while preserving its tracker, tool, states, and
 already-compatible operations. Also replace an additive-only blocker update
-with the complete stale-removal and missing-addition operation. The old names
+with the complete stale-removal and missing-addition operation. Treat triage
+items that re-select waiting issues on a human reply or body edit as outdated
+too, and replace them with the not-yet-judged query. The old names
 are not read for compatibility, so tell the user to rename `Source-Issue:` to
 `Issue:` in active spec folders themselves; leave existing title-key issues
 for the user to tidy in the tracker.
