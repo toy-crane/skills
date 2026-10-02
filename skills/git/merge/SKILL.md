@@ -29,9 +29,10 @@ When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
 section, read its linked detailed convention when present; legacy inline
 conventions also work, without a separate setup skill installation. Without
 the section, skip every issue step in this skill. For a configured tracker,
-read the `Spec-Folder: docs/specs/<slug>/` trailers from the branch's commits
-before merging, while the branch still exists and before a squash can drop
-them, and keep those folders for the steps below.
+read the `Spec-Folder: docs/specs/<slug>/` and `Issue: <tracker>:<id>`
+trailers from the branch's commits before merging, while the branch still
+exists and before a squash can drop them, and keep those folders and issues for
+the steps below.
 
 Before creating or updating the PR, gather the spec folders it carries: every
 `docs/specs/<slug>/` folder the branch adds or changes, and every folder a
@@ -53,7 +54,8 @@ the created ID so a rerun records it instead of creating another.
 
 Put an `Issue: <tracker>:<id>` line in the PR body for each linked issue, so
 later reconciliation can find the PR after a squash merge; a direct fix of a
-known issue without a spec folder carries the same line. Put the convention's
+known issue without a spec folder carries the same line, for the issue the
+request or an `Issue:` commit trailer names. Put the convention's
 closing reference in a PR body only when its diff and verification show
 implementation delivery; a trailer or `Issue:` line alone is insufficient. A
 spec-only PR links its issue without closing it.
