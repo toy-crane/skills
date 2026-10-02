@@ -96,9 +96,11 @@ visible. Upload only the inspected, safe media as GitHub attachments, using a
 supported mechanism in the current environment. For GitHub CLI, check attachment support: `gh pr create` and
 `gh pr edit` accept repeatable `--attach` on supported versions and rewrite
 matching local media references in `--body-file` to uploaded URLs. A Markdown
-table can place two images side by side; give each video its own line so it
-renders as a player. Keep review captures outside repository history; no
-separate media host is needed.
+table can place two images side by side. Reference each video as `![](path)`
+alone in its own blank-line-separated paragraph so it renders as a player; a
+reference inside other text renders as a link, and an unreferenced attachment
+lands at the end of the body. Keep review captures outside repository history;
+no separate media host is needed.
 
 If baseline execution, capture, or upload is unavailable, state the exact limit
 and present only the evidence obtained. Inspect the resulting remote body and

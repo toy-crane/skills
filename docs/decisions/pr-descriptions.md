@@ -100,3 +100,6 @@
   [GitHub 첨부 문서](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/attaching-files)는
   .mp4·.mov·.webm을 지원하고 영상 한도를 무료 10MB, 유료 100MB로 둔다. 표
   셀 안 영상 렌더링 여부는 문서에 없어 확인하지 못했다.
+  [GitHub CLI 첨부 문서](https://docs.github.com/en/github-cli/github-cli/attaching-files-with-github-cli#embedding-a-video)는
+  영상 참조 `![](PATH)`가 빈 줄로 둘러싼 단독 문단이어야 플레이어로 보이고,
+  문장 안이면 링크가 되며, 참조하지 않은 첨부는 본문 끝에 붙는다고 설명한다.

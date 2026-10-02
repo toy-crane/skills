@@ -146,7 +146,7 @@
       "files": [],
       "expectations": [
         "It updates existing PR #61 with current behavior and evidence and replaces obsolete visual claims.",
-        "It shows the before and after videos of the same drag flow as the primary evidence, each on its own line with a label naming its revision, flow, and conditions, and explains the difference.",
+        "It shows the before and after videos of the same drag flow as the primary evidence, each in its own paragraph as a `![](path)` reference below a label naming its revision, flow, and conditions, and explains the difference.",
         "It attaches media and checks the published body rather than reporting simulated uploads as already complete."
       ]
     },
@@ -207,7 +207,7 @@
       "files": [],
       "expectations": [
         "It plans to record base and head running the same double-tap flow under matching account and viewport, so the before video shows the bug occurring.",
-        "The body embeds the two videos, each on its own line with a label, followed by the difference and its reason, rather than leading with or settling for a screenshot comparison.",
+        "The body embeds the two videos, each in its own paragraph as a `![](path)` reference below a label, followed by the difference and its reason, rather than leading with or settling for a screenshot comparison.",
         "It keeps each video short enough for the free plan's attachment limit and checks the published body before reporting the videos as available."
       ]
     },
