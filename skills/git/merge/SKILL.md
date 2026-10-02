@@ -205,8 +205,8 @@ the tracker's automatic closing does: a merge into a non-default base, a squash
 message without the trailer, or a tracker with no closing reference can leave
 it open otherwise. A spec-only merge never closes the issue, even when its
 commits carry that trailer. A direct small implementation PR may have no spec
-folder or trailer: inspect the current PR's exact `Issue:` line, diff, and
-verification, then close that issue now when they establish implementation
+folder: its `Issue:` commit trailer or PR body line names the issue. Inspect
+that exact `Issue:` line, the diff, and verification, then close that issue now when they establish implementation
 delivery. A line alone never closes an issue. Verify the resulting tracker
 state and report a failed close for retry. After a spec-only PR merges, leave
 its issue open and use the convention's mark-ready operation to clear the PR

@@ -103,7 +103,7 @@ flowchart LR
     SI -- "small settled change" --> IM
     BP --> SPEC
     SPEC --> ST["split-into-tasks<br/>(shallow outcome map)"]
-    SPEC --> IM["implement<br/>(spec folder)"]
+    SPEC --> IM["implement<br/>(spec folder or settled issue)"]
     ST --> IM
     IM --> ONE["build one outcome"]
     ONE --> CHECK["check real behavior"]

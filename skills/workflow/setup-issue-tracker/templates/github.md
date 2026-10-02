@@ -29,7 +29,8 @@ Spec section markers: `<!-- triage-issues:spec:start -->` and
 `<!-- triage-issues:spec:end -->`. Summary section markers:
 `<!-- triage-issues:triage:start -->` and `<!-- triage-issues:triage:end -->`,
 the ones the triage body renderer writes. Every skill uses exactly these, so an
-issue never gets a second section.
+issue never gets a second section. The summary section opens with a
+`## Triage 요약` heading inside its markers; keep it when replacing the text.
 
 - Find: `gh issue view <n> --json number,title,state,assignees,labels,body`.
   List open blockers with `gh api

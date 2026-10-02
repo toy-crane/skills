@@ -120,7 +120,8 @@ for a spec. When the repository's
 `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker` section and this work
 came from an issue, record the settled decisions in that issue's summary
 section: re-read the latest body, replace only the text between the
-convention's summary section markers, and recheck that the human report and
+convention's summary section markers, keeping the section's heading, and
+recheck that the human report and
 every other part are unchanged. Then invoke `implement` by name with the
 issue's `<tracker>:<id>` and the decisions; without a tracker, invoke it with
 the request and the decisions. If `implement` is unavailable, report the
