@@ -40,8 +40,10 @@
   radius and spacing), the shared components in use, rejected patterns, and a
   map from each visible element to the contract that owns it. A rejected
   pattern and a map entry are each one line plus a link to the owning contract;
-  no rule text is copied in. `project-knowledge` creates the file when it first
-  records a contract that decides how something looks or behaves on screen,
+  no rule text is copied in. A rejected pattern is something an agent would
+  otherwise produce in UI code, not every alternative a contract rejected.
+  `project-knowledge` creates the file when it first records, or changes the
+  scope of, a contract that decides how something looks or behaves on screen,
   maps every existing such contract, copies values and components once from
   the project's token and component sources with their paths, and adds one
   read route to `AGENTS.md` or `CLAUDE.md`. After creation it maintains only
