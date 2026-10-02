@@ -53,9 +53,12 @@ writes. Create, refresh, and every other skill use exactly these.
 When general-issue triage is enabled, record which team states are open and
 which include Backlog. Map `needs-triage` to native Triage or a label as
 appropriate, and verify the selected `needs-info` and `needs-decision` labels.
-Record comment and human-edit detection, linked PR lookup, evidence attachments,
-and duplicate disposition. Record the move to Backlog for an issue whose spec
-PR closed unmerged. Record an operation that re-reads the latest description
+Record the not-yet-judged query: the team's open issues, including Triage and
+Backlog, whose description has no `<!-- triage-issues:triage:start -->`
+section and which carry no `needs-info` or `needs-decision` label and no review
+or active state, oldest first; filter the returned descriptions locally rather
+than through search. Record linked PR lookup, evidence attachments, and
+duplicate disposition. Record an operation that re-reads the latest description
 and updates only bounded AI-managed sections while preserving human content.
 Record whether the available tool conditionally updates descriptions;
 otherwise re-read and verify after writing, recover any observed human edit,

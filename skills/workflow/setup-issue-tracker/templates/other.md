@@ -48,9 +48,10 @@ seven operations below.>
 
 If general-issue triage is configured, also specify its open scope including
 Backlog; `needs-triage`, `needs-info`, and `needs-decision` state/label mapping;
-human comment and body-edit detection; active work and linked PR lookup; comment
-and evidence publishing; duplicate disposition; the return to a re-triageable
-state when a spec PR closes unmerged; and a bounded AI-section body update that
+the not-yet-judged query, which returns open general issues with no
+`<!-- triage-issues:triage:start -->` section and none of those results, oldest
+first; active work and linked PR lookup; comment and evidence publishing;
+duplicate disposition; and a bounded AI-section body update that
 preserves the latest human report and verifies the result. Record whether the
 tracker supports conditional updates; if not, report the remaining human-edit
 race.
