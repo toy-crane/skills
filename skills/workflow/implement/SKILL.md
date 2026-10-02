@@ -10,11 +10,10 @@ description: Implement or resume settled work from a selected spec folder as one
 The input is always the spec folder. When the repository's `AGENTS.md` or
 `CLAUDE.md` carries an `## Issue tracker` section, read both files and use the
 first found and its linked detailed convention before finding this folder's
-issue. A `Source-Issue: <tracker-qualified-ID>` line in `spec.md` names the
-original human-written issue; find that issue by ID without publishing or
-claiming a separate `spec:<slug>` pointer. Otherwise use the convention's
-exact title key. Existing inline conventions remain valid. Use the convention's
-key, tool, and claim operation without requiring `setup-issue-tracker` to be installed.
+issue. An `Issue: <tracker>:<id>` line in `spec.md` names the folder's one
+issue; fetch it by that ID and never search the tracker by title. Existing
+inline conventions remain valid. Use the convention's ID form, tool, and claim
+operation without requiring `setup-issue-tracker` to be installed.
 Claiming is the first write of the run, ahead of source, task, or spec edits.
 Check the convention's active-work signal before claiming: an issue already in
 progress requires the user's explicit request to resume, even when its assignee
@@ -22,11 +21,12 @@ is the current account. Assign eligible work to the current tracker account and
 apply the convention's active state. Stop without changing source and report
 another account's claim, open blockers, an unreadable linked convention, or an
 unavailable tracker tool; continue unclaimed only on explicit user instruction.
-A folder with no issue yet
-proceeds as usual. Without the section, nothing here applies.
+A folder without an `Issue:` line
+proceeds unclaimed; the PR that carries it creates its issue. Without the
+section, nothing here applies.
 
 End every commit's message with a `Spec-Folder: docs/specs/<slug>/` trailer so
-the pull request that follows can name and close the issue; this trailer is
+the pull request that follows can find the folder and close its issue; this trailer is
 repository information and is written whether or not a tracker exists.
 
 ## Load the current handoff
