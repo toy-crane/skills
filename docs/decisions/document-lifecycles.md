@@ -43,7 +43,8 @@
   no rule text is copied in. A rejected pattern is something an agent would
   otherwise produce in UI code, not every alternative a contract rejected.
   `project-knowledge` creates the file when it first records, or changes the
-  scope of, a contract that decides how something looks or behaves on screen,
+  scope or rejected UI patterns of, a contract that decides how something looks
+  or behaves on screen,
   maps every existing such contract, copies values and components once from
   the project's token and component sources with their paths. Whenever it
   updates the file it keeps a read route in `AGENTS.md`, and in `CLAUDE.md`

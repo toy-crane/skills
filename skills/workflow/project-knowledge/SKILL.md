@@ -59,13 +59,14 @@ ownership, review process, or deployment are not screen contracts and leave
 `DESIGN.md` alone. A contract that sets UI review criteria may be a link target
 for a rejected pattern but is not a map element.
 
-When you create a screen contract or change which elements one covers, update
-`DESIGN.md` in the same change using the
+When you create a screen contract, change which elements one covers, or add or
+remove a UI pattern that a screen or UI review-criteria contract rejects,
+update `DESIGN.md` in the same change using the
 [design entry template](./templates/design.md):
 
-- Add or correct one map line for each element the contract owns.
-- Add one rejected-pattern line for each pattern the contract rejects that an
-  agent would otherwise write in UI code. Process alternatives, such as
+- Add, correct, or remove one map line for each element the contract owns.
+- Add or remove one rejected-pattern line for each pattern the contract rejects
+  that an agent would otherwise write in UI code. Process alternatives, such as
   enforcing a rule through lint, stay only in the contract.
 - Make sure both agent clients are told that work which builds or reviews
   screens reads `DESIGN.md` first. Put that line in `AGENTS.md`, creating the
