@@ -1,6 +1,6 @@
 ---
 name: setup-issue-tracker
-description: Record once per repository which issue tracker coordinates spec folders and, when requested, scheduled triage of human-written issues. Run by hand before parallel implementation or issue triage; rerun to change trackers or upgrade an older convention.
+description: Record once per repository which issue tracker coordinates spec folders and, when requested, triage of new human-written issues. Run by hand before parallel implementation or issue triage; rerun to change trackers or upgrade an older convention.
 disable-model-invocation: true
 ---
 
@@ -14,8 +14,8 @@ an existing issue, that issue is the one named; otherwise the PR that first
 carries the folder creates the issue and commits the line. Every lookup uses
 that recorded ID, never a title search. Repositories without this section keep
 every skill's current behavior: no issue is created and no `Issue:` line is
-written. Write it when the user wants parallel implementation or scheduled
-general-issue triage.
+written. Write it when the user wants parallel implementation or general-issue
+triage.
 
 ## Explore, then recommend
 
@@ -49,22 +49,24 @@ Settle these items:
   by clearing the review or active signal and leaving it open in a non-active
   state that is not general triage; and close it. Record which states or
   labels are the review signal and which states count as active work. Record
-  the exact markers that bound the spec section so every skill writes and
-  finds the same one; the templates' default matches the markers the triage
-  skill's body renderer writes, so a triaged issue never gets a second spec
+  the exact markers that bound the spec section and the summary section so
+  every skill writes and finds the same ones; keep the templates' defaults,
+  which existing issues already carry, so an issue never gets a second
   section.
-- **General-issue triage, when requested**: record the open general-issue
-  scope including Backlog; how to read human comments and body revisions; and
-  the tracker states or labels representing `needs-triage`, `needs-info`, and
-  `needs-decision`. Use native Triage where appropriate, and verify or create
-  the selected labels. Record how to find linked PRs and active work, attach
-  evidence, leave comments, change waiting states, dispose of proven
-  duplicates, and update only bounded AI-managed body sections while
-  preserving human text. Record whether conditional body updates are supported
-  and how the latest body is re-read and verified afterward. Record how an
-  issue whose spec PR closed unmerged returns to a re-triageable state such as
-  Backlog. Do not add a decision-maker field or treat an assignee or label as
-  an atomic lock.
+- **General-issue triage, when requested**: triage judges each new issue
+  once and hands it on, so record what that judgment needs. Record the open
+  general-issue scope including Backlog and the not-yet-judged query: open
+  general issues with no summary section and none of the judgment results.
+  Record the tracker states or labels representing `needs-triage`, the waiting
+  results `needs-info` and `needs-decision`, and the ready-for-implementation
+  result, and make the claim operation clear the waiting results. Use native
+  Triage where appropriate, and verify or create the selected labels. Record
+  how to find linked PRs and active work, dispose of proven duplicates with
+  linked evidence, and update only the bounded summary section while
+  preserving human text. Record whether conditional body updates are
+  supported and how the latest body is re-read and verified afterward. Do not
+  add a decision-maker or source field, or treat an assignee or label as an
+  atomic lock.
 
 Start from the matching template and adjust it to what exploration found:
 [templates/github.md](templates/github.md),
@@ -84,7 +86,11 @@ folders through a `spec:<slug>` title key, a `Source-Issue` line, or a managed
 issue listing as outdated: propose replacing them with the `Issue:` line and
 ID-based operations while preserving its tracker, tool, states, and
 already-compatible operations. Also replace an additive-only blocker update
-with the complete stale-removal and missing-addition operation. The old names
+with the complete stale-removal and missing-addition operation. Treat triage
+items that detect human replies or body edits on waiting issues, or return a
+closed spec PR's issue to Backlog, as outdated too: replace them with the
+not-yet-judged query, the summary section markers, and a claim that clears the
+waiting results. The old names
 are not read for compatibility, so tell the user to rename `Source-Issue:` to
 `Issue:` in active spec folders themselves; leave existing title-key issues
 for the user to tidy in the tracker.

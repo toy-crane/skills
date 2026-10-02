@@ -26,8 +26,10 @@ bodies. Titles carry no key or prefix. Address every issue by that ID; never
 find one by title search or by listing issues.
 
 Spec section markers: `<!-- triage-issues:spec:start -->` and
-`<!-- triage-issues:spec:end -->`, the same markers the triage body renderer
-writes. Create, refresh, and every other skill use exactly these.
+`<!-- triage-issues:spec:end -->`. Summary section markers:
+`<!-- triage-issues:triage:start -->` and `<!-- triage-issues:triage:end -->`,
+the ones the triage body renderer writes. Every skill uses exactly these, so an
+issue never gets a second section.
 
 <One paragraph in the user's words describing how issues are fetched, created,
 updated, assigned, moved between states, and closed, covering each of the
@@ -41,16 +43,17 @@ seven operations below.>
   marked spec section, keeps the title and every other part, verifies>
 - Update blockers: <command; replaces the complete relation set by removing
   stale edges and adding missing ones>
-- Claim: <command>
+- Claim: <command; when triage is enabled, also clears `needs-info` and
+  `needs-decision`>
 - Mark ready: <command; clears the review or active signal after a spec-only
   PR merges and leaves the issue open in a non-active state outside triage>
 - Close: <command, or the pull request body reference that closes it on merge>
 
 If general-issue triage is configured, also specify its open scope including
-Backlog; `needs-triage`, `needs-info`, and `needs-decision` state/label mapping;
-human comment and body-edit detection; active work and linked PR lookup; comment
-and evidence publishing; duplicate disposition; the return to a re-triageable
-state when a spec PR closes unmerged; and a bounded AI-section body update that
-preserves the latest human report and verifies the result. Record whether the
-tracker supports conditional updates; if not, report the remaining human-edit
-race.
+Backlog; `needs-triage`, `needs-info`, `needs-decision`, and
+ready-for-implementation state/label mapping; the not-yet-judged query, which
+returns open general issues with no summary section and none of those judgment
+results, oldest first; active work and linked PR lookup; duplicate disposition
+with linked evidence; and a summary-section body update that preserves the
+latest human report and verifies the result. Record whether the tracker
+supports conditional updates; if not, report the remaining human-edit race.
