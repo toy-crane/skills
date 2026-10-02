@@ -11,8 +11,9 @@ Shaping settles decisions; implementation applies them. Do not change product
 source, configuration, or dependencies, even for an edit you plan to revert. A
 changed line mixes alignment with delivery and leaves unreviewed code behind.
 
-Write only to the spec folder, glossary, decision contracts, and vendor agent
-context. Run every experiment, benchmark, and preview in a scratch directory
+Write only to the spec folder, glossary, decision contracts, the root
+`DESIGN.md` and its read route that recording a screen decision updates, and
+vendor agent context. Run every experiment, benchmark, and preview in a scratch directory
 outside the working tree. If no experiment can answer a question, record an
 assumption and its risk. If code contradicts the user or a decision, surface the
 conflict; do not fix the code.
