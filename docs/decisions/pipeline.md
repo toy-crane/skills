@@ -314,8 +314,9 @@
   state, never back to general triage. Folder deletion alone never closes an
   issue. An open linked PR excludes the issue from triage; when a spec PR
   closes unmerged, triage returns the issue to a non-active state such as
-  Backlog after checking for other active work. That clears a stale review
-  signal and does not make the issue new. Merged PR bodies keep the
+  Backlog after checking for other active work. A separate stale-review query
+  finds those issues, because the new-issue query skips them; the cleanup
+  clears a stale review signal and does not make the issue new. Merged PR bodies keep the
   exact `Issue:` line so a later pass can retry a failed close or ready
   transition after the branch and trailers are gone. Blocker edges come from
   the `Issue:` lines of the folders a `Blocked by` line names; when one has no

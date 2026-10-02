@@ -30,9 +30,12 @@ linked PR, and issues named by an `Issue:` line in a spec folder on the default
 branch; those wait for review or implementation. A PR links an issue when the
 tracker links it or its body carries that issue's `Issue: <tracker>:<id>`
 line. Do not filter by title. A review signal whose only linked PRs closed
-unmerged is stale: inspect their branches, comments, and attempted changes,
-then return the issue to the convention's non-active state, such as Backlog,
-when no active work remains. This clears the signal only; the issue keeps its
+unmerged is stale. Each run also takes the convention's stale-review query,
+separately from new issues, to find open issues that still carry the review
+signal with no open linked PR. For each, inspect the closed PRs' branches,
+comments, and attempted changes, then return the issue to the convention's
+non-active state, such as Backlog, when no active work remains. This cleanup
+does not count toward the three issues. This clears the signal only; the issue keeps its
 sections, so triage does not pick it up again. Reuse useful work rather than
 creating a duplicate PR. A merged implementation PR follows the tracker close
 or reconciliation path, not triage.

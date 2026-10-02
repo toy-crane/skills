@@ -65,9 +65,10 @@ Settle these items:
   waiting states, dispose of proven duplicates, and update only bounded
   AI-managed body sections while preserving human text. Record whether
   conditional body updates are supported and how the latest body is re-read
-  and verified afterward. Record how an issue whose spec PR closed unmerged
-  returns to a non-active state such as Backlog; this clears a stale review
-  signal and does not make the issue new. Do not add a decision-maker field or
+  and verified afterward. Record the stale-review query, which returns open
+  issues carrying the review signal with no open linked PR, and how such an
+  issue whose spec PR closed unmerged returns to a non-active state such as
+  Backlog; this clears a stale review signal and does not make the issue new. Do not add a decision-maker field or
   treat an assignee or label as an atomic lock.
 
 Start from the matching template and adjust it to what exploration found:
