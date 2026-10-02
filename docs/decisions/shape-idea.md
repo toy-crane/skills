@@ -27,6 +27,10 @@
   with that exact English label in a spec of any language. It sits with the
   links, not in the contract's field list, and is repository information that
   `merge` mirrors into tracker blocking edges when a tracker is set up.
+- When a tracker is set up and the user names the existing issue the work
+  comes from, write an `Issue: <tracker>:<id>` line beside the same links in
+  the convention's ID form. Shaping never searches the tracker by title and
+  never creates an issue; the PR that first carries the folder creates one.
 - Treat low-risk, reversible choices made by the AI as assumptions. A choice is
   settled when the user confirms it or it is made under explicitly delegated
   authority. Only a settled outcome that meets the reusable project-decision

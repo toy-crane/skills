@@ -371,6 +371,19 @@
         "It keeps the worktree while the server works inside it and reports the server's PID and command.",
         "It reports that the project declares no cleanup command rather than claiming the cleanup completed."
       ]
+    },
+    {
+      "id": 32,
+      "name": "post-merge-updates-issue-by-id",
+      "prompt": "스펙만 담은 PR을 merge해줘. 브랜치는 docs/specs/export-csv/spec.md의 제목을 'CSV 내보내기'에서 '데이터 내보내기'로 바꾸고 Blocked by: docs/specs/auth/ 줄을 추가했다. spec.md에는 `Issue: linear:FLY-145`가 있고, docs/specs/auth/spec.md에는 `Issue: linear:FLY-120`이 있다. AGENTS.md에 ## Issue tracker 섹션과 docs/issue-tracker.md가 있다. 다른 스킬은 설치되지 않았다.",
+      "expected_output": "After MERGED, the response refreshes only FLY-145's bounded spec section and blocker edges by ID, keeps its title, and moves it to the ready-for-implementation state without closing it.",
+      "files": [],
+      "expectations": [
+        "It finds both issues through their Issue lines and never searches the tracker by title or lists managed issues.",
+        "It keeps FLY-145's title unchanged and refreshes only its bounded spec section.",
+        "It adds FLY-120 as a blocker of FLY-145 through the convention's blocker operation.",
+        "It does not close FLY-145, and uses the mark-ready operation to clear the review signal after checking for newer active implementation."
+      ]
     }
   ]
 }

@@ -24,20 +24,41 @@ Create the pull request ready for review with a title and body describing the
 actual change. When the repository's `AGENTS.md` or `CLAUDE.md` carries an
 `## Issue tracker` section, read it and its linked detailed convention when
 present; legacy inline conventions also work without the setup skill installed.
-With a tracker configured and branch commits carrying a
-`Spec-Folder: docs/specs/<slug>/` trailer, find that folder's issue by its
-`Source-Issue` ID when present or the convention's exact `spec:<slug>` key.
-Put `Source-Issue: <tracker-qualified-ID>` in the body when the folder records
-one, so a later reconciliation can find the PR after the branch is gone. Put
-the convention's closing reference in the body only when the PR actually
-delivers that folder's implementation, as established by the diff and
-verification; a trailer alone does not establish delivery. A spec-only PR
-links the original source issue without a closing reference, even if a trailer
-is present. A direct implementation PR with a known `Source-Issue` but no spec
-folder also gets the convention's closing reference when its diff and
-verification establish delivery.
-Without the tracker section, the body is unchanged. Leave merging, required
-reviews, and release decisions outside this skill's authority.
+Without the section, skip every issue step below and leave the body unchanged.
+
+## Link each spec folder to one issue
+
+With a tracker configured, gather the spec folders this PR carries before
+creating it: every `docs/specs/<slug>/` folder the branch adds or changes, and
+every folder named by a `Spec-Folder: docs/specs/<slug>/` commit trailer, that
+still exists at the head. Skip folders the branch deletes. A folder's
+`spec.md` names its issue with an `Issue: <tracker>:<id>` line; use that ID and
+create nothing.
+
+For each gathered folder without that line, create one issue through the
+convention's create operation: the title is the first heading of `spec.md`
+with no prefix, the body is one spec section rendered from `spec.md` between
+the convention's spec section markers, and the issue carries the
+convention's review signal so general triage leaves it alone before the PR
+links it. The section holds the first section's text,
+the remaining section headings, the folder path, and the issues of folders its
+`Blocked by: docs/specs/<other>/` lines name, read from their own `Issue:`
+lines; report a blocker folder that has none. Then write
+`Issue: <tracker>:<id>` in the convention's ID form beside the spec's other
+links, commit it on the same branch, and only then publish and open the PR.
+Never search the tracker by title to find or reuse an issue. If the issue was
+created but the line could not be committed, stop before opening the PR and
+report the created ID so a rerun records it instead of creating another.
+
+Put an `Issue: <tracker>:<id>` line in the PR body for each linked issue, so a
+later pass can find the PR after the branch is gone. A PR with no spec folder
+that fixes a known issue directly carries the same line. Put the convention's
+closing reference in the body only when the PR actually delivers that issue's
+implementation, as established by the diff and verification; a trailer or
+`Issue:` line alone does not establish delivery. A spec-only PR links its issue
+without a closing reference. When reusing an existing PR, apply the same steps
+and bring its body in line. Leave merging, required reviews, and release
+decisions outside this skill's authority.
 
 If a linked convention cannot be read, report the missing information rather
 than guessing issue operations or claiming that the issue was linked or closed.

@@ -122,66 +122,52 @@ Do not import issue prose or comments into durable project context.
 
 Resolve and fetch the remote's advertised default branch. Compare the tracker
 with `docs/specs/<slug>/` folders on that fetched branch, not with unmerged
-changes in the current checkout. Use the convention's `List managed issues`
-operation to inventory every open and closed issue whose exact key is
-`spec:<slug>`; fetch each folder's `Source-Issue` by its recorded ID instead of
-requiring it to appear in the pointer inventory. When an older convention lacks
-that operation or records body-only
-or additive-only updates, use only the capabilities it actually records and
-complete that one-way portion of the reconciliation. Report each unavailable
-guarantee explicitly: orphan and duplicate detection without listing, derived
-title replacement without a title-capable update, and stale blocker removal
-without complete blocker-set replacement. Tell the user to rerun
-`setup-issue-tracker` for the full upgrade; do not invent tracker-specific
-commands or imply that the partial pass fully reconciled the mirror.
+changes in the current checkout. Each folder's `spec.md` names its one issue
+with an `Issue: <tracker>:<id>` line; fetch every issue by that ID. Never list
+issues or search them by title to find a folder's issue, and do not hunt for
+orphan or duplicate issues; a person tidies duplicates in the tracker. If the
+convention still describes a `spec:<slug>` title key, a `Source-Issue` line,
+or a managed-issue listing, tell the user to rerun `setup-issue-tracker`
+instead of using those operations, and to rename `Source-Issue:` to `Issue:`
+in active spec folders themselves; the old line is not read.
 
-For each default-branch spec folder, resolve its source issue ID when present
-or use its exact `spec:<slug>` key, then apply the rules below:
+For each default-branch spec folder, apply the rules below:
 
-- Publish a missing pointer only for a folder without `Source-Issue`. Report a
-  missing source issue without replacing it with a new pointer.
-- Regenerate the pointer title and body from the fetched `spec.md`: use its
-  first heading as the title after the key, the text of its first section, the
-  remaining section headings, the folder path, and its `Blocked by:
-  docs/specs/<other>/` issue references. Use the recorded update operations to
-  replace the derived title and body whole for a pointer. For a human-written
-  source issue, preserve its title and report and refresh only its bounded
-  generated spec section. Remove stale blocking edges and add missing ones
-  while preserving its assignee and open or closed state until delivery is
-  checked below.
-- Close an open generated pointer whose folder is absent from the fetched
-  default branch. Leave an already closed orphan unchanged. Do not infer that
-  a human-written source issue should close merely because its spec folder is
-  absent; only confirmed implementation delivery or the recorded tracker
-  convention settles it.
+- Report a folder without an `Issue:` line, or whose ID cannot be fetched,
+  and create nothing; the next PR that carries the folder creates its issue.
+- Refresh only the issue's spec section, between the convention's markers,
+  from the fetched `spec.md`:
+  the text of its first section, the remaining section headings, the folder
+  path, and its `Blocked by: docs/specs/<other>/` issue references. Keep the
+  issue's title and every other part of its body, whether a person or an agent
+  created it.
+- Replace its blocker set with the issues named by the `Issue:` lines of its
+  `Blocked by` folders, removing stale edges and adding missing ones while
+  preserving its assignee and open or closed state. When a blocker folder has
+  no `Issue:` line, report it and leave the dependent issue's entire blocker
+  relation set unchanged rather than removing edges on partial information.
+- Never close an issue because its folder is absent, and never reopen a closed
+  issue merely because its folder remains. Only confirmed implementation
+  delivery or the recorded tracker convention settles closure.
 
-Search merged PR bodies for exact `Source-Issue: <tracker-qualified-ID>`
-markers, including PRs whose spec folder has since been deleted. Resolve each
-source issue through the convention. A merged PR is durable retry evidence for
-a failed close only when its diff and verification establish implementation
-delivery for that issue; a `Spec-Folder` trailer, linked spec PR, or missing
-folder alone is insufficient. Retry the convention's close operation for an
-open source issue, then verify its state. For a merged spec-only PR with no
-implementation delivery, keep the source issue open. If it still carries the
-PR review or active-work signal, check for newer implementation work, then use
-the convention's post-spec-merge transition to a non-active,
-ready-for-implementation state and verify the result. Never demote work that
-has already started. Report the exact missing PR evidence or failed operation
-when neither safe closure nor a ready transition can be established. This
-catch-up also applies when the original merge run reported a tracker failure;
-do not depend on that run's branch or commit trailers surviving a squash merge.
+Search merged PR bodies for exact `Issue: <tracker>:<id>` lines, including PRs
+whose spec folder has since been deleted, and fetch each issue by that ID. A
+merged PR is durable retry evidence for a failed close only when its diff and
+verification establish implementation delivery for that issue; a `Spec-Folder`
+trailer, linked spec PR, `Issue:` line, or missing folder alone is
+insufficient. Retry the convention's close operation for an open issue, then
+verify its state. For a merged spec-only PR with no implementation delivery,
+keep the issue open. If it still carries the PR review or active-work signal,
+check for newer implementation work, then use the convention's mark-ready
+operation and verify the result. Never demote work that has already started.
+Report the exact missing PR evidence or failed operation when neither safe
+closure nor a ready transition can be established. This catch-up also applies
+when the original merge run reported a tracker failure; do not depend on that
+run's branch or commit trailers surviving a squash merge.
 
-When several issues share one exact key, report every identifier and state and
-leave all of them unchanged; the key alone cannot prove which one owns the work.
-Before replacing any unique issue's blocker set, resolve every desired `Blocked
-by` folder to exactly one tracker issue. When any desired blocker key has
-several issues, report all candidate identifiers and leave that dependent
-issue's entire blocker relation set unchanged rather than choosing or removing
-an edge arbitrarily; its unambiguous title and body may still be refreshed.
-Never reopen a closed issue merely because its folder remains. If the configured
-tool is unavailable or any operation fails, finish the repository cleanup,
-report the incomplete tracker operation and reason, and preserve the remaining
-issue state for a later pass.
+If the configured tool is unavailable or any operation fails, finish the
+repository cleanup, report the incomplete tracker operation and reason, and
+preserve the remaining issue state for a later pass.
 
 ## Finish
 
@@ -192,5 +178,5 @@ as far as its recorded operations allow, and ambiguous meaning remains
 preserved.
 
 Report what changed, what was deleted, what was intentionally left unchanged,
-the tracker issues published, updated, closed, or left conflicted, and the exact
+the tracker issues updated, closed, or left unchanged with a reason, and the exact
 question needed for every unresolved conflict or unclear shipment.

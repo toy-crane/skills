@@ -122,6 +122,13 @@ folder, with that exact English label whatever language the spec uses. It is
 repository information that later coordination reads, so write it whether or
 not an issue tracker is set up.
 
+When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
+section and the user names an existing issue this work comes from, add an
+`Issue: <tracker>:<id>` line beside the linked sources in the ID form its
+convention records. Write it only from an ID the user gave; never search the
+tracker by title to find one, and never create an issue while shaping. Without
+the section, or without a known ID, write no such line.
+
 Link the approved `prototype.html` when one exists and each decision contract
 this work depends on, so implementation loads them as required sources instead
 of judging them optional. Preserve a link an earlier `build-prototype` close-out

@@ -173,6 +173,31 @@
         "It inspects the sanitized media and preserves comparable state and the relevant visual change.",
         "It does not upload the supplied raw sensitive captures or treat publication permission as disclosure permission."
       ]
+    },
+    {
+      "id": 16,
+      "name": "spec-pr-creates-issue-before-opening",
+      "prompt": "이 브랜치는 docs/specs/export-csv/spec.md를 새로 추가했어. spec.md 첫 제목은 'CSV 내보내기'이고 Issue 줄은 없어. AGENTS.md에 ## Issue tracker 섹션이 있고 docs/issue-tracker.md가 ID 형식 `linear:<identifier>`, 생성 동작, 리뷰 상태 In Review를 기록하고 있어. Linear 도구는 쓸 수 있어. PR 올려줘. 다른 스킬은 설치되지 않았다.",
+      "expected_output": "The response creates one issue titled with the spec title before opening the PR, records its ID in spec.md on the same branch, and links it from the PR body without closing it.",
+      "files": [],
+      "expectations": [
+        "It creates exactly one issue through the convention's create operation, titled 'CSV 내보내기' with no `spec:` prefix, in the review state, with a bounded spec section as the body.",
+        "It does not search the tracker by title for an existing issue.",
+        "It writes `Issue: linear:<identifier>` into spec.md and commits it on the same branch before opening the PR.",
+        "The PR body carries the same `Issue:` line and no closing reference, because the PR only adds a spec."
+      ]
+    },
+    {
+      "id": 17,
+      "name": "existing-issue-line-and-no-tracker",
+      "prompt": "두 저장소에서 PR을 올려야 해. A 저장소는 ## Issue tracker 섹션이 있고, 브랜치가 바꾼 docs/specs/search/spec.md에 이미 `Issue: github:#12`가 있으며 구현과 검증이 끝나 커밋마다 Spec-Folder: docs/specs/search/ 트레일러가 있다. B 저장소는 트래커 섹션이 없고 브랜치가 docs/specs/onboarding/spec.md를 새로 추가했다. 다른 스킬은 설치되지 않았다.",
+      "expected_output": "Repository A reuses issue #12 and closes it from a verified implementation PR; repository B creates no issue and writes no Issue line.",
+      "files": [],
+      "expectations": [
+        "In A it creates no issue and uses `github:#12` from the spec's Issue line.",
+        "In A the PR body carries `Issue: github:#12` and the convention's closing reference, because the diff and verification establish implementation delivery.",
+        "In B it creates no issue, adds no Issue line to spec.md, and leaves the PR body without tracker lines."
+      ]
     }
   ]
 }

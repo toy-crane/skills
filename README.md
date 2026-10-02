@@ -375,7 +375,9 @@ releasing its resources through the project's declared cleanup commands.
 - **[pr](./skills/git/pr/SKILL.md)**: Turn the current change into a ready-for-review
   GitHub pull request with a proportionate behavior explanation, verification
   evidence, and attached before-and-after screen comparisons when applicable;
-  return its URL without merging it.
+  return its URL without merging it. With an issue tracker configured, first
+  create the issue for each carried spec folder that has no `Issue:` line and
+  commit that line.
 - **[merge](./skills/git/merge/SKILL.md)**: Carry a change through verified pull
   request merge with the same self-contained body and visual-evidence guidance,
   choose squash or rebase by commit meaning, then safely clean up the merged
@@ -421,10 +423,11 @@ available for an affected product surface.
   unaudited project.
 - **[setup-issue-tracker](./skills/workflow/setup-issue-tracker/SKILL.md)**: Record
   once per repository which issue tracker coordinates spec folders and, when
-  requested, general-issue triage. A spec-first folder gets a pointer after
-  merge; a spec originating from a human issue keeps that original issue.
-  `implement` claims the corresponding issue, and context maintenance repairs
-  the mirror. Without the convention every skill behaves as before.
+  requested, general-issue triage. Each spec folder names its one issue with an
+  `Issue:` line: the PR that first carries the folder creates the issue, and a
+  spec that starts from an existing issue records that one. Every lookup uses
+  the recorded ID. `implement` claims the issue, and context maintenance repairs
+  drift. Without the convention every skill behaves as before.
 - **[triage-issues](./skills/workflow/triage-issues/SKILL.md)**: On a schedule or
   by hand, inspect up to three open human-written issues, including Backlog.
   Investigate and raise one verified implementation or spec PR when ready, or
@@ -462,9 +465,10 @@ available for an affected product surface.
   a clear place to resume after switching tasks.
 - **[maintain-project-context](./skills/workflow/maintain-project-context/SKILL.md)**:
   Periodically reconcile `PRODUCT.md`, the glossary, decision contracts, shipped
-  specs, agent instructions, and any configured spec-issue mirror after work
-  accumulates. Apply only meaning that is already settled, keep tracker issues
-  derived from the remote default branch, and leave ambiguous conflicts for
+  specs, agent instructions, and any configured spec issues after work
+  accumulates. Apply only meaning that is already settled, refresh each spec
+  issue found by its `Issue:` line from the remote default branch, and leave
+  ambiguous conflicts for
   explicit clarification.
 
 ## Output styles
