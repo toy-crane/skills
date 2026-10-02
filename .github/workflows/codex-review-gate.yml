@@ -76,9 +76,13 @@ jobs:
               "timed out",
           )
           REVIEW_HINT = (
-              "Comment `@codex review` from a personal account; Codex ignores requests "
-              "from bots. If Codex answers that this repository needs an environment, "
-              "create one at https://chatgpt.com/codex/cloud/settings/environments first."
+              "Codex reviews every push on its own while the owner's Codex review trigger "
+              "is \"On every push\" (https://chatgpt.com/settings/code-review); this check "
+              "re-runs when it finishes. If no review arrives, confirm the Codex GitHub app "
+              "installation is not suspended and Codex usage remains, then comment "
+              "`@codex review` from a personal account; Codex ignores requests from bots. "
+              "If Codex answers that this repository needs an environment, create one at "
+              "https://chatgpt.com/codex/cloud/settings/environments first."
           )
 
 
@@ -177,8 +181,8 @@ jobs:
                       + reviewed
                       + ", but the head commit is `"
                       + short
-                      + "`. Codex does not re-review a pull request when new commits "
-                      "are pushed.\n\n" + REVIEW_HINT,
+                      + "`. Codex has not reported a review of the newest push.\n\n"
+                      + REVIEW_HINT,
                   )
               return (
                   "failure",
