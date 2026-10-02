@@ -1,6 +1,6 @@
 ---
 name: shape-idea
-description: Turn a chosen problem and broad direction into shared decisions and an implementation-ready spec. Use when the user wants to clarify behavior or scope, stress-test an idea, align before implementation, or produce a spec.
+description: Turn a chosen problem and broad direction, or a tracker issue that needs information or a decision, into shared decisions and an implementation-ready spec, handing a small settled change straight to implement. Use when the user wants to clarify behavior or scope, stress-test an idea, align before implementation, or produce a spec.
 ---
 
 # Shape Idea
@@ -10,9 +10,10 @@ description: Turn a chosen problem and broad direction into shared decisions and
 Shaping settles decisions; implementation applies them. Do not change product
 source, configuration, or dependencies, even for an edit you plan to revert. A
 changed line mixes alignment with delivery and leaves unreviewed code behind.
+Delivery starts only when you hand the settled work to `implement`.
 
-Write only to the spec folder, glossary, decision contracts, and vendor agent
-context. Run every experiment, benchmark, and preview in a scratch directory
+Write only to the spec folder, glossary, decision contracts, vendor agent
+context, and the bounded summary section of the issue this work came from. Run every experiment, benchmark, and preview in a scratch directory
 outside the working tree. If no experiment can answer a question, record an
 assumption and its risk. If code contradicts the user or a decision, surface the
 conflict; do not fix the code.
@@ -22,6 +23,11 @@ Revert what this session changed outside the allowed paths and keep only what
 you learned. Leave uncommitted work that predates the session alone.
 
 ## Ground decisions in project truth
+
+When shaping starts from a tracker issue, read its report, its bounded summary
+section, and its comments as the problem and direction, and start from the open
+point the caller names. Ask in this conversation, not in issue comments; the
+person's answers arrive here whenever the conversation continues.
 
 Before the first question, invoke `project-knowledge` and apply it throughout the
 session. If it is unavailable, read `GLOSSARY.md` and relevant subjects from
@@ -107,11 +113,24 @@ the product needs while it stays open is written under the deferred point,
 naming the decision that replaces it; where the contract states that behavior
 again so it can be built and tested, mark it interim there too.
 
-When ready for implementation, write `docs/specs/<slug>/spec.md` as the stable
-product contract, creating the kebab-case folder when needed. Include the
-user-visible outcomes, approved scope, observable acceptance criteria, settled
-constraints and rationale, assumptions, off-limits areas and why, deferred
-points, and remaining risks. Record behavior and decisions without predicting
+When every decision is settled, the requested result is clear, and the change
+is small, so no contract emerges that later work would need to reread, skip
+`spec.md` and hand the work straight to implementation, unless the user asked
+for a spec. When the repository's
+`AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker` section and this work
+came from an issue, record the settled decisions in that issue's summary
+section: re-read the latest body, replace only the text between the
+convention's summary section markers, and recheck that the human report and
+every other part are unchanged. Then invoke `implement` by name with the
+issue's `<tracker>:<id>` and the decisions; without a tracker, invoke it with
+the request and the decisions. If `implement` is unavailable, report the
+decisions and that next step instead.
+
+For a larger change, when ready for implementation, write
+`docs/specs/<slug>/spec.md` as the stable product contract, creating the
+kebab-case folder when needed. Include the user-visible outcomes, approved
+scope, observable acceptance criteria, settled constraints and rationale,
+assumptions, off-limits areas and why, deferred points, and remaining risks. Record behavior and decisions without predicting
 files, functions, code structure, technical layers, or implementation steps.
 Carry only applicable app-level constraints from `PRODUCT.md`; keep the file as
 their canonical product context rather than duplicating its full contents.
@@ -123,10 +142,11 @@ repository information that later coordination reads, so write it whether or
 not an issue tracker is set up.
 
 When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
-section and the user names an existing issue this work comes from, add an
-`Issue: <tracker>:<id>` line beside the linked sources in the ID form its
-convention records. Write it only from an ID the user gave; never search the
-tracker by title to find one, and never create an issue while shaping. Without
+section and this work comes from an existing issue, named by the user or by the
+skill that invoked this one, add an `Issue: <tracker>:<id>` line beside the
+linked sources in the ID form its convention records. Write it only from an ID
+you were given; never search the tracker by title to find one, and never create
+an issue while shaping. Without
 the section, or without a known ID, write no such line.
 
 Link the approved `prototype.html` when one exists and each decision contract
@@ -151,4 +171,5 @@ surface being changed.
 
 Distinguish the intended experience from implemented evidence, keep the
 close-out consistent with the product contract, and do not prompt for another
-action.
+action. A small change closes the same way before its `implement` handoff, with
+the settled decisions standing in for the spec.
