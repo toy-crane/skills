@@ -74,12 +74,18 @@ specific unresolved judgments when they help assess the change. Keep the whole
 change understandable beyond those highlighted judgments; omit empty sections
 and invented alternatives or questions.
 
-For screen changes, capture the actual base and head at matching viewport,
-data, and state, or reuse evidence verified to match those revisions. Embed
-before-and-after screenshots side by side in the body, with a short explanation
-of the difference and its reason. Identify the revisions, screen and capture
-conditions, including unavoidable differences. Add actual interaction video
-when still images cannot explain the important behavior. Separate observed
+For screen changes, let the reviewer watch the behavior they are judging.
+Record the actual base and head running the same flow at matching viewport,
+data, and state, or reuse evidence verified to match those revisions, and embed
+the before-and-after videos with a short explanation of the difference and its
+reason. When motion adds nothing to the judgment, as with copy, styling, or
+static layout, compare screenshots side by side instead; when such fine visual
+detail accompanies a behavior change, add that still comparison to the videos.
+A screen with no before state gets the head video alone. If video cannot be
+recorded, made safe, or kept within the attachment limit after trimming to the
+judged behavior, compare screenshots and say why video is missing. Video takes
+no alt text, so label each one with its revision, flow, and conditions, and
+identify unavoidable differences between the captures. Separate observed
 results from source inference and unverified states; a prototype is not runtime
 evidence. When updating an existing PR, bring its explanation and evidence into
 line with the final change, replacing outdated visual claims.
@@ -90,14 +96,17 @@ throughout the media, keeping comparison conditions and the relevant change
 visible. Upload only the inspected, safe media as GitHub attachments, using a
 supported mechanism in the current environment. For GitHub CLI, check attachment support: `gh pr create` and
 `gh pr edit` accept repeatable `--attach` on supported versions and rewrite
-matching local image references in `--body-file` to uploaded URLs. A Markdown
-table can place the two images side by side. Keep review captures outside
-repository history; no separate image host is needed.
+matching local media references in `--body-file` to uploaded URLs. A Markdown
+table can place two images side by side. Reference each video as `![](path)`
+alone in its own blank-line-separated paragraph so it renders as a player; a
+reference inside other text renders as a link, and an unreferenced attachment
+lands at the end of the body. Keep review captures outside repository history;
+no separate media host is needed.
 
 If baseline execution, capture, or upload is unavailable, state the exact limit
 and present only the evidence obtained. Inspect the resulting remote body and
 attachments before reporting them as available to reviewers; a local path is
-not a published image. A partial upload may still create the PR: inspect and
+not a published attachment. A partial upload may still create the PR: inspect and
 repair that PR instead of duplicating it. Carry successful attachment URLs from
 the remote body into its replacement, and replace unusable local references
 with an honest limitation if recovery fails.

@@ -133,12 +133,12 @@
     {
       "id": 12,
       "name": "refresh-interaction",
-      "prompt": "OPEN PR #61 본문을 최신 변경으로 갱신해줘. 이전 head d444 이미지는 구버전이다. 현재 head e555는 사진 정렬을 즉시 저장하던 동작에서 저장 버튼을 눌러 확정하는 방식으로 바뀌었다. 실제 base와 e555에서 같은 3개 사진과 390x844 조건으로 before.png, after.png, drag-save.mp4를 촬영했고 저장 전 이탈과 저장 후 재접속 동작도 확인했다. 기존 캡처는 현재 head에 맞지 않는다. gh pr edit --attach가 지원되며 권한이 있다. PR 본문을 정리한 뒤 merge까지 진행해줘. 필수 체크와 리뷰는 통과했고 병합 후 원격 상태 확인과 소유 리소스 정리가 필요하다. 다른 스킬은 설치되지 않았다.",
+      "prompt": "OPEN PR #61 본문을 최신 변경으로 갱신해줘. 이전 head d444 이미지는 구버전이다. 현재 head e555는 사진 정렬을 즉시 저장하던 동작에서 저장 버튼을 눌러 확정하는 방식으로 바뀌었다. 실제 base와 e555에서 같은 3개 사진과 390x844 조건으로 같은 드래그 흐름을 녹화한 before-drag.mp4와 after-drag-save.mp4가 있고, 각각 4MB다. 저장 전 이탈과 저장 후 재접속 동작도 확인했다. 기존 캡처는 현재 head에 맞지 않는다. gh pr edit --attach가 지원되며 권한이 있다. PR 본문을 정리한 뒤 merge까지 진행해줘. 필수 체크와 리뷰는 통과했고 병합 후 원격 상태 확인과 소유 리소스 정리가 필요하다. 다른 스킬은 설치되지 않았다.",
       "expected_output": "The standalone merge skill prepares an understandable PR body with honest visual evidence, then preserves its existing verified-merge and cleanup boundaries.",
       "files": [],
       "expectations": [
         "It updates existing PR #61 with current behavior and evidence and replaces obsolete visual claims.",
-        "It uses the matched before/after images plus the actual interaction video, explaining the difference.",
+        "It shows the before and after videos of the same drag flow as the primary evidence, each in its own paragraph as a `![](path)` reference below a label naming its revision, flow, and conditions, and explains the difference.",
         "It attaches media and checks the published body rather than reporting simulated uploads as already complete.",
         "It preserves required reviews, verified remote MERGED state before cleanup, and does not depend on another installed skill."
       ]
@@ -383,6 +383,19 @@
         "It keeps FLY-145's title unchanged and refreshes only its bounded spec section.",
         "It adds FLY-120 as a blocker of FLY-145 through the convention's blocker operation.",
         "It does not close FLY-145, and uses the mark-ready operation to clear the review signal after checking for newer active implementation."
+      ]
+    },
+    {
+      "id": 33,
+      "name": "video-first-bugfix",
+      "prompt": "PR을 만들어줘. 장바구니에서 수량을 빠르게 두 번 누르면 수량이 1만 늘던 버그를 고쳤다. base c100과 head c200을 같은 테스트 계정과 1280x800 조건으로 실행할 수 있고, 브라우저 자동화 도구로 화면 녹화가 가능하다. 아직 아무것도 촬영하지 않았다. gh pr create --attach가 영상 첨부를 지원하고 권한이 있다. 무료 플랜 저장소다. Git 준비 완료. PR 본문을 정리한 뒤 merge까지 진행해줘. 필수 체크와 리뷰는 통과했고 병합 후 원격 상태 확인과 소유 리소스 정리가 필요하다. 다른 스킬은 설치되지 않았다.",
+      "expected_output": "An interaction change gets before-and-after videos of the same flow as its primary evidence.",
+      "files": [],
+      "expectations": [
+        "It plans to record base and head running the same double-tap flow under matching account and viewport, so the before video shows the bug occurring.",
+        "The body embeds the two videos, each in its own paragraph as a `![](path)` reference below a label, followed by the difference and its reason, rather than leading with or settling for a screenshot comparison.",
+        "It keeps each video short enough for the free plan's attachment limit and checks the published body before reporting the videos as available.",
+        "It preserves required reviews, verified remote MERGED state before cleanup, and does not depend on another installed skill."
       ]
     }
   ]
