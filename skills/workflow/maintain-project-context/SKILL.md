@@ -134,7 +134,8 @@ For each default-branch spec folder, apply the rules below:
 
 - Report a folder without an `Issue:` line, or whose ID cannot be fetched,
   and create nothing; the next PR that carries the folder creates its issue.
-- Refresh only the issue's bounded spec section from the fetched `spec.md`:
+- Refresh only the issue's spec section, between the convention's markers,
+  from the fetched `spec.md`:
   the text of its first section, the remaining section headings, the folder
   path, and its `Blocked by: docs/specs/<other>/` issue references. Keep the
   issue's title and every other part of its body, whether a person or an agent

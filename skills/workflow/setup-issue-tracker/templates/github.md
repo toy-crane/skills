@@ -25,6 +25,10 @@ points at. Issue ID form: `github:#<number>`, written as `Issue: github:#<n>`
 in `spec.md` and in PR bodies. Titles carry no key or prefix. Address every
 issue by that number; never find one by title search or by listing issues.
 
+Spec section markers: `<!-- triage-issues:spec:start -->` and
+`<!-- triage-issues:spec:end -->`, the same markers the triage body renderer
+writes. Create, refresh, and every other skill use exactly these.
+
 - Find: `gh issue view <n> --json number,title,state,assignees,labels,body`.
   List open blockers with `gh api
   repos/{owner}/{repo}/issues/<n>/dependencies/blocked_by --jq '[.[] |

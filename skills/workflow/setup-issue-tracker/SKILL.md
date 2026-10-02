@@ -48,7 +48,11 @@ Settle these items:
   ones; claim it; mark it ready for implementation after a spec-only PR merges
   by clearing the review or active signal and leaving it open in a non-active
   state that is not general triage; and close it. Record which states or
-  labels are the review signal and which states count as active work.
+  labels are the review signal and which states count as active work. Record
+  the exact markers that bound the spec section so every skill writes and
+  finds the same one; the templates' default matches the markers the triage
+  skill's body renderer writes, so a triaged issue never gets a second spec
+  section.
 - **General-issue triage, when requested**: record the open general-issue
   scope including Backlog; how to read human comments and body revisions; and
   the tracker states or labels representing `needs-triage`, `needs-info`, and

@@ -39,8 +39,9 @@ trailer names, that still exists at the head; skip deleted folders. A folder's
 `spec.md` names its issue with an `Issue: <tracker>:<id>` line; use that ID and
 create nothing. For each gathered folder without that line, create one issue
 through the convention's create operation: the title is the first heading of
-`spec.md` with no prefix, the body is one bounded spec section rendered from
-`spec.md`, and the issue carries the convention's review signal. The section
+`spec.md` with no prefix, the body is one spec section rendered from
+`spec.md` between the convention's spec section markers, and the issue
+carries the convention's review signal. The section
 holds the first section's text, the remaining section headings, the folder
 path, and the issues of folders its `Blocked by: docs/specs/<other>/` lines
 name, read from their own `Issue:` lines; report a blocker folder that has

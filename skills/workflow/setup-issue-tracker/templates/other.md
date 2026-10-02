@@ -25,6 +25,10 @@ Tracker: <name>, through <tool the session verified>. Issue ID form:
 bodies. Titles carry no key or prefix. Address every issue by that ID; never
 find one by title search or by listing issues.
 
+Spec section markers: `<!-- triage-issues:spec:start -->` and
+`<!-- triage-issues:spec:end -->`, the same markers the triage body renderer
+writes. Create, refresh, and every other skill use exactly these.
+
 <One paragraph in the user's words describing how issues are fetched, created,
 updated, assigned, moved between states, and closed, covering each of the
 seven operations below.>

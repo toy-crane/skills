@@ -26,6 +26,10 @@ session verified>. Issue ID form: `linear:<identifier>`, written as
 or prefix. Address every issue by that identifier; never find one by title
 search, because Linear search ranks by meaning and may miss an exact title.
 
+Spec section markers: `<!-- triage-issues:spec:start -->` and
+`<!-- triage-issues:spec:end -->`, the same markers the triage body renderer
+writes. Create, refresh, and every other skill use exactly these.
+
 - Find: fetch the issue by identifier and read its state, assignee,
   description, and open blocking relations.
 - Create: create an issue in the team titled with the spec title, with the

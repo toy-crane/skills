@@ -11,6 +11,7 @@
         "It does not propose a `spec:<slug>` title key, a title prefix, a spec label, or a List managed issues operation.",
         "It includes find, create, refresh the spec section, full blocker-set replacement, claim, mark ready, and close operations, each addressing an issue by its number.",
         "Create uses the spec title, a bounded spec section as the body, and the recorded review signal, and returns the new number.",
+        "It records the exact markers that bound the spec section, matching the triage body renderer's `<!-- triage-issues:spec:start -->` and `<!-- triage-issues:spec:end -->` by default.",
         "Its GitHub blocker update paginates every open and closed current relation before removing stale edges and adding missing ones, while Find still returns only open blockers for implementation gating.",
         "It shows the proposed section before writing and does not create issues for existing spec folders during setup."
       ]
