@@ -50,8 +50,8 @@
   the map and rejected patterns; work that changes a named value or component
   source updates that section by hand. Projects without UI never get the file.
 - `AGENTS.md` or `CLAUDE.md` carries repository mechanics, the route to the
-  decision index, the route to `DESIGN.md` when one exists, and compact task-time routes to current official vendor
-  context. It does not cache decision content or copies of external guidance.
+  decision index, the route to `DESIGN.md` when one exists, and compact
+  task-time routes to current official vendor context. It does not cache decision content or copies of external guidance.
 - `maintain-project-context` is the periodic hygiene pass across permanent
   product context, publication premises, the glossary, decision contracts,
   shipped spec folders, published brief folders, and always-loaded repository
