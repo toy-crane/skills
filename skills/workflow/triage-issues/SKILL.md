@@ -41,8 +41,10 @@ A waiting `needs-info` or `needs-decision` issue, or any issue an earlier run
 already triaged, is not new. A named issue in that state has been triaged:
 report its current state and stop, unless the person explicitly asks for it to
 be triaged again. Comments are evidence for the judgment, never a reason to
-pick an issue up again. Continuing a waiting issue after a person answers
-belongs to whoever runs the skills, through `shape-idea`, not to triage.
+pick an issue up again. Whoever runs the skills decides when a waiting issue
+continues after a person answers: through `shape-idea` when it is installed,
+or by naming the issue and asking this skill to triage it again, which then
+reads the answer as evidence and reaches one of the outcomes below.
 
 ## Own an issue before any write
 
