@@ -8,11 +8,14 @@ disable-model-invocation: true
 
 Give this repository one issue tracker convention that the other skills read
 through a short route in its agent instructions. The spec folder under
-`docs/specs/<slug>/` stays the implementation contract. A spec-first folder
-gets a derived pointer issue after merge; when triage starts from an existing
-human-written issue, that original issue stays the only issue for the work.
-Repositories without this section keep every skill's current behavior. Write
-it when the user wants parallel implementation or scheduled general-issue triage.
+`docs/specs/<slug>/` stays the implementation contract, and its `spec.md`
+names its one issue with an `Issue: <tracker>:<id>` line. When work starts from
+an existing issue, that issue is the one named; otherwise the PR that first
+carries the folder creates the issue and commits the line. Every lookup uses
+that recorded ID, never a title search. Repositories without this section keep
+every skill's current behavior: no issue is created and no `Issue:` line is
+written. Write it when the user wants parallel implementation or scheduled
+general-issue triage.
 
 ## Explore, then recommend
 
@@ -28,22 +31,24 @@ Settle these items:
 
 - **Tracker**: GitHub Issues, Linear, or another tracker the user describes in
   one paragraph.
-- **Key**: how a spec folder maps to an issue. The default is an issue title
-  that starts with `spec:<slug>` followed by a space or the end of the title,
-  matched exactly so `spec:checkout` never matches `spec:checkout-v2`. A spec
-  with `Source-Issue: <tracker-qualified-ID>` instead maps to that original
-  issue without changing its title.
+- **Issue ID form**: the `<tracker>:<id>` value an `Issue:` line carries in
+  `spec.md` and in a PR body, such as `linear:FLY-145` or `github:#12`. The
+  line is the only link between a spec folder and its issue; titles carry no
+  key or prefix, and no label marks a spec issue.
 - **Tool**: the command or server the skills use, verified to exist in this
   session rather than assumed.
 - **Repository conventions**: how work in progress is recognized, when a user
   must explicitly request resumption, and how a PR links and closes its issue.
-- **Seven operations**, documented for issue work: list every managed issue in
-  every state, find the issue for a folder (returning whether it is open, its
-  assignee, and its open blockers), publish an issue, update its derived title
-  and body, replace its blockers by removing stale edges and adding missing
-  ones, claim it, and close it. The list operation returns each issue's
-  identifier, title, and state so a maintenance pass can find orphan and
-  duplicate exact keys.
+- **Seven operations**, documented for issue work, each addressing an issue by
+  its recorded ID: find it (returning whether it is open, its assignee, its
+  state, and its open blockers); create it with the spec title, a bounded spec
+  section as its body, and the review signal, returning its ID; refresh only
+  its bounded spec section while preserving its title and every other part of
+  its body; replace its blockers by removing stale edges and adding missing
+  ones; claim it; mark it ready for implementation after a spec-only PR merges
+  by clearing the review or active signal and leaving it open in a non-active
+  state that is not general triage; and close it. Record which states or
+  labels are the review signal and which states count as active work.
 - **General-issue triage, when requested**: record the open general-issue
   scope including Backlog; how to read human comments and body revisions; and
   the tracker states or labels representing `needs-triage`, `needs-info`, and
@@ -52,12 +57,10 @@ Settle these items:
   evidence, leave comments, change waiting states, dispose of proven
   duplicates, and update only bounded AI-managed body sections while
   preserving human text. Record whether conditional body updates are supported
-  and how the latest body is re-read and verified afterward. Record the source
-  ID and URL form that lets a spec
-  find the same original issue. Do not add a decision-maker field or treat an
-  assignee or label as an atomic lock. Record a post-spec-merge transition that
-  clears the PR review or active-work signal and leaves the source issue open
-  in a state eligible for `implement`, without returning it to general triage.
+  and how the latest body is re-read and verified afterward. Record how an
+  issue whose spec PR closed unmerged returns to a re-triageable state such as
+  Backlog. Do not add a decision-maker field or treat an assignee or label as
+  an atomic lock.
 
 Start from the matching template and adjust it to what exploration found:
 [templates/github.md](templates/github.md),
@@ -72,20 +75,22 @@ exists, and `AGENTS.md` when both exist as separate files; when neither exists,
 ask which one to create. Never create the second file beside an existing one.
 When the section already exists, replace it in place and leave the surrounding
 content untouched; rerunning this skill shows the current convention and
-changes only what the user wants changed. Treat an older section without `List
-managed issues` as incomplete and include that operation in the proposed
-upgrade while preserving its tracker, key, tool, and already-complete
-operations. At the same time replace a legacy body-only update with the derived
-title-and-body operation and replace an additive-only blocker update with the
-complete stale-removal and missing-addition operation; otherwise the upgraded
-section still cannot support full reconciliation.
+changes only what the user wants changed. Treat an older section that maps
+folders through a `spec:<slug>` title key, a `Source-Issue` line, or a managed
+issue listing as outdated: propose replacing them with the `Issue:` line and
+ID-based operations while preserving its tracker, tool, states, and
+already-compatible operations. Also replace an additive-only blocker update
+with the complete stale-removal and missing-addition operation. The old names
+are not read for compatibility, so tell the user to rename `Source-Issue:` to
+`Issue:` in active spec folders themselves; leave existing title-key issues
+for the user to tidy in the tracker.
 
 Keep the always-loaded section focused on purpose: where spec state lives,
 require an explicit user request before resuming an issue already in progress,
 and link issues through PRs and close them when implementation merges. A spec
-PR does not close a human-written source issue. Add a task-time link to
-`docs/issue-tracker.md`; write the repository's key, verified tool, state and
-claim conventions, closing reference, seven spec operations, and any triage
+PR never closes its issue. Add a task-time link to `docs/issue-tracker.md`;
+write the repository's issue ID form, verified tool, state and claim
+conventions, closing reference, seven spec operations, and any triage
 operations there. Load that file only for issue work. Preserve
 repository-specific choices and non-obvious
 behavior; use the current tool schema or CLI help for exact arguments instead
@@ -93,12 +98,12 @@ of copying exhaustive field lists into either document. General tool guidance
 belongs in this skill's references, not in always-loaded instructions.
 
 On rerun, move existing operational detail into that document without losing
-custom keys, team settings, claim protection, or closing behavior. Reconcile an
+custom team settings, states, claim protection, or closing behavior. Reconcile an
 existing detail document instead of creating a competing source. Preserve the
 surrounding agent instructions and unrelated document content. Consumers must
 be able to use the repository documents without this skill being installed.
 
 Show the drafted section and detailed convention before writing them, then
-write both and report their paths. Do not publish issues for existing spec
-folders here: the next `merge` incrementally publishes missing folders, and
-`maintain-project-context` can perform a full reconciliation.
+write both and report their paths. Do not create issues for existing spec
+folders here: the next PR that carries a folder without an `Issue:` line
+creates its issue and records the line.
