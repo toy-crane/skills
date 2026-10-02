@@ -44,6 +44,47 @@ For each qualifying decision, use the
 update its single subject file in `docs/decisions/`. Preserve only the context
 future work needs to apply the decision without repeating the original analysis.
 
+## Keep the design entry current
+
+Root `DESIGN.md` is where design work starts: the project's values, the shared
+components in use, rejected UI patterns, and a map from each visible element to
+the decision contract that owns it. Contracts stay the source of every rule;
+`DESIGN.md` only points at them, so copy no rule text, rationale, or threshold
+into it.
+
+A screen contract decides how something looks or behaves on screen: color, text
+role, spacing, icon, component, copy, loading, disabled, or error state, or
+sheet, toast, or header behavior. Contracts about repository mechanics, data
+ownership, review process, or deployment are not screen contracts and leave
+`DESIGN.md` alone. A contract that sets UI review criteria may be a link target
+for a rejected pattern but is not a map element.
+
+When you create a screen contract or change which elements one covers, update
+`DESIGN.md` in the same change using the
+[design entry template](./templates/design.md):
+
+- Add or correct one map line for each element the contract owns.
+- Add one rejected-pattern line for each pattern the contract rejects that an
+  agent would otherwise write in UI code. Process alternatives, such as
+  enforcing a rule through lint, stay only in the contract.
+
+When `DESIGN.md` does not exist yet, create it at that moment:
+
+- Map every existing screen contract in the decision index, not only the
+  current one, and list their rejected UI patterns.
+- Copy values and shared components once from the project's token source and
+  shared component directory, naming each source path in its section. Omit a
+  section whose source does not exist.
+- Add one line to `AGENTS.md`, or to `CLAUDE.md` when only that exists, saying
+  that work which builds or reviews screens reads `DESIGN.md` first. Create
+  `AGENTS.md` when neither exists. Skip the line when one with that meaning is
+  already there.
+
+After creation, leave the values and components sections to the work that
+changes their named sources. When an existing `DESIGN.md` uses another layout,
+add lines where it already keeps them instead of reformatting it. A project
+with no screen contract has no `DESIGN.md`.
+
 ## Record follow-ups
 
 Record a follow-up when a workaround applied in this session is temporary and
