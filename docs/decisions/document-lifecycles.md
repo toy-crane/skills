@@ -34,9 +34,26 @@
   out-of-scope defect observed with evidence. One file per item, written at the
   moment of discovery, deleted when the work ships or the item is promoted into
   a spec folder.
+- Root `DESIGN.md` is the permanent, current entry point for design work, not a
+  design authority. Decision contracts stay the source of every UI rule. It
+  carries values (semantic color tokens for each shipped theme, text roles,
+  radius and spacing), the shared components in use, rejected patterns, and a
+  map from each visible element to the contract that owns it. A rejected
+  pattern and a map entry are each one line plus a link to the owning contract;
+  no rule text is copied in. A rejected pattern is something an agent would
+  otherwise produce in UI code, not every alternative a contract rejected.
+  `project-knowledge` creates the file when it first records, or changes the
+  scope or rejected UI patterns of, a contract that decides how something looks
+  or behaves on screen,
+  maps every existing such contract, copies values and components once from
+  the project's token and component sources with their paths. Whenever it
+  updates the file it keeps a read route in `AGENTS.md`, and in `CLAUDE.md`
+  when that file does not load `AGENTS.md`, so both agent clients find it.
+  After creation it maintains only the map and rejected patterns; work that
+  changes a named value or component source updates that section by hand. Projects without UI never get the file.
 - `AGENTS.md` or `CLAUDE.md` carries repository mechanics, the route to the
-  decision index, and compact task-time routes to current official vendor
-  context. It does not cache decision content or copies of external guidance.
+  decision index, the route to `DESIGN.md` when one exists, and compact
+  task-time routes to current official vendor context. It does not cache decision content or copies of external guidance.
 - `maintain-project-context` is the periodic hygiene pass across permanent
   product context, publication premises, the glossary, decision contracts,
   shipped spec folders, published brief folders, and always-loaded repository
@@ -85,6 +102,13 @@ present from history. Before this model, 27 records plus their index occupied
 subject contracts keep the authority and anti-repetition payload in the normal
 read path; Git retains recoverability without spending context on chronology.
 
+UI rules spread across many contracts, so design work needs one place that
+routes a visible element to its owner and holds the values it applies. Moving
+the rules into that place would split their source, because `project-knowledge`
+keeps writing new rules to contracts. Updating the map at the moment a contract
+is written, in the skill that writes it, keeps it current without another
+skill or a per-project instruction.
+
 A one-time kickoff prompt disappears with the session, while copying the whole
 app premise into every work-unit spec makes those specs drift. One current
 app-level context keeps the product premise available across later shaping
@@ -102,6 +126,9 @@ without turning it into feature scope or implementation prediction.
   unrelated decisions.
 - Git history proves too difficult to recover when a removed detail is genuinely
   needed.
+- A `DESIGN.md` value or component section is first observed out of step with
+  its named source; then add a drift check through `maintain-project-context`
+  or generation from the source.
 
 ## Still-rejected alternatives
 
@@ -129,6 +156,15 @@ without turning it into feature scope or implementation prediction.
 - A single `docs/follow-ups.md` backlog list — parallel worktree sessions
   appending to one file collide on merge, the same failure that sequential
   record numbers produced.
+- `DESIGN.md` as the single design authority, as in
+  [Vercel's design.md](https://vercel.com/design.md) or the
+  [Google Labs DESIGN.md format](https://github.com/google-labs-code/design.md)
+  (YAML tokens plus rationale, alpha in 2026) — rules would then live in two
+  places while new decisions keep landing in contracts.
+- A separate skill that maintains `DESIGN.md` — `project-knowledge` would have
+  to invoke it, and a standalone install would silently drop the map.
+- Editing each reading skill to open `DESIGN.md` — one route line in the
+  project's agent instructions reaches every reader without widening them.
 - Harness task chips or session to-do state — they do not survive an
   application restart and exist in only one of the agent harnesses this
   repository targets.

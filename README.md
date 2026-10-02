@@ -451,8 +451,10 @@ available for an affected product surface.
   taking ownership of unrelated artifacts.
 - **[project-knowledge](./skills/workflow/project-knowledge/SKILL.md)**: Maintain project
   terms and settled decisions that future work should reuse whenever they are
-  taking shape, including while a plan weighs alternatives. Does not run for
-  lookup, routine implementation details, or execution of settled decisions.
+  taking shape, including while a plan weighs alternatives. Keeps root
+  `DESIGN.md`, the entry point for design work, mapped to the contracts that
+  own each on-screen element. Does not run for lookup, routine implementation
+  details, or execution of settled decisions.
 - **[resolve-follow-ups](./skills/workflow/resolve-follow-ups/SKILL.md)**: Sweep
   evidence-backed `docs/follow-ups/` items in bounded batches, reproduce each
   symptom before editing, and publish verified fixes as independent

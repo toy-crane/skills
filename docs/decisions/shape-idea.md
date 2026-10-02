@@ -61,7 +61,8 @@
   substitute. Verify only the states needed for a trustworthy comparison before
   the user judges one unresolved experiential decision.
 - Writes are limited to the spec folder, glossary, current decision contracts,
-  and current vendor agent context. Product source, configuration, and
+  the root `DESIGN.md` and its read route that recording a screen decision
+  updates, and current vendor agent context. Product source, configuration, and
   dependencies do not change during shaping, including edits meant to be
   reverted. Experiments, benchmarks, dependency checks, and previews run in a
   scratch directory outside the working tree; when none can answer a question,
@@ -190,3 +191,8 @@ shaping session from sliding into implementation.
   overclaiming on its own. Assertions about grounding the dependency and about
   finishing without a question passed everywhere and were kept or dropped on
   that basis rather than on the split they failed to produce.
+- A non-interactive shaping run that settled an app-wide toast rule had
+  `project-knowledge` create root `DESIGN.md` and its `AGENTS.md` read route.
+  Under the earlier allowed-path list the pre-spec check deleted both, leaving
+  the contract without its map line; with `DESIGN.md` and its read route
+  allowed, the same run kept them.
