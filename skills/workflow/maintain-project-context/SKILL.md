@@ -128,7 +128,8 @@ issues or search them by title to find a folder's issue, and do not hunt for
 orphan or duplicate issues; a person tidies duplicates in the tracker. If the
 convention still describes a `spec:<slug>` title key, a `Source-Issue` line,
 or a managed-issue listing, tell the user to rerun `setup-issue-tracker`
-instead of using those operations.
+instead of using those operations, and to rename `Source-Issue:` to `Issue:`
+in active spec folders themselves; the old line is not read.
 
 For each default-branch spec folder, apply the rules below:
 
