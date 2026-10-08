@@ -7,7 +7,8 @@ description: Carry the current repository change through a verified GitHub pull 
 
 Carry the current request's change through a pull request, verified merge, and
 safe local cleanup. Complete the necessary commit, synchronization, publication,
-and PR work, using the available `pull` skill for base synchronization.
+and PR work, using the available `pull` skill for base synchronization and the
+available `pr` skill to create or update the pull request.
 
 Start from current remote truth. Preserve unrelated work, commit only the
 request's changes as logical Conventional Commits, resolve the named base or
@@ -33,82 +34,45 @@ read the `Spec-Folder: docs/specs/<slug>/` trailers from the branch's commits
 before merging, while the branch still exists and before a squash can drop
 them, and keep those folders for the steps below.
 
-Before creating or updating the PR, gather the spec folders it carries: every
-`docs/specs/<slug>/` folder the branch adds or changes, and every folder a
-trailer names, that still exists at the head; skip deleted folders. A folder's
-`spec.md` names its issue with an `Issue: <tracker>:<id>` line; use that ID and
-create nothing. For each gathered folder without that line, create one issue
-through the convention's create operation: the title is the first heading of
-`spec.md` with no prefix, the body is one spec section rendered from
-`spec.md` between the convention's spec section markers, and the issue
-carries the convention's review signal. The section
-holds the first section's text, the remaining section headings, the folder
-path, and the issues of folders its `Blocked by: docs/specs/<other>/` lines
-name, read from their own `Issue:` lines; report a blocker folder that has
-none. Write `Issue: <tracker>:<id>` in the convention's ID form beside the
-spec's other links and commit it on the same branch before publishing. Never
-search the tracker by title to find or reuse an issue. If the issue was
-created but the line could not be committed, stop before merging and report
-the created ID so a rerun records it instead of creating another.
+## Create or update the PR with `pr`
 
-Put an `Issue: <tracker>:<id>` line in the PR body for each linked issue, so
-later reconciliation can find the PR after a squash merge; a direct fix of a
-known issue without a spec folder carries the same line. Put the convention's
-closing reference in a PR body only when its diff and verification show
-implementation delivery; a trailer or `Issue:` line alone is insufficient. A
-spec-only PR links its issue without closing it.
+After verifying the synchronized HEAD, invoke the available `pr` skill with the
+resolved remote and base. It publishes the branch and creates the
+ready-for-review PR, or reuses the open PR and brings its body and evidence in
+line with the final change, including any issue links. Verify before invoking
+it, because it publishes. `pr` finishes by handing back the PR URL; here that
+is an intermediate step, so continue to the merge below instead of stopping to
+report. Invoke it again only when the change itself makes the body outdated,
+not when a rebase merely moves the head.
 
-If a linked convention cannot be read, report the missing information rather
-than guessing issue operations or claiming that the issue was linked or closed.
+When `pr` is unavailable, publish the branch and create or update the ready PR
+here, with a brief body a reviewer without the conversation can follow: the
+problem, the before-and-after behavior, and what verification establishes. With
+a tracker configured, keep these outcomes, because reconciliation below reads
+them back:
 
-## Make the body understandable
+- Each spec folder the PR carries has one issue. A folder counts when the
+  branch adds or changes it or a trailer names it, and it still exists at the
+  head. Reuse the ID its `spec.md` names on an `Issue: <tracker>:<id>` line.
+  Otherwise create one through the convention's create operation, titled with
+  the spec's first heading without a prefix, carrying the review signal, with
+  a body of one spec section rendered from `spec.md` between the convention's
+  markers: the first section's text, the remaining headings, the folder path,
+  and the issues its `Blocked by: docs/specs/<other>/` folders name on their own
+  `Issue:` lines. Report a blocker folder without one. Commit the new `Issue:`
+  line beside the spec's other links on the same branch before publishing.
+  Never search the tracker by title. If the issue was created but the line
+  could not be committed, stop before merging and report the created ID.
+- The PR body carries an `Issue: <tracker>:<id>` line for each linked issue,
+  and so does a direct fix of a known issue without a spec folder.
+- The body carries the convention's closing reference only when the diff and
+  verification show implementation delivery; a trailer or `Issue:` line alone
+  is insufficient. A spec-only PR links its issue without closing it.
 
-When creating or updating an open PR, write for a reviewer without the
-conversation history: explain the problem, concrete before-and-after behavior,
-why it changed, and what verification establishes. Scale the explanation to the
-change; a typo fix needs only a brief description and relevant validation.
-Include mechanisms, a diagram for complex flows, actual alternatives and
-trade-offs, affected users or integrations, and specific unresolved judgments
-when they help assess the change. Keep the whole change understandable beyond
-those highlighted judgments; omit empty sections and invented alternatives or
-questions.
-
-For screen changes, let the reviewer watch the behavior they are judging.
-Record the actual base and head running the same flow at matching viewport,
-data, and state, or reuse evidence verified to match those revisions, and embed
-the before-and-after videos with a short explanation of the difference and its
-reason. When motion adds nothing to the judgment, as with copy, styling, or
-static layout, compare screenshots side by side instead; when such fine visual
-detail accompanies a behavior change, add that still comparison to the videos.
-A screen with no before state gets the head video alone. If video cannot be
-recorded, made safe, or kept within the attachment limit after trimming to the
-judged behavior, compare screenshots and say why video is missing. Video takes
-no alt text, so label each one with its revision, flow, and conditions, and
-identify unavoidable differences between the captures. Separate observed
-results from source inference and unverified states; a prototype is not runtime
-evidence. When updating an existing PR, bring its explanation and evidence into
-line with the final change, replacing outdated visual claims.
-
-Before uploading, inspect screenshots and videos for credentials, personal
-data, and private information. Use safe seeded data or redact those details
-throughout the media, keeping comparison conditions and the relevant change
-visible. Upload only the inspected, safe media as GitHub attachments, using a
-supported mechanism in the current environment. For GitHub CLI, check attachment support: `gh pr create` and
-`gh pr edit` accept repeatable `--attach` on supported versions and rewrite
-matching local media references in `--body-file` to uploaded URLs. A Markdown
-table can place two images side by side. Reference each video as `![](path)`
-alone in its own blank-line-separated paragraph so it renders as a player; a
-reference inside other text renders as a link, and an unreferenced attachment
-lands at the end of the body. Keep review captures outside repository history;
-no separate media host is needed.
-
-If baseline execution, capture, or upload is unavailable, state the exact limit
-and present only the evidence obtained. Inspect the resulting remote body and
-attachments before reporting them as available to reviewers; a local path is
-not a published attachment. A partial upload may still create the PR: inspect and
-repair that PR instead of duplicating it. Carry successful attachment URLs from
-the remote body into its replacement, and replace unusable local references
-with an honest limitation if recovery fails.
+Whichever path created the PR, confirm these outcomes on the remote PR before
+merging. If a linked convention cannot be read, report the missing information
+rather than guessing issue operations or claiming that the issue was linked or
+closed.
 
 ## Merge and clean up
 

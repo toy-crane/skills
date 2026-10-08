@@ -379,9 +379,10 @@ releasing its resources through the project's declared cleanup commands.
   create the issue for each carried spec folder that has no `Issue:` line and
   commit that line.
 - **[merge](./skills/git/merge/SKILL.md)**: Carry a change through verified pull
-  request merge with the same self-contained body and visual-evidence guidance,
-  choose squash or rebase by commit meaning, then safely clean up the merged
-  worktree with the project's declared cleanup commands.
+  request merge, creating or updating the PR through `pr` when it is installed
+  and with a brief body plus the same issue links when it is not, choose squash
+  or rebase by commit meaning, then safely clean up the merged worktree with the
+  project's declared cleanup commands.
 - **[clean-worktrees](./skills/git/clean-worktrees/SKILL.md)**: Sweep a
   repository's accumulated worktrees in one pass. Remove those whose pull
   request merged or closed, detached ones the base already contains, and
