@@ -47,7 +47,9 @@ not when a rebase merely moves the head.
 
 When `pr` is unavailable, publish the branch and create or update the ready PR
 here, with a brief body a reviewer without the conversation can follow: the
-problem, the before-and-after behavior, and what verification establishes. With
+problem, the before-and-after behavior, and what verification establishes.
+Attach screenshots or video only after inspecting them for credentials,
+personal data, and private information, using safe data or redaction. With
 a tracker configured, keep these outcomes, because reconciliation below reads
 them back:
 
