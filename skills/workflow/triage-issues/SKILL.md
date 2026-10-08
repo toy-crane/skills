@@ -90,19 +90,15 @@ evidence. Choose the smallest outcome that actually resolves the request:
   select a public test seam, verify the affected behavior in the running
   product when one exists, and obtain one completed automated review of the
   whole diff. Repair confirmed ordinary-path defects and rerun affected checks.
-  Raise a ready-for-review implementation PR with the evidence and link the
-  original issue. Record `Issue: <tracker>:<id>` in the PR body so later
-  reconciliation can find it after the branch is gone. Include the
-  convention's closing reference because the verified PR delivers the direct
-  implementation, even without a spec folder or `Spec-Folder` trailer. Do not
-  claim runtime proof from static checks.
+  Raise a ready-for-review implementation PR with the evidence through `pr`,
+  linking the original issue. Do not claim runtime proof from static checks.
 - If the result is clear but spans substantial behavior or requires a durable
   design choice, write `docs/specs/<slug>/spec.md` as the implementation
   contract and raise a spec PR. Record `Issue: <tracker>:<id>` for the
   original issue beside the spec's source links, so PR creation reuses it
-  instead of creating another. Do not start implementation in this triage run.
-  Put the same `Issue:` line in the PR body without a closing reference. An unmerged spec is a draft, and its PR remains linked to
-  the original issue.
+  instead of creating another. Raise the spec PR through `pr`. Do not start
+  implementation in this triage run. An unmerged spec is a draft, and its PR
+  remains linked to the original issue.
 - If a missing fact prevents either path, ask for precisely that fact in a
   comment and set `needs-info` through the configured convention.
 - If a product choice remains, leave `needs-decision`: explain the choice,
@@ -116,8 +112,15 @@ evidence. Choose the smallest outcome that actually resolves the request:
   a new product request that may be declined, recommend proceed, defer, or
   decline with consequences and leave the choice to a person.
 
-Use available specialized shaping, implementation, verification, or PR skills
-when they fit, but carry the outcome above even when those skills are absent.
+Raise either PR by invoking the available `pr` skill, which writes the body,
+evidence, and issue links. When `pr` is unavailable, create the PR with a brief
+body of the problem, the change, and its verification, and keep the issue
+links, because later reconciliation reads them: an `Issue: <tracker>:<id>` line
+in the body, and the convention's closing reference only on the implementation
+PR, whose verified diff delivers the direct implementation even without a spec
+folder or `Spec-Folder` trailer. A spec PR carries no closing reference. Use
+available specialized shaping, implementation, or verification skills when they
+fit, but carry the outcome above even when those skills are absent.
 Resolve technical choices from evidence; do not turn them into human questions.
 Do not treat a speculative implementation as a clear small issue merely to
 avoid writing a spec or asking about expected behavior.

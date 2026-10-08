@@ -36,12 +36,20 @@
 - Git delivery skills state the requested repository outcome, the authority the
   request grants, the state that must be preserved, and the evidence required
   for completion. They leave ordinary Git command selection to the model.
-- `commit`, `pull`, `push`, `pr`, and `merge` each stand alone. `merge` invokes
+- `commit`, `pull`, `push`, `pr`, and `merge` each stand alone for their outcome. `merge` invokes
   an available `pull` skill with its resolved remote and base before verification
   and publication, so base integration and conflicts are handled before PR
   preparation. It retains an inline fetch-and-rebase fallback for standalone
   installs; the broader skills never assume a separately installed skill
   supplied missing instructions.
+- `merge` and `triage-issues` create or update their pull requests by
+  explicitly invoking an available `pr`, so PR body guidance has one copy.
+  Their standalone fallback keeps inline every rule whose output a later step
+  reads back, namely the issue-linking rules and the `Issue:` line, and
+  shortens only presentation guidance to a brief body of problem, change, and
+  verification. A degraded fallback is acceptable for presentation quality,
+  never for data that reconciliation depends on. `merge` treats `pr`'s finish
+  as an intermediate step and continues to verification and merge.
 - Deterministic Git helpers earn their fixed procedure only where ownership is
   unsafe to infer. The worktree removal helper decides whether a worktree is
   used by the current session, an attached process, or a left-over one, and
@@ -181,6 +189,13 @@ approval alone is insufficient evidence of better review.
   verify without being forced through a universal sequence.
 - Predicted failures as justification for permanent procedure — guardrails earn
   their context cost from observed behavior.
+- A full copy of `pr`'s body guidance in `merge`, kept identical by a CI
+  check — it prevents drift but keeps the long duplicate and needs
+  section-comparison tooling; the copy that matters for correctness is the
+  short issue-linking rule set.
+- A fallback that drops issue linking when `pr` is absent — a standalone
+  `merge` would open PRs without the `Issue:` line its own reconciliation and
+  catch-up search for.
 - Relying on another installed skill — skills.sh users may possess only the
   current skill.
 - A `run-server` skill as an `implement` dependency — it names a technical
@@ -312,3 +327,9 @@ approval alone is insufficient evidence of better review.
   switching to `bunx`, so the instruction saves one failed call rather than a
   stuck run. Neither the `update-project-skills` nor the Expo wording has been
   tested on a held-out control.
+- In dearly session records for the two weeks before 2026-10-09, 42 sessions
+  ran `gh pr create`; only 11 loaded `pr`. Of the other 31, 28 created the PR
+  inside `merge` from its copied body rules and 3 were `triage-issues` runs,
+  whose generic "use available PR skills when they fit" sentence never led to
+  `pr`. A GitHub PR template is no substitute: `gh` 2.100.0 ignores it whenever
+  `--body` or `--body-file` is passed, which agents always do.

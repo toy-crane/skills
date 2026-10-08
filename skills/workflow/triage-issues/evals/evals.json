@@ -21,7 +21,8 @@
       "expectations": [
         "It handles #44 alone and does not list or judge other issues.",
         "It claims #44 with the bundled claim helper before any write.",
-        "It raises one ready-for-review implementation PR whose body carries Issue: github:#44 and the convention's closing reference."
+        "It raises one ready-for-review implementation PR whose body carries Issue: github:#44 and the convention's closing reference.",
+        "It raises the PR by invoking the available pr skill."
       ]
     },
     {
@@ -33,6 +34,29 @@
         "It recognizes #30 as already triaged.",
         "It reports the current state instead of triaging again.",
         "It does not interpret the person's reply or continue the decision."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/triage-issues github:#51\n\nGitHub Issues 규약이 있다. #51은 라벨과 요약 구역이 없는 새 이슈다: \"팀 단위로 알림 설정을 공유하고 싶다. 개인 설정이 팀 설정을 덮어쓸 수 있어야 한다.\" 여러 화면과 저장 구조가 바뀌는 큰 변경이다. pr 스킬이 설치돼 있다.",
+      "expected_output": "The run writes a spec with `Issue: github:#51`, raises the spec PR through pr, which reuses #51 and adds no closing reference.",
+      "files": [],
+      "expectations": [
+        "It writes docs/specs/<slug>/spec.md with `Issue: github:#51` beside its source links before raising the PR.",
+        "It raises the spec PR by invoking the pr skill.",
+        "The PR reuses #51, creates no other issue, and its body carries `Issue: github:#51` without a closing reference.",
+        "It does not start implementation."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/triage-issues github:#52\n\nGitHub Issues 규약이 있다. #52는 라벨과 요약 구역이 없는 새 이슈다: \"설정 화면의 '알림 끄기' 문구를 '알림 받지 않기'로 바꿔 줘.\" triage-issues 외에 다른 스킬은 설치되지 않았다.",
+      "expected_output": "Without pr, the run still raises one verified implementation PR whose brief body carries `Issue: github:#52` and the closing reference.",
+      "files": [],
+      "expectations": [
+        "It implements and verifies the copy change and obtains one completed automated review.",
+        "It raises one ready-for-review PR whose body states the problem, the change, and its verification.",
+        "The body carries `Issue: github:#52` and the convention's closing reference, the same links pr would have written."
       ]
     }
   ]
