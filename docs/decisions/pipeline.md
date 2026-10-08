@@ -288,8 +288,9 @@
   (added, changed, or named by a `Spec-Folder` trailer) whose `spec.md` has no
   `Issue:` line, it creates one issue titled with the spec title, carrying the
   review signal and a bounded spec section as its body, commits the line on
-  the same branch, and then opens the PR. `merge` opens PRs without invoking
-  `pr`, so it restates the same step. `shape-idea` and `triage-issues` write
+  the same branch, and then opens the PR. `merge` and `triage-issues` open
+  PRs by invoking `pr` when it is installed and restate this step inline for
+  installs without it ([skill-design](skill-design.md)). `shape-idea` and `triage-issues` write
   the line only for an issue ID they already know, from the user or the issue
   triage started from; they never find one by title search. Duplicates that
   still arise are tidied by a person in the tracker.

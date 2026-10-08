@@ -36,7 +36,7 @@
 - Git delivery skills state the requested repository outcome, the authority the
   request grants, the state that must be preserved, and the evidence required
   for completion. They leave ordinary Git command selection to the model.
-- `commit`, `pull`, `push`, `pr`, and `merge` each stand alone. `merge` invokes
+- `commit`, `pull`, `push`, `pr`, and `merge` each stand alone for their outcome. `merge` invokes
   an available `pull` skill with its resolved remote and base before verification
   and publication, so base integration and conflicts are handled before PR
   preparation. It retains an inline fetch-and-rebase fallback for standalone
