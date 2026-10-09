@@ -67,12 +67,21 @@
   the same act with a source name; naming the source in a skill name was
   rejected here because a user should predict the command from the work, not
   from where the skills came from.
-- `clean-worktrees` names the outcome a user asks for when worktrees pile up:
-  the repository's stale worktrees cleared in one pass. The user chose it over
-  `sweep-worktrees`, whose verb `resolve-follow-ups` already uses for its run
-  unit, and `prune-worktrees`, which reads as `git worktree prune` although
-  that command only drops registrations whose folder is gone. Neither Claude
-  Code 2.1.284 nor Codex 0.159.2 carries a command by that name.
+- `clean-branches` names the local leftovers of finished work cleared: the
+  worktree and local branch of a merged or closed pull request, detached
+  worktrees the base contains, and folders that lost their Git registration.
+  It replaced `clean-worktrees` when `merge` started handing it the branch it
+  merged, because a merge made from an ordinary checkout leaves a branch to
+  delete but no worktree. The branch is the unit every merged case shares and
+  the word users already use for the sweep. The object is plural because the
+  direct request is a sweep; the one branch `merge` passes is a special case
+  of it. The user chose it over `clean-merged`, which misses closed pull
+  requests, and `clean-local`, which reads as `git clean` and suggests
+  deleting uncommitted files the skill in fact preserves. Earlier,
+  `sweep-worktrees` lost because `resolve-follow-ups` already uses that verb
+  for its run unit, and `prune-worktrees` because it reads as `git worktree
+  prune`, which only drops registrations whose folder is gone. The
+  description says it leaves remote branches alone.
 - `update-project-skills` names the outcome a user asks for: every skill
   installed in the project brought to its latest published version. The object
   is the project's installed set from every source, and the Toycrane-specific
