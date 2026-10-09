@@ -453,7 +453,7 @@
 App-level context and work-unit shaping operate at different lifetimes. A
 from-scratch app needs one current premise that survives across features, while
 each shaping session must still converge on one implementation-ready work unit.
-Keeping their skills independent lets either be installed and invoked alone and
+Keeping their skills separate lets either be invoked without the other and
 prevents app identity from becoming feature scope. Plans derived at execution
 time age better than stored implementation predictions. Delivery outcomes,
 rather than predicted session duration, remain the durable task unit.

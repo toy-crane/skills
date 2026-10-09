@@ -63,6 +63,14 @@
 - `clean-worktrees`를 `clean-branches`로 바꾼다. 폴더, frontmatter 이름,
   `plugin.json` 경로, `.agents/skills/`와 `.claude/skills/` 심볼릭 링크,
   README, `merge` 안의 참조가 함께 바뀐다.
+- `clean-branches`의 일괄 정리는 워크트리 없는 로컬 브랜치도 후보로 본다.
+  지금은 `git worktree list`에서 출발해 워크트리에 체크아웃된 브랜치만
+  보는데, 일반 체크아웃에서 머지한 브랜치는 워크트리가 없어서 한 번도
+  후보가 되지 않는다. 새 이름이 약속하는 단위가 브랜치이므로, PR이 머지되거나
+  닫힌 로컬 브랜치를 워크트리와 같은 기준으로 판정한다: GitHub에서 브랜치
+  이름으로 PR을 찾고, tip이 PR head와 같거나 base에 포함될 때만 지우며,
+  base 브랜치와 지금 체크아웃된 브랜치는 건드리지 않는다. PR이 없는
+  브랜치는 지금 워크트리에서 그러듯 남기고 보고한다.
 - `clean-branches`는 `merge`가 넘기는 한 브랜치를 받는 경로를 얻는다.
   워크트리가 있으면 지금의 헬퍼 판정으로 워크트리와 로컬 브랜치를 정리한다.
   머지한 브랜치가 일반 체크아웃(주 체크아웃)에 체크아웃돼 있으면 헬퍼를
@@ -94,7 +102,9 @@
   없는 체크아웃에서 머지한 경우 로컬 브랜치 삭제와 base 체크아웃 복귀만
   일어난다.
 - `clean-branches`를 직접 부르면 지금 `clean-worktrees`와 같은 후보 판정,
-  제거, 보고를 한다.
+  제거, 보고를 하고, 거기에 더해 PR이 머지되거나 닫힌 워크트리 없는 로컬
+  브랜치를 지운다. PR 없는 브랜치, base 브랜치, 체크아웃된 브랜치는 남고
+  보고에 이유가 적힌다.
 - 저장소에 `remove-worktree.sh`가 한 벌만 있고, `.github/workflows/`에는
   `plugin-manifest`와 `codex-review-gate`만 남는다.
 - `claude plugin validate . --strict`가 통과하고, `plugin.json`의 `skills`
