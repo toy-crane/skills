@@ -5,6 +5,12 @@ description: Implement or resume settled work from a selected spec folder as one
 
 # Implement
 
+This skill requires `tdd`, `babysit-specs`, and `project-knowledge`. Before
+doing any work, confirm each one is installed. When one is missing, stop and
+report it with its install command,
+`npx skills@latest add toy-crane/skills --skill <name>`, using the project's
+package manager runner where it pins one.
+
 ## Claim the folder when a tracker coordinates it
 
 The input is always the spec folder. When the repository's `AGENTS.md` or
@@ -73,9 +79,10 @@ baseline, so each check covers only what happened since the previous outcome.
 A mismatch that would change an approved outcome, acceptance criterion,
 off-limits area, or other product constraint stops that outcome before any
 source change: name the stale point and its evidence, then route it to
-`babysit-specs` for this spec folder alone when that skill is available, or
-present the exact decision for the user to settle through shaping when it is
-not. Naming the folder keeps the revision on the selected work unit; you still
+`babysit-specs` for this spec folder alone, handing it the stale point and its
+evidence; it hands back the revised `spec.md`, which this run reloads before
+continuing. Naming the folder keeps the revision on the selected work unit;
+you still
 never read a sibling spec folder. A stale spec caught here
 costs nothing, while the same discovery made mid-implementation discards work
 already done.
@@ -89,9 +96,10 @@ file.
 ## Implement and reconcile one outcome
 
 Select a public test seam from the agreed behavior and existing interfaces.
-Briefly state the seam and the behavior it will verify, then use the `tdd` skill
-when available. Otherwise implement one red-to-green behavior at a time through
-the selected seam. Resolve technical uncertainty through repository evidence;
+Briefly state the seam and the behavior it will verify, then hand both to the
+`tdd` skill, which implements one red-to-green behavior at a time through that
+seam and hands back the passing tests and the change they establish.
+Resolve technical uncertainty through repository evidence;
 ask the user only when expected behavior remains unclear or proceeding would
 change the agreed product contract.
 
@@ -167,9 +175,9 @@ success.
 
 Resolve in-scope discrepancies and affected tasks in the current work. Route a
 workaround whose root cause remains open, or an evidenced out-of-scope defect,
-through `project-knowledge` at discovery time. If unavailable, write the
-symptom, observed evidence, suspected cause, what was tried, and proposed next
-step to `docs/follow-ups/<slug>.md`.
+through `project-knowledge` at discovery time, handing it the symptom, observed
+evidence, suspected cause, what was tried, and proposed next step, and keep
+the `docs/follow-ups/<slug>.md` path it reports for the handoff.
 
 ## Complete deterministic verification before review
 
@@ -240,12 +248,12 @@ for another look at a confirmed user command instead of invoking the reviewer
 again.
 
 Record every other finding rather than repairing it: an evidenced defect or open
-workaround through `project-knowledge`, or as `docs/follow-ups/<slug>.md` when
-that skill is absent; a trade-off the spec or a decision contract already
-disposed of, as disposed; an out-of-scope, stylistic, or unconfirmed finding, in
-the handoff; and a material consequence the spec leaves open, such as a security
-trade-off or a pathological-input failure, as a decision the user owns, with
-`human-review` offered for judging it.
+workaround through `project-knowledge` with the same five fields, keeping the
+follow-up path it reports; a trade-off the spec or a decision
+contract already disposed of, as disposed; an out-of-scope, stylistic, or
+unconfirmed finding, in the handoff; and a material consequence the spec leaves
+open, such as a security trade-off or a pathological-input failure, as a
+decision the user owns.
 
 ## Verify the final product after review and repairs
 

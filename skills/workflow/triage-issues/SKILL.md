@@ -5,6 +5,11 @@ description: Triage new human-written general issues from a configured issue tra
 
 # Triage general issues
 
+This skill requires `pr`. Before doing any work, confirm it is installed.
+When it is missing, stop and report it with its install command,
+`npx skills@latest add toy-crane/skills --skill pr`, using the project's
+package manager runner where it pins one.
+
 Reduce the time a person spends deciding what to do with freely written issues.
 Use the repository's `## Issue tracker` section in `AGENTS.md` or `CLAUDE.md`
 and its linked `docs/issue-tracker.md`. Read both agent files and use the first
@@ -112,10 +117,11 @@ evidence. Choose the smallest outcome that actually resolves the request:
   a new product request that may be declined, recommend proceed, defer, or
   decline with consequences and leave the choice to a person.
 
-Raise either PR by invoking the available `pr` skill, which writes the body,
-evidence, and issue links. When `pr` is unavailable, create the PR with a brief
-body of the problem, the change, and its verification, and keep the issue
-links, because later reconciliation reads them: an `Issue: <tracker>:<id>` line
+Raise either PR by invoking the `pr` skill with the branch, the base, the
+issue ID this run triaged, and the verification evidence collected; it writes
+the body, evidence, and issue links and hands back the PR URL. Later
+reconciliation reads the links it leaves: an
+`Issue: <tracker>:<id>` line
 in the body, and the convention's closing reference only on the implementation
 PR, whose verified diff delivers the direct implementation even without a spec
 folder or `Spec-Folder` trailer. A spec PR carries no closing reference. Use

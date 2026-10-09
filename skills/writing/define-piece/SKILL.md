@@ -5,6 +5,11 @@ description: Turn one topic and a rough direction into a confirmed brief for a s
 
 # Define Piece
 
+This skill requires `project-knowledge`. Before doing any work, confirm it is
+installed. When it is missing, stop and report it with its install command,
+`npx skills@latest add toy-crane/skills --skill project-knowledge`, using the
+project's package manager runner where it pins one.
+
 Settle what one piece must do before any of it is written, by putting concrete
 candidates in front of the user to correct, then record the confirmed brief
 that drafting will follow.
@@ -23,8 +28,8 @@ root `PRODUCT.md` when the topic concerns the product, taking only the facts
 this piece needs. Apply the relevant confirmed writing criteria and accepted
 examples when proposing headings and prose variants; transfer their writing
 qualities, not their subject matter. Resolve an ambiguous term with the user
-and record it through `project-knowledge`, or directly in `GLOSSARY.md` when
-that skill is unavailable.
+and record it through `project-knowledge`, handing it the term, its confirmed
+meaning, and the wording to avoid, and use the `GLOSSARY.md` entry it reports.
 
 Resolve what evidence can answer before asking the user. When the piece makes
 a claim about how code, a tool, or a package behaves, read the source or run

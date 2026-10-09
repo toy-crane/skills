@@ -16,7 +16,7 @@
 - `merge` 스킬이 auto merge를 선택할 조건과 일반 병합 경로를 명확히 한다.
 - 병합 방식은 기존처럼 커밋을 보존할 가치에 따라 rebase 또는 squash를 선택한다. Auto merge 여부가 병합 방식을 바꾸지 않는다.
 - PR의 현재 head, base, 관련 검증, GitHub 필수 조건, 저장소의 auto merge 허용 여부를 근거로 선택한다.
-- [Skill design](../../decisions/skill-design.md)은 Git 전달 스킬의 독립성과 원격 완료 증거를 규정한다. [기존 merge 복구 스펙](../merge-rebase-blocker-recovery/spec.md)은 rebase 차단, head 변경, 최신 CI 재검증을 규정한다.
+- [Skill design](../../decisions/skill-design.md)은 Git 전달 스킬의 원격 완료 증거를 규정한다. rebase 차단, head 변경, 최신 CI 재검증은 `merge` 스킬 본문이 규정한다.
 
 ## 수용 기준
 

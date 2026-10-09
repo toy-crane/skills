@@ -5,6 +5,11 @@ description: Interview the user to define or revise the standing premise of one 
 
 # Define Publication
 
+This skill requires `project-knowledge`. Before doing any work, confirm it is
+installed. When it is missing, stop and report it with its install command,
+`npx skills@latest add toy-crane/skills --skill project-knowledge`, using the
+project's package manager runner where it pins one.
+
 Draw out what one publication is for and how it works, then preserve it as the
 single current premise later pieces read. A rough direction starts the
 interview; it does not supply the missing meaning.
@@ -150,10 +155,10 @@ Keep the file about this medium:
 - Put the medium's accepted sample and confirmed voice in its Voice section.
   Voice explicitly shared across the author's publications belongs in the
   existing style subject under `docs/decisions/`; link to it instead of copying
-  the rule or sample. Use `project-knowledge` when available, or update that
-  subject directly with the rule, reason, scope, representative example, and
-  confirmation evidence. When no subject exists, create one and link it once
-  from `docs/decisions/README.md`. A pointer to an unwritten record is not
+  the rule or sample. Record it through `project-knowledge`, handing it the
+  rule, reason, scope, representative example, and confirmation evidence, and
+  link the `docs/decisions/<subject>.md` path it reports. A pointer to an
+  unwritten record is not
   preservation. Durable writes stay within these premise and style owners.
 - Leave individual pieces, their theses, outlines, and briefs to the per-piece
   workflow.

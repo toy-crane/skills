@@ -34,14 +34,19 @@
   checkout that also holds registered linked worktrees, such as
   `.claude/worktrees/`. With a `.git` entry, uncommitted work cannot be ruled
   out, so the folder stays.
-- `merge` and `clean-worktrees` ship the same removal helper, so each stands
-  alone when installed by itself. A pull request check fails when the shipped
-  copies differ.
+- `clean-branches` is the only skill that ships the removal helper and its
+  evals. `merge` requires `clean-branches` and hands it the merged branch, its
+  worktree when one exists, the fetched base, and the merged pull request's
+  head commit after the remote reports `MERGED`.
 
 ## Boundaries
 
-- The procedure removes one worktree that a skill has already chosen. Choosing
-  which worktrees qualify belongs to the calling skill.
+- The procedure removes one worktree at a time. `clean-branches` chooses the
+  candidates when it sweeps the repository; `merge` names the one it merged.
+- The helper never removes the primary checkout: it reports `main-checkout`
+  and `blocked`. When the merged branch is checked out there, `clean-branches`
+  skips the helper, moves that checkout to the merged base, and deletes only
+  the local branch, leaving it when uncommitted changes remain.
 - Docker containers, emulators, and other resources that do not work inside
   the folder are released only by the project's declared commands.
 - A Git worktree's removal does not delete its remote branch.
@@ -90,8 +95,10 @@ first so the chat can restore it.
   in-progress chat and loses the snapshot Codex takes before its own removal.
 - Running the cleanup commands only when the folder is removed — merged
   worktrees kept for the current session keep their resources.
-- One skill delegating removal to another installed skill — the first skill
-  loses its cleanup when installed alone.
+- A copy of the helper in each skill that removes worktrees, kept identical by
+  a pull request check — it let each skill work alone, but every change had to
+  land twice and the check existed only to police the copies; a `merge`
+  installed without `clean-branches` now stops at its start and says so.
 
 ## Evidence worth preserving
 

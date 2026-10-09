@@ -5,6 +5,11 @@ description: Verify Expo and React Native changes in a running app with agent-de
 
 # Expo Dev Loop
 
+This skill requires `project-knowledge`. Before doing any work, confirm it is
+installed. When it is missing, stop and report it with its install command,
+`npx skills@latest add toy-crane/skills --skill project-knowledge`, using the
+project's package manager runner where it pins one.
+
 Prove the changed behavior in the running app. Static inspection, type checks,
 unit tests, and a successful bundle support the result but do not replace device
 verification.
@@ -153,10 +158,10 @@ a flow worth keeping as a regression check.
 
 When a workaround such as clearing a cache or rebuilding leaves its root cause
 open, or you observe an out-of-scope defect with evidence, record it at the
-moment of discovery through the `project-knowledge` skill. If that skill is
-unavailable, write the symptom, observed evidence, suspected cause, what was
-tried, and a proposed next step to `docs/follow-ups/<slug>.md` yourself.
-Reporting it only in conversation loses it.
+moment of discovery through the `project-knowledge` skill, handing it the
+symptom, observed evidence, suspected cause, what was tried, and a proposed
+next step, and keep the `docs/follow-ups/<slug>.md` path it reports for the
+handoff. Reporting it only in conversation loses it.
 
 ## Finish the loop
 

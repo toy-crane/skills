@@ -11,17 +11,29 @@
   the procedure when improved models handle that failure without instruction.
 - Point at real artifacts instead of paraphrasing them. Keep detailed material
   in a referenced resource and load it only when needed.
-- Every published skill is self-sufficient because skills may be installed one
-  at a time. Restate a required constraint inline instead of assuming another
-  skill's text is available.
+- A published skill never assumes another skill's text is loaded: skills load
+  one at a time, so it restates what it needs inline rather than pointing at
+  another skill's discipline. Delegation is different from knowledge. A skill
+  that invokes another skill of this set by name requires it: it states what it
+  hands over and what it gets back, and carries no inline path for the case
+  where that skill is missing. Before doing any work, it checks that every
+  skill it will invoke is installed, and when one is missing it stops and names
+  the skill with the command that installs it. A side task, such as recording
+  a follow-up through `project-knowledge`, is required the same way as a main
+  step. A name that only appears in a message to the user, such as "rerun
+  `setup-issue-tracker`", or in a boundary sentence, is not a dependency.
+- Skills outside this set, such as `find-skills`, stay optional: a skill uses
+  one when it is present and keeps the same outcome itself when it is not.
 - `resolve-follow-ups` keeps intent, reproduction, and reporting guidance in
   its standalone skill while a bundled dispatcher owns the low-freedom
   operations whose races are costly: fetched ordering, attempt identity,
   atomic ownership, worktree binding, terminal state, recovery, and cleanup.
-- An orchestration skill may use an available specialized skill whose trigger
-  matches the current surface, while retaining the outcome itself when that
-  specialist is absent. `implement` applies this to runtime verification rather
-  than depending on a generic verification dispatcher.
+- An orchestration skill may use a specialized skill selected by trigger match
+  on the current surface, such as an Expo verification loop, while retaining
+  the outcome itself when no such specialist is installed. A specialist chosen
+  this way is not named, so it is not a required skill. `implement` applies
+  this to runtime verification rather than depending on a generic verification
+  dispatcher.
 - Put trigger conditions in frontmatter descriptions. `project-knowledge`
   triggers when project terms are being clarified, when choices that may
   constrain future work are being considered or settled in any session including
@@ -29,27 +41,20 @@
   stays open or observes an out-of-scope defect with evidence, but not for
   lookup or execution of settled work.
 - `project-knowledge` owns the follow-up criteria, format, and lifecycle.
-  Execution skills carry only a routing sentence to it plus a compressed inline
-  fallback, so a standalone install still records the item.
+  Execution skills carry only a routing sentence to it and require it.
 - Evaluate suspected counter-defaults against realistic prompts. When wording is
   revised after seeing a failure, test the revision on a new held-out control.
 - Git delivery skills state the requested repository outcome, the authority the
   request grants, the state that must be preserved, and the evidence required
   for completion. They leave ordinary Git command selection to the model.
-- `commit`, `pull`, `push`, `pr`, and `merge` each stand alone for their outcome. `merge` invokes
-  an available `pull` skill with its resolved remote and base before verification
+- `commit`, `pull`, `push`, and `pr` each own their outcome. `merge` composes
+  them: it invokes `pull` with its resolved remote and base before verification
   and publication, so base integration and conflicts are handled before PR
-  preparation. It retains an inline fetch-and-rebase fallback for standalone
-  installs; the broader skills never assume a separately installed skill
-  supplied missing instructions.
-- `merge` and `triage-issues` create or update their pull requests by
-  explicitly invoking an available `pr`, so PR body guidance has one copy.
-  Their standalone fallback keeps inline every rule whose output a later step
-  reads back, namely the issue-linking rules and the `Issue:` line, and
-  shortens only presentation guidance to a brief body of problem, change, and
-  verification. A degraded fallback is acceptable for presentation quality,
-  never for data that reconciliation depends on. `merge` treats `pr`'s finish
-  as an intermediate step and continues to verification and merge.
+  preparation, and invokes `pr` to create or update the pull request, so PR
+  body and issue-linking guidance has one copy. `triage-issues` raises its
+  pull requests through `pr` the same way. `merge` treats `pr`'s finish as an
+  intermediate step and continues to verification and merge, then hands the
+  merged branch to `clean-branches`, which owns the removal helper.
 - Deterministic Git helpers earn their fixed procedure only where ownership is
   unsafe to infer. The worktree removal helper decides whether a worktree is
   used by the current session, an attached process, or a left-over one, and
@@ -182,6 +187,8 @@ approval alone is insufficient evidence of better review.
 - A trigger description under- or over-fires on realistic routing evals.
 - A task becomes fragile enough that deterministic scripts or a fixed sequence
   are safer than open-ended instructions.
+- skills.sh lets a skill declare the skills it requires, so the install can
+  pull them in instead of the skill checking at its start.
 
 ## Still-rejected alternatives
 
@@ -189,19 +196,18 @@ approval alone is insufficient evidence of better review.
   verify without being forced through a universal sequence.
 - Predicted failures as justification for permanent procedure — guardrails earn
   their context cost from observed behavior.
+- An inline fallback for a required skill that is missing — plugin users and
+  `update-project-skills` always install the whole set, so the fallback runs
+  only for a one-skill skills.sh install, yet agents took it as the main path:
+  28 of 42 PR-creating sessions used `merge`'s copied rules instead of `pr`. A
+  shortened fallback also degrades silently where a stop is visible.
 - A full copy of `pr`'s body guidance in `merge`, kept identical by a CI
   check — it prevents drift but keeps the long duplicate and needs
-  section-comparison tooling; the copy that matters for correctness is the
-  short issue-linking rule set.
-- A fallback that drops issue linking when `pr` is absent — a standalone
-  `merge` would open PRs without the `Issue:` line its own reconciliation and
-  catch-up search for.
-- Relying on another installed skill — skills.sh users may possess only the
-  current skill.
+  section-comparison tooling.
 - A `run-server` skill as an `implement` dependency — it names a technical
-  mechanism rather than the handoff outcome and breaks standalone installation;
-  reconsider a separately invokable preview skill only if users repeatedly need
-  the same lifecycle outside implementation.
+  mechanism rather than the handoff outcome; reconsider a separately invokable
+  preview skill only if users repeatedly need the same lifecycle outside
+  implementation.
 - A generic verification skill as an `implement` dependency — framework skills
   own their distinct runtime loops, while `implement` already owns selection and
   the completion gate.
@@ -333,3 +339,8 @@ approval alone is insufficient evidence of better review.
   whose generic "use available PR skills when they fit" sentence never led to
   `pr`. A GitHub PR template is no substitute: `gh` 2.100.0 ignores it whenever
   `--body` or `--body-file` is passed, which agents always do.
+- The `skills` CLI 1.7.1 installs skills one at a time through `--skill` and
+  reads only `name` and `description` from a `SKILL.md` frontmatter; it has no
+  field for declaring that one skill requires another. A required skill can
+  therefore be missing only after a one-skill skills.sh install, and the skill
+  itself has to detect that at its start.

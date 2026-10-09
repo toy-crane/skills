@@ -5,10 +5,10 @@
 - `add-stack-context` owns the project-wide audit of direct stack technologies,
   discovery of agent-facing context, source acceptance, installation, and the
   final accounting for every technology.
-- Skill discovery starts with `find-skills` when it is available. Because a
-  published skill must work when installed alone, `add-stack-context` retains
-  the same search outcome through the Skills CLI or equivalent current sources
-  when `find-skills` is absent.
+- Skill discovery starts with `find-skills` when it is available. It is
+  published outside this set, so it is not a required skill: `add-stack-context`
+  retains the same search outcome through the Skills CLI or equivalent current
+  sources when `find-skills` is absent.
 - A skill controlled by the technology's vendor may be installed automatically
   through its documented method. A community skill may be assessed and reported
   as a candidate, but requires explicit user approval before installation and
@@ -57,8 +57,8 @@ context while making the document itself current at the moment it matters.
 
 - The Skills ecosystem exposes verified vendor ownership that is strong enough
   to replace independent source validation.
-- A standard dependency declaration lets individually installed skills require
-  `find-skills` without losing standalone execution.
+- This set adopts `find-skills` as its own skill, or a standard dependency
+  declaration lets a skill require one from another publisher.
 - Vendors provide a version-pinned, automatically updated local context format
   that is more reliable than task-time retrieval.
 
@@ -71,8 +71,9 @@ context while making the document itself current at the moment it matters.
   audit.
 - Ignore community skills completely — it hides potentially useful capability
   even though the user can safely approve it after review.
-- Require `find-skills` as an installed dependency — plugin and individually
-  installed skills cannot assume it is present.
+- Require `find-skills` as an installed dependency — skills of this set require
+  each other, but `find-skills` belongs to another publisher, and the plugin
+  cannot carry it; the equivalent search is one CLI command.
 
 ## Evidence worth preserving
 

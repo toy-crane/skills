@@ -161,8 +161,9 @@ without turning it into feature scope or implementation prediction.
   [Google Labs DESIGN.md format](https://github.com/google-labs-code/design.md)
   (YAML tokens plus rationale, alpha in 2026) — rules would then live in two
   places while new decisions keep landing in contracts.
-- A separate skill that maintains `DESIGN.md` — `project-knowledge` would have
-  to invoke it, and a standalone install would silently drop the map.
+- A separate skill that maintains `DESIGN.md` — the map changes only when a
+  screen contract does, which is one write step inside `project-knowledge`;
+  a second skill would add a required dependency for that single step.
 - Editing each reading skill to open `DESIGN.md` — one route line in the
   project's agent instructions reaches every reader without widening them.
 - Harness task chips or session to-do state — they do not survive an

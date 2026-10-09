@@ -82,8 +82,8 @@
   code-plus-task checkpoints advance that baseline. A mismatch that would
   change an approved outcome, acceptance criterion, off-limits area, or product
   constraint stops that outcome before any source change, names the stale point
-  and its evidence, and routes it to `babysit-specs` when available or to the
-  same inline shaping decision when not. The check reads the selected spec
+  and its evidence, and routes it to `babysit-specs` for that folder alone.
+  The check reads the selected spec
   against the repository, so `implement` still never reads sibling spec
   folders.
 - The spec-writing skills own the producer side of that loading rule. A spec
@@ -101,7 +101,7 @@
   neither source silently overrides the other.
 - `implement` selects public test seams from the agreed behavior and existing
   interfaces under its implementation authority. It briefly states what the
-  seam will verify, then uses `tdd` when available. Technical uncertainty is
+  seam will verify, then uses `tdd`. Technical uncertainty is
   resolved through repository evidence; only unresolved expected behavior or a
   change to the agreed product contract requires a user decision.
 - For each affected product surface, `implement` uses an available matching
@@ -244,8 +244,7 @@
   repository evidence. The same context may continue, but remembered
   conversation alone cannot supply the next task's plan or current truth.
 - When shaping settles on a framework or hosted service, route its current
-  agent context through `add-stack-context` when that skill is available and
-  retain the same outcome inline when it is not. The
+  agent context through `add-stack-context`. The
   [stack-context](stack-context.md) contract owns discovery, source acceptance,
   live vendor-document routing, and the audit used during setup, stack changes,
   and entry into an unchecked project.
@@ -256,9 +255,9 @@
   decision.
 - When execution applies a workaround whose root cause stays open, or observes
   an out-of-scope defect with evidence, it records a follow-up at the moment of
-  discovery through `project-knowledge`, and writes the item directly when that
-  skill is absent. `implement` and each runtime-verification skill carry this
-  routing; `project-knowledge` owns the criteria and format. A recorded
+  discovery through `project-knowledge`. `implement` and each
+  runtime-verification skill carry this routing; `project-knowledge` owns the
+  criteria and format. A recorded
   follow-up is a valid `shape-idea` input or a direct fix seed for a later
   session.
 - `setup-issue-tracker` keeps the always-loaded tracker section focused on
@@ -289,8 +288,7 @@
   `Issue:` line, it creates one issue titled with the spec title, carrying the
   review signal and a bounded spec section as its body, commits the line on
   the same branch, and then opens the PR. `merge` and `triage-issues` open
-  PRs by invoking `pr` when it is installed and restate this step inline for
-  installs without it ([skill-design](skill-design.md)). `shape-idea` and `triage-issues` write
+  PRs by invoking `pr` ([skill-design](skill-design.md)). `shape-idea` and `triage-issues` write
   the line only for an issue ID they already know, from the user or the issue
   triage started from; they never find one by title search. Duplicates that
   still arise are tidied by a person in the tracker.
@@ -453,7 +451,7 @@
 App-level context and work-unit shaping operate at different lifetimes. A
 from-scratch app needs one current premise that survives across features, while
 each shaping session must still converge on one implementation-ready work unit.
-Keeping their skills independent lets either be installed and invoked alone and
+Keeping their skills separate lets either be invoked without the other and
 prevents app identity from becoming feature scope. Plans derived at execution
 time age better than stored implementation predictions. Delivery outcomes,
 rather than predicted session duration, remain the durable task unit.
@@ -495,8 +493,7 @@ review evidence, so verified implementation and pending review stay distinct.
 
 The runnable handoff lets the user inspect the verified implementation without
 turning server mechanics into a separate pipeline phase. Keeping the outcome in
-`implement` also preserves standalone installation while leaving
-`human-review` focused on unresolved human judgment.
+`implement` also keeps `human-review` focused on unresolved human judgment.
 
 Specialized runtime-verification skills own framework-specific observation
 loops, while `implement` owns their selection and the completion gates that
@@ -622,9 +619,10 @@ state keep automation reviewable without turning follow-up files into a queue.
   to a session that checked out the default branch, so two sessions take the
   same folder; the assignee field is visible the moment it is written.
 - A separately invoked reconciliation skill for alignment inside one work unit
-  — that alignment is part of outcome completion and becomes optional if
-  correctness depends on another installed skill or user invocation, so it
-  stays in `implement`. Revision across work units is different: it happens
+  — that alignment is part of outcome completion, so it stays in `implement`
+  rather than becoming one more required skill, or a user invocation, that
+  every ordinary implementation would wait on. Revision across work units is
+  different: it happens
   between implementations rather than inside one, and `implement`'s load-time
   staleness check keeps correctness from depending on anyone remembering to
   invoke `babysit-specs`.
@@ -632,10 +630,9 @@ state keep automation reviewable without turning follow-up files into a queue.
   outcomes prematurely.
 - Separate `implement-spec` and `implement-tasks` entry points — the spec folder
   already contains the information needed to choose the implementation path.
-- A `run-server` pipeline skill — it exposes a technical mechanism and would
-  make `implement` depend on another installed skill; reconsider a standalone
-  preview workflow only after repeated independent user requests establish a
-  separate outcome.
+- A `run-server` pipeline skill — it exposes a technical mechanism rather than
+  the handoff outcome; reconsider a separately invokable preview workflow only
+  after repeated independent user requests establish a separate outcome.
 - A generic runtime-verification dispatcher — matching framework skills already
   own their observation loops, while `implement` owns the implementation
   completion gate and remains usable when none is installed.

@@ -5,21 +5,25 @@ checks require real fresh sessions; matching words in SKILL.md is not a pass.
 Use only the synthetic fixtures here, never a user's blog or session history.
 
 For each independent entry in `evals.json`, copy its fixture into a temporary
-Git repository, install the selected skill there, and apply `setup.write` and
-`setup.remove` when present before invoking the prompt. Run without
-`project-knowledge` to exercise standalone preservation. Compare the unchanged
-source revision and the candidate on identical inputs. Retain temporary CLI
+Git repository, install the selected skill and `project-knowledge` there, and
+apply `setup.write` and `setup.remove` when present before invoking the
+prompt. The writing skills require `project-knowledge`, so a capture case
+only runs with it installed. Keep one separate stop case: run draft eval 3
+with `project-knowledge` absent and confirm the skill stops before touching
+the fixture, naming `project-knowledge` and
+`npx skills@latest add toy-crane/skills --skill project-knowledge`. Compare
+the unchanged source revision and the candidate on identical inputs. Retain temporary CLI
 traces and changed files for inspection. Authentication, permission, API, timeout,
 missing-agent, and incomplete-turn failures are invalid runs, not behavioral
 failures or empty successes. A successful CLI exit alone is not a passing result.
 
 ## Cross-client transfer
 
-1. Start from `fixtures/writing-feedback` with only `draft-piece` installed.
-   Run draft eval 3 in Claude. Inspect the actual decision file for capture,
+1. Start from `fixtures/writing-feedback` with `draft-piece` and
+   `project-knowledge` installed. Run draft eval 3 in Claude. Inspect the actual decision file for capture,
    merged brevity and claim criteria, rationale, scope and confirmation evidence.
 2. Start a fresh Codex session in that resulting repository with `define-piece`
-   installed. Run define-piece eval 5 without its synthetic `setup` override;
+   and `project-knowledge` installed. Run define-piece eval 5 without its synthetic `setup` override;
    the only preference evidence must be what Claude actually wrote. Confirm
    the new topic's proposed headings express claims without copying backup facts.
 3. Reverse the clients in a new fixture: Codex records via draft eval 3, then a

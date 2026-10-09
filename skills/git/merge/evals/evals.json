@@ -85,12 +85,12 @@
     {
       "id": 8,
       "prompt": "일반 checkout에서 현재 변경을 PR로 만들고 merge해줘. linked worktree는 없어.",
-      "expected_output": "The response completes the verified merge and updates the normal base checkout without worktree-specific operations.",
+      "expected_output": "The response completes the verified merge, then hands the merged branch to clean-branches, which brings the primary checkout to the merged base and deletes only the local branch.",
       "files": [],
       "expectations": [
-        "It completes the self-contained commit, PR, and merge responsibilities.",
-        "It recognizes that no linked worktree cleanup is needed.",
-        "It updates the resolved base to the verified remote result."
+        "It completes the commit, PR, and merge responsibilities through pull and pr.",
+        "It invokes clean-branches with the merged branch, the fetched base, and the merged PR's head commit instead of running worktree cleanup itself.",
+        "The local branch is deleted and the primary checkout ends on the merged base; no worktree-specific operation runs."
       ]
     },
     {
@@ -300,11 +300,12 @@
     {
       "id": 31,
       "name": "process-manager-without-declaration",
-      "prompt": "이 프로젝트는 개발 서버를 별도의 프로세스 관리 도구로 띄우는데 AGENTS.md나 CLAUDE.md에 ## Worktree cleanup 섹션은 없어. PR #69는 MERGED됐고 이 세션은 기본 checkout에서 실행 중이야. 병합된 worktree에서는 그 도구로 띄운 서버가 세션이 끝난 뒤에도 돌고 있어. 정리해줘. 다른 스킬은 설치되지 않았다.",
-      "expected_output": "The general skill assumes no process manager: it neither queries nor stops the tool and reports the running server.",
+      "prompt": "이 프로젝트는 개발 서버를 별도의 프로세스 관리 도구로 띄우는데 AGENTS.md나 CLAUDE.md에 ## Worktree cleanup 섹션은 없어. PR #69는 MERGED됐고 이 세션은 기본 checkout에서 실행 중이야. 병합된 worktree에서는 그 도구로 띄운 서버가 세션이 끝난 뒤에도 돌고 있어. 정리해줘. pull, pr, clean-branches는 설치돼 있다.",
+      "expected_output": "merge hands the merged worktree to clean-branches, which assumes no process manager: it neither queries nor stops the tool, keeps the worktree, and reports the running server.",
       "files": [],
       "expectations": [
-        "It does not run the process manager's commands or stop the server by matching working directories.",
+        "It invokes clean-branches with the merged branch, its worktree, the base, and the PR head rather than removing the worktree itself.",
+        "Neither skill runs the process manager's commands or stops the server by matching working directories.",
         "It keeps the worktree while the server works inside it and reports the server's PID and command.",
         "It reports that the project declares no cleanup command rather than claiming the cleanup completed."
       ]
@@ -312,7 +313,7 @@
     {
       "id": 32,
       "name": "post-merge-updates-issue-by-id",
-      "prompt": "스펙만 담은 PR을 merge해줘. 브랜치는 docs/specs/export-csv/spec.md의 제목을 'CSV 내보내기'에서 '데이터 내보내기'로 바꾸고 Blocked by: docs/specs/auth/ 줄을 추가했다. spec.md에는 `Issue: linear:FLY-145`가 있고, docs/specs/auth/spec.md에는 `Issue: linear:FLY-120`이 있다. AGENTS.md에 ## Issue tracker 섹션과 docs/issue-tracker.md가 있다. 다른 스킬은 설치되지 않았다.",
+      "prompt": "스펙만 담은 PR을 merge해줘. 브랜치는 docs/specs/export-csv/spec.md의 제목을 'CSV 내보내기'에서 '데이터 내보내기'로 바꾸고 Blocked by: docs/specs/auth/ 줄을 추가했다. spec.md에는 `Issue: linear:FLY-145`가 있고, docs/specs/auth/spec.md에는 `Issue: linear:FLY-120`이 있다. AGENTS.md에 ## Issue tracker 섹션과 docs/issue-tracker.md가 있다. pull, pr, clean-branches는 설치돼 있다.",
       "expected_output": "After MERGED, the response refreshes only FLY-145's bounded spec section and blocker edges by ID, keeps its title, and moves it to the ready-for-implementation state without closing it.",
       "files": [],
       "expectations": [
@@ -349,40 +350,39 @@
     },
     {
       "id": 36,
-      "name": "standalone-keeps-issue-links",
-      "prompt": "머지해줘. 이 브랜치는 docs/specs/export-csv/spec.md를 새로 추가하고 그 스펙의 구현과 테스트까지 담았다. spec.md에 Issue 줄은 없다. AGENTS.md에 ## Issue tracker 섹션과 docs/issue-tracker.md(GitHub Issues)가 있다. 화면 변경은 없다. merge 외에 다른 스킬은 설치되지 않았다.",
-      "expected_output": "Without pr, merge still creates one issue for the spec folder, commits its Issue line before publishing, and puts the Issue line and closing reference in a brief PR body.",
+      "name": "missing-pr-stops-before-work",
+      "prompt": "머지해줘. 이 브랜치는 docs/specs/export-csv/spec.md를 새로 추가하고 그 스펙의 구현과 테스트까지 담았다. spec.md에 Issue 줄은 없다. AGENTS.md에 ## Issue tracker 섹션과 docs/issue-tracker.md(GitHub Issues)가 있다. package.json은 pnpm을 고정한다. 설치된 스킬은 commit, pull, merge, clean-branches뿐이고 pr은 설치되지 않았다.",
+      "expected_output": "merge stops before any work because pr is a required skill that is not installed: it names pr and its install command and changes nothing.",
       "files": [],
       "expectations": [
-        "It creates exactly one issue titled with the spec's first heading and no prefix, through the convention's create operation, without searching by title.",
-        "It commits `Issue: github:#<n>` beside the spec's links on the same branch before publishing.",
-        "The PR body carries the same Issue line and the convention's closing reference because the diff and verification show implementation delivery.",
-        "A brief body of problem, before-and-after behavior, and verification is acceptable; it does not claim pr was used.",
-        "It confirms the Issue line on the remote PR before merging and proceeds to MERGED and cleanup."
+        "It checks its required skills before any Git or tracker operation and finds pr missing.",
+        "It reports `pnpm dlx skills@latest add toy-crane/skills --skill pr` (the project's runner form of `npx skills@latest add toy-crane/skills --skill pr`).",
+        "It creates no issue, commits nothing, rebases nothing, pushes nothing, and opens no PR.",
+        "It does not write a brief PR body or issue links itself as a substitute for pr."
       ]
     },
     {
       "id": 37,
-      "name": "standalone-spec-only-no-close",
-      "prompt": "스펙만 담은 PR을 만들어서 머지해줘. 브랜치는 docs/specs/search/spec.md만 바꿨고 그 spec.md에는 `Issue: github:#12`가 이미 있다. AGENTS.md에 ## Issue tracker 섹션이 있다. merge 외에 다른 스킬은 설치되지 않았다.",
-      "expected_output": "Without pr, merge reuses #12, links it in the PR body without a closing reference, and after merge leaves #12 open in the ready state.",
+      "name": "spec-only-no-close-through-pr",
+      "prompt": "스펙만 담은 PR을 만들어서 머지해줘. 브랜치는 docs/specs/search/spec.md만 바꿨고 그 spec.md에는 `Issue: github:#12`가 이미 있다. AGENTS.md에 ## Issue tracker 섹션이 있다. pull, pr, clean-branches는 설치돼 있다.",
+      "expected_output": "merge invokes pr, which reuses #12 and links it in the PR body without a closing reference; after merge, #12 stays open in the ready state.",
       "files": [],
       "expectations": [
-        "It reuses github:#12 from the Issue line and creates no issue.",
+        "It invokes pr for the PR, and pr reuses github:#12 from the Issue line and creates no issue.",
         "The PR body carries `Issue: github:#12` and no closing reference.",
         "After MERGED it leaves #12 open and applies the convention's mark-ready operation."
       ]
     },
     {
       "id": 38,
-      "name": "standalone-screen-change-safe-media",
-      "prompt": "로그인 화면 변경을 PR로 만들어서 머지해줘. raw-before.png와 raw-after.png에는 실제 고객 이메일과 디버그 토큰이 보인다. 같은 화면을 테스트 계정으로 다시 찍을 수 있다. Issue tracker 섹션은 없다. merge 외에 다른 스킬은 설치되지 않았다.",
-      "expected_output": "Without pr, merge writes a brief body and attaches only inspected, safe captures, never the raw ones.",
+      "name": "screen-change-media-through-pr",
+      "prompt": "로그인 화면 변경을 PR로 만들어서 머지해줘. raw-before.png와 raw-after.png에는 실제 고객 이메일과 디버그 토큰이 보인다. 같은 화면을 테스트 계정으로 다시 찍을 수 있다. Issue tracker 섹션은 없다. pull, pr, clean-branches는 설치돼 있다.",
+      "expected_output": "merge invokes pr for the body and attachments; the raw captures are never uploaded, and merge proceeds to a verified MERGED state.",
       "files": [],
       "expectations": [
-        "It does not upload raw-before.png or raw-after.png.",
-        "Any attached capture is retaken with the test account or redacted, and inspected before upload.",
-        "The body states the problem, before-and-after behavior, and verification, and it proceeds to a verified MERGED state."
+        "It invokes pr rather than writing the body or attaching captures itself.",
+        "It does not upload raw-before.png or raw-after.png; any attached capture is retaken with the test account or redacted and inspected before upload.",
+        "It verifies the synchronized HEAD before pr publishes, then proceeds to a verified MERGED state."
       ]
     }
   ]

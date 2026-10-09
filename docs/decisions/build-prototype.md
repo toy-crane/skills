@@ -190,8 +190,8 @@ states that evidence boundary directly.
 - Reviewers of a multi-view flow comparison repeatedly report that switching
   alternatives in place hides a structural difference they needed to see at
   once; a wide-pane-only combined view would be the first candidate.
-- Individually installed skills gain a reliable dependency mechanism that can
-  share project-knowledge rules without making this skill unavailable alone.
+- A skill can load another skill's text at run time, so the project-knowledge
+  rules this skill restates could be read from their owner instead.
 
 ## Still-rejected alternatives
 
@@ -205,8 +205,9 @@ states that evidence boundary directly.
   requests and in-progress shaping may have complete conversational context
   before any spec exists.
 - Delegating core context and preservation behavior to `project-knowledge` — it
-  shortens this file but breaks standalone installs and direct invocation when
-  that skill is unavailable.
+  shortens this file, but a skill cannot assume another skill's text is loaded,
+  so every direct prototype request would have to invoke `project-knowledge`
+  first for rules this skill applies on every run.
 - One file per screen or shared external CSS — the surface stops travelling and
   rendering as a single consistent artifact.
 - Screen tabs and state pills — their width grows with the surface, and listing
@@ -259,7 +260,7 @@ states that evidence boundary directly.
   and built a two-alternative authentication flow. The latter two artifacts
   passed 29 browser checks. These bounded checks support the local pruning;
   they do not establish general model equivalence or execute the high-effort
-  review itself. The preserved-state and standalone-install rules remain.
+  review itself. The preserved-state and self-contained-context rules remain.
 - A fresh `standard` control run after fixing the shared gate produced all three
   requested screens, exercised them at 390, 768, and full width, and tested the
   requested interaction and reset paths. Its browser pass found and corrected
