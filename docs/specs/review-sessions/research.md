@@ -1,10 +1,10 @@
-# 세션 기록에서 결정론으로 옮길 일 찾기 — 조사 결과 (초안)
+# 세션 기록에서 결정론으로 옮길 일 찾기 — 조사 결과
 
-> 초안. 스킬을 만들지 결정하면 `spec.md`로 흡수하거나 이 파일을 지운다.
-> 폴더 이름 `review-sessions`는 임시다. 스킬 이름은 `skill-naming` 결정을 따라 따로 정한다.
-> 이 파일과 `tools/`는 스펙 폴더가 원래 갖지 않는 임시 파일이다
-> ([document-lifecycles](../../decisions/document-lifecycles.md)는 spec, prototype,
-> tasks만 둔다). 결정이 나면 스킬의 `scripts/`로 옮기거나 폴더와 함께 지운다.
+> 이 폴더의 조사 기록이다. [spec.md](./spec.md)가 근거와 수용 기준의 재현
+> 대상으로 연결하며, 폴더가 퇴역할 때 함께 지워진다. `tools/`는 구현이
+> 출발점으로 삼는 측정 틀이고, 스킬에 실리면 여기서는 지운다
+> ([document-lifecycles](../../decisions/document-lifecycles.md)는 spec,
+> prototype, tasks만 두므로 둘 다 이 작업 단위에 한정된 임시 파일이다).
 
 출발점은 [Poteto 인터뷰 정리](https://notes.toycrane.xyz/poteto-spacex-shipping-2500-prs/)의 주장이다.
 지난 대화를 주기적으로 읽어서 반복 개입과 반복 실패를 찾고, 그중 고정된 절차는
