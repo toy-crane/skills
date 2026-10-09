@@ -55,8 +55,11 @@ work-unit scope, or acceptance criteria into it.
 
 When a proposed edit would choose a new audience, problem, promise, core loop,
 product boundary, or other product intent, leave the file unchanged and ask the
-user to settle that meaning. Use `define-product` when the user wants to reopen
-the product premise.
+user to settle that meaning. When the user wants to reopen the product
+premise, invoke `define-product` with the current `PRODUCT.md`, the exact
+ambiguity found, and the surfaces that depend on it, so it revises only that
+part of the premise; it hands back the updated `PRODUCT.md`, after which this
+pass resumes and reconciles the remaining durable surfaces against it.
 
 ## Maintain decision contracts
 

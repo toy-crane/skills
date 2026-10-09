@@ -80,7 +80,8 @@ that makes the decision judgeable.
   question about its unresolved part and wait. Keep a linear structure that fits
   in one sentence in prose.
 - When the user asks for an explanation rather than a decision, invoke
-  `explain-visually`.
+  `explain-visually` with the question and the sources it concerns; it hands
+  back the rendered explanation, after which shaping resumes.
 
 A choice is settled when the user confirms it or it is made under authority the
 user explicitly delegated for that class of decision. It becomes a project

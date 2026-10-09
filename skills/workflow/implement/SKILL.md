@@ -79,8 +79,10 @@ baseline, so each check covers only what happened since the previous outcome.
 A mismatch that would change an approved outcome, acceptance criterion,
 off-limits area, or other product constraint stops that outcome before any
 source change: name the stale point and its evidence, then route it to
-`babysit-specs` for this spec folder alone. Naming the folder keeps the
-revision on the selected work unit; you still
+`babysit-specs` for this spec folder alone, handing it the stale point and its
+evidence; it hands back the revised `spec.md`, which this run reloads before
+continuing. Naming the folder keeps the revision on the selected work unit;
+you still
 never read a sibling spec folder. A stale spec caught here
 costs nothing, while the same discovery made mid-implementation discards work
 already done.
@@ -94,8 +96,9 @@ file.
 ## Implement and reconcile one outcome
 
 Select a public test seam from the agreed behavior and existing interfaces.
-Briefly state the seam and the behavior it will verify, then use the `tdd` skill
-to implement one red-to-green behavior at a time through the selected seam.
+Briefly state the seam and the behavior it will verify, then hand both to the
+`tdd` skill, which implements one red-to-green behavior at a time through that
+seam and hands back the passing tests and the change they establish.
 Resolve technical uncertainty through repository evidence;
 ask the user only when expected behavior remains unclear or proceeding would
 change the agreed product contract.

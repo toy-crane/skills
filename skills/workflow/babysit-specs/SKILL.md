@@ -97,7 +97,9 @@ its rationale, and the rejected alternatives, and link the
 - A completed task whose delivered outcome the revision changed: leave its
   evidence untouched and name it for re-verification.
 - A drifted prototype: regenerate the affected screens through
-  `build-prototype`.
+  `build-prototype`, handing it the drifted screens and states and the
+  current surface they must match; it hands back the updated
+  `prototype.html`, which the spec keeps linking.
 - A spec whose acceptance criteria all pass against the current repository:
   report it as a retirement candidate. Deleting the folder belongs to
   `maintain-project-context` or the user.
