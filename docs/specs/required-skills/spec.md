@@ -95,9 +95,14 @@
   싣고 CI로 맞춘다"는 요구를, `docs/specs/use-pr-skill-for-prs/`(#127)는
   "`pr`이 없을 때 `merge`가 쓰는 짧은 본문과 인라인 이슈 연결"을,
   `docs/specs/merge-rebase-blocker-recovery/`는 "`merge`는 단독 설치에서도
-  복구를 책임진다"는 전제를 들고 있다. 남겨 두면 이 스펙과 모순되는 수용
-  기준이 저장소 컨텍스트에 남는다. 그 결정 내용은 `worktree-cleanup.md`,
+  복구를 책임진다"는 전제를, `docs/specs/pr-video-first/`(#126)는 "`pr`과
+  `merge`는 각자 독립 설치되므로 같은 PR 본문 규칙 사본을 가진다"는
+  제약을 들고 있다. 남겨 두면 이 스펙과 모순되는 수용 기준이 저장소
+  컨텍스트에 남는다. 그 결정 내용은 `worktree-cleanup.md`,
   `skill-design.md`, `pr-descriptions.md`가 이미 가지고 있다.
+  `docs/specs/merge-auto-merge/`는 남기되, 지워지는
+  `merge-rebase-blocker-recovery/`로 가는 링크와 "Git 전달 스킬의 독립성"
+  문구를 `merge` 스킬 본문이 그 복구 동작을 가진다는 문장으로 바꾼다.
 - 설치된 플러그인 사용자가 업데이트를 받도록 `plugin.json` 버전을 올린다.
 
 ## 수용 기준
@@ -155,7 +160,7 @@
 - `clean-branches`의 description은 일괄 정리와 `merge`가 넘기는 한 브랜치를
   함께 받는다고 적고, "머지 직후 정리는 `merge` 몫"이라는 문장은 지운다.
 - `plugin.json` 버전은 minor를 올린다.
-- 출시된 네 스펙 폴더의 삭제는 이 작업에서 한다. 보통은
+- 출시된 다섯 스펙 폴더의 삭제는 이 작업에서 한다. 보통은
   `maintain-project-context`의 정기 정리 몫이지만, 이 작업이 그 폴더들의
   요구를 직접 뒤집기 때문이다.
 
