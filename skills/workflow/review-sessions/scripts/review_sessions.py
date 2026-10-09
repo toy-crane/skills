@@ -276,9 +276,35 @@ def parse_claude(path):
 EXEC_CMD_RE = re.compile(r"exec_command\(\s*\{[^}]*?cmd\s*:\s*(\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)", re.S)
 
 
+def events_from_item(item, ts):
+    """Events for a `codex review` run, which records items only as event_msg lines."""
+    kind = item.get("type")
+    if kind == "UserMessage":
+        txt = " ".join(b.get("text", "") for b in item.get("content", []) if isinstance(b, dict)).strip()
+        return [{"k": "user", "t": ts, "text": txt[:400], "corr": bool(CORRECTION_RE.search(txt[:400])),
+                 "interrupt": False, "len": len(txt)}] if txt else []
+    if kind != "CommandExecution":
+        return []
+    cmd = item.get("command")
+    if isinstance(cmd, str) and cmd.startswith("["):
+        m = re.search(r"'-l?c',\s*'(.*)'\]$", cmd, re.S)
+        cmd = m.group(1) if m else cmd
+    elif isinstance(cmd, list):
+        cmd = cmd[-1] if len(cmd) >= 3 and str(cmd[1]).startswith("-") else " ".join(map(str, cmd))
+    cmd = str(cmd or "")
+    heads, full = norm_cmd(cmd)
+    out = [{"k": "tool", "t": ts, "name": "Bash", "side": False, "heads": heads, "full": full, "raw": cmd[:300]}]
+    code = item.get("exit_code")
+    if code not in (None, 0) or item.get("status") == "failed":
+        text = str(item.get("aggregated_output") or item.get("stderr") or f"exit code {code}")
+        out.append({"k": "err", "t": ts, "tool": "Bash", "side": False, "denial": False, "key": err_key(text), "text": text[:300]})
+    return out
+
+
 def parse_codex(path):
     s = Session("codex", path)
     call_names = {}
+    fallback = []
     with open(path, "r", errors="replace") as f:
         for line in f:
             if not line.startswith("{"):
@@ -302,6 +328,10 @@ def parse_codex(path):
                 s.cwd = p.get("cwd")
                 s.originator = p.get("originator")
                 s.thread_source = p.get("thread_source")
+                continue
+            if typ == "event_msg":
+                if p.get("type") == "item_completed":
+                    fallback.extend(events_from_item(p.get("item") or {}, ts))
                 continue
             if typ != "response_item":
                 continue
@@ -361,6 +391,10 @@ def parse_codex(path):
                 if code not in (None, 0):
                     s.events.append({"k": "err", "t": ts, "tool": call_names.get(p.get("call_id"), "?"), "side": False,
                                      "denial": False, "key": err_key(out), "text": out[:300]})
+    if fallback and not any(e["k"] == "tool" for e in s.events):
+        s.events = fallback
+        s.n_user_text = sum(1 for e in fallback if e["k"] == "user")
+        s.first_prompt = next((e["text"][:300] for e in fallback if e["k"] == "user"), s.first_prompt)
     return s
 
 

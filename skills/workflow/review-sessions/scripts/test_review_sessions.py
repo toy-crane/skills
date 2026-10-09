@@ -123,6 +123,16 @@ class ScanFixture:
         g.append({"timestamp": "2026-10-01T09:00:00.000Z", "type": "weird", "payload": {}})
         g.append({"timestamp": "2026-09-01T09:00:00.000Z", "type": "weird", "payload": {}})
         write_jsonl(self.codex / "2026" / "10" / "01" / "rollout-2026-10-01T09-00-00-g1.jsonl", g, mtime=old)
+        # R: a Codex review run recorded as events only (no response_item lines)
+        r_ts = "2026-10-02T09:00:00.000Z"
+        write_jsonl(self.codex / "2026" / "10" / "02" / "rollout-2026-10-02T09-00-00-r1.jsonl", [
+            {"timestamp": r_ts, "type": "session_meta", "payload": {"id": "r1", "cwd": f"{HOME}/code/beta", "originator": "codex_exec", "thread_source": "user", "cli_version": "0.161.0"}},
+            {"timestamp": r_ts, "type": "event_msg", "payload": {"type": "item_completed", "item": {"type": "UserMessage", "id": "u1", "content": [{"type": "text", "text": "Review the change in `git diff origin/main...HEAD`."}]}}},
+            {"timestamp": r_ts, "type": "event_msg", "payload": {"type": "item_completed", "item": {"type": "CommandExecution", "id": "e1", "command": ["/opt/homebrew/bin/zsh", "-lc", "git diff origin/main...HEAD"], "exit_code": 0, "status": "completed"}}},
+            {"timestamp": r_ts, "type": "event_msg", "payload": {"type": "item_completed", "item": {"type": "CommandExecution", "id": "e2", "command": ["/opt/homebrew/bin/zsh", "-lc", "bun test"], "exit_code": 1, "status": "failed", "aggregated_output": "1 fail"}}},
+            {"timestamp": r_ts, "type": "event_msg", "payload": {"type": "item_completed", "item": {"type": "CommandExecution", "id": "e3", "command": "['/opt/homebrew/bin/zsh', '-lc', 'cat docs/specs/x/spec.md']", "exit_code": 0, "status": "completed"}}},
+            {"timestamp": r_ts, "type": "event_msg", "payload": {"type": "item_completed", "item": {"type": "AgentMessage", "id": "a1", "content": [{"type": "Text", "text": "patch is correct"}]}}},
+        ], mtime=old)
         # H: Codex subagent thread — excluded
         write_jsonl(self.codex / "2026" / "10" / "01" / "rollout-2026-10-01T09-05-00-h1.jsonl", codex_session(
             "h1", f"{HOME}/code/beta", "Codex Desktop", "subagent", [
@@ -203,9 +213,9 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
     def test_counts_sessions_events_and_excludes_eval_in_progress_empty_and_subagent_sessions(self):
         f = self.fx.scan()
         self.assertEqual(f["sessions"]["claude"], 2)
-        self.assertEqual(f["sessions"]["codex"], 1)
+        self.assertEqual(f["sessions"]["codex"], 2)
         self.assertEqual(f["sessions"]["excluded"], {"eval": 1, "in_progress": 1, "no_user_text": 1, "subagent": 1})
-        self.assertEqual(f["sessions"]["by_kind"], {"unattended": 1, "interactive": 2})
+        self.assertEqual(f["sessions"]["by_kind"], {"unattended": 1, "interactive": 3})
         harness = signal(f, "harness_sleep_tail")
         self.assertEqual((harness["sessions"], harness["events"]), (1, 1))
         guard = signal(f, "guard_blocked")
@@ -222,7 +232,12 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
 
     def test_codex_structured_exit_code_counts_as_an_error(self):
         f = self.fx.scan()
-        self.assertEqual(f["sessions"]["errors"], 4)
+        self.assertEqual(f["sessions"]["errors"], 5)
+
+    def test_codex_review_runs_recorded_as_events_only_are_counted(self):
+        f = self.fx.scan("--strict-n", "5", "--threshold-sessions", "1")
+        self.assertIn("beta r1", " ".join(s["session"] for s in f["strict"]))
+        self.assertEqual(f["sessions"]["tool_calls"], 11)
 
     def test_keeps_a_session_whose_user_turn_predates_the_period_but_whose_tools_fall_inside(self):
         self.fx.add_session_started_before_period()
@@ -328,7 +343,7 @@ class StrictReadsAreAFixedRandomSample(unittest.TestCase):
 
     def test_takes_every_eligible_session_when_fewer_than_five(self):
         strict = self.fx.scan()["strict"]
-        self.assertEqual(sorted(s["session"] for s in strict), ["alpha aaaa1111", "beta g1"])
+        self.assertEqual(sorted(s["session"] for s in strict), ["alpha aaaa1111", "beta g1", "beta r1"])
 
 
 CANDIDATES = {
@@ -353,7 +368,7 @@ class ReportRendersTheApprovedLayoutOffline(unittest.TestCase):
 
     def test_report_carries_header_counts_candidate_card_remeasure_table_and_strict_reads(self):
         html = self.fx.report(CANDIDATES)
-        for needle in ("세션 되돌아보기", "Claude Code 세션 2", "Codex 세션 1", "후보 1건",
+        for needle in ("세션 되돌아보기", "Claude Code 세션 2", "Codex 세션 2", "후보 1건",
                        "claim.sh 호출이 워크트리 가드에 막힌다", "스크립트 인터페이스 + 스킬 문장", "triage-issues",
                        "alpha bbbb2222", "다음 2주 가드 차단 0건", "재측정", "워크트리 가드가 막은 명령",
                        "codex review 호출 메모", "sleep 폴링 뒤 브라우저 탐색 실패", "sleep+tail 폴링을 하네스가 차단",
