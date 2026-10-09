@@ -17,10 +17,10 @@
     {
       "id": 2,
       "prompt": "/review-sessions pr 위임을 고친 #127이 머지된 뒤 효과가 있었는지 재측정해줘.",
-      "expected_output": "The run splits the signal table by the SKILL.md text hash sessions loaded (from skill_versions in findings.json) rather than by merge date alone, reports before/after counts for the delegation signal, and says which sessions ran an older installed copy.",
+      "expected_output": "The run splits the signal table by the SKILL.md text hash sessions loaded (from skill_versions in findings.json) rather than by merge date alone, chooses the hash of the skill whose text changed, reports before/after and unclassified counts for the delegation signal, and says which sessions ran an older installed copy.",
       "files": [],
       "expectations": [
-        "It uses --split-hash with the pr skill's newer text hash, or explains why only a date split was possible.",
+        "It uses --split-hash with the newer text hash of the skill whose text changed (merge or triage-issues, not pr, which the missed sessions never loaded), or explains why only a date split was possible.",
         "It reports before and after counts for delegation_pr and does not claim the fix worked from a date split alone.",
         "It writes nothing except the report folder."
       ]

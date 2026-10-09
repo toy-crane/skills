@@ -43,7 +43,11 @@ Add `--split <date>` to divide every signal into before and after that day, or
 `--split-hash <skill>=<prefix>` to divide by the SKILL.md text sessions actually
 loaded; `findings.json` lists each loaded skill version under `skill_versions`
 with example sessions, so the prefix comes from there. Installed copies lag a
-merge by up to a day, so the hash split is the honest one after a fix.
+merge by up to a day, so the hash split is the honest one after a fix. Split
+by the skill whose text changed: a delegation signal such as `delegation_pr`
+counts sessions that never loaded `pr`, so splitting by `pr` leaves them all
+unclassified, while splitting by `merge` shows whether the fixed caller stopped
+producing them.
 
 The scan excludes eval and scratch runs (working directories under `/private`
 or `/var`), subagent threads, logs modified in the last ten minutes, and
