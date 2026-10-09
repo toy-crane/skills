@@ -379,7 +379,6 @@ def load_sessions(claude_dir, codex_dir, since, until, now, min_age_minutes, sel
             by_harness[harness]["in_progress"] += 1
             continue
         s = parse_claude(path) if harness == "claude" else parse_codex(path)
-        unknown[harness].update(s.unknown)
         if select_by == "activity":
             start, end = parse_ts(s.start), parse_ts(s.end)
             if start is None or end is None or end < since or start >= until:
@@ -390,6 +389,7 @@ def load_sessions(claude_dir, codex_dir, since, until, now, min_age_minutes, sel
                 excluded["no_events_in_period"] += 1
                 by_harness[harness]["no_events_in_period"] += 1
                 continue
+        unknown[harness].update(s.unknown)
         reason = None
         if is_eval_cwd(s.cwd):
             reason = "eval"
