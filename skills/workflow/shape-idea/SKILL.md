@@ -53,9 +53,13 @@ before building on it or working around it. Record what was checked, what fell
 short, and the upstream change that would reopen the decision.
 
 When a decision selects a framework or hosted service, invoke
-`add-stack-context` and let it own discovery, source acceptance,
-installation, live vendor-document routing, and accounting for the selected
-technology before continuing.
+`add-stack-context` with that one technology, the decision that selected it,
+and the project evidence behind it, so it audits only that technology rather
+than the whole stack. It owns discovery, source acceptance, installation, and
+live vendor-document routing for it, and hands back the technology's
+accounting outcome together with the paths of the skills it installed and the
+agent-instruction lines it added or changed; shaping resumes once that is in
+hand and records the outcome in the spec.
 
 ## Present one decision at a time
 

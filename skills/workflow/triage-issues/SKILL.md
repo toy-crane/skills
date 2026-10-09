@@ -117,8 +117,10 @@ evidence. Choose the smallest outcome that actually resolves the request:
   a new product request that may be declined, recommend proceed, defer, or
   decline with consequences and leave the choice to a person.
 
-Raise either PR by invoking the `pr` skill, which writes the body, evidence,
-and issue links. Later reconciliation reads the links it leaves: an
+Raise either PR by invoking the `pr` skill with the branch, the base, the
+issue ID this run triaged, and the verification evidence collected; it writes
+the body, evidence, and issue links and hands back the PR URL. Later
+reconciliation reads the links it leaves: an
 `Issue: <tracker>:<id>` line
 in the body, and the convention's closing reference only on the implementation
 PR, whose verified diff delivers the direct implementation even without a spec

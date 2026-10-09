@@ -24,7 +24,9 @@ For an existing open PR, fetch its current head and synchronize the checkout
 with it, preserving both the observed remote commits and in-scope local work.
 If their intended combination is unclear, report the blocker before rebasing
 or publishing. Then invoke `pull` with that resolved remote and base before verification,
-publication, and creating or updating the ready-for-review PR.
+publication, and creating or updating the ready-for-review PR; it hands back
+the checkout rebased onto the fetched base, or the exact blocker when it could
+not rebase safely.
 Preserve unrelated local work; do not silently
 commit, stash, or discard it to make synchronization possible. Resolve conflicts
 only when the intended result is established; otherwise keep the work
