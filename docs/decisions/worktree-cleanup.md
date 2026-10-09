@@ -43,6 +43,10 @@
 
 - The procedure removes one worktree at a time. `clean-branches` chooses the
   candidates when it sweeps the repository; `merge` names the one it merged.
+- The helper never removes the primary checkout: it reports `main-checkout`
+  and `blocked`. When the merged branch is checked out there, `clean-branches`
+  skips the helper, moves that checkout to the merged base, and deletes only
+  the local branch, leaving it when uncommitted changes remain.
 - Docker containers, emulators, and other resources that do not work inside
   the folder are released only by the project's declared commands.
 - A Git worktree's removal does not delete its remote branch.

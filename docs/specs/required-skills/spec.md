@@ -44,20 +44,32 @@
 - 이 저장소의 스킬을 이름으로 부르는 모든 자리에서 "없을 때" 대체 경로를
   지운다. 현재 대상:
   - `merge` → `pr`, `pull`, `clean-branches`
-  - `triage-issues` → `pr`, `shape-idea`
-  - `implement` → `tdd`, `babysit-specs`, `human-review`, `project-knowledge`
+  - `triage-issues` → `pr`
+  - `implement` → `tdd`, `babysit-specs`, `project-knowledge`
   - `shape-idea` → `project-knowledge`, `add-stack-context`,
     `explain-visually`, `build-prototype`
   - `babysit-specs` → `project-knowledge`, `build-prototype`
   - `maintain-project-context` → `define-product`
   - `expo-dev-loop`, `expo-smoke-test`, `resolve-follow-ups`, `define-piece`,
     `draft-piece`, `define-publication` → `project-knowledge`
+  이름이 사용자에게 보내는 안내문이나 경계 문장에만 나오는 경우는 의존성이
+  아니다. `triage-issues`가 "답이 오면 `shape-idea`로 이어 간다"고 적은
+  것, `implement`가 사용자에게 `human-review`를 권하는 것,
+  `resolve-follow-ups`가 "나중 `shape-idea` 세션이 정한다"고 적은 것이
+  그 예다.
 - 각 스킬은 작업을 시작하기 전에 자기가 부를 스킬이 설치돼 있는지 확인하고,
   없으면 멈춘다. 부수 작업용 스킬(`project-knowledge`로 후속 과제 기록)도
   같은 기준이다.
 - `clean-worktrees`를 `clean-branches`로 바꾼다. 폴더, frontmatter 이름,
   `plugin.json` 경로, `.agents/skills/`와 `.claude/skills/` 심볼릭 링크,
   README, `merge` 안의 참조가 함께 바뀐다.
+- `clean-branches`는 `merge`가 넘기는 한 브랜치를 받는 경로를 얻는다.
+  워크트리가 있으면 지금의 헬퍼 판정으로 워크트리와 로컬 브랜치를 정리한다.
+  머지한 브랜치가 일반 체크아웃(주 체크아웃)에 체크아웃돼 있으면 헬퍼를
+  쓰지 않는다. 헬퍼는 주 체크아웃을 `main-checkout`으로 보고 `blocked`를
+  돌려주기 때문이다. 대신 지금 `merge`가 하는 그대로 그 체크아웃을 머지된
+  base 상태로 옮기고 로컬 브랜치만 지운다. 커밋 안 한 변경이 있으면
+  브랜치를 남기고 보고한다.
 - `remove-worktree.sh`와 그 eval은 `clean-branches`에만 남긴다. `merge`의
   복사본과 CI `shared-helpers` 워크플로를 지우고, `CLAUDE.md`와 `AGENTS.md`의
   "Skills stand alone"과 "Merging into main" 절을 새 규칙에 맞게 고친다.
@@ -119,7 +131,10 @@
 
 ## 손대지 않는 것과 이유
 
-- 각 스킬의 나머지 본문. 이번 작업은 의존성 문장과 복사본만 바꾼다.
+- 각 스킬의 나머지 본문. 이번 작업은 의존성 문장, `merge`가 정리를 넘기는
+  문장, `clean-branches`가 그 한 브랜치를 받는 경로, 복사본만 바꾼다.
+- `remove-worktree.sh`의 판정 자체. 주 체크아웃을 `blocked`로 보는 것은 그
+  폴더를 지우면 안 되기 때문이고, 브랜치만 지우는 경로는 스킬 본문이 맡는다.
 - `add-stack-context`의 `find-skills` 분기. 외부 스킬 예외로 확정했다.
 - `.agents/skills/writing-great-skills`. 배포되지 않는 vendored 스킬이라
   규칙 대상이 아니다.
