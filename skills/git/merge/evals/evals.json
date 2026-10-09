@@ -85,12 +85,12 @@
     {
       "id": 8,
       "prompt": "일반 checkout에서 현재 변경을 PR로 만들고 merge해줘. linked worktree는 없어.",
-      "expected_output": "The response completes the verified merge and updates the normal base checkout without worktree-specific operations.",
+      "expected_output": "The response completes the verified merge, then hands the merged branch to clean-branches, which brings the primary checkout to the merged base and deletes only the local branch.",
       "files": [],
       "expectations": [
-        "It completes the self-contained commit, PR, and merge responsibilities.",
-        "It recognizes that no linked worktree cleanup is needed.",
-        "It updates the resolved base to the verified remote result."
+        "It completes the commit, PR, and merge responsibilities through pull and pr.",
+        "It invokes clean-branches with the merged branch, the fetched base, and the merged PR's head commit instead of running worktree cleanup itself.",
+        "The local branch is deleted and the primary checkout ends on the merged base; no worktree-specific operation runs."
       ]
     },
     {
