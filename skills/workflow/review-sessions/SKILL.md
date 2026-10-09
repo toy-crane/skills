@@ -31,8 +31,9 @@ it missed is removed before writing.
 
 The bundled [measurement script](scripts/review_sessions.py) does every count,
 so a later run is comparable with this one. Run it with `python3 -I` from a
-folder outside any repository, for example a dated folder under
-`~/.review-sessions/`, which also holds the report:
+temporary directory (`mktemp -d`) outside any repository; the findings and
+candidates files live there and are removed at the end, so the dated report
+folder under `~/.review-sessions/` holds only `report.html`:
 
 ```
 python3 -I scripts/review_sessions.py scan --since 2026-09-26 --until 2026-10-10 --out findings.json
@@ -53,7 +54,9 @@ the report shows that count so a format change is visible.
 
 `findings.json` carries, per signal: sessions, events, repositories, unattended
 sessions, example session ids, up to three masked event windows, and the
-before/after split. A signal is a candidate only past the threshold: five
+before/after split, plus the sessions a hash split could not classify because
+they never loaded that skill; a large unclassified share means the before and
+after columns cannot show a fix's effect yet. A signal is a candidate only past the threshold: five
 sessions, or two repositories, or one unattended session. Signals in the
 `harness` bucket never become candidates; the harness already blocks them and
 the agent recovers in one turn. The `judgment` bucket (interrupts, corrections,
@@ -99,7 +102,9 @@ renders its empty state with the re-measurement table and strict reads alone.
 python3 -I scripts/review_sessions.py report --findings findings.json --candidates candidates.json --out report.html
 ```
 
-The report follows the approved layout: header with period, session counts,
+Write the report to `~/.review-sessions/<date>/report.html`, then delete the
+temporary directory with the findings and candidates files. The report follows
+the approved layout: header with period, session counts,
 exclusions, and the data rule; candidate cards in cost order, unattended first;
 the harness, judgment, and project buckets collapsed; the re-measurement table
 with a link from each row to its card; the loaded skill versions; the strict

@@ -121,7 +121,7 @@ def err_key(text):
 SECRET_RES = [
     (re.compile(r"(--token[= ]+)(\"[^\"]*\"|'[^']*'|\S+)"), r"\1<token>"),
     (re.compile(r"(--expected[= ]+)(\"[^\"]*\"|'[^']*'|\S+)"), r"\1<hex>"),
-    (re.compile(r"((?:token|secret|password|passwd|api[_-]?key|authorization)[=: ]+)\S+", re.I), r"\1<token>"),
+    (re.compile(r"((?:token|secret|password|passwd|api[_-]?key|authorization)[\"']?\s*[=:]\s*)(\"[^\"]*\"|'[^']*'|\S+)", re.I), r"\1<token>"),
     (re.compile(r"\bBearer\s+\S+"), "Bearer <token>"),
     (re.compile(r"\b(?:sk|ghp|gho|ghu|ghs|xoxb|xoxp|lin_api)[-_][A-Za-z0-9_-]{8,}"), "<secret>"),
     (re.compile(r"\b[0-9a-f]{32,}\b"), "<hex>"),
@@ -150,7 +150,7 @@ def event_line(e):
 def window(session, index, radius=6):
     lo, hi = max(0, index - radius), min(len(session.events), index + radius + 1)
     lines = [redact(re.sub(r"\s+", " ", event_line(e)))[:240] for e in session.events[lo:hi] if not e.get("side")]
-    return {"session": f"{os.path.basename(session.repo)} {session.id[:8]}", "kind": session.kind, "lines": lines}
+    return {"session": redact(session.label), "kind": session.kind, "lines": lines}
 
 
 # ---------------------------------------------------------------- sessions
@@ -169,12 +169,19 @@ class Session:
         self.skills = {}          # name -> 16-hex prefix of sha256(loaded body), or "" when unknown
         self.thread_source = None
         self.originator = None
-        self.unknown = Counter()
+        self.unknown_records = []   # (type, timestamp) for records this script does not know
         self.has_sidechain = False
+
+    def unknown_in(self, since=None, until=None):
+        return Counter(typ for typ, ts in self.unknown_records if since is None or in_period(ts, since, until))
 
     @property
     def repo(self):
         return repo_of(self.cwd)
+
+    @property
+    def label(self):
+        return f"{os.path.basename(self.repo)} {self.id[:8]}"
 
     @property
     def kind(self):
@@ -199,7 +206,7 @@ def parse_claude(path):
                 continue
             typ = d.get("type")
             if typ not in KNOWN_CLAUDE_TYPES:
-                s.unknown[str(typ)] += 1
+                s.unknown_records.append((str(typ), d.get("timestamp") or s.end))
                 continue
             ts = d.get("timestamp") or s.end
             if ts:
@@ -282,7 +289,7 @@ def parse_codex(path):
                 continue
             typ = d.get("type")
             if typ not in KNOWN_CODEX_TYPES:
-                s.unknown[str(typ)] += 1
+                s.unknown_records.append((str(typ), d.get("timestamp") or s.end))
                 continue
             p = d.get("payload") or {}
             ts = d.get("timestamp") or s.end
@@ -290,6 +297,8 @@ def parse_codex(path):
                 s.start = s.start or ts
                 s.end = ts
             if typ == "session_meta":
+                if p.get("id"):
+                    s.id = str(p["id"])
                 s.cwd = p.get("cwd")
                 s.originator = p.get("originator")
                 s.thread_source = p.get("thread_source")
@@ -298,7 +307,7 @@ def parse_codex(path):
                 continue
             pt = p.get("type")
             if pt not in KNOWN_CODEX_PAYLOADS:
-                s.unknown[str(pt)] += 1
+                s.unknown_records.append((str(pt), ts))
                 continue
             if pt == "message":
                 if p.get("role") != "user":
@@ -340,11 +349,15 @@ def parse_codex(path):
                 if isinstance(out, list):
                     out = " ".join(x.get("text", "") for x in out if isinstance(x, dict))
                 out = out if isinstance(out, str) else json.dumps(out, ensure_ascii=False)[:400]
-                m = re.search(r"exit code (\d+)|Script failed|Process exited with code (\d+)|exited with code (\d+)", out[:200])
                 code = None
+                m = re.search(r"\"exit_code\"\s*:\s*(\d+)", out[:600])   # exec_command's structured result after "Output:"
                 if m:
-                    g = [x for x in m.groups() if x]
-                    code = int(g[0]) if g else 1
+                    code = int(m.group(1))
+                else:
+                    m = re.search(r"exit code (\d+)|Script failed|Process exited with code (\d+)|exited with code (\d+)", out[:200])
+                    if m:
+                        g = [x for x in m.groups() if x]
+                        code = int(g[0]) if g else 1
                 if code not in (None, 0):
                     s.events.append({"k": "err", "t": ts, "tool": call_names.get(p.get("call_id"), "?"), "side": False,
                                      "denial": False, "key": err_key(out), "text": out[:300]})
@@ -384,12 +397,12 @@ def load_sessions(claude_dir, codex_dir, since, until, now, min_age_minutes, sel
             if start is None or end is None or end < since or start >= until:
                 continue
             s.events = [e for e in s.events if in_period(e.get("t"), since, until)]
-            s.n_user_text = sum(1 for e in s.events if e["k"] == "user")
+            s.n_user_text_in_period = sum(1 for e in s.events if e["k"] == "user")
             if not s.events:
                 excluded["no_events_in_period"] += 1
                 by_harness[harness]["no_events_in_period"] += 1
                 continue
-        unknown[harness].update(s.unknown)
+        unknown[harness].update(s.unknown_in(since, until) if select_by == "activity" else s.unknown_in())
         reason = None
         if is_eval_cwd(s.cwd):
             reason = "eval"
@@ -500,7 +513,7 @@ def delegation_signals(sessions):
             repos.add(s.repo)
             unattended += s.kind == "unattended"
             if len(examples) < 4:
-                examples.append(f"{os.path.basename(s.repo)} {s.id[:8]}")
+                examples.append(redact(s.label))
             side = split_side(s, delegation_signals.split_date, delegation_signals.split_hash)
             sides[side]["sessions"] += 1
             sides[side]["events"] += n
@@ -551,7 +564,7 @@ def compute_signals(sessions, split_date=None, split_hash=None):
             if s.kind == "unattended":
                 unattended += 1
             if len(examples) < 4:
-                examples.append(f"{os.path.basename(s.repo)} {s.id[:8]}")
+                examples.append(redact(s.label))
             if len(windows) < 3 and bucket != "judgment":
                 windows.append(window(s, hits[0]))
         out.append({"id": sid, "label": label, "bucket": bucket, "sessions": hit_sessions, "events": events,
@@ -592,8 +605,8 @@ def strict_sample(sessions, since, until, n=5, min_tools=3):
     eligible = [s for s in sessions if s.kind == "interactive" and sum(1 for e in s.events if e["k"] == "tool") >= min_tools]
     eligible.sort(key=lambda s: (s.harness, s.id))
     random.Random(f"{since}:{until}").shuffle(eligible)
-    return [{"session": f"{os.path.basename(s.repo)} {s.id[:8]}", "harness": s.harness, "repo": s.repo.replace(HOME, "~"),
-             "kind": s.kind, "path": s.path, "summary": session_summary(s)} for s in eligible[:n]]
+    return [{"session": redact(s.label), "harness": s.harness, "repo": redact(s.repo.replace(HOME, "~")),
+             "kind": s.kind, "path": redact(s.path), "summary": session_summary(s)} for s in eligible[:n]]
 
 
 # ---------------------------------------------------------------- commands
@@ -616,7 +629,7 @@ def cmd_scan(args):
                 entry = skill_versions[name][digest]
                 entry["sessions"] += 1
                 if len(entry["examples"]) < 3:
-                    entry["examples"].append(f"{os.path.basename(s.repo)} {s.id[:8]}")
+                    entry["examples"].append(redact(s.label))
     findings = {
         "period": {"since": args.since, "until": args.until, "select_by": args.select_by, "generated_at": now.isoformat(),
                    "split": args.split, "split_hash": args.split_hash},
@@ -629,7 +642,7 @@ def cmd_scan(args):
             "by_kind": {"unattended": by_kind.get("unattended", 0), "interactive": by_kind.get("interactive", 0)},
             "tool_calls": sum(1 for s in sessions for e in s.events if e["k"] == "tool"),
             "errors": sum(1 for s in sessions for e in s.events if e["k"] == "err"),
-            "user_turns": sum(s.n_user_text for s in sessions),
+            "user_turns": sum(getattr(s, "n_user_text_in_period", s.n_user_text) for s in sessions),
         },
         "unknown_records": {h: dict(c) for h, c in unknown.items()},
         "skill_versions": {k: dict(v) for k, v in skill_versions.items()},
@@ -675,7 +688,8 @@ VERDICT_LABEL = {"ok": "의미 있음", "part": "부분적"}
 
 
 def esc(value):
-    return (str(value).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;"))
+    """Mask then escape: nothing reaches the report unmasked, whichever file it came from."""
+    return (redact(str(value)).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;"))
 
 
 def fmt(n):
@@ -717,7 +731,10 @@ def render_report(findings, cands):
     sigs = {s["id"]: s for s in findings["signals"]}
     period = findings["period"]
     sess = findings["sessions"]
-    candidates = [c for c in cands.get("candidates", []) if c.get("signal") in sigs]
+    candidates = [c for c in cands.get("candidates", []) if c.get("signal") in sigs and sigs[c["signal"]].get("candidate")]
+    for c in cands.get("candidates", []):
+        if not (c.get("signal") in sigs and sigs[c["signal"]].get("candidate")):
+            print(f"report: dropped candidate {c.get('signal')!r}: not a signal past the threshold", file=sys.stderr)
     n = len(candidates)
     header_chips = [f"Claude Code 세션 {fmt(sess['claude'])}", f"Codex 세션 {fmt(sess['codex'])}",
                     "제외 " + " · ".join(f"{h} {sum(c.values())} (eval {c['eval']}, 진행 중 {c['in_progress']}, 발화 없음 {c['no_user_text']}, 서브에이전트 {c['subagent']}, 기간 내 활동 없음 {c.get('no_events_in_period', 0)})" for h, c in sess.get("excluded_by_harness", {"all": sess["excluded"]}).items()),
@@ -766,13 +783,15 @@ def render_report(findings, cands):
             continue
         link = f'<a class="badge {esc(next((c.get("verdict", "ok") for c in candidates if c["signal"] == s["id"]), "ok"))}" href="#cand-{cand_num[s["id"]]}">B{cand_num[s["id"]]}</a>' if s["id"] in cand_num else f'<span class=chip>{esc(s["bucket"])}</span>'
         if split:
-            b, a = s["before"], s["after"]
-            rows.append(f"<tr><td>{esc(s['label'])}</td><td class=n>{b['sessions']} / {b['events']}</td><td class=n>{a['sessions']} / {a['events']}</td><td class=n>{delta_html(b['sessions'], a['sessions'])}</td><td>{link}</td></tr>")
+            b, a, u = s["before"], s["after"], s.get("unsplit", {"sessions": 0, "events": 0})
+            unsplit_cell = f"<td class=n>{u['sessions']} / {u['events']}</td>" if period.get("split_hash") else ""
+            rows.append(f"<tr><td>{esc(s['label'])}</td><td class=n>{b['sessions']} / {b['events']}</td><td class=n>{a['sessions']} / {a['events']}</td>{unsplit_cell}<td class=n>{delta_html(b['sessions'], a['sessions'])}</td><td>{link}</td></tr>")
         else:
             rows.append(f"<tr><td>{esc(s['label'])}</td><td class=n>{s['sessions']} / {s['events']}</td><td class=n>{s['unattended_sessions']}</td><td>{link}</td></tr>")
     if split:
-        head = "<tr><th>신호</th><th>전 세션/건</th><th>후 세션/건</th><th>세션 변화</th><th>후보</th></tr>"
-        note = f"기준: {esc(split)}" + ("" if period.get("split_hash") else " (날짜 기준. 설치 사본 지연으로 옛 판 세션이 섞일 수 있다)")
+        unsplit_head = "<th>미분류 세션/건</th>" if period.get("split_hash") else ""
+        head = f"<tr><th>신호</th><th>전 세션/건</th><th>후 세션/건</th>{unsplit_head}<th>세션 변화</th><th>후보</th></tr>"
+        note = f"기준: {esc(split)}" + (" (스킬 판 기준. 그 스킬을 읽지 않은 세션은 미분류로 따로 센다. 미분류가 크면 전후 비교로 효과를 말할 수 없다)" if period.get("split_hash") else " (날짜 기준. 설치 사본 지연으로 옛 판 세션이 섞일 수 있다)")
     else:
         head = "<tr><th>신호</th><th>세션 / 건</th><th>무인 세션</th><th>후보</th></tr>"
         note = "기준 없이 한 기간만 센 표다. 고친 뒤에는 --split 날짜나 --split-hash 스킬판으로 나눠 다시 돌린다."

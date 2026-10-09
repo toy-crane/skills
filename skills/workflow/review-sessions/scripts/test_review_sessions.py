@@ -114,15 +114,29 @@ class ScanFixture:
             {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "카드 발행 체크해봐"}]},
             {"type": "function_call", "name": "exec_command", "call_id": "c1", "arguments": json.dumps({"cmd": "git status"})},
             {"type": "function_call_output", "call_id": "c1", "output": "clean"},
+            {"type": "function_call", "name": "exec_command", "call_id": "c3", "arguments": json.dumps({"cmd": "curl -d '{\"token\":\"opaqueCredential123456\"}' http://127.0.0.1:1/x"})},
+            {"type": "function_call_output", "call_id": "c3", "output": "ok"},
+            {"type": "custom_tool_call", "name": "exec", "call_id": "c4", "input": "text(await tools.exec_command({cmd:\"bun test 2>&1 | tail -3\"}))"},
+            {"type": "custom_tool_call_output", "call_id": "c4", "output": [{"type": "input_text", "text": "Script completed\nWall time 0.1 seconds\nOutput:\n {\"chunk_id\":\"adf143\",\"wall_time_seconds\":0.2,\"exit_code\":1,\"original_token_count\":40,\"output\":\"1 fail\"}"}]},
             {"type": "mystery_item", "call_id": "c2"},
         ])
         g.append({"timestamp": "2026-10-01T09:00:00.000Z", "type": "weird", "payload": {}})
+        g.append({"timestamp": "2026-09-01T09:00:00.000Z", "type": "weird", "payload": {}})
         write_jsonl(self.codex / "2026" / "10" / "01" / "rollout-2026-10-01T09-00-00-g1.jsonl", g, mtime=old)
         # H: Codex subagent thread — excluded
         write_jsonl(self.codex / "2026" / "10" / "01" / "rollout-2026-10-01T09-05-00-h1.jsonl", codex_session(
             "h1", f"{HOME}/code/beta", "Codex Desktop", "subagent", [
                 {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "sub task"}]},
             ]), mtime=old)
+
+    def add_session_started_before_period(self):
+        """A session whose only user turn predates the period but whose tool calls fall inside it."""
+        alpha = f"{HOME}/code/alpha"
+        write_jsonl(self.claude / "-Users-tester-code-alpha" / "99999999.jsonl", [
+            claude_user("내일 이어서 보자", "2026-09-20T09:00:00.000Z", alpha),
+            claude_tool("t1", "Bash", {"command": "sleep 9; tail -1 /tmp/x.log"}, "2026-10-02T09:00:00.000Z", alpha),
+            claude_result("t1", "<tool_use_error>Blocked: sleep 9 followed by: tail -1 /tmp/x.log.", "2026-10-02T09:00:01.000Z", alpha, is_error=True),
+        ], mtime=time.time() - 3600 * 24)
 
     def add_second_period_session(self):
         """An interactive session on 2026-10-05 that loaded a newer `pr` skill text."""
@@ -206,6 +220,21 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
         self.assertEqual(f["unknown_records"]["codex"], {"weird": 1, "mystery_item": 1})
         self.assertEqual(f["unknown_records"]["claude"], {})
 
+    def test_codex_structured_exit_code_counts_as_an_error(self):
+        f = self.fx.scan()
+        self.assertEqual(f["sessions"]["errors"], 4)
+
+    def test_keeps_a_session_whose_user_turn_predates_the_period_but_whose_tools_fall_inside(self):
+        self.fx.add_session_started_before_period()
+        f = self.fx.scan()
+        self.assertEqual(f["sessions"]["claude"], 3)
+        self.assertEqual(signal(f, "harness_sleep_tail")["sessions"], 2)
+
+    def test_codex_sessions_are_labelled_by_their_session_id_not_the_rollout_file_name(self):
+        f = self.fx.scan("--strict-n", "5", "--threshold-sessions", "1")
+        labels = " ".join(x for s in f["signals"] for x in s["examples"]) + " ".join(s["session"] for s in f["strict"])
+        self.assertNotIn("rollout-", labels)
+
 
 class WindowsNeverCarrySecrets(unittest.TestCase):
     def setUp(self):
@@ -227,6 +256,15 @@ class WindowsNeverCarrySecrets(unittest.TestCase):
         self.assertIsNone(re.search(r"[0-9a-f]{32,}", text))
         self.assertNotIn("0ad862d48c1f4e0b9a7d6e5f4c3b2a1908f7e6d5c4b3a291", text)
         self.assertNotIn("79e772556cf616f59d93334bb10efb8e8bb016a3", text)
+
+    def test_json_quoted_and_quoted_multiword_secrets_are_masked_everywhere(self):
+        f = self.fx.scan("--strict-n", "5")
+        text = (self.fx.out / "findings.json").read_text()
+        self.assertNotIn("opaqueCredential123456", text)
+        html = self.fx.report({"summary": "token=opaqueCredential123456 그리고 TOKEN=\"alpha beta gamma\"",
+                               "candidates": [], "judgment_notes": [], "project": [], "strict": []})
+        self.assertNotIn("opaqueCredential123456", html)
+        self.assertNotIn("alpha beta gamma", html)
 
 
 class CandidatesPassTheThreshold(unittest.TestCase):
@@ -290,7 +328,7 @@ class StrictReadsAreAFixedRandomSample(unittest.TestCase):
 
     def test_takes_every_eligible_session_when_fewer_than_five(self):
         strict = self.fx.scan()["strict"]
-        self.assertEqual([s["session"] for s in strict], ["alpha aaaa1111"])
+        self.assertEqual(sorted(s["session"] for s in strict), ["alpha aaaa1111", "beta g1"])
 
 
 CANDIDATES = {
@@ -324,6 +362,23 @@ class ReportRendersTheApprovedLayoutOffline(unittest.TestCase):
         self.assertNotIn("<script src=", html)
         self.assertNotIn("<link ", html)
         self.assertIsNone(re.search(r"[0-9a-f]{32,}", html))
+
+    def test_report_drops_a_candidate_whose_signal_did_not_pass_the_threshold(self):
+        bad = dict(CANDIDATES)
+        bad["candidates"] = CANDIDATES["candidates"] + [{"signal": "harness_sleep_tail", "title": "하네스 신호를 후보로", "verdict": "ok",
+                                                         "form": "x", "owner": "y", "form_detail": "", "evidence": [], "judgment": "", "remeasure": ""}]
+        html = self.fx.report(bad)
+        self.assertNotIn("하네스 신호를 후보로", html)
+        self.assertIn("후보 1건", html)
+
+    def test_report_shows_the_unclassified_column_for_a_hash_split(self):
+        self.fx.add_second_period_session()
+        f = self.fx.scan()
+        newer = next(h for h, n in f["skill_versions"]["pr"].items() if "a2a2a2a2" in n["examples"][0])
+        self.fx.scan("--split-hash", f"pr={newer[:12]}")
+        html = self.fx.report(CANDIDATES)
+        self.assertIn("미분류 세션/건", html)
+        self.assertIn("미분류로 따로 센다", html)
 
     def test_report_shows_the_empty_state_when_no_candidate_passed(self):
         html = self.fx.report({"summary": "", "candidates": [], "judgment_notes": [], "project": [], "strict": []})
