@@ -338,16 +338,16 @@ $draft-piece docs/briefs/monorepo-move/
 
 ## Git delivery
 
-Five standalone skills cover the repository handoff from a local change to a
-merged base branch, and a sixth clears the worktrees that pile up afterward.
+Five skills cover the repository handoff from a local change to a merged base
+branch, and a sixth clears the branches and worktrees that pile up afterward.
 Invoke them directly with `/commit`, `/pull`, `/push`, `/pr`, `/merge`, or
-`/clean-worktrees` in Claude Code and `$commit`, `$pull`, `$push`, `$pr`,
-`$merge`, or `$clean-worktrees` in Codex.
+`/clean-branches` in Claude Code and `$commit`, `$pull`, `$push`, `$pr`,
+`$merge`, or `$clean-branches` in Codex.
 
 When Codex exposes the managed plugin namespace, or a user-level skill with the
 same short name is also installed, use `$toycrane-skills:commit`,
 `$toycrane-skills:pull`, `$toycrane-skills:push`, `$toycrane-skills:pr`,
-`$toycrane-skills:merge`, or `$toycrane-skills:clean-worktrees` to select this
+`$toycrane-skills:merge`, or `$toycrane-skills:clean-branches` to select this
 bundle unambiguously.
 
 ```mermaid
@@ -359,11 +359,14 @@ flowchart LR
     L -. "synchronize when needed" .-> P
 ```
 
-Each skill is independently installable and owns its whole advertised outcome.
-`push` deliberately leaves dirty changes local. `pr` may perform the necessary
+Each skill owns its whole advertised outcome. A skill that invokes another one
+by name requires it: `merge` requires `pull`, `pr`, and `clean-branches`, and
+stops before any work with the install command when one is missing. `push`
+deliberately leaves dirty changes local. `pr` may perform the necessary
 commit, synchronization, and publication, but stops before merge. `merge`
-continues through verified remote merge and cleans up only the merged worktree,
-releasing its resources through the project's declared cleanup commands.
+continues through verified remote merge and hands the merged branch to
+`clean-branches`, which releases its worktree's resources through the
+project's declared cleanup commands and removes it.
 
 - **[commit](./skills/git/commit/SKILL.md)**: Record only the current request's
   changes as logical Conventional Commits while preserving unrelated work.
@@ -379,22 +382,21 @@ releasing its resources through the project's declared cleanup commands.
   create the issue for each carried spec folder that has no `Issue:` line and
   commit that line.
 - **[merge](./skills/git/merge/SKILL.md)**: Carry a change through verified pull
-  request merge, creating or updating the PR through `pr` when it is installed
-  and with a brief body plus the same issue links when it is not, choose squash
-  or rebase by commit meaning, then safely clean up the merged worktree with the
-  project's declared cleanup commands.
-- **[clean-worktrees](./skills/git/clean-worktrees/SKILL.md)**: Sweep a
-  repository's accumulated worktrees in one pass. Remove those whose pull
-  request merged or closed, detached ones the base already contains, and
-  left-over folders that lost their Git registration; report open,
-  uncommitted, session-attached, and Codex-managed ones with the reason they
-  stayed.
+  request merge, synchronizing through `pull` and creating or updating the PR
+  through `pr`, choose squash or rebase by commit meaning, then hand the
+  merged branch to `clean-branches` for cleanup.
+- **[clean-branches](./skills/git/clean-branches/SKILL.md)**: Sweep a
+  repository's finished local work in one pass. Remove worktrees and local
+  branches whose pull request merged or closed, detached worktrees the base
+  already contains, and left-over folders that lost their Git registration;
+  report open, uncommitted, session-attached, and Codex-managed ones with the
+  reason they stayed. Also cleans the one branch `merge` hands over.
 
 A project that gives each worktree its own servers, devices, or databases
-declares how to release them in `AGENTS.md` or `CLAUDE.md`. `merge` and
-`clean-worktrees` run the commands in order inside a worktree before removing
-it. Without the section they stop no process, and they leave a worktree that
-another session or terminal still uses.
+declares how to release them in `AGENTS.md` or `CLAUDE.md`. `clean-branches`
+runs the commands in order inside a worktree before removing it. Without the
+section it stops no process, and it leaves a worktree that another session or
+terminal still uses.
 
 ````md
 ## Worktree cleanup

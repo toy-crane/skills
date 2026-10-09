@@ -51,12 +51,19 @@ add it there. skills.sh would otherwise find it — `.agents/skills/` and
 `INSTALL_INTERNAL_SKILLS=1` is set. Keep that frontmatter when updating the
 vendored skill.
 
-## Skills stand alone
+## Skills never assume another skill's text, and require the ones they invoke
 
-A published skill must be self-sufficient at execution time: skills load one
-at a time and skills.sh installs them individually, so a skill may invoke
-another skill by name but must never assume knowledge of another skill's text
-("follow X's discipline"). Restate what it needs inline.
+Skills load one at a time, so a published skill must never assume knowledge of
+another skill's text ("follow X's discipline"); restate what it needs inline.
+A skill that invokes another skill of this set by name requires it: it states
+what it hands over and gets back, carries no inline path for the case where
+that skill is missing, and before doing any work checks that each required
+skill is installed, stopping with the install command
+(`npx skills@latest add toy-crane/skills --skill <name>`) when one is not.
+Plugin and `update-project-skills` installs always carry the whole set, so
+only a one-skill skills.sh install can hit that stop. Skills outside this
+set, such as `find-skills`, stay optional. See
+[skill-design](docs/decisions/skill-design.md).
 
 ## Project decisions
 
@@ -73,11 +80,9 @@ see an update. No changeset or CI automation.
 
 ## Merging into `main`
 
-`.github/workflows/` holds three pull request checks.
+`.github/workflows/` holds two pull request checks.
 `plugin-manifest` runs the same `claude plugin validate . --strict` this file
 already asks for and reports a broken manifest.
-`shared-helpers` fails when the copies of a helper that several skills ship
-differ, since each skill must stand alone with its own copy.
 `codex-review-gate` republishes Codex's review summary as a check run on the
 pull request's current head commit, because Codex itself publishes no check.
 
