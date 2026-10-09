@@ -90,18 +90,20 @@ Never delete the base branch or a branch that is checked out anywhere.
 ## Clean the branch that merge hands over
 
 When `merge` invokes this skill, it passes the merged branch, its worktree when
-one exists, the fetched base, and the merged pull request's head commit. Skip
-the candidate search and act on that branch alone:
+one exists, the base, and the merged pull request's head commit. Fetch the base
+first, because the remote merge moved it after any fetch `merge` made, so the
+helper's base argument, the detached HEAD it leaves for a session, and the
+branch-only rule all see the merged base. Then skip the candidate search and
+act on that branch alone:
 
 - In a linked worktree: run the helper with those arguments and act on its
   verdict exactly as above, including the declared cleanup commands.
 - Checked out in the primary checkout: the helper reports `main-checkout` and
   `blocked`, so do not use it. When `git status --porcelain` shows uncommitted
-  changes, leave the branch and report it. Otherwise fetch the base again,
-  because the remote merge moved it after any earlier fetch, then bring that
-  checkout to the merged base state by checking out the base and
-  fast-forwarding it to the freshly fetched remote, and delete only the local
-  branch under the branch-only rule.
+  changes, leave the branch and report it. Otherwise bring that checkout to
+  the merged base state by checking out the base and fast-forwarding it to
+  the freshly fetched remote, then delete only the local branch under the
+  branch-only rule.
   When the base cannot be checked out there, for example because a linked
   worktree holds it, or cannot be fast-forwarded because the local base has
   diverged, leave the checkout and the branch as they are and report why;
