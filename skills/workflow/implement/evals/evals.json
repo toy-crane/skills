@@ -641,7 +641,7 @@
         "It identifies the conflict between the spec's comma-separated constraint and the shipped tab delimiter in src/rows.js, including the report.csv filename criterion.",
         "It stops that outcome before writing any source change rather than implementing against either side.",
         "It names the exact stale point and its evidence instead of reporting a vague mismatch.",
-        "It routes the stale point to babysit-specs when that skill is available, or presents the exact decision for the user to settle through shaping when it is not.",
+        "It routes the stale point to babysit-specs for this spec folder alone rather than presenting the decision or revising the spec itself.",
         "It does not silently rewrite the spec to match the code, nor change the shipped delimiter to match the spec."
       ]
     },
