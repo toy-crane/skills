@@ -116,7 +116,9 @@ class ScanFixture:
             {"type": "function_call_output", "call_id": "c1", "output": "clean"},
             {"type": "function_call", "name": "exec_command", "call_id": "c3", "arguments": json.dumps({"cmd": "curl -d '{\"token\":\"opaqueCredential123456\"}' http://127.0.0.1:1/x"})},
             {"type": "function_call_output", "call_id": "c3", "output": "ok"},
-            {"type": "custom_tool_call", "name": "exec", "call_id": "c4", "input": "text(await tools.exec_command({cmd:\"bun test 2>&1 | tail -3\"}))"},
+            {"type": "custom_tool_call", "name": "exec", "call_id": "c4", "input": "text(await tools.exec_command({\"cmd\":\"bun test 2>&1 | tail -3\"}))"},
+            {"type": "function_call", "name": "exec_command", "call_id": "c5", "arguments": json.dumps({"cmd": "AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG bun run deploy; curl https://user:hunter2@db.example.com/x -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'"})},
+            {"type": "function_call_output", "call_id": "c5", "output": "ok"},
             {"type": "custom_tool_call_output", "call_id": "c4", "output": [{"type": "input_text", "text": "Script completed\nWall time 0.1 seconds\nOutput:\n {\"chunk_id\":\"adf143\",\"wall_time_seconds\":0.2,\"exit_code\":1,\"original_token_count\":40,\"output\":\"1 fail\"}"}]},
             {"type": "mystery_item", "call_id": "c2"},
         ])
@@ -237,7 +239,7 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
     def test_codex_review_runs_recorded_as_events_only_are_counted(self):
         f = self.fx.scan("--strict-n", "5", "--threshold-sessions", "1")
         self.assertIn("beta r1", " ".join(s["session"] for s in f["strict"]))
-        self.assertEqual(f["sessions"]["tool_calls"], 11)
+        self.assertEqual(f["sessions"]["tool_calls"], 12)
 
     def test_keeps_a_session_whose_user_turn_predates_the_period_but_whose_tools_fall_inside(self):
         self.fx.add_session_started_before_period()
@@ -271,6 +273,16 @@ class WindowsNeverCarrySecrets(unittest.TestCase):
         self.assertIsNone(re.search(r"[0-9a-f]{32,}", text))
         self.assertNotIn("0ad862d48c1f4e0b9a7d6e5f4c3b2a1908f7e6d5c4b3a291", text)
         self.assertNotIn("79e772556cf616f59d93334bb10efb8e8bb016a3", text)
+
+    def test_env_style_url_and_jwt_credentials_are_masked(self):
+        self.fx.scan("--strict-n", "5")
+        text = (self.fx.out / "findings.json").read_text()
+        for leak in ("wJalrXUtnFEMI", "hunter2", "eyJhbGciOiJIUzI1NiJ9"):
+            self.assertNotIn(leak, text)
+        from review_sessions import redact
+        self.assertEqual(redact("AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG bun run deploy"), "AWS_SECRET_ACCESS_KEY=<token> bun run deploy")
+        self.assertEqual(redact("postgres://app:hunter2@db.example.com/x"), "postgres://app:<password>@db.example.com/x")
+        self.assertEqual(redact("Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"), "Bearer <token>")
 
     def test_json_quoted_and_quoted_multiword_secrets_are_masked_everywhere(self):
         f = self.fx.scan("--strict-n", "5")
@@ -394,6 +406,19 @@ class ReportRendersTheApprovedLayoutOffline(unittest.TestCase):
         html = self.fx.report(CANDIDATES)
         self.assertIn("미분류 세션/건", html)
         self.assertIn("미분류로 따로 센다", html)
+
+    def test_report_focus_puts_the_matching_candidate_first(self):
+        self.fx.scan("--split", "2026-10-03", "--threshold-sessions", "1")
+        two = dict(CANDIDATES)
+        two["candidates"] = CANDIDATES["candidates"] + [{"signal": "browser_friction", "title": "미리보기 마찰", "verdict": "part",
+                                                         "form": "프로젝트 설정", "owner": "build-prototype", "form_detail": "", "evidence": [], "judgment": "", "remeasure": ""}]
+        cands = self.fx.out / "candidates.json"; cands.write_text(json.dumps(two, ensure_ascii=False))
+        html_path = self.fx.out / "focus.html"
+        subprocess.run([sys.executable, "-I", str(CLI), "report", "--findings", str(self.fx.out / "findings.json"), "--candidates", str(cands),
+                        "--focus", "build-prototype", "--out", str(html_path)], check=True, capture_output=True)
+        html = html_path.read_text()
+        self.assertIn("초점: build-prototype", html)
+        self.assertLess(html.index("미리보기 마찰"), html.index("claim.sh 호출이 워크트리 가드에 막힌다"))
 
     def test_report_shows_the_empty_state_when_no_candidate_passed(self):
         html = self.fx.report({"summary": "", "candidates": [], "judgment_notes": [], "project": [], "strict": []})

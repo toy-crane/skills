@@ -30,13 +30,15 @@ it missed is removed before writing.
 ## Count everything with the script
 
 The bundled [measurement script](scripts/review_sessions.py) does every count,
-so a later run is comparable with this one. Run it with `python3 -I` from a
-temporary directory (`mktemp -d`) outside any repository; the findings and
-candidates files live there and are removed at the end, so the dated report
-folder under `~/.review-sessions/` holds only `report.html`:
+so a later run is comparable with this one. Take its absolute path from this
+skill's base directory before moving anywhere, then run it with `python3 -I`
+from a temporary directory (`mktemp -d`) outside any repository; the findings
+and candidates files live there and are removed at the end, so the dated
+report folder under `~/.review-sessions/` holds only `report.html`:
 
 ```
-python3 -I scripts/review_sessions.py scan --since 2026-09-26 --until 2026-10-10 --out findings.json
+SCRIPT=<this skill's base directory>/scripts/review_sessions.py
+python3 -I "$SCRIPT" scan --since 2026-09-26 --until 2026-10-10 --out findings.json
 ```
 
 Add `--split <date>` to divide every signal into before and after that day, or
@@ -103,8 +105,11 @@ renders its empty state with the re-measurement table and strict reads alone.
 ## Render and hand off
 
 ```
-python3 -I scripts/review_sessions.py report --findings findings.json --candidates candidates.json --out report.html
+python3 -I "$SCRIPT" report --findings findings.json --candidates candidates.json --out report.html
 ```
+
+With a focus, pass `--focus <skill or signal>` to `report`: the matching
+candidates and re-measurement rows come first and the header names the focus.
 
 Write the report to `~/.review-sessions/<date>/report.html`, then delete the
 temporary directory with the findings and candidates files. The report follows

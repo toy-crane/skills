@@ -121,7 +121,9 @@ def err_key(text):
 SECRET_RES = [
     (re.compile(r"(--token[= ]+)(\"[^\"]*\"|'[^']*'|\S+)"), r"\1<token>"),
     (re.compile(r"(--expected[= ]+)(\"[^\"]*\"|'[^']*'|\S+)"), r"\1<hex>"),
-    (re.compile(r"((?:token|secret|password|passwd|api[_-]?key|authorization)[\"']?\s*[=:]\s*)(\"[^\"]*\"|'[^']*'|\S+)", re.I), r"\1<token>"),
+    (re.compile(r"(\b[\w.-]*(?:token|secret|password|passwd|api[_-]?key|authorization|credential|private[_-]?key)[\w.-]*[\"']?\s*[=:]\s*)(\"[^\"]*\"|'[^']*'|\S+)", re.I), r"\1<token>"),
+    (re.compile(r"\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b"), "<jwt>"),
+    (re.compile(r"(://[^/\s:@]+:)[^@\s]+@"), r"\1<password>@"),
     (re.compile(r"\bBearer\s+\S+"), "Bearer <token>"),
     (re.compile(r"\b(?:sk|ghp|gho|ghu|ghs|xoxb|xoxp|lin_api)[-_][A-Za-z0-9_-]{8,}"), "<secret>"),
     (re.compile(r"\b[0-9a-f]{32,}\b"), "<hex>"),
@@ -273,7 +275,7 @@ def parse_claude(path):
     return s
 
 
-EXEC_CMD_RE = re.compile(r"exec_command\(\s*\{[^}]*?cmd\s*:\s*(\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)", re.S)
+EXEC_CMD_RE = re.compile(r"exec_command\(\s*\{[^}]*?[\"']?cmd[\"']?\s*:\s*(\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)", re.S)
 
 
 def events_from_item(item, ts):
@@ -761,7 +763,15 @@ def render_card(num, cand, sig):
 <dt>남는 판단</dt><dd>{esc(cand.get("judgment", ""))}</dd><dt>재측정</dt><dd>{esc(cand.get("remeasure", ""))}</dd></dl></details></div>"""
 
 
-def render_report(findings, cands):
+def matches_focus(focus, sig, cand=None):
+    if not focus:
+        return False
+    f = focus.lower()
+    hay = [sig["id"], sig["label"]] + ([cand.get("owner", ""), cand.get("title", "")] if cand else [])
+    return any(f in str(h).lower() for h in hay)
+
+
+def render_report(findings, cands, focus=None):
     sigs = {s["id"]: s for s in findings["signals"]}
     period = findings["period"]
     sess = findings["sessions"]
@@ -777,6 +787,8 @@ def render_report(findings, cands):
     unknown = {h: c for h, c in findings.get("unknown_records", {}).items() if c}
     if unknown:
         header_chips.append("모르는 레코드 " + ", ".join(f"{h} {sum(c.values())}" for h, c in unknown.items()))
+    if focus:
+        header_chips.append(f"초점: {focus}")
     split = period.get("split_hash") or period.get("split")
     out = [f"<!doctype html><meta charset=utf-8><meta name=viewport content=\"width=device-width, initial-scale=1\">",
            f"<title>review-sessions 보고서 {esc(period['since'])}～{esc(period['until'])}</title><style>{CSS}</style><main>",
@@ -791,7 +803,7 @@ def render_report(findings, cands):
     out.append('<div class="toc">' + "".join(toc) + "</div>")
     if n:
         out.append('<h2 id="cands">후보 · 비용순</h2>')
-        ordered = sorted(candidates, key=lambda c: (-sigs[c["signal"]]["unattended_sessions"], -sigs[c["signal"]]["sessions"] * max(1, sigs[c["signal"]]["events"])))
+        ordered = sorted(candidates, key=lambda c: (not matches_focus(focus, sigs[c["signal"]], c), -sigs[c["signal"]]["unattended_sessions"], -sigs[c["signal"]]["sessions"] * max(1, sigs[c["signal"]]["events"])))
         for i, c in enumerate(ordered, 1):
             out.append(render_card(i, c, sigs[c["signal"]]))
     else:
@@ -810,9 +822,9 @@ def render_report(findings, cands):
     out.append(f"<details><summary>프로젝트 follow-up {len(project)}건</summary><div class=tbl><table><tr><th>대상</th><th>관찰과 형태</th></tr>{rows}</table></div></details>")
     # re-measurement
     out.append('<h2 id="remeasure">재측정</h2>')
-    cand_num = {c["signal"]: i for i, c in enumerate(sorted(candidates, key=lambda c: (-sigs[c["signal"]]["unattended_sessions"], -sigs[c["signal"]]["sessions"] * max(1, sigs[c["signal"]]["events"]))), 1)}
+    cand_num = {c["signal"]: i for i, c in enumerate(sorted(candidates, key=lambda c: (not matches_focus(focus, sigs[c["signal"]], c), -sigs[c["signal"]]["unattended_sessions"], -sigs[c["signal"]]["sessions"] * max(1, sigs[c["signal"]]["events"]))), 1)}
     rows = []
-    for s in findings["signals"]:
+    for s in sorted(findings["signals"], key=lambda s: not matches_focus(focus, s)):
         if not s["sessions"]:
             continue
         link = f'<a class="badge {esc(next((c.get("verdict", "ok") for c in candidates if c["signal"] == s["id"]), "ok"))}" href="#cand-{cand_num[s["id"]]}">B{cand_num[s["id"]]}</a>' if s["id"] in cand_num else f'<span class=chip>{esc(s["bucket"])}</span>'
@@ -849,7 +861,7 @@ def cmd_report(args):
         findings = json.load(f)
     with open(args.candidates) as f:
         cands = json.load(f)
-    html = render_report(findings, cands)
+    html = render_report(findings, cands, args.focus)
     with open(args.out, "w") as f:
         f.write(html)
     print(f"report: {args.out}", file=sys.stderr)
@@ -879,6 +891,7 @@ def main(argv=None):
     rp = sub.add_parser("report", help="render the offline HTML report")
     rp.add_argument("--findings", required=True, help="findings.json from scan")
     rp.add_argument("--candidates", required=True, help="candidates.json written after reading the windows")
+    rp.add_argument("--focus", help="a skill name or signal id whose candidates and rows come first")
     rp.add_argument("--out", required=True)
     rp.set_defaults(func=cmd_report)
     args = ap.parse_args(argv)
