@@ -7,9 +7,9 @@
   정한다.
 - 조사 기록 [research.md](./research.md): 2026-09-10～10-10 기록으로 낸 후보,
   수치, 판정. 수용 기준이 재현하는 대상이다.
-- 측정 틀 [tools/extract.py](./tools/extract.py),
-  [tools/measure.py](./tools/measure.py): 구현이 출발점으로 삼는 추출·집계
-  스크립트. 세션 제외 규칙과 신호 정의가 여기 있다.
+- 측정 틀: 조사에 쓴 추출·집계 스크립트는 스킬의
+  [scripts/review_sessions.py](../../../skills/workflow/review-sessions/scripts/review_sessions.py)로
+  옮겨졌다. 세션 제외 규칙과 신호 정의가 거기 있다.
 - [skill-design](../../decisions/skill-design.md): 스킬 본문의 원칙, 번들
   스크립트가 자리를 얻는 조건(재현 가능한 측정 포함), 필수 스킬 규칙.
 - [skill-layout](../../decisions/skill-layout.md): `workflow` 그룹.
