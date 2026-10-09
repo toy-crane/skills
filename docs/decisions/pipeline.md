@@ -244,8 +244,7 @@
   repository evidence. The same context may continue, but remembered
   conversation alone cannot supply the next task's plan or current truth.
 - When shaping settles on a framework or hosted service, route its current
-  agent context through `add-stack-context` when that skill is available and
-  retain the same outcome inline when it is not. The
+  agent context through `add-stack-context`. The
   [stack-context](stack-context.md) contract owns discovery, source acceptance,
   live vendor-document routing, and the audit used during setup, stack changes,
   and entry into an unchecked project.
@@ -289,8 +288,7 @@
   `Issue:` line, it creates one issue titled with the spec title, carrying the
   review signal and a bounded spec section as its body, commits the line on
   the same branch, and then opens the PR. `merge` and `triage-issues` open
-  PRs by invoking `pr` when it is installed and restate this step inline for
-  installs without it ([skill-design](skill-design.md)). `shape-idea` and `triage-issues` write
+  PRs by invoking `pr` ([skill-design](skill-design.md)). `shape-idea` and `triage-issues` write
   the line only for an issue ID they already know, from the user or the issue
   triage started from; they never find one by title search. Duplicates that
   still arise are tidied by a person in the tracker.

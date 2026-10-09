@@ -190,8 +190,8 @@ states that evidence boundary directly.
 - Reviewers of a multi-view flow comparison repeatedly report that switching
   alternatives in place hides a structural difference they needed to see at
   once; a wide-pane-only combined view would be the first candidate.
-- Individually installed skills gain a reliable dependency mechanism that can
-  share project-knowledge rules without making this skill unavailable alone.
+- A skill can load another skill's text at run time, so the project-knowledge
+  rules this skill restates could be read from their owner instead.
 
 ## Still-rejected alternatives
 

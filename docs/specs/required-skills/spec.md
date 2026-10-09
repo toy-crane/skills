@@ -61,8 +61,10 @@
   없으면 멈춘다. 부수 작업용 스킬(`project-knowledge`로 후속 과제 기록)도
   같은 기준이다.
 - `clean-worktrees`를 `clean-branches`로 바꾼다. 폴더, frontmatter 이름,
-  `plugin.json` 경로, `.agents/skills/`와 `.claude/skills/` 심볼릭 링크,
-  README, `merge` 안의 참조가 함께 바뀐다.
+  `plugin.json` 경로, `skills.sh.json`의 "Git delivery" 그룹 항목,
+  `.agents/skills/`와 `.claude/skills/` 심볼릭 링크, README, `merge` 안의
+  참조가 함께 바뀐다. `skills.sh.json`은 `notGrouped: bottom`이라 항목을
+  빠뜨리면 새 스킬이 그룹 밖 맨 아래로 밀린다.
 - `clean-branches`의 일괄 정리는 워크트리 없는 로컬 브랜치도 후보로 본다.
   지금은 `git worktree list`에서 출발해 워크트리에 체크아웃된 브랜치만
   보는데, 일반 체크아웃에서 머지한 브랜치는 워크트리가 없어서 한 번도
