@@ -1,5 +1,5 @@
 {
-  "skill_name": "clean-worktrees",
+  "skill_name": "clean-branches",
   "evals": [
     {
       "id": 1,
@@ -41,7 +41,7 @@
     {
       "id": 4,
       "name": "session-inside-candidate",
-      "prompt": "/clean-worktrees 이 세션은 지금 PR #30이 이미 MERGED된 worktree 안에서 실행 중이야. AGENTS.md의 ## Worktree cleanup 섹션에 bun run dev:remove가 있어. 다른 후보는 없어.",
+      "prompt": "/clean-branches 이 세션은 지금 PR #30이 이미 MERGED된 worktree 안에서 실행 중이야. AGENTS.md의 ## Worktree cleanup 섹션에 bun run dev:remove가 있어. 다른 후보는 없어.",
       "expected_output": "The sweep releases resources but keeps the folder this session uses.",
       "files": [],
       "expectations": [
@@ -89,13 +89,39 @@
     {
       "id": 8,
       "name": "no-pr-branch",
-      "prompt": "/clean-worktrees experiment/z 브랜치 worktree는 PR을 만든 적이 없고 커밋이 origin/main에 없어. chore/w 브랜치 worktree도 PR은 없지만 커밋이 이미 origin/main에 포함돼 있어. 둘 다 깨끗해.",
+      "prompt": "/clean-branches experiment/z 브랜치 worktree는 PR을 만든 적이 없고 커밋이 origin/main에 없어. chore/w 브랜치 worktree도 PR은 없지만 커밋이 이미 origin/main에 포함돼 있어. 둘 다 깨끗해.",
       "expected_output": "A branch without a pull request never qualifies, whether or not the base contains it.",
       "files": [],
       "expectations": [
         "It leaves experiment/z and its branch in place and reports that it has no PR.",
         "It also leaves chore/w and its branch in place even though origin/main contains it, because only merged or closed pull requests qualify a branch worktree.",
         "It does not substitute commit ancestry for a missing pull request."
+      ]
+    },
+    {
+      "id": 9,
+      "name": "branch-only-leftovers",
+      "prompt": "/clean-branches worktree는 없고 로컬 브랜치만 쌓였어. feat/a는 PR #40이 squash merge됐고 tip이 PR head와 같아. fix/b는 PR #41이 닫혔고 origin/main에 포함돼 있어. spike/c는 PR이 없어. main은 지금 체크아웃돼 있어.",
+      "expected_output": "Branch-only leftovers are judged by their pull request: feat/a and fix/b are deleted, spike/c stays, and main is never touched.",
+      "files": [],
+      "expectations": [
+        "It deletes feat/a because its tip equals the merged PR's head even though a squash merge left it outside origin/main.",
+        "It deletes fix/b because its PR closed and origin/main contains it.",
+        "It leaves spike/c and reports that it has no pull request.",
+        "It never deletes main or the checked-out branch, and it runs no helper or cleanup commands for branch-only candidates."
+      ]
+    },
+    {
+      "id": 10,
+      "name": "merge-handoff-primary-checkout",
+      "prompt": "merge가 clean-branches를 불렀어: 머지된 브랜치 feat/d, 워크트리 없음, base origin/main, PR head abc1234. feat/d는 주 체크아웃에 체크아웃돼 있고 git status는 깨끗해.",
+      "expected_output": "The handoff path skips the candidate search and the helper, moves the primary checkout to the merged base, deletes only feat/d, and hands the result lines back to merge.",
+      "files": [],
+      "expectations": [
+        "It does not run the sweep's candidate search.",
+        "It does not run the removal helper, because the helper reports main-checkout and blocked for the primary checkout.",
+        "It checks out origin/main's branch, fast-forwards it, then deletes feat/d.",
+        "It reports the result so merge can show it beside the verified merge."
       ]
     }
   ]
