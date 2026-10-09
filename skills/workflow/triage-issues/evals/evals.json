@@ -50,13 +50,13 @@
     },
     {
       "id": 5,
-      "prompt": "/triage-issues github:#52\n\nGitHub Issues 규약이 있다. #52는 라벨과 요약 구역이 없는 새 이슈다: \"설정 화면의 '알림 끄기' 문구를 '알림 받지 않기'로 바꿔 줘.\" triage-issues 외에 다른 스킬은 설치되지 않았다.",
-      "expected_output": "Without pr, the run still raises one verified implementation PR whose brief body carries `Issue: github:#52` and the closing reference.",
+      "prompt": "/triage-issues github:#52\n\nGitHub Issues 규약이 있다. #52는 라벨과 요약 구역이 없는 새 이슈다: \"설정 화면의 '알림 끄기' 문구를 '알림 받지 않기'로 바꿔 줘.\" 설치된 스킬은 triage-issues뿐이고 pr은 설치되지 않았다.",
+      "expected_output": "The run stops before any work because pr is a required skill that is not installed: it names pr and its install command and neither claims the issue nor changes the repository.",
       "files": [],
       "expectations": [
-        "It implements and verifies the copy change and obtains one completed automated review.",
-        "It raises one ready-for-review PR whose body states the problem, the change, and its verification.",
-        "The body carries `Issue: github:#52` and the convention's closing reference, the same links pr would have written."
+        "It checks its required skills first and finds pr missing.",
+        "It reports `npx skills@latest add toy-crane/skills --skill pr`, in the project's package manager runner form when one is pinned.",
+        "It does not claim #52, implement the copy change, or open a PR with a brief body as a substitute for pr."
       ]
     }
   ]

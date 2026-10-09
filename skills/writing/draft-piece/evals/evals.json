@@ -41,7 +41,7 @@
         "It updates the existing heading rule on disk without a separate remember request or approval.",
         "It preserves brevity alongside claim-bearing headings, reason, scope, before/after and confirming instruction.",
         "It changes the heading but preserves the backup claim and brief ownership.",
-        "It works with only draft-piece installed and reports the actual record location."
+        "It records the rule through project-knowledge and reports the actual record location."
       ]
     },
     {
