@@ -43,9 +43,8 @@
   this decision layer separate from product screens: use only the component,
   screen, or related views needed to judge the question, integrate the user's
   choice into the existing prototype when present, discard the comparison, and resume
-  shaping. If the skill is unavailable, use a sufficient renderer for the local
-  question and defer a whole-surface decision rather than treating a partial
-  render as approval. When the user asks for explanation, invoke `explain-visually`.
+  shaping. Never treat a partial render as approval of the whole surface. When
+  the user asks for explanation, invoke `explain-visually`.
 - Mirror flows, state models, and relationships with one diagram when they have
   multiple branches, transitions, or links before moving to a downstream
   decision. Ask at most one question about an unresolved part of the diagram and
@@ -71,10 +70,9 @@
   session made outside the allowed paths are reverted, and uncommitted work
   that predates the session is left alone.
 - When a framework or hosted service settles during shaping, establish its
-  current agent context through `add-stack-context` when available. Keep the
-  outcome self-contained when it is absent: discover official skills, preserve
-  live routes to current vendor guidance instead of copying that guidance, and
-  account for the technology before continuing.
+  current agent context through `add-stack-context`, which owns discovery,
+  source acceptance, live routes to vendor guidance, and the accounting for
+  the technology before shaping continues.
 - Ground any conclusion about a third-party package or tool in evidence of how
   it actually behaves — its own source, documentation, releases, and maintainer
   statements — and confirm it against this project's versions in a scratch copy

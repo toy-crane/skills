@@ -82,8 +82,8 @@
   code-plus-task checkpoints advance that baseline. A mismatch that would
   change an approved outcome, acceptance criterion, off-limits area, or product
   constraint stops that outcome before any source change, names the stale point
-  and its evidence, and routes it to `babysit-specs` when available or to the
-  same inline shaping decision when not. The check reads the selected spec
+  and its evidence, and routes it to `babysit-specs` for that folder alone.
+  The check reads the selected spec
   against the repository, so `implement` still never reads sibling spec
   folders.
 - The spec-writing skills own the producer side of that loading rule. A spec
@@ -101,7 +101,7 @@
   neither source silently overrides the other.
 - `implement` selects public test seams from the agreed behavior and existing
   interfaces under its implementation authority. It briefly states what the
-  seam will verify, then uses `tdd` when available. Technical uncertainty is
+  seam will verify, then uses `tdd`. Technical uncertainty is
   resolved through repository evidence; only unresolved expected behavior or a
   change to the agreed product contract requires a user decision.
 - For each affected product surface, `implement` uses an available matching
@@ -256,9 +256,9 @@
   decision.
 - When execution applies a workaround whose root cause stays open, or observes
   an out-of-scope defect with evidence, it records a follow-up at the moment of
-  discovery through `project-knowledge`, and writes the item directly when that
-  skill is absent. `implement` and each runtime-verification skill carry this
-  routing; `project-knowledge` owns the criteria and format. A recorded
+  discovery through `project-knowledge`. `implement` and each
+  runtime-verification skill carry this routing; `project-knowledge` owns the
+  criteria and format. A recorded
   follow-up is a valid `shape-idea` input or a direct fix seed for a later
   session.
 - `setup-issue-tracker` keeps the always-loaded tracker section focused on

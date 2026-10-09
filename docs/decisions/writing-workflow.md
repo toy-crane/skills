@@ -34,8 +34,7 @@
   proposals. A local edit or repeated occurrence does not by itself authorize
   an author-wide preference.
 - Later planning and drafting apply the relevant confirmed rules and accepted
-  examples. Keep shared context readable by both Claude and Codex, including
-  when a writing skill is installed without `project-knowledge`. Update an
+  examples. Keep shared context readable by both Claude and Codex. Update an
   example when later user feedback replaces or rejects it; Git retains the
   correction history, not a second active feedback log.
 - Briefs live in `docs/briefs/<slug>/brief.md` and record what the piece must
