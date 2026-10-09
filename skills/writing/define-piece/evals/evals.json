@@ -47,7 +47,7 @@
       "expectations": [
         "It strengthens the existing short-heading rule with a claim requirement, rationale, blog scope and confirming choice.",
         "It saves the accepted example in the owning decision and preserves the existing brevity rationale.",
-        "It writes the actual repository record even without project-knowledge installed.",
+        "It records the rule through project-knowledge so the actual repository record is written, not only reported.",
         "It does not duplicate criteria into the brief or write content/posts/."
       ]
     },

@@ -102,9 +102,10 @@
 
 ## 수용 기준
 
-- 배포되는 `SKILL.md` 어디에도 이 저장소의 스킬에 대해 "없으면/unavailable/
-  absent/when available" 조건으로 분기하는 문장이 없다. `find-skills`에 대한
-  분기는 남는다.
+- 배포되는 스킬 폴더 어디에도(`SKILL.md`뿐 아니라 `references/`,
+  `agents/`, `evals/`까지) 이 저장소의 스킬에 대해 "없으면/unavailable/
+  absent/when available" 조건으로 분기하는 문장이나 그런 동작을 기대하는
+  평가 단언이 없다. `find-skills`에 대한 분기는 남는다.
 - 필수 스킬이 하나 빠진 상태에서 스킬을 부르면, 파일이나 Git 상태를 바꾸기
   전에 빠진 스킬 이름과 설치 명령을 보고하고 끝난다. 예:
   `pr`이 없는 `merge`는 커밋·rebase·PR 생성 중 아무것도 하지 않는다.

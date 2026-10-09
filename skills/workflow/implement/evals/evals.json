@@ -335,7 +335,7 @@
       "expectations": [
         "It repairs the acceptance-criterion break and the reproducible sorting defect and reruns only the verification those repairs affect.",
         "It notes the SSRF finding as a trade-off the spec already disposed of rather than repairing it or reopening the decision.",
-        "It records the unrelated-file defect as a follow-up through project-knowledge, or writes docs/follow-ups/<slug>.md when that skill is absent, instead of fixing it in this run.",
+        "It records the unrelated-file defect as a follow-up through project-knowledge instead of fixing it in this run.",
         "It keeps the naming-style note and the unreproduced race-condition suspicion in the handoff without repairing them.",
         "It does not invoke the automated reviewer again after the repairs.",
         "It reports completion and records the review mode, what was repaired, and what was recorded."

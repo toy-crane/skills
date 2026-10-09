@@ -15,9 +15,9 @@ Preserve a confirmed reusable choice before handing back that correction:
   supplied, say so instead of inventing the user's rationale. Keep examples
   representative rather than collecting every edit.
 - Reusable style and structure belong in the relevant subject under
-  `docs/decisions/`, with one link from `docs/decisions/README.md`. Use
-  `project-knowledge` when available; otherwise write the subject and index
-  directly. Create a subject only when none owns the choice. Use shared
+  `docs/decisions/`, with one link from `docs/decisions/README.md`. Record
+  it through `project-knowledge`, which creates a subject only when none owns
+  the choice. Use shared
   repository files so either Claude or Codex can read the current criteria.
 - The publication owns its baseline voice; a deliberate change to that voice
   belongs to `define-publication`. A piece's thesis and scope belong to its
