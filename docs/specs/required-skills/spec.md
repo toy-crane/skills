@@ -54,9 +54,14 @@
     `draft-piece`, `define-publication` → `project-knowledge`
   이름이 사용자에게 보내는 안내문이나 경계 문장에만 나오는 경우는 의존성이
   아니다. `triage-issues`가 "답이 오면 `shape-idea`로 이어 간다"고 적은
-  것, `implement`가 사용자에게 `human-review`를 권하는 것,
-  `resolve-follow-ups`가 "나중 `shape-idea` 세션이 정한다"고 적은 것이
+  것, `resolve-follow-ups`가 "나중 `shape-idea` 세션이 정한다"고 적은 것이
   그 예다.
+- `implement`에서 `human-review`를 언급하는 유일한 문장(리뷰 결과 분류에서
+  "사용자 몫인 결정은 `human-review`로 판단하도록 권한다")을 지운다. 그
+  결정을 사용자 몫으로 핸드오프에 적는 동작은 그대로이고, 어떤 스킬로
+  판단할지 권하는 부분만 빠진다. `implement/evals/evals.json`에서 그 권유를
+  기대하는 단언도 함께 지운다. `human-review` 스킬 자체는 남는다. 이로써
+  이 저장소의 다른 스킬 본문에는 `human-review`가 나오지 않는다.
 - 각 스킬은 작업을 시작하기 전에 자기가 부를 스킬이 설치돼 있는지 확인하고,
   없으면 멈춘다. 부수 작업용 스킬(`project-knowledge`로 후속 과제 기록)도
   같은 기준이다.
@@ -152,7 +157,9 @@
 ## 손대지 않는 것과 이유
 
 - 각 스킬의 나머지 본문. 이번 작업은 의존성 문장, `merge`가 정리를 넘기는
-  문장, `clean-branches`가 그 한 브랜치를 받는 경로, 복사본만 바꾼다.
+  문장, `clean-branches`가 그 한 브랜치를 받는 경로, `implement`의
+  `human-review` 권유 문장, 복사본만 바꾼다.
+- `human-review` 스킬 자체. 사용자가 직접 부르는 스킬로 남는다.
 - `remove-worktree.sh`의 판정 자체. 주 체크아웃을 `blocked`로 보는 것은 그
   폴더를 지우면 안 되기 때문이고, 브랜치만 지우는 경로는 스킬 본문이 맡는다.
 - `add-stack-context`의 `find-skills` 분기. 외부 스킬 예외로 확정했다.
