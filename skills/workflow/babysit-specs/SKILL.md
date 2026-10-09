@@ -5,6 +5,12 @@ description: Revise active `docs/specs/SLUG/` specs so they match what has shipp
 
 # Babysit Specs
 
+This skill requires `project-knowledge` and `build-prototype`. Before doing
+any work, confirm each one is installed. When one is missing, stop and report
+it with its install command,
+`npx skills@latest add toy-crane/skills --skill <name>`, using the project's
+package manager runner where it pins one.
+
 ## Select the specs and establish the baseline
 
 Take the spec folders the user names. With none named, take every folder
@@ -80,8 +86,7 @@ again elsewhere in the contract, keep it marked interim there.
 Add no change log section and no revision file; Git holds the history. Never
 edit product source, configuration, or dependencies, and run any experiment in
 a scratch directory outside the working tree. Record a settled outcome that
-future work should reuse through `project-knowledge` when it is available, and
-write it into its decision contract directly when it is not.
+future work should reuse through `project-knowledge`.
 
 ## Hand off what you do not own
 
@@ -90,8 +95,7 @@ write it into its decision contract directly when it is not.
 - A completed task whose delivered outcome the revision changed: leave its
   evidence untouched and name it for re-verification.
 - A drifted prototype: regenerate the affected screens through
-  `build-prototype` when available; otherwise record the drift as a remaining
-  risk in the spec.
+  `build-prototype`.
 - A spec whose acceptance criteria all pass against the current repository:
   report it as a retirement candidate. Deleting the folder belongs to
   `maintain-project-context` or the user.

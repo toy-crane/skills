@@ -344,13 +344,12 @@
     {
       "id": 28,
       "prompt": "/implement docs/specs/importer/의 구현과 검증은 끝났어. 자동 리뷰가 병적으로 중첩된 입력 파일에서 파서가 몇 분씩 멈춘다고 지적했어. spec은 이 입력 종류를 다루지 않고, 일반 사용 경로에서는 재현되지 않아. 마무리해줘.",
-      "expected_output": "The response treats the pathological-input failure as a material consequence the spec leaves open: it records the evidence, names the risk decision for the user, offers human-review for that judgment, and reports the verified work as complete without opening another repair round.",
+      "expected_output": "The response treats the pathological-input failure as a material consequence the spec leaves open: it records the evidence, names the risk decision for the user, and reports the verified work as complete without opening another repair round.",
       "files": [],
       "expectations": [
         "It does not treat the finding as a must-fix because it neither breaks an approved acceptance criterion nor reproduces on an ordinary-use path.",
         "It records the evidenced failure durably rather than only mentioning it in the closing message.",
         "It names the risk acceptance as a decision the user owns.",
-        "It offers human-review for that judgment instead of invoking it automatically.",
         "It does not run repair-and-review rounds against the pathological input.",
         "It reports the verified implementation as complete."
       ]

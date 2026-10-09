@@ -5,6 +5,11 @@ description: Clean, compact, and reconcile durable project context and any confi
 
 # Maintain Project Context
 
+This skill requires `define-product`. Before doing any work, confirm it is
+installed. When it is missing, stop and report it with its install command,
+`npx skills@latest add toy-crane/skills --skill define-product`, using the
+project's package manager runner where it pins one.
+
 Run a deliberate hygiene pass across the durable context that future work will
 reuse. Make the current meaning easier to retrieve without becoming the
 decision-maker for any artifact.
@@ -50,9 +55,8 @@ work-unit scope, or acceptance criteria into it.
 
 When a proposed edit would choose a new audience, problem, promise, core loop,
 product boundary, or other product intent, leave the file unchanged and ask the
-user to settle that meaning. Use `define-product` when it is available and the
-user wants to reopen the product premise; otherwise ask the same exact product
-question directly.
+user to settle that meaning. Use `define-product` when the user wants to reopen
+the product premise.
 
 ## Maintain decision contracts
 

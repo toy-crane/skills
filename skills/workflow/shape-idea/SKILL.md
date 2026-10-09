@@ -5,6 +5,12 @@ description: Turn a chosen problem and broad direction into shared decisions and
 
 # Shape Idea
 
+This skill requires `project-knowledge`, `add-stack-context`,
+`explain-visually`, and `build-prototype`. Before the first question, confirm
+each one is installed. When one is missing, stop and report it with its
+install command, `npx skills@latest add toy-crane/skills --skill <name>`,
+using the project's package manager runner where it pins one.
+
 ## Keep alignment separate from delivery
 
 Shaping settles decisions; implementation applies them. Do not change product
@@ -25,9 +31,7 @@ you learned. Leave uncommitted work that predates the session alone.
 ## Ground decisions in project truth
 
 Before the first question, invoke `project-knowledge` and apply it throughout the
-session. If it is unavailable, read `GLOSSARY.md` and relevant subjects from
-`docs/decisions/README.md` when present, update confirmed terms, and surface
-terminology or decision conflicts for explicit clarification.
+session.
 
 Read root `PRODUCT.md` when it exists before settling the work unit. Treat it as
 the current app-level premise, use only the product constraints relevant to the
@@ -44,16 +48,9 @@ before building on it or working around it. Record what was checked, what fell
 short, and the upstream change that would reopen the decision.
 
 When a decision selects a framework or hosted service, invoke
-`add-stack-context` when available and let it own discovery, source acceptance,
-installation, live vendor-document routing, and accounting. When it is absent,
-retain the selected technology's outcome inline: use `find-skills` when
-available, or an equivalent current Skills search when not, verify vendor
-control before installing an official skill, require explicit approval for a
-community skill, and check other official vendor channels. Keep a changing
-`llms.txt` at its official source and preserve a bounded `AGENTS.md` or
-`CLAUDE.md` instruction that retrieves it during relevant work instead of
-copying its contents into the repository. Account for the selected technology
-before continuing.
+`add-stack-context` and let it own discovery, source acceptance,
+installation, live vendor-document routing, and accounting for the selected
+technology before continuing.
 
 ## Present one decision at a time
 
@@ -83,8 +80,7 @@ that makes the decision judgeable.
   question about its unresolved part and wait. Keep a linear structure that fits
   in one sentence in prose.
 - When the user asks for an explanation rather than a decision, invoke
-  `explain-visually`. If unavailable, use one sentence when sufficient or the
-  best available renderer otherwise.
+  `explain-visually`.
 
 A choice is settled when the user confirms it or it is made under authority the
 user explicitly delegated for that class of decision. It becomes a project

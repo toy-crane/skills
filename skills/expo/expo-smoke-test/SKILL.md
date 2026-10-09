@@ -5,6 +5,11 @@ description: Verify an Expo or React Native change together with the app's core 
 
 # Expo Smoke Test
 
+This skill requires `project-knowledge`. Before doing any work, confirm it is
+installed. When it is missing, stop and report it with its install command,
+`npx skills@latest add toy-crane/skills --skill project-knowledge`, using the
+project's package manager runner where it pins one.
+
 Prove two things on each platform: the current change works, and the app's core
 loop still works. Static inspection, type checks, unit tests, and a successful
 bundle support the result but do not replace device verification.
@@ -289,7 +294,5 @@ cleanup; in CI, release the devices with `agent-device close --shutdown`.
 
 When a workaround such as clearing a cache or rebuilding leaves its root cause
 open, or you observe an out-of-scope defect with evidence, record it at the
-moment of discovery through the `project-knowledge` skill. If that skill is
-unavailable, write the symptom, observed evidence, suspected cause, what was
-tried, and a proposed next step to `docs/follow-ups/<slug>.md` yourself.
-Reporting it only in conversation loses it.
+moment of discovery through the `project-knowledge` skill. Reporting it only
+in conversation loses it.

@@ -5,6 +5,11 @@ description: Draft or resume a piece from a selected docs/briefs/SLUG/ folder, o
 
 # Draft Piece
 
+This skill requires `project-knowledge`. Before doing any work, confirm it is
+installed. When it is missing, stop and report it with its install command,
+`npx skills@latest add toy-crane/skills --skill project-knowledge`, using the
+project's package manager runner where it pins one.
+
 ## Load the current handoff
 
 Treat `brief.md` as the confirmed contract for the piece. Read the publication
@@ -66,9 +71,7 @@ editing the brief.
 
 Route a workaround whose root cause stays open, or an evidenced out-of-scope
 defect found while running the piece's code, through `project-knowledge` at
-discovery time. If that skill is unavailable, write the symptom, observed
-evidence, suspected cause, what was tried, and proposed next step to
-`docs/follow-ups/<slug>.md`.
+discovery time.
 
 ## Verify in two layers
 
