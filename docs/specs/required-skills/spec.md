@@ -89,11 +89,15 @@
   복사본과 CI `shared-helpers` 워크플로를 지우고, `CLAUDE.md`와 `AGENTS.md`의
   "Skills stand alone"과 "Merging into main" 절을 새 규칙에 맞게 고친다.
 - README의 "각 스킬은 독립적으로 설치 가능하다"는 설명을 새 규칙으로 바꾼다.
-- 이미 출시된 `docs/specs/clean-worktrees/`(#121)와
-  `docs/specs/merge-worktree-cleanup/`(#120)을 지운다. 두 폴더는 옛 이름과
-  "헬퍼를 두 벌 싣고 CI로 맞춘다"는 요구를 그대로 들고 있어서, 남겨 두면
-  이 스펙과 모순되는 수용 기준이 저장소 컨텍스트에 남는다. 그 결정 내용은
-  `worktree-cleanup.md`가 이미 가지고 있다.
+- 이미 출시됐지만 은퇴하지 않은 스펙 폴더 중 이 작업과 모순되는 네 개를
+  지운다: `docs/specs/clean-worktrees/`(#121)와
+  `docs/specs/merge-worktree-cleanup/`(#120)은 옛 이름과 "헬퍼를 두 벌
+  싣고 CI로 맞춘다"는 요구를, `docs/specs/use-pr-skill-for-prs/`(#127)는
+  "`pr`이 없을 때 `merge`가 쓰는 짧은 본문과 인라인 이슈 연결"을,
+  `docs/specs/merge-rebase-blocker-recovery/`는 "`merge`는 단독 설치에서도
+  복구를 책임진다"는 전제를 들고 있다. 남겨 두면 이 스펙과 모순되는 수용
+  기준이 저장소 컨텍스트에 남는다. 그 결정 내용은 `worktree-cleanup.md`,
+  `skill-design.md`, `pr-descriptions.md`가 이미 가지고 있다.
 - 설치된 플러그인 사용자가 업데이트를 받도록 `plugin.json` 버전을 올린다.
 
 ## 수용 기준
@@ -150,7 +154,7 @@
 - `clean-branches`의 description은 일괄 정리와 `merge`가 넘기는 한 브랜치를
   함께 받는다고 적고, "머지 직후 정리는 `merge` 몫"이라는 문장은 지운다.
 - `plugin.json` 버전은 minor를 올린다.
-- 출시된 두 스펙 폴더의 삭제는 이 작업에서 한다. 보통은
+- 출시된 네 스펙 폴더의 삭제는 이 작업에서 한다. 보통은
   `maintain-project-context`의 정기 정리 몫이지만, 이 작업이 그 폴더들의
   요구를 직접 뒤집기 때문이다.
 
