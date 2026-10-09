@@ -30,8 +30,13 @@ you learned. Leave uncommitted work that predates the session alone.
 
 ## Ground decisions in project truth
 
-Before the first question, invoke `project-knowledge` and apply it throughout the
-session.
+Before the first question, invoke `project-knowledge` with the problem and
+direction being shaped and the terms and choices they touch; it hands back
+the confirmed definitions of those terms, the decision contracts that apply,
+and the path of each `GLOSSARY.md` entry or `docs/decisions/<subject>.md`
+file it writes. Apply those throughout the session, and route each term that
+gets resolved and each decision that settles during shaping back through it
+the same way.
 
 Read root `PRODUCT.md` when it exists before settling the work unit. Treat it as
 the current app-level premise, use only the product constraints relevant to the
