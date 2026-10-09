@@ -495,8 +495,7 @@ review evidence, so verified implementation and pending review stay distinct.
 
 The runnable handoff lets the user inspect the verified implementation without
 turning server mechanics into a separate pipeline phase. Keeping the outcome in
-`implement` also preserves standalone installation while leaving
-`human-review` focused on unresolved human judgment.
+`implement` also keeps `human-review` focused on unresolved human judgment.
 
 Specialized runtime-verification skills own framework-specific observation
 loops, while `implement` owns their selection and the completion gates that
@@ -622,9 +621,10 @@ state keep automation reviewable without turning follow-up files into a queue.
   to a session that checked out the default branch, so two sessions take the
   same folder; the assignee field is visible the moment it is written.
 - A separately invoked reconciliation skill for alignment inside one work unit
-  — that alignment is part of outcome completion and becomes optional if
-  correctness depends on another installed skill or user invocation, so it
-  stays in `implement`. Revision across work units is different: it happens
+  — that alignment is part of outcome completion, so it stays in `implement`
+  rather than becoming one more required skill, or a user invocation, that
+  every ordinary implementation would wait on. Revision across work units is
+  different: it happens
   between implementations rather than inside one, and `implement`'s load-time
   staleness check keeps correctness from depending on anyone remembering to
   invoke `babysit-specs`.
@@ -632,10 +632,9 @@ state keep automation reviewable without turning follow-up files into a queue.
   outcomes prematurely.
 - Separate `implement-spec` and `implement-tasks` entry points — the spec folder
   already contains the information needed to choose the implementation path.
-- A `run-server` pipeline skill — it exposes a technical mechanism and would
-  make `implement` depend on another installed skill; reconsider a standalone
-  preview workflow only after repeated independent user requests establish a
-  separate outcome.
+- A `run-server` pipeline skill — it exposes a technical mechanism rather than
+  the handoff outcome; reconsider a separately invokable preview workflow only
+  after repeated independent user requests establish a separate outcome.
 - A generic runtime-verification dispatcher — matching framework skills already
   own their observation loops, while `implement` owns the implementation
   completion gate and remains usable when none is installed.

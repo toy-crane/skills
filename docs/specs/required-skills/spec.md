@@ -74,6 +74,11 @@
   복사본과 CI `shared-helpers` 워크플로를 지우고, `CLAUDE.md`와 `AGENTS.md`의
   "Skills stand alone"과 "Merging into main" 절을 새 규칙에 맞게 고친다.
 - README의 "각 스킬은 독립적으로 설치 가능하다"는 설명을 새 규칙으로 바꾼다.
+- 이미 출시된 `docs/specs/clean-worktrees/`(#121)와
+  `docs/specs/merge-worktree-cleanup/`(#120)을 지운다. 두 폴더는 옛 이름과
+  "헬퍼를 두 벌 싣고 CI로 맞춘다"는 요구를 그대로 들고 있어서, 남겨 두면
+  이 스펙과 모순되는 수용 기준이 저장소 컨텍스트에 남는다. 그 결정 내용은
+  `worktree-cleanup.md`가 이미 가지고 있다.
 - 설치된 플러그인 사용자가 업데이트를 받도록 `plugin.json` 버전을 올린다.
 
 ## 수용 기준
@@ -128,6 +133,9 @@
 - `clean-branches`의 description은 일괄 정리와 `merge`가 넘기는 한 브랜치를
   함께 받는다고 적고, "머지 직후 정리는 `merge` 몫"이라는 문장은 지운다.
 - `plugin.json` 버전은 minor를 올린다.
+- 출시된 두 스펙 폴더의 삭제는 이 작업에서 한다. 보통은
+  `maintain-project-context`의 정기 정리 몫이지만, 이 작업이 그 폴더들의
+  요구를 직접 뒤집기 때문이다.
 
 ## 손대지 않는 것과 이유
 
@@ -152,7 +160,7 @@
 
 - 에이전트가 "멈추라"는 지시를 무시하고 즉석에서 대체 경로를 만들 수 있다.
   옛 실패의 반대 방향이다. `pr`을 뺀 `merge` 호출 한 번으로 확인한다.
-- `implement`만 설치한 사용자는 이제 `tdd`, `babysit-specs`, `human-review`,
+- `implement`만 설치한 사용자는 이제 `tdd`, `babysit-specs`,
   `project-knowledge`까지 설치해야 한다. 설치 명령을 한 줄로 안내하므로
   비용은 한 번이다.
 - 복사 설치로 `clean-worktrees`를 쓰던 사용자는 `update-project-skills`를
