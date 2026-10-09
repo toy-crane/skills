@@ -28,7 +28,8 @@ root `PRODUCT.md` when the topic concerns the product, taking only the facts
 this piece needs. Apply the relevant confirmed writing criteria and accepted
 examples when proposing headings and prose variants; transfer their writing
 qualities, not their subject matter. Resolve an ambiguous term with the user
-and record it through `project-knowledge`.
+and record it through `project-knowledge`, handing it the term, its confirmed
+meaning, and the wording to avoid, and use the `GLOSSARY.md` entry it reports.
 
 Resolve what evidence can answer before asking the user. When the piece makes
 a claim about how code, a tool, or a package behaves, read the source or run

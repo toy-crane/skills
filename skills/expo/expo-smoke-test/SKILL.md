@@ -294,5 +294,7 @@ cleanup; in CI, release the devices with `agent-device close --shutdown`.
 
 When a workaround such as clearing a cache or rebuilding leaves its root cause
 open, or you observe an out-of-scope defect with evidence, record it at the
-moment of discovery through the `project-knowledge` skill. Reporting it only
-in conversation loses it.
+moment of discovery through the `project-knowledge` skill, handing it the
+symptom, observed evidence, suspected cause, what was tried, and a proposed
+next step, and keep the `docs/follow-ups/<slug>.md` path it reports for the
+handoff. Reporting it only in conversation loses it.

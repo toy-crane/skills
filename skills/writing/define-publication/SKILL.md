@@ -155,9 +155,10 @@ Keep the file about this medium:
 - Put the medium's accepted sample and confirmed voice in its Voice section.
   Voice explicitly shared across the author's publications belongs in the
   existing style subject under `docs/decisions/`; link to it instead of copying
-  the rule or sample. Record it through `project-knowledge` with the rule,
-  reason, scope, representative example, and confirmation evidence. A pointer
-  to an unwritten record is not
+  the rule or sample. Record it through `project-knowledge`, handing it the
+  rule, reason, scope, representative example, and confirmation evidence, and
+  link the `docs/decisions/<subject>.md` path it reports. A pointer to an
+  unwritten record is not
   preservation. Durable writes stay within these premise and style owners.
 - Leave individual pieces, their theses, outlines, and briefs to the per-piece
   workflow.

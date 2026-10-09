@@ -172,7 +172,9 @@ success.
 
 Resolve in-scope discrepancies and affected tasks in the current work. Route a
 workaround whose root cause remains open, or an evidenced out-of-scope defect,
-through `project-knowledge` at discovery time.
+through `project-knowledge` at discovery time, handing it the symptom, observed
+evidence, suspected cause, what was tried, and proposed next step, and keep
+the `docs/follow-ups/<slug>.md` path it reports for the handoff.
 
 ## Complete deterministic verification before review
 
@@ -243,7 +245,8 @@ for another look at a confirmed user command instead of invoking the reviewer
 again.
 
 Record every other finding rather than repairing it: an evidenced defect or open
-workaround through `project-knowledge`; a trade-off the spec or a decision
+workaround through `project-knowledge` with the same five fields, keeping the
+follow-up path it reports; a trade-off the spec or a decision
 contract already disposed of, as disposed; an out-of-scope, stylistic, or
 unconfirmed finding, in the handoff; and a material consequence the spec leaves
 open, such as a security trade-off or a pathological-input failure, as a

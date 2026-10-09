@@ -71,7 +71,9 @@ editing the brief.
 
 Route a workaround whose root cause stays open, or an evidenced out-of-scope
 defect found while running the piece's code, through `project-knowledge` at
-discovery time.
+discovery time, handing it the symptom, observed evidence, suspected cause,
+what was tried, and proposed next step, and keep the
+`docs/follow-ups/<slug>.md` path it reports for the handoff.
 
 ## Verify in two layers
 

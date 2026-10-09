@@ -86,7 +86,9 @@ again elsewhere in the contract, keep it marked interim there.
 Add no change log section and no revision file; Git holds the history. Never
 edit product source, configuration, or dependencies, and run any experiment in
 a scratch directory outside the working tree. Record a settled outcome that
-future work should reuse through `project-knowledge`.
+future work should reuse through `project-knowledge`, handing it the decision,
+its rationale, and the rejected alternatives, and link the
+`docs/decisions/<subject>.md` path it reports from the spec.
 
 ## Hand off what you do not own
 

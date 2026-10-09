@@ -142,7 +142,9 @@ When reproduction reveals a different out-of-scope defect, preserve the
 selected item and return the new symptom, observed evidence, suspected cause,
 what was tried, and proposed next step to the coordinator. Do not leave the only
 record in the disposable worker. The coordinator serializes these records in
-its own checkout through `project-knowledge`. Before cleaning up the worker,
+its own checkout through `project-knowledge`, handing it those five fields and
+keeping the `docs/follow-ups/<symptom>.md` path it reports. Before cleaning up
+the worker,
 commit that record and publish a dedicated ready-for-review follow-up-record PR;
 do not mix it into the selected item's resolution PR. A local coordinator change
 or closing-message copy is not a durable handoff.
