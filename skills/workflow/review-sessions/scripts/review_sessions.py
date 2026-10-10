@@ -627,6 +627,28 @@ def split_side(session, split_date, split_hash):
     return "unsplit"
 
 
+def unclassified_errors(sessions, min_sessions=2, top=15):
+    """Recurring error keys no signal predicate claims, so a new failure class surfaces."""
+    preds = [pred for _, _, _, pred in SIGNALS]
+    per_key = defaultdict(lambda: {"sessions": set(), "events": 0, "examples": [], "unattended": set()})
+    for s in sessions:
+        for i, e in enumerate(s.events):
+            if e["k"] != "err" or e.get("side") or any(pred(s, i, e) for pred in preds):
+                continue
+            entry = per_key[e["key"]]
+            entry["sessions"].add(s.id)
+            entry["events"] += 1
+            if s.kind == "unattended":
+                entry["unattended"].add(s.id)
+            if len(entry["examples"]) < 3:
+                entry["examples"].append(redact(s.label))
+    rows = [{"key": redact(k), "sessions": len(v["sessions"]), "events": v["events"],
+             "unattended_sessions": len(v["unattended"]), "examples": v["examples"]}
+            for k, v in per_key.items() if len(v["sessions"]) >= min_sessions]
+    rows.sort(key=lambda r: (-r["unattended_sessions"], -r["sessions"], -r["events"]))
+    return rows[:top]
+
+
 def compute_signals(sessions, split_date=None, split_hash=None):
     out = []
     delegation_signals.split_date, delegation_signals.split_hash = split_date, split_hash
@@ -677,16 +699,26 @@ def session_summary(s, limit=2000):
         else:
             seq.append([k, 1])
     body = " ".join(f"{k}x{n}" if n > 1 else k for k, n in seq)
-    head = f"first prompt: {redact(re.sub(chr(10), ' ', s.first_prompt or ''))[:200]}\n"
+    first = s.first_prompt or ""
+    m = re.match(r"\s*/([\w:-]+)", first)
+    opening = f"/{m.group(1)}" if m else "plain prompt"   # the words themselves stay in the log
+    head = f"first prompt: {opening} ({len(first)}자); skills loaded: {', '.join(sorted(s.skills)) or '없음'}\n"
     head += f"tool calls {sum(1 for e in s.events if e['k'] == 'tool')}, errors {sum(1 for e in s.events if e['k'] == 'err')}, user turns {s.n_user_text}\n"
     return (head + redact(body))[:limit]
 
 
 def strict_sample(sessions, since, until, n=5, min_tools=3):
+    """Five interactive sessions, seeded by the period. Sessions with at least min_tools
+    tool calls are drawn first because there is something to read; shorter ones fill the
+    rest so the sample stays five whenever five interactive sessions exist."""
     import random
-    eligible = [s for s in sessions if s.kind == "interactive" and sum(1 for e in s.events if e["k"] == "tool") >= min_tools]
-    eligible.sort(key=lambda s: (s.harness, s.id))
-    random.Random(f"{since}:{until}").shuffle(eligible)
+    rng = random.Random(f"{since}:{until}")
+    interactive = sorted((s for s in sessions if s.kind == "interactive"), key=lambda s: (s.harness, s.id))
+    rich = [s for s in interactive if sum(1 for e in s.events if e["k"] == "tool") >= min_tools]
+    thin = [s for s in interactive if s not in rich]
+    rng.shuffle(rich)
+    rng.shuffle(thin)
+    eligible = rich + thin
     return [{"session": redact(s.label), "harness": s.harness, "repo": redact(s.repo.replace(HOME, "~")),
              "kind": s.kind, "path": redact(s.path), "summary": session_summary(s)} for s in eligible[:n]]
 
@@ -729,6 +761,7 @@ def cmd_scan(args):
         "unknown_records": {h: dict(c) for h, c in unknown.items()},
         "skill_versions": {k: dict(v) for k, v in skill_versions.items()},
         "signals": compute_signals(sessions, split_date, split_hash),
+        "unclassified_errors": unclassified_errors(sessions),
     }
     threshold = {"sessions": args.threshold_sessions, "repos": args.threshold_repos, "unattended": args.threshold_unattended}
     for sig in findings["signals"]:
@@ -866,6 +899,9 @@ def render_report(findings, cands, focus=None):
     project = cands.get("project", [])
     rows = "".join(f"<tr><td>{esc(p.get('title', ''))}</td><td>{esc(p.get('note', ''))}</td></tr>" for p in project)
     out.append(f"<details><summary>프로젝트 follow-up {len(project)}건</summary><div class=tbl><table><tr><th>대상</th><th>관찰과 형태</th></tr>{rows}</table></div></details>")
+    unclassified = findings.get("unclassified_errors", [])
+    rows = "".join(f"<tr><td><code>{esc(r['key'])}</code></td><td class=n>{r['sessions']}</td><td class=n>{r['events']}</td><td class=n>{r['unattended_sessions']}</td><td>{' '.join(f'<code>{esc(x)}</code>' for x in r['examples'])}</td></tr>" for r in unclassified)
+    out.append(f"<details{' open' if unclassified else ''}><summary>어느 신호에도 안 잡힌 반복 오류 {len(unclassified)}건 · 새 신호 후보</summary><div class=tbl><table><tr><th>오류 (정규화)</th><th>세션</th><th>건수</th><th>무인</th><th>예시 세션</th></tr>{rows}</table></div></details>")
     # re-measurement
     out.append('<h2 id="remeasure">재측정</h2>')
     cand_num = {c["signal"]: i for i, c in enumerate(sorted(candidates, key=lambda c: (not matches_focus(focus, sigs[c["signal"]], c), -sigs[c["signal"]]["unattended_sessions"], -sigs[c["signal"]]["sessions"] * max(1, sigs[c["signal"]]["events"]))), 1)}

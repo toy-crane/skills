@@ -69,7 +69,10 @@ the agent recovers in one turn. The `judgment` bucket (interrupts, corrections,
 rejected tools) is reported as product judgment headed for decision contracts
 and memory, not for tooling. `strict` holds the five interactive sessions
 sampled for strict reading, chosen by a seed from the period so the same period
-samples the same sessions.
+samples the same sessions; sessions with at least three tool calls are drawn
+first because there is something to read, and shorter ones fill the rest.
+`unclassified_errors` lists error texts that repeat across sessions without
+matching any signal: the place a new failure class shows up first.
 
 ## Read only what the script selected
 
@@ -82,10 +85,12 @@ Before proposing a form, look for the script, flag, or check the owner already
 has; one that exists but goes unused is the finding, not a reinvention. Record
 what judgment stays with the agent and what a re-measurement would confirm.
 
-Read each of the five strict-read sessions from its `summary`, opening excerpts
-of the log only where the summary points, and note inefficiencies and
-shortcuts the defined signals did not catch. A new kind of failure found here
-is proposed as a new signal, not added to this run's candidates.
+Read each of the five strict-read sessions from its `summary`, which names the
+opening command, the loaded skills, and the run of tools, never the person's
+words; open excerpts of the log only where the summary points, and note
+inefficiencies and shortcuts the defined signals did not catch. Read the
+`unclassified_errors` rows the same way. A new kind of failure found in either
+place is proposed as a new signal, not added to this run's candidates.
 
 Write `candidates.json` beside the findings:
 

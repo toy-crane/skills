@@ -82,6 +82,8 @@ class ScanFixture:
             claude_user("아니 그게 아니라 서버부터 켜", t, alpha),
             claude_tool("t3", "Bash", {"command": "gh pr create --title x --body y"}, t, alpha),
             claude_result("t3", "https://github.com/x/y/pull/1", t, alpha),
+            claude_tool("t4", "Bash", {"command": "bun run build"}, t, alpha),
+            claude_result("t4", "Exit code 1\nerror: ENOSPC: no space left on device, write", t, alpha, is_error=True),
         ], mtime=old)
         # B: unattended Robo session hitting the worktree guard with a claim token on the command line
         write_jsonl(self.claude / "-Users-tester-code-alpha--claude-worktrees-robo-fly-1-abc12345" / "bbbb2222.jsonl", [
@@ -93,6 +95,8 @@ class ScanFixture:
             claude_tool("t3", "Bash", {"command": "rg -n 'sleep|gh pr create|git worktree remove' skills/ docs/"}, t, robo),
             claude_result("t3", "skills/x/SKILL.md:3:sleep", t, robo),
             claude_user("연락처는 Jane Doe, +1 415-555-0123, 010-1234-5678 이고 주소는 서울시 어딘가", t, robo),
+            claude_tool("t4", "Bash", {"command": "bun run build"}, t, robo),
+            claude_result("t4", "Exit code 1\nerror: ENOSPC: no space left on device, write", t, robo, is_error=True),
         ], mtime=old)
         # C: eval run under /private/tmp — excluded entirely
         ev = "/private/tmp/claude-501/eval-run/scratchpad/holdout"
@@ -262,6 +266,15 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
         self.assertEqual(signal(f, "delegation_pr")["sessions"], 0)
         self.assertEqual(signal(f, "delegation_clean")["sessions"], 0)
 
+    def test_recurring_errors_no_signal_claims_are_aggregated(self):
+        f = self.fx.scan()
+        rows = f["unclassified_errors"]
+        self.assertEqual(len(rows), 1)
+        self.assertIn("ENOSPC", rows[0]["key"])
+        self.assertEqual((rows[0]["sessions"], rows[0]["events"], rows[0]["unattended_sessions"]), (2, 2, 1))
+        html = self.fx.report({"summary": "", "candidates": [], "judgment_notes": [], "project": [], "strict": []})
+        self.assertIn("어느 신호에도 안 잡힌 반복 오류 1건", html)
+
     def test_counts_unknown_record_types_instead_of_failing(self):
         f = self.fx.scan()
         self.assertEqual(f["unknown_records"]["codex"], {"weird": 1, "mystery_item": 1})
@@ -269,12 +282,12 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
 
     def test_codex_structured_exit_code_counts_as_an_error(self):
         f = self.fx.scan()
-        self.assertEqual(f["sessions"]["errors"], 5)
+        self.assertEqual(f["sessions"]["errors"], 7)
 
     def test_codex_review_runs_recorded_as_events_only_are_counted(self):
         f = self.fx.scan("--strict-n", "5", "--threshold-sessions", "1")
         self.assertIn("beta r1", " ".join(s["session"] for s in f["strict"]))
-        self.assertEqual(f["sessions"]["tool_calls"], 13)
+        self.assertEqual(f["sessions"]["tool_calls"], 15)
 
     def test_keeps_a_session_whose_user_turn_predates_the_period_but_whose_tools_fall_inside(self):
         self.fx.add_session_started_before_period()
@@ -404,6 +417,23 @@ class StrictReadsAreAFixedRandomSample(unittest.TestCase):
         self.assertTrue(all(s["kind"] == "interactive" for s in first))
         self.assertNotIn("bbbb2222", " ".join(s["session"] for s in first))
         self.assertTrue(all(0 < len(s["summary"]) <= 2000 for s in first))
+
+    def test_strict_summaries_carry_no_prompt_words(self):
+        f = self.fx.scan()
+        summaries = " ".join(s["summary"] for s in f["strict"])
+        self.assertNotIn("미리보기 띄워줘", summaries)
+        self.assertIn("first prompt: plain prompt (", summaries)
+
+    def test_short_interactive_sessions_still_fill_the_sample_of_five(self):
+        gamma = f"{HOME}/code/gamma"
+        for i in range(7):
+            t = f"2026-10-0{1 + i % 7}T11:00:00.000Z"
+            write_jsonl(self.fx.claude / "-Users-tester-code-gamma" / f"short{i}short{i}.jsonl", [
+                claude_user(f"질문 {i}", t, gamma),
+                claude_tool("t1", "Bash", {"command": "git status"}, t, gamma),
+                claude_result("t1", "clean", t, gamma),
+            ], mtime=time.time() - 3600 * 24)
+        self.assertEqual(len(self.fx.scan()["strict"]), 5)
 
     def test_takes_every_eligible_session_when_fewer_than_five(self):
         strict = self.fx.scan()["strict"]
