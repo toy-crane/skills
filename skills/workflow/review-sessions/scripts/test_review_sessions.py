@@ -90,6 +90,9 @@ class ScanFixture:
             claude_result("t1", "This session is isolated in the worktree " + robo + ", but this command runs bash inside a construct too complex to verify", t, robo, is_error=True),
             claude_tool("t2", "Bash", {"command": "bash .claude/skills/triage-issues/scripts/claim.sh verify --issue linear:FLY-1 --expected 79e772556cf616f59d93334bb10efb8e8bb016a3 --token 0ad862d48c1f4e0b9a7d6e5f4c3b2a1908f7e6d5c4b3a291"}, t, robo),
             claude_result("t2", "ok", t, robo),
+            claude_tool("t3", "Bash", {"command": "rg -n 'sleep|gh pr create|git worktree remove' skills/ docs/"}, t, robo),
+            claude_result("t3", "skills/x/SKILL.md:3:sleep", t, robo),
+            claude_user("연락처는 Jane Doe, +1 415-555-0123, 010-1234-5678 이고 주소는 서울시 어딘가", t, robo),
         ], mtime=old)
         # C: eval run under /private/tmp — excluded entirely
         ev = "/private/tmp/claude-501/eval-run/scratchpad/holdout"
@@ -253,6 +256,12 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
         self.assertEqual(signal(f, "delegation_pr")["sessions"], 0)
         self.assertEqual(signal(f, "polling_sleep")["sessions"], 1)
 
+    def test_searching_or_printing_a_command_string_is_not_executing_it(self):
+        f = self.fx.scan()
+        self.assertEqual(signal(f, "polling_sleep")["sessions"], 1)       # only A's real sleep
+        self.assertEqual(signal(f, "delegation_pr")["sessions"], 0)
+        self.assertEqual(signal(f, "delegation_clean")["sessions"], 0)
+
     def test_counts_unknown_record_types_instead_of_failing(self):
         f = self.fx.scan()
         self.assertEqual(f["unknown_records"]["codex"], {"weird": 1, "mystery_item": 1})
@@ -265,7 +274,7 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
     def test_codex_review_runs_recorded_as_events_only_are_counted(self):
         f = self.fx.scan("--strict-n", "5", "--threshold-sessions", "1")
         self.assertIn("beta r1", " ".join(s["session"] for s in f["strict"]))
-        self.assertEqual(f["sessions"]["tool_calls"], 12)
+        self.assertEqual(f["sessions"]["tool_calls"], 13)
 
     def test_keeps_a_session_whose_user_turn_predates_the_period_but_whose_tools_fall_inside(self):
         self.fx.add_session_started_before_period()
@@ -309,6 +318,16 @@ class WindowsNeverCarrySecrets(unittest.TestCase):
         self.assertEqual(redact("AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG bun run deploy"), "AWS_SECRET_ACCESS_KEY=<token> bun run deploy")
         self.assertEqual(redact("postgres://app:hunter2@db.example.com/x"), "postgres://app:<password>@db.example.com/x")
         self.assertEqual(redact("Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"), "Bearer <token>")
+
+    def test_windows_keep_no_user_words_and_mask_phone_numbers(self):
+        f = self.fx.scan()
+        text = (self.fx.out / "findings.json").read_text()
+        for leak in ("Jane Doe", "415-555-0123", "010-1234-5678", "서울시"):
+            self.assertNotIn(leak, text)
+        lines = [l for w in signal(f, "guard_blocked")["windows"] for l in w["lines"] if l.startswith("USER")]
+        self.assertTrue(lines and all(re.fullmatch(r"USER \(발화 \d+자(, [^)]+)?\)", l) for l in lines), lines)
+        from review_sessions import redact
+        self.assertEqual(redact("call +1 415-555-0123 or 010-1234-5678"), "call <phone> or <phone>")
 
     def test_json_quoted_and_quoted_multiword_secrets_are_masked_everywhere(self):
         f = self.fx.scan("--strict-n", "5")

@@ -86,6 +86,24 @@ def norm_cmd(cmd):
     return heads, re.sub(r"\s+", " ", full).strip()[:200]
 
 
+def command_segments(cmd):
+    """Each executed segment with its quoted arguments blanked, so text an agent merely
+    searches or prints (rg 'sleep|gh pr create') never reads as an executed command."""
+    if not isinstance(cmd, str):
+        return []
+    segs = []
+    for seg in SPLIT_RE.split(QUOTE_RE.sub("<q>", cmd.strip())):
+        seg = ENV_RE.sub("", seg.strip())
+        toks = seg.split()
+        while toks and toks[0] in ("sudo", "command", "timeout", "nohup", "time", "exec", "nice", "caffeinate", "do", "then", "else"):
+            toks = toks[1:]
+            if toks and toks[0].isdigit():
+                toks = toks[1:]
+        if toks:
+            segs.append(" ".join(toks))
+    return segs
+
+
 _REPO_ROOT_CACHE = {}
 
 
@@ -146,6 +164,8 @@ SECRET_RES = [
     (re.compile(r"\b(?:sk|ghp|gho|ghu|ghs|xoxb|xoxp|lin_api)[-_][A-Za-z0-9_-]{8,}"), "<secret>"),
     (re.compile(r"\b[0-9a-f]{32,}\b"), "<hex>"),
     (re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"), "<email>"),
+    (re.compile(r"(?<![\w/.-])\+?\d{1,3}[ -]?\(?\d{2,4}\)?[ -]\d{3,4}[ -]\d{4}\b"), "<phone>"),
+    (re.compile(r"\b01\d-?\d{3,4}-?\d{4}\b"), "<phone>"),
 ]
 
 
@@ -163,7 +183,10 @@ def event_line(e):
     if e["k"] == "err":
         return f"ERR {e.get('tool', '?')} {e.get('text', '')}"
     if e["k"] == "user":
-        return f"USER {e.get('text', '')}"
+        # A person's words can carry names, numbers, or addresses no regex catches; the
+        # window keeps only that a turn happened, its length, and its markers.
+        marks = [m for m, on in (("중단", e.get("interrupt")), ("교정 표지", e.get("corr"))) if on]
+        return f"USER (발화 {e.get('len', 0)}자{', ' + ', '.join(marks) if marks else ''})"
     return e["k"]
 
 
@@ -481,15 +504,20 @@ def err_matches(e, *needles):
 
 HELPER_RE = re.compile(r"(?:cat\s*>\s*|tee\s+)(\S+\.(?:sh|py|mjs|js|ts))")
 DELEGATIONS = [  # command that a skill of this set owns -> the skill that should have been loaded
-    ("delegation_pr", "gh pr create 실행, pr 미로드", r"gh pr create", ("pr",), None),
-    ("delegation_merge", "gh pr merge 실행, merge 미로드", r"gh pr merge", ("merge",), None),
-    ("delegation_pull", "merge 세션의 git rebase, pull 미로드", r"git rebase", ("pull",), "merge"),
-    ("delegation_clean", "git worktree remove 실행, clean-branches·merge 미로드", r"git worktree remove", ("clean-branches", "merge"), None),
+    ("delegation_pr", "gh pr create 실행, pr 미로드", r"gh pr create\b", ("pr",), None),
+    ("delegation_merge", "gh pr merge 실행, merge 미로드", r"gh pr merge\b", ("merge",), None),
+    ("delegation_pull", "merge 세션의 git rebase, pull 미로드", r"git rebase\b", ("pull",), "merge"),
+    ("delegation_clean", "git worktree remove 실행, clean-branches·merge 미로드", r"git worktree remove\b", ("clean-branches", "merge"), None),
 ]
 
 
 def is_bash(e, pattern):
-    return e["k"] == "tool" and e["name"] == "Bash" and re.search(pattern, e.get("raw", "")) is not None
+    """True when one executed segment of a Bash call starts with the pattern."""
+    if e["k"] != "tool" or e["name"] != "Bash":
+        return False
+    if "segs" not in e:
+        e["segs"] = command_segments(e.get("raw", ""))
+    return any(re.match(pattern, seg) for seg in e["segs"])
 
 
 def user_after_error(s, i, e):
@@ -536,9 +564,9 @@ SIGNALS = [
      lambda s, i, e: e["k"] == "err" and str(e.get("tool", "")).startswith("mcp__Claude_Browser__")),
     ("browser_nav_denied", "브라우저 탐색 거부·실패", "candidate", lambda s, i, e: err_matches(e, "denied or failed")),
     ("launch_json_missing", "launch.json 없음", "candidate", lambda s, i, e: err_matches(e, "No .claude") and "launch" in e.get("text", "")),
-    ("polling_sleep", "sleep으로 기다림", "candidate", lambda s, i, e: is_bash(e, r"\bsleep\b")),
+    ("polling_sleep", "sleep으로 기다림", "candidate", lambda s, i, e: is_bash(e, r"sleep\b")),
     ("device_press_sleep", "agent-device 조작 뒤 sleep", "candidate",
-     lambda s, i, e: is_bash(e, r"agent-device\s+(press|tap|type|fill|swipe)") and re.search(r"\bsleep\b", e.get("raw", "")) is not None),
+     lambda s, i, e: is_bash(e, r"(?:bunx?\s+(?:run\s+)?|npx\s+)?(?:\S*/)?agent-device\s+(?:press|tap|type|fill|swipe)\b") and is_bash(e, r"sleep\b")),
     ("helper_rebuilt", "임시 폴더에 보조 스크립트를 새로 씀", "candidate", helper_written),
     ("retry_after_error", "오류 직후 같은 명령 재실행", "candidate", retry_after_error),
     ("user_after_error", "오류 뒤 사람이 개입", "candidate", user_after_error),
