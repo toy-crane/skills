@@ -469,6 +469,15 @@ class StrictReadsAreAFixedRandomSample(unittest.TestCase):
         self.assertNotIn("bbbb2222", " ".join(s["session"] for s in first))
         self.assertTrue(all(0 < len(s["summary"]) <= 2000 for s in first))
 
+    def test_strict_samples_point_at_errors_and_long_runs_by_timestamp(self):
+        f = self.fx.scan()
+        a = next(s for s in f["strict"] if s["session"] == "alpha aaaa1111")
+        kinds = [p["what"] for p in a["pointers"]]
+        self.assertIn("error", kinds)
+        self.assertTrue(all(p["t"] and p["t"].startswith("2026-10-01") for p in a["pointers"]), a["pointers"])
+        self.assertTrue(any("Blocked: sleep" in p["detail"] for p in a["pointers"]))
+        self.assertNotIn("Alex Roe", json.dumps(a["pointers"], ensure_ascii=False))
+
     def test_strict_summaries_carry_no_prompt_words(self):
         f = self.fx.scan()
         summaries = " ".join(s["summary"] for s in f["strict"])

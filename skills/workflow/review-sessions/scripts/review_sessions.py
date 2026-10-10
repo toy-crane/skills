@@ -743,6 +743,29 @@ def session_summary(s, limit=2000):
     return (head + redact(body))[:limit]
 
 
+def strict_pointers(s, limit=8):
+    """Where to open excerpts of a strict-read session: each error with its timestamp and
+    normalized headline, and each long run of one command head. No arguments, no prose."""
+    out = []
+    run_head, run_start, run_len = None, None, 0
+    for e in s.events:
+        if e.get("side"):
+            continue
+        if e["k"] == "err":
+            out.append({"t": e.get("t"), "what": "error", "detail": f"{e.get('tool', '?')}: {error_headline(e.get('text', ''), 80)}"})
+        head = (e.get("heads") or ["?"])[0] if e["k"] == "tool" and e["name"] == "Bash" else (e["name"] if e["k"] == "tool" else None)
+        if head and head == run_head:
+            run_len += 1
+        else:
+            if run_head and run_len >= 5:
+                out.append({"t": run_start, "what": "run", "detail": f"{run_head} x{run_len}"})
+            run_head, run_start, run_len = head, e.get("t"), 1
+    if run_head and run_len >= 5:
+        out.append({"t": run_start, "what": "run", "detail": f"{run_head} x{run_len}"})
+    out.sort(key=lambda x: x["t"] or "")
+    return [{"t": x["t"], "what": x["what"], "detail": redact(x["detail"])} for x in out[:limit]]
+
+
 def strict_sample(sessions, since, until, n=5, min_tools=3):
     """Five interactive sessions, seeded by the period. Sessions with at least min_tools
     tool calls are drawn first because there is something to read; shorter ones fill the
@@ -756,7 +779,8 @@ def strict_sample(sessions, since, until, n=5, min_tools=3):
     rng.shuffle(thin)
     eligible = rich + thin
     return [{"session": redact(s.label), "harness": s.harness, "repo": redact(s.repo.replace(HOME, "~")),
-             "kind": s.kind, "path": redact(s.path), "summary": session_summary(s)} for s in eligible[:n]]
+             "kind": s.kind, "path": redact(s.path), "summary": session_summary(s), "pointers": strict_pointers(s)}
+            for s in eligible[:n]]
 
 
 # ---------------------------------------------------------------- commands

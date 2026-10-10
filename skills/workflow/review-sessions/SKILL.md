@@ -87,7 +87,9 @@ what judgment stays with the agent and what a re-measurement would confirm.
 
 Read each of the five strict-read sessions from its `summary`, which names the
 opening command, the loaded skills, and the run of tools, never the person's
-words; open excerpts of the log only where the summary points, and note
+words; its `pointers` give the timestamp of each error and of each long run of
+one command, so open the log only at those timestamps (for example with
+`grep -n '"timestamp":"<prefix>'` and a few lines around the hit), and note
 inefficiencies and shortcuts the defined signals did not catch. Read the
 `unclassified_errors` rows the same way. A new kind of failure found in either
 place is proposed as a new signal, not added to this run's candidates.
