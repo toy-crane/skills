@@ -562,7 +562,8 @@ SIGNALS = [
     ("shell_cwd_lost", "워크트리 삭제 뒤 셸 위치 상실", "candidate", lambda s, i, e: err_matches(e, "was deleted; shell cwd recovered")),
     ("browser_friction", "브라우저 패널 미리보기 마찰", "candidate",
      lambda s, i, e: e["k"] == "err" and str(e.get("tool", "")).startswith("mcp__Claude_Browser__")),
-    ("browser_nav_denied", "브라우저 탐색 거부·실패", "candidate", lambda s, i, e: err_matches(e, "denied or failed")),
+    ("browser_nav_denied", "브라우저 탐색 거부·실패", "candidate",
+     lambda s, i, e: err_matches(e, "denied or failed") and str(e.get("tool", "")).startswith("mcp__Claude_Browser__")),
     ("launch_json_missing", "launch.json 없음", "candidate", lambda s, i, e: err_matches(e, "No .claude") and "launch" in e.get("text", "")),
     ("polling_sleep", "sleep으로 기다림", "candidate", lambda s, i, e: is_bash(e, r"sleep\b")),
     ("device_press_sleep", "agent-device 조작 뒤 sleep", "candidate",
@@ -627,9 +628,12 @@ def split_side(session, split_date, split_hash):
     return "unsplit"
 
 
+RESPONSE_SIGNALS = {"retry_after_error", "user_after_error"}   # describe what followed an error, not the error
+
+
 def unclassified_errors(sessions, min_sessions=2, top=15):
-    """Recurring error keys no signal predicate claims, so a new failure class surfaces."""
-    preds = [pred for _, _, _, pred in SIGNALS]
+    """Recurring error keys no error-classifying signal claims, so a new failure class surfaces."""
+    preds = [pred for sid, _, _, pred in SIGNALS if sid not in RESPONSE_SIGNALS]
     per_key = defaultdict(lambda: {"sessions": set(), "events": 0, "examples": [], "unattended": set()})
     for s in sessions:
         for i, e in enumerate(s.events):

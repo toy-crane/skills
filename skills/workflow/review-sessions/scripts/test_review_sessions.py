@@ -84,6 +84,9 @@ class ScanFixture:
             claude_result("t3", "https://github.com/x/y/pull/1", t, alpha),
             claude_tool("t4", "Bash", {"command": "bun run build"}, t, alpha),
             claude_result("t4", "Exit code 1\nerror: ENOSPC: no space left on device, write", t, alpha, is_error=True),
+            claude_user("디스크 정리하고 다시 해", t, alpha),
+            claude_tool("t5", "Bash", {"command": "curl -s https://api.example.com/x"}, t, alpha),
+            claude_result("t5", "Exit code 22\nrequest denied or failed", t, alpha, is_error=True),
         ], mtime=old)
         # B: unattended Robo session hitting the worktree guard with a claim token on the command line
         write_jsonl(self.claude / "-Users-tester-code-alpha--claude-worktrees-robo-fly-1-abc12345" / "bbbb2222.jsonl", [
@@ -271,7 +274,14 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
         rows = f["unclassified_errors"]
         self.assertEqual(len(rows), 1)
         self.assertIn("ENOSPC", rows[0]["key"])
+        # A's ENOSPC is followed by a user turn (user_after_error fires) and still counts here
         self.assertEqual((rows[0]["sessions"], rows[0]["events"], rows[0]["unattended_sessions"]), (2, 2, 1))
+        self.assertEqual(signal(f, "user_after_error")["sessions"], 1)
+
+    def test_navigation_failures_count_only_from_browser_tools(self):
+        f = self.fx.scan()
+        self.assertEqual(signal(f, "browser_nav_denied")["sessions"], 0)
+        self.assertEqual(signal(f, "browser_friction")["sessions"], 1)
         html = self.fx.report({"summary": "", "candidates": [], "judgment_notes": [], "project": [], "strict": []})
         self.assertIn("어느 신호에도 안 잡힌 반복 오류 1건", html)
 
@@ -282,12 +292,12 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
 
     def test_codex_structured_exit_code_counts_as_an_error(self):
         f = self.fx.scan()
-        self.assertEqual(f["sessions"]["errors"], 7)
+        self.assertEqual(f["sessions"]["errors"], 8)
 
     def test_codex_review_runs_recorded_as_events_only_are_counted(self):
         f = self.fx.scan("--strict-n", "5", "--threshold-sessions", "1")
         self.assertIn("beta r1", " ".join(s["session"] for s in f["strict"]))
-        self.assertEqual(f["sessions"]["tool_calls"], 15)
+        self.assertEqual(f["sessions"]["tool_calls"], 16)
 
     def test_keeps_a_session_whose_user_turn_predates_the_period_but_whose_tools_fall_inside(self):
         self.fx.add_session_started_before_period()
