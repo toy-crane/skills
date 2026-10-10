@@ -55,6 +55,12 @@
   pull requests through `pr` the same way. `merge` treats `pr`'s finish as an
   intermediate step and continues to verification and merge, then hands the
   merged branch to `clean-branches`, which owns the removal helper.
+- A bundled deterministic script also earns its place when a measurement must
+  be comparable across runs. `review-sessions` ships its session extraction
+  and aggregation so a later pass counts the same sessions, exclusions, and
+  signals as the first; prompt-driven mining cannot guarantee that, and the
+  skill's re-measurement after a fix depends on it. The model reads only the
+  event windows the script selects.
 - Deterministic Git helpers earn their fixed procedure only where ownership is
   unsafe to infer. The worktree removal helper decides whether a worktree is
   used by the current session, an attached process, or a left-over one, and
@@ -145,7 +151,8 @@
 - Instructions may constrain outcomes and safety without prescribing a fixed
   sequence.
 - Use a deterministic bundled script when concurrency or destructive lifecycle
-  operations require atomic ownership and exact target verification.
+  operations require atomic ownership and exact target verification, or when
+  a measurement must stay comparable across runs.
 - Prefer executable positive direction over lists of forbidden actions.
 - UI metadata must continue to match the skill after a substantial edit.
 - Eval outputs are disposable; stable prompts and assertions may remain so later

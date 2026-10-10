@@ -411,11 +411,12 @@ bun run db:remove
 
 ## Supporting workflows
 
-Ten additional skills can run independently. They handle stack setup, issue
+Eleven additional skills can run independently. They handle stack setup, issue
 tracker coordination for parallel spec work, Expo runtime verification,
 pre-delivery both-platform checks, cross-client skill and agent
 synchronization, incremental project knowledge, verified follow-up resolution,
-visual explanation, final human judgment, and periodic context maintenance.
+visual explanation, final human judgment, periodic context maintenance, and
+periodic review of session logs for work to make deterministic.
 `implement` also uses a matching runtime-verification skill when one is
 available for an affected product surface.
 
@@ -476,6 +477,14 @@ available for an affected product surface.
   issue found by its `Issue:` line from the remote default branch, and leave
   ambiguous conflicts for
   explicit clarification.
+- **[review-sessions](./skills/workflow/review-sessions/SKILL.md)**: Mine this
+  machine's recent Claude Code and Codex session logs for work agents redo by
+  chance every session. A bundled script counts every session; the model reads
+  only the event windows and five strictly sampled sessions it selects. The
+  result is one offline HTML report of candidates with evidence, a proposed
+  deterministic owner and form, and a re-measurement check by date or by the
+  skill version each session loaded. It changes nothing; fixes stay with people
+  and other skills.
 
 ## Output styles
 

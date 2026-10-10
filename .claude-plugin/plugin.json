@@ -1,7 +1,7 @@
 {
   "name": "toycrane-skills",
-  "version": "0.65.0",
-  "description": "Skills for product definition, shaping, implementation, runtime verification, writing publications, briefs, and drafts, project skill updates with cross-client agent synchronization, review, project knowledge, test-first development, and safe Git delivery.",
+  "version": "0.66.0",
+  "description": "Skills for product definition, shaping, implementation, runtime verification, writing publications, briefs, and drafts, project skill updates with cross-client agent synchronization, review, session log review, project knowledge, test-first development, and safe Git delivery.",
   "author": {
     "name": "toy-crane",
     "url": "https://github.com/toy-crane"
@@ -52,7 +52,10 @@
     "define-piece",
     "draft-piece",
     "writing",
-    "blog"
+    "blog",
+    "review-sessions",
+    "session-review",
+    "session-logs"
   ],
   "skills": [
     "./skills/git/commit",
@@ -71,6 +74,7 @@
     "./skills/workflow/maintain-project-context",
     "./skills/workflow/project-knowledge",
     "./skills/workflow/resolve-follow-ups",
+    "./skills/workflow/review-sessions",
     "./skills/workflow/shape-idea",
     "./skills/workflow/setup-issue-tracker",
     "./skills/workflow/triage-issues",
