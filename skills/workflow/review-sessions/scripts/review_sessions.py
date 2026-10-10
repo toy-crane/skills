@@ -134,7 +134,8 @@ def repo_of(cwd):
 
 
 def is_eval_cwd(cwd):
-    return not cwd or cwd.startswith("/private/") or cwd.startswith("/var/") or "/T/" in cwd
+    """Eval and scratch runs live in temporary locations: macOS /private and /var, Linux /tmp."""
+    return not cwd or cwd.startswith(("/private/", "/var/", "/tmp/")) or "/T/" in cwd
 
 
 def user_text(content):
@@ -502,7 +503,7 @@ def err_matches(e, *needles):
     return e["k"] == "err" and any(n in t for n in needles)
 
 
-HELPER_RE = re.compile(r"(?:cat\s*>\s*|tee\s+)(\S+\.(?:sh|py|mjs|js|ts))")
+HELPER_RE = re.compile(r"^(?:cat\s*>\s*|tee\s+(?:-a\s+)?)(\S+\.(?:sh|py|mjs|js|ts))")   # applied per executed segment
 DELEGATIONS = [  # command that a skill of this set owns -> the skill that should have been loaded
     ("delegation_pr", "gh pr create 실행, pr 미로드", r"gh pr create\b", ("pr",), None),
     ("delegation_merge", "gh pr merge 실행, merge 미로드", r"gh pr merge\b", ("merge",), None),
@@ -540,10 +541,18 @@ def retry_after_error(s, i, e):
 
 
 def helper_written(s, i, e):
+    """A helper script written to a temporary place, judged from executed segments only."""
     if e["k"] != "tool":
         return False
-    path = e.get("file") if e["name"] in ("Write",) else (HELPER_RE.search(e.get("raw", "")) or [None, None])[1] if e["name"] == "Bash" else None
-    return bool(path and (path.startswith(("/tmp", "/private/tmp")) or "/scratchpad/" in path) and re.search(r"\.(sh|py|mjs|js|ts)$", path))
+    if e["name"] == "Write":
+        paths = [e.get("file") or ""]
+    elif e["name"] == "Bash":
+        if "segs" not in e:
+            e["segs"] = command_segments(e.get("raw", ""))
+        paths = [m.group(1) for seg in e["segs"] for m in [HELPER_RE.match(seg)] if m]
+    else:
+        return False
+    return any((path.startswith(("/tmp", "/private/tmp")) or "/scratchpad/" in path) and re.search(r"\.(sh|py|mjs|js|ts)$", path) for path in paths)
 
 
 SIGNALS = [

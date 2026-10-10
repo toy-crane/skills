@@ -87,6 +87,16 @@ class ScanFixture:
             claude_user("디스크 정리하고 다시 해", t, alpha),
             claude_tool("t5", "Bash", {"command": "curl -s https://api.example.com/x"}, t, alpha),
             claude_result("t5", "Exit code 22\nrequest denied or failed", t, alpha, is_error=True),
+            claude_tool("t6", "Bash", {"command": "rg -n 'cat > /tmp/foo.py' docs/"}, t, alpha),
+            claude_result("t6", "docs/x.md:4:cat > /tmp/foo.py", t, alpha),
+            claude_tool("t7", "Bash", {"command": "cat > /tmp/probe.sh <<'EOF'\necho hi\nEOF\nbash /tmp/probe.sh"}, t, alpha),
+            claude_result("t7", "hi", t, alpha),
+        ], mtime=old)
+        # L: a Linux-style temporary working directory — excluded as an eval run
+        write_jsonl(self.claude / "-tmp-eval-run" / "llll7777.jsonl", [
+            claude_user("hello", t, "/tmp/eval-run/case-3"),
+            claude_tool("t1", "Bash", {"command": "sleep 2; tail -1 x.log"}, t, "/tmp/eval-run/case-3"),
+            claude_result("t1", "<tool_use_error>Blocked: sleep 2 followed by: tail -1 x.log.", t, "/tmp/eval-run/case-3", is_error=True),
         ], mtime=old)
         # B: unattended Robo session hitting the worktree guard with a claim token on the command line
         write_jsonl(self.claude / "-Users-tester-code-alpha--claude-worktrees-robo-fly-1-abc12345" / "bbbb2222.jsonl", [
@@ -252,7 +262,7 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
         f = self.fx.scan()
         self.assertEqual(f["sessions"]["claude"], 2)
         self.assertEqual(f["sessions"]["codex"], 2)
-        self.assertEqual(f["sessions"]["excluded"], {"eval": 1, "in_progress": 1, "no_user_text": 1, "subagent": 1})
+        self.assertEqual(f["sessions"]["excluded"], {"eval": 2, "in_progress": 1, "no_user_text": 1, "subagent": 1})
         self.assertEqual(f["sessions"]["by_kind"], {"unattended": 1, "interactive": 3})
         harness = signal(f, "harness_sleep_tail")
         self.assertEqual((harness["sessions"], harness["events"]), (1, 1))
@@ -278,6 +288,11 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
         self.assertEqual((rows[0]["sessions"], rows[0]["events"], rows[0]["unattended_sessions"]), (2, 2, 1))
         self.assertEqual(signal(f, "user_after_error")["sessions"], 1)
 
+    def test_helper_creation_is_read_from_executed_segments_not_searched_text(self):
+        f = self.fx.scan()
+        helper = signal(f, "helper_rebuilt")
+        self.assertEqual((helper["sessions"], helper["events"]), (1, 1))   # /tmp/probe.sh, not the rg argument
+
     def test_navigation_failures_count_only_from_browser_tools(self):
         f = self.fx.scan()
         self.assertEqual(signal(f, "browser_nav_denied")["sessions"], 0)
@@ -297,7 +312,7 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
     def test_codex_review_runs_recorded_as_events_only_are_counted(self):
         f = self.fx.scan("--strict-n", "5", "--threshold-sessions", "1")
         self.assertIn("beta r1", " ".join(s["session"] for s in f["strict"]))
-        self.assertEqual(f["sessions"]["tool_calls"], 16)
+        self.assertEqual(f["sessions"]["tool_calls"], 18)
 
     def test_keeps_a_session_whose_user_turn_predates_the_period_but_whose_tools_fall_inside(self):
         self.fx.add_session_started_before_period()
