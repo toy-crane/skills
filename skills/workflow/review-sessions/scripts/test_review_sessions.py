@@ -91,6 +91,14 @@ class ScanFixture:
             claude_result("t6", "docs/x.md:4:cat > /tmp/foo.py", t, alpha),
             claude_tool("t7", "Bash", {"command": "cat > /tmp/probe.sh <<'EOF'\necho hi\nEOF\nbash /tmp/probe.sh"}, t, alpha),
             claude_result("t7", "hi", t, alpha),
+            claude_tool("t8", "Bash", {"command": "git checkout 'missing-a'"}, t, alpha),
+            claude_result("t8", "Exit code 1\nerror: pathspec 'missing-a' did not match any file(s) known to git", t, alpha, is_error=True),
+            claude_tool("t9", "Bash", {"command": "git checkout 'existing-b'"}, t, alpha),
+            claude_result("t9", "Switched to branch 'existing-b'", t, alpha),
+            claude_tool("t10", "Bash", {"command": "bun run typecheck"}, t, alpha),
+            claude_result("t10", "Exit code 2\nerror TS2304: Cannot find name 'Foo'.\n  at src/x.ts:12\n  Customer Alex Roe at 123 Main Street", t, alpha, is_error=True),
+            claude_tool("t11", "Bash", {"command": "bun run typecheck"}, t, alpha),
+            claude_result("t11", "ok", t, alpha),
         ], mtime=old)
         # L: a Linux-style temporary working directory — excluded as an eval run
         write_jsonl(self.claude / "-tmp-eval-run" / "llll7777.jsonl", [
@@ -180,9 +188,13 @@ class ScanFixture:
         root = Path(tempfile.mkdtemp(prefix="review-sessions-mono-", dir=cache))
         self._mono_root = root
         (root / ".git").mkdir(parents=True)
-        for name in ("a", "b"):
-            cwd = str(root / "packages" / name)
-            (root / "packages" / name).mkdir(parents=True, exist_ok=True)
+        wt = root.parent / (root.name + "-wt")
+        wt.mkdir()
+        (root / ".git" / "worktrees" / "feature").mkdir(parents=True)
+        (wt / ".git").write_text(f"gitdir: {root}/.git/worktrees/feature\n")
+        self._mono_wt = wt
+        for name, cwd in (("a", str(root / "packages" / "a")), ("b", str(root / "packages" / "b")), ("w", str(wt / "packages" / "a"))):
+            Path(cwd).mkdir(parents=True, exist_ok=True)
             t = "2026-10-04T09:00:00.000Z"
             write_jsonl(self.claude / "-mono" / f"pkg{name}pkg{name}.jsonl", [
                 claude_user("빌드 고쳐줘", t, cwd),
@@ -243,10 +255,10 @@ class ScanFixture:
 
     def cleanup(self):
         self.tmp.cleanup()
-        mono = getattr(self, "_mono_root", None)
-        if mono and mono.exists():
-            import shutil
-            shutil.rmtree(mono)
+        import shutil
+        for d in (getattr(self, "_mono_root", None), getattr(self, "_mono_wt", None)):
+            if d and d.exists():
+                shutil.rmtree(d)
 
 
 def signal(findings, sid):
@@ -293,6 +305,20 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
         helper = signal(f, "helper_rebuilt")
         self.assertEqual((helper["sessions"], helper["events"]), (1, 1))   # /tmp/probe.sh, not the rg argument
 
+    def test_a_corrected_argument_is_not_a_retry_but_the_same_command_is(self):
+        f = self.fx.scan()
+        retry = signal(f, "retry_after_error")
+        self.assertEqual((retry["sessions"], retry["events"]), (1, 1))   # bun run typecheck twice, not git checkout a→b
+
+    def test_error_lines_in_windows_keep_only_the_normalized_headline(self):
+        f = self.fx.scan("--threshold-sessions", "1")
+        text = (self.fx.out / "findings.json").read_text()
+        self.assertNotIn("Alex Roe", text)                      # body lines of an error never reach the windows
+        lines = [l for s in f["signals"] for w in s["windows"] for l in w["lines"] if l.startswith("ERR")]
+        self.assertTrue(lines)
+        self.assertTrue(all(len(l) <= 120 and "\n" not in l for l in lines), lines[:3])
+        self.assertTrue(any("Exit code <n> error TS2304: Cannot find name" in l for l in lines), lines)
+
     def test_navigation_failures_count_only_from_browser_tools(self):
         f = self.fx.scan()
         self.assertEqual(signal(f, "browser_nav_denied")["sessions"], 0)
@@ -307,12 +333,12 @@ class ScanCountsSignalsWithExclusions(unittest.TestCase):
 
     def test_codex_structured_exit_code_counts_as_an_error(self):
         f = self.fx.scan()
-        self.assertEqual(f["sessions"]["errors"], 8)
+        self.assertEqual(f["sessions"]["errors"], 10)
 
     def test_codex_review_runs_recorded_as_events_only_are_counted(self):
         f = self.fx.scan("--strict-n", "5", "--threshold-sessions", "1")
         self.assertIn("beta r1", " ".join(s["session"] for s in f["strict"]))
-        self.assertEqual(f["sessions"]["tool_calls"], 18)
+        self.assertEqual(f["sessions"]["tool_calls"], 22)
 
     def test_keeps_a_session_whose_user_turn_predates_the_period_but_whose_tools_fall_inside(self):
         self.fx.add_session_started_before_period()
@@ -393,7 +419,7 @@ class CandidatesPassTheThreshold(unittest.TestCase):
         self.fx.add_sessions_in_two_subdirectories_of_one_checkout()
         f = self.fx.scan()
         clean = signal(f, "delegation_clean")
-        self.assertEqual((clean["sessions"], clean["repos"]), (2, 1))
+        self.assertEqual((clean["sessions"], clean["repos"]), (3, 1))   # two packages plus a linked worktree
         self.assertNotIn("delegation_clean", f["candidates"])
 
     def test_harness_owned_signals_never_become_candidates(self):

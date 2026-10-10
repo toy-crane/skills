@@ -114,8 +114,19 @@ def repo_root(path):
     root = path
     cur = path
     while cur and cur != os.path.dirname(cur):
-        if os.path.exists(os.path.join(cur, ".git")):
+        dot_git = os.path.join(cur, ".git")
+        if os.path.exists(dot_git):
             root = cur
+            if os.path.isfile(dot_git):
+                # A linked worktree: ".git" is a file pointing at <common>/.git/worktrees/<name>
+                try:
+                    with open(dot_git) as f:
+                        pointer = f.read().strip()
+                except OSError:
+                    pointer = ""
+                m = re.match(r"gitdir:\s*(.+?)/\.git/worktrees/[^/]+/?$", pointer)
+                if m:
+                    root = os.path.normpath(os.path.join(cur, m.group(1))) if not os.path.isabs(m.group(1)) else m.group(1)
             break
         cur = os.path.dirname(cur)
     _REPO_ROOT_CACHE[path] = root
@@ -155,6 +166,13 @@ def err_key(text):
     return t[:120]
 
 
+def error_headline(text, limit=100):
+    """The first two non-empty lines of an error, normalized and capped: the headline a
+    reader needs, without the body where tool output may echo personal details."""
+    lines = [l.strip() for l in (text or "").splitlines() if l.strip()][:2]
+    return err_key(" ".join(lines))[:limit]
+
+
 SECRET_RES = [
     (re.compile(r"(--token[= ]+)(\"[^\"]*\"|'[^']*'|\S+)"), r"\1<token>"),
     (re.compile(r"(--expected[= ]+)(\"[^\"]*\"|'[^']*'|\S+)"), r"\1<hex>"),
@@ -182,7 +200,9 @@ def event_line(e):
         body = e.get("raw") or e.get("file") or e.get("skill") or ""
         return f"TOOL {e['name']} {body}"
     if e["k"] == "err":
-        return f"ERR {e.get('tool', '?')} {e.get('text', '')}"
+        # The normalized key (paths, numbers, hashes blanked, 120 chars) rather than the
+        # raw message: tool output can echo names or addresses that no mask recognizes.
+        return f"ERR {e.get('tool', '?')} {error_headline(e.get('text', ''))}"
     if e["k"] == "user":
         # A person's words can carry names, numbers, or addresses no regex catches; the
         # window keeps only that a turn happened, its length, and its markers.
@@ -307,7 +327,8 @@ def parse_claude(path):
                     ev = {"k": "tool", "t": ts, "name": name, "side": side}
                     if name == "Bash":
                         heads, full = norm_cmd(inp.get("command", ""))
-                        ev.update(heads=heads, full=full, raw=(inp.get("command") or "")[:300])
+                        ev.update(heads=heads, full=full, raw=(inp.get("command") or "")[:300],
+                                  canon=re.sub(r"\s+", " ", (inp.get("command") or "").strip())[:1000])
                     elif name == "Skill":
                         s.skills.setdefault(inp.get("skill") or "?", "")
                         ev["skill"] = inp.get("skill")
@@ -337,7 +358,8 @@ def events_from_item(item, ts):
         cmd = cmd[-1] if len(cmd) >= 3 and str(cmd[1]).startswith("-") else " ".join(map(str, cmd))
     cmd = str(cmd or "")
     heads, full = norm_cmd(cmd)
-    out = [{"k": "tool", "t": ts, "name": "Bash", "side": False, "heads": heads, "full": full, "raw": cmd[:300]}]
+    out = [{"k": "tool", "t": ts, "name": "Bash", "side": False, "heads": heads, "full": full, "raw": cmd[:300],
+            "canon": re.sub(r"\s+", " ", cmd.strip())[:1000]}]
     code = item.get("exit_code")
     if code not in (None, 0) or item.get("status") == "failed":
         text = str(item.get("aggregated_output") or item.get("stderr") or f"exit code {code}")
@@ -412,7 +434,8 @@ def parse_codex(path):
                 if cmds:
                     for c in cmds:
                         heads, full = norm_cmd(c)
-                        s.events.append({"k": "tool", "t": ts, "name": "Bash", "side": False, "heads": heads, "full": full, "raw": c[:300]})
+                        s.events.append({"k": "tool", "t": ts, "name": "Bash", "side": False, "heads": heads, "full": full, "raw": c[:300],
+                                         "canon": re.sub(r"\s+", " ", c.strip())[:1000]})
                         m = re.search(r"skills/([\w-]+)/SKILL\.md", c)
                         if m:
                             s.skills.setdefault(m.group(1), "")
@@ -537,7 +560,7 @@ def retry_after_error(s, i, e):
         return False
     prev, nxt = s.events[i - 1], s.events[i + 1]
     return (prev["k"] == "tool" and nxt["k"] == "tool" and prev["name"] == "Bash" == nxt["name"]
-            and prev.get("full") and prev.get("full") == nxt.get("full"))
+            and bool(prev.get("canon")) and prev.get("canon") == nxt.get("canon"))
 
 
 def helper_written(s, i, e):
