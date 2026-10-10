@@ -151,8 +151,14 @@ class ScanFixture:
         ], mtime=time.time() - 3600 * 24)
 
     def add_sessions_in_two_subdirectories_of_one_checkout(self):
-        """Two sessions whose cwd are different packages of one real checkout on disk."""
-        root = Path(self.tmp.name) / "mono"
+        """Two sessions whose cwd are different packages of one real checkout on disk.
+
+        The checkout lives under ~/.cache rather than the temp dir, because the
+        scan treats /private and /var paths as eval runs and drops them."""
+        cache = Path(os.path.expanduser("~/.cache"))
+        cache.mkdir(exist_ok=True)
+        root = Path(tempfile.mkdtemp(prefix="review-sessions-mono-", dir=cache))
+        self._mono_root = root
         (root / ".git").mkdir(parents=True)
         for name in ("a", "b"):
             cwd = str(root / "packages" / name)
@@ -217,6 +223,10 @@ class ScanFixture:
 
     def cleanup(self):
         self.tmp.cleanup()
+        mono = getattr(self, "_mono_root", None)
+        if mono and mono.exists():
+            import shutil
+            shutil.rmtree(mono)
 
 
 def signal(findings, sid):
