@@ -86,6 +86,24 @@ def norm_cmd(cmd):
     return heads, re.sub(r"\s+", " ", full).strip()[:200]
 
 
+_REPO_ROOT_CACHE = {}
+
+
+def repo_root(path):
+    """The nearest ancestor holding a .git directory or file, or the path itself when none exists on disk."""
+    if path in _REPO_ROOT_CACHE:
+        return _REPO_ROOT_CACHE[path]
+    root = path
+    cur = path
+    while cur and cur != os.path.dirname(cur):
+        if os.path.exists(os.path.join(cur, ".git")):
+            root = cur
+            break
+        cur = os.path.dirname(cur)
+    _REPO_ROOT_CACHE[path] = root
+    return root
+
+
 def repo_of(cwd):
     if not cwd:
         return ""
@@ -94,7 +112,7 @@ def repo_of(cwd):
         m = re.match(pat, cwd)
         if m:
             return m.group(1) if m.lastindex == 1 else f"{HOME}/code/{m.group(2)}"
-    return cwd
+    return repo_root(cwd)
 
 
 def is_eval_cwd(cwd):
@@ -823,8 +841,9 @@ def render_report(findings, cands, focus=None):
     # re-measurement
     out.append('<h2 id="remeasure">재측정</h2>')
     cand_num = {c["signal"]: i for i, c in enumerate(sorted(candidates, key=lambda c: (not matches_focus(focus, sigs[c["signal"]], c), -sigs[c["signal"]]["unattended_sessions"], -sigs[c["signal"]]["sessions"] * max(1, sigs[c["signal"]]["events"]))), 1)}
+    cand_by_signal = {c["signal"]: c for c in candidates}
     rows = []
-    for s in sorted(findings["signals"], key=lambda s: not matches_focus(focus, s)):
+    for s in sorted(findings["signals"], key=lambda s: not matches_focus(focus, s, cand_by_signal.get(s["id"]))):
         if not s["sessions"]:
             continue
         link = f'<a class="badge {esc(next((c.get("verdict", "ok") for c in candidates if c["signal"] == s["id"]), "ok"))}" href="#cand-{cand_num[s["id"]]}">B{cand_num[s["id"]]}</a>' if s["id"] in cand_num else f'<span class=chip>{esc(s["bucket"])}</span>'
@@ -838,9 +857,10 @@ def render_report(findings, cands, focus=None):
         unsplit_head = "<th>미분류 세션/건</th>" if period.get("split_hash") else ""
         head = f"<tr><th>신호</th><th>전 세션/건</th><th>후 세션/건</th>{unsplit_head}<th>세션 변화</th><th>후보</th></tr>"
         note = f"기준: {esc(split)}" + (" (스킬 판 기준. 그 스킬을 읽지 않은 세션은 미분류로 따로 센다. 미분류가 크면 전후 비교로 효과를 말할 수 없다)" if period.get("split_hash") else " (날짜 기준. 설치 사본 지연으로 옛 판 세션이 섞일 수 있다)")
+        note += f" · 선택 방식: {esc(period.get('select_by', 'activity'))}"
     else:
         head = "<tr><th>신호</th><th>세션 / 건</th><th>무인 세션</th><th>후보</th></tr>"
-        note = "기준 없이 한 기간만 센 표다. 고친 뒤에는 --split 날짜나 --split-hash 스킬판으로 나눠 다시 돌린다."
+        note = f"기준 없이 한 기간만 센 표다. 고친 뒤에는 --split 날짜나 --split-hash 스킬판으로 나눠 다시 돌린다. · 선택 방식: {esc(period.get('select_by', 'activity'))}"
     out.append(f"<div class=tbl><table>{head}{''.join(rows)}</table></div><p class=sub>{note}</p>")
     versions = findings.get("skill_versions", {})
     if versions:

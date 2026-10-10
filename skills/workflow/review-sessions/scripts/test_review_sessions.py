@@ -150,6 +150,22 @@ class ScanFixture:
             claude_result("t1", "<tool_use_error>Blocked: sleep 9 followed by: tail -1 /tmp/x.log.", "2026-10-02T09:00:01.000Z", alpha, is_error=True),
         ], mtime=time.time() - 3600 * 24)
 
+    def add_sessions_in_two_subdirectories_of_one_checkout(self):
+        """Two sessions whose cwd are different packages of one real checkout on disk."""
+        root = Path(self.tmp.name) / "mono"
+        (root / ".git").mkdir(parents=True)
+        for name in ("a", "b"):
+            cwd = str(root / "packages" / name)
+            (root / "packages" / name).mkdir(parents=True, exist_ok=True)
+            t = "2026-10-04T09:00:00.000Z"
+            write_jsonl(self.claude / "-mono" / f"pkg{name}pkg{name}.jsonl", [
+                claude_user("빌드 고쳐줘", t, cwd),
+                claude_tool("t1", "Bash", {"command": "sleep 4; tail -2 build.log"}, t, cwd),
+                claude_result("t1", "<tool_use_error>Blocked: sleep 4 followed by: tail -2 build.log.", t, cwd, is_error=True),
+                claude_tool("t2", "Bash", {"command": "git worktree remove ../old"}, t, cwd),
+                claude_result("t2", "removed", t, cwd),
+            ], mtime=time.time() - 3600 * 24)
+
     def add_second_period_session(self):
         """An interactive session on 2026-10-05 that loaded a newer `pr` skill text."""
         alpha = f"{HOME}/code/alpha"
@@ -306,6 +322,13 @@ class CandidatesPassTheThreshold(unittest.TestCase):
         self.assertTrue(signal(f, "guard_blocked")["candidate"])
         self.assertFalse(signal(f, "browser_friction")["candidate"])
 
+    def test_two_subdirectories_of_one_checkout_count_as_one_repository(self):
+        self.fx.add_sessions_in_two_subdirectories_of_one_checkout()
+        f = self.fx.scan()
+        clean = signal(f, "delegation_clean")
+        self.assertEqual((clean["sessions"], clean["repos"]), (2, 1))
+        self.assertNotIn("delegation_clean", f["candidates"])
+
     def test_harness_owned_signals_never_become_candidates(self):
         f = self.fx.scan("--threshold-sessions", "1")
         self.assertIn("browser_friction", f["candidates"])
@@ -419,6 +442,9 @@ class ReportRendersTheApprovedLayoutOffline(unittest.TestCase):
         html = html_path.read_text()
         self.assertIn("초점: build-prototype", html)
         self.assertLess(html.index("미리보기 마찰"), html.index("claim.sh 호출이 워크트리 가드에 막힌다"))
+        table = html[html.index('id="remeasure"'):html.index('id="strict"')]
+        self.assertLess(table.index("브라우저 패널 미리보기 마찰"), table.index("워크트리 가드가 막은 명령"))
+        self.assertIn("선택 방식: activity", html)
 
     def test_report_shows_the_empty_state_when_no_candidate_passed(self):
         html = self.fx.report({"summary": "", "candidates": [], "judgment_notes": [], "project": [], "strict": []})
