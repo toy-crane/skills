@@ -100,12 +100,12 @@
 - After surface approval and every implementation-relevant decision is settled
   or explicitly deferred, reuse an identified work-unit folder or derive a
   kebab-case slug from the product or feature name. Create or update the same
-  stable product contract as shaping, preserving user-visible outcomes, approved
-  scope, observable acceptance criteria, settled constraints and rationale,
-  assumptions, off-limits areas and reasons, deferrals, and risks without
-  predicting implementation. Preserve the approved file as
-  `docs/specs/<slug>/prototype.html`, linked from the spec. It is a visual
-  reference, never production code.
+  stable product contract as shaping, preserving user-visible outcomes,
+  approved scope, observable acceptance criteria, settled constraints and
+  rationale, assumptions, off-limits areas and reasons, deferrals, risks, and
+  setup before implementation without predicting implementation. Preserve the
+  approved file as `docs/specs/<slug>/prototype.html`, linked from the spec.
+  It is a visual reference, never production code.
 - Record surface decisions in the work-unit spec. Update a project decision
   contract only when the user confirmed a choice that future work should reuse,
   whose rationale prevents reasonable re-litigation, and that came from a real

@@ -50,12 +50,12 @@
   inferred from implementation.
 - Every spec-producing path writes the same stable product contract:
   user-visible outcomes, approved scope, observable acceptance criteria,
-  settled constraints and rationale, assumptions, off-limits areas and reasons,
-  deferred points, and remaining risks. It records behavior and decisions rather
-  than predicted implementation. `build-prototype` creates or updates this
-  contract when its approved surface closes without a prior shaping handoff and
-  consequential behavior outside that surface is settled or explicitly
-  deferred.
+  settled constraints and rationale, assumptions, off-limits areas and
+  reasons, deferred points, remaining risks, and setup before implementation.
+  It records behavior and decisions rather than predicted implementation.
+  `build-prototype` creates or updates this contract when its approved surface
+  closes without a prior shaping handoff and consequential behavior outside
+  that surface is settled or explicitly deferred.
 - Implementation planning is just-in-time against current code. There is no
   separate plan-writing skill or durable `plan.md` lifecycle.
 - A spec with multiple outcomes that should be delivered separately is split by
