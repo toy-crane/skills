@@ -93,6 +93,17 @@ worker, or reviewer. Keep the spec folder as the single handoff instead of
 adding a roadmap, execution ledger, durable implementation plan, or run-state
 file.
 
+## Finish outside setup before changing source
+
+When `spec.md` lists items under `## Setup before implementation`, finish them
+after any claim and before the first source change. Do what you can of each
+item yourself within your current tools and authority, then check every done
+condition. If any item remains, report every remaining item at once, with what
+is left for the user and its done condition, and stop without changing source.
+Resume when the user says they are done and every condition passes; ask the
+user to confirm a condition only when you cannot observe it yourself. A
+`None.` section or a spec without the section needs nothing here.
+
 ## Implement and reconcile one outcome
 
 Select a public test seam from the agreed behavior and existing interfaces.

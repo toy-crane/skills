@@ -129,6 +129,15 @@ folder, with that exact English label whatever language the spec uses. It is
 repository information that later coordination reads, so write it whether or
 not an issue tracker is set up.
 
+Always write a `## Setup before implementation` section under that exact
+English heading. List each piece of work outside the repository that
+implementation needs, such as a vendor account, an issued key, or a console or
+DNS setting, on one line: what is needed, the outcome it serves, and a done
+condition observable without the work this spec delivers, such as console
+state, a direct API call made outside the app, or a DNS lookup. Write `None.`
+when nothing is needed, and never write a secret value. Leave who does each
+item and how to implementation, and do none of it while shaping.
+
 When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
 section and the user names an existing issue this work comes from, add an
 `Issue: <tracker>:<id>` line beside the linked sources in the ID form its
@@ -155,6 +164,9 @@ Choose the explanation and approved visual evidence that best reveal the
 intended change and its important downstream consequences. Give particular
 attention to consequences that are easy to miss when reviewing only the
 surface being changed.
+
+List the setup items from the spec in the close-out so the user can finish
+them before implementation starts.
 
 Distinguish the intended experience from implemented evidence, keep the
 close-out consistent with the product contract, and do not prompt for another

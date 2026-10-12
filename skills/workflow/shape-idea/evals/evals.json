@@ -316,6 +316,30 @@
         "It points at both linked sources rather than copying the retry rules or the approved screen compositions into spec.md.",
         "It still records the user-visible outcomes, approved scope, observable acceptance criteria, settled constraints, assumptions, off-limits areas, deferred points, and remaining risks, treating the links as sources beside those fields rather than as one of them."
       ]
+    },
+    {
+      "id": 24,
+      "prompt": "/shape-idea 비밀번호 재설정 메일을 보내고 싶어. 메일은 Resend로 보내기로 이미 정했고, 발신 주소는 no-reply@acme.test, 링크는 30분 유효로 하자. 남은 제품 결정은 없으니 spec으로 마무리해줘.",
+      "expected_output": "The response writes spec.md with a `## Setup before implementation` section listing the Resend domain verification and API key, each on one line with the outcome it serves and a done condition checkable before any code exists, and repeats those items in the close-out.",
+      "files": [],
+      "expectations": [
+        "spec.md has a section headed exactly `## Setup before implementation`.",
+        "It lists the Resend sending-domain verification and the Resend API key as separate one-line items naming the reset email they serve.",
+        "Each done condition can be observed without the reset-email code, such as console state or a direct API call, not a delivered reset email.",
+        "No item assigns an owner or step-by-step instructions, and no secret value or environment-variable name appears.",
+        "It performs none of the setup during shaping.",
+        "The close-out lists the same setup items."
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "/shape-idea 할 일 목록에서 완료한 항목을 한 번에 지우는 버튼을 추가하고 싶어. 로컬 저장만 쓰는 앱이고 확인 대화상자 없이 실행 취소 토스트를 보여주기로 정했어. spec으로 마무리해줘.",
+      "expected_output": "The response writes spec.md whose `## Setup before implementation` section reads `None.`.",
+      "files": [],
+      "expectations": [
+        "spec.md has a `## Setup before implementation` section whose content is `None.`.",
+        "It does not invent accounts, keys, or console settings for a local-only change."
+      ]
     }
   ]
 }
