@@ -42,6 +42,10 @@ _Avoid_: Confusion, knowledge gap
 A delivery-sized unit cut from a spec: a complete, independently deliverable and verifiable path through every layer it touches, separated only when it can stand on its own. Work that becomes meaningful only when completed together remains one task. Together the non-superseded tasks are the work unit's shallow roadmap; implementation plans only the active outcome in detail and may revise active unfinished tasks after verified discoveries while preserving the approved product contract. A task retained as `superseded` after an approved replacement is inactive recovery history, not current work or completion proof. Tasks whose genuine blockers are all done form the frontier implementation may continue through. A task boundary always carries focused verification and reconciliation, but is not automatically a context or automated-review boundary. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
 _Avoid_: Ticket, slice, subtask, to-do
 
+**Setup before implementation**:
+Work outside the repository that implementation needs before it can run, such as a vendor account, an issued key, or a console or DNS setting. Listed in a spec's `## Setup before implementation` section, one line per item with what it serves and the condition that shows it is done. The agent does what it can of each item; the rest is the user's. Distinct from a task's blockers, which are dependencies between tasks, and from the runtime prerequisite `implement` reports when a check fails.
+_Avoid_: Prerequisite, manual setup
+
 **Follow-up**:
 An open item a session discovered but did not resolve, kept in `docs/follow-ups/<slug>.md`: a temporary workaround whose root cause stays open, or an out-of-scope defect observed with evidence. Carries symptom, observed evidence, suspected cause, what was tried, and a proposed next step, so a later session can act without the original conversation. Distinct from a spec's deferred points, which are decisions postponed during shaping, and from human-review's deferred commitments, which are unresolved questions inside one review.
 _Avoid_: Backlog item, ticket, TODO

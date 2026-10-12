@@ -248,6 +248,17 @@
   [stack-context](stack-context.md) contract owns discovery, source acceptance,
   live vendor-document routing, and the audit used during setup, stack changes,
   and entry into an unchecked project.
+- Setup that lives outside the repository and that implementation needs,
+  such as a vendor account, an issued key, or a console or DNS setting, is
+  listed by `shape-idea` in the spec's `## Setup before implementation`
+  section: one line per item naming what is needed, which outcome it serves,
+  and the observable condition that shows it is done. The section reads
+  `None.` when nothing is needed and never holds a secret value. Before its
+  first source change, `implement` does what it can of each item itself, then
+  checks every done condition. If any item remains, it reports all remaining
+  items at once and stops before changing source; it resumes when the user
+  says they are done and the conditions pass. A spec without the section
+  proceeds as before.
 - Before building on or working around a third-party package or tool,
   `shape-idea` grounds its conclusion in evidence of how that dependency
   actually behaves and confirms it in the project. The spec records what was
@@ -519,6 +530,9 @@ state keep automation reviewable without turning follow-up files into a queue.
 
 ## Reconsider when
 
+- Setup items listed during shaping are regularly wrong or stale by the time
+  implementation starts, so deriving them at implementation start would be
+  more accurate than recording them in the spec.
 - Spec folders routinely contain ambiguous or competing implementation
   handoffs that the tasks-first rule cannot resolve.
 - Selected intermediate reviews regularly cost more than the defects or
@@ -563,6 +577,11 @@ state keep automation reviewable without turning follow-up files into a queue.
 
 ## Still-rejected alternatives
 
+- Letting `implement` derive outside setup from the spec only when it starts —
+  the need is already known when shaping selects the service, and deriving it
+  later tells the user at the last moment. Implementing outcomes that do not
+  need the setup while the user finishes it was also rejected: it interleaves
+  waiting with delivery, and a spec without tasks has only one outcome.
 - Triage that detects human answers from comment authors, timestamps, and body
   fingerprints and re-evaluates waiting issues — the runner already knows when
   a person replied, and a shared skill should not guess it from tracker
