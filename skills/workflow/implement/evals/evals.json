@@ -710,6 +710,40 @@
         "It uses command runtime evidence rather than adding device, screenshot or Expo gates.",
         "It preserves the whole-diff review and the current executable revision completion requirements."
       ]
+    },
+    {
+      "id": 58,
+      "prompt": "/implement docs/specs/password-reset-email/ 구현해줘. 이 환경에는 Resend 계정 로그인이나 API 키가 없어.",
+      "expected_output": "The response reads the spec's setup section before any source change, does what it can, reports every remaining setup item at once with its done condition, and stops without changing source.",
+      "files": [
+        "evals/fixtures/setup-pending/package.json",
+        "evals/fixtures/setup-pending/README.md",
+        "evals/fixtures/setup-pending/src/reset.js",
+        "evals/fixtures/setup-pending/docs/specs/password-reset-email/spec.md"
+      ],
+      "expectations": [
+        "It reads the `## Setup before implementation` section before changing any source file.",
+        "It reports both Resend items together in one message rather than discovering them one at a time.",
+        "Each reported item names what is left for the user and the done condition from the spec.",
+        "It changes no source file and writes no stub or mock mail sender while setup remains.",
+        "It does not ask for or print a secret value in chat."
+      ]
+    },
+    {
+      "id": 59,
+      "prompt": "/implement docs/specs/password-reset-email/ 셋팅 다 했어. 이어서 구현해줘. (확인해 보니 Resend 콘솔의 acme.test 도메인은 아직 Pending 상태로 보여.)",
+      "expected_output": "The response rechecks every done condition before starting, finds the domain condition still failing, and keeps source untouched while naming that one remaining item.",
+      "files": [
+        "evals/fixtures/setup-pending/package.json",
+        "evals/fixtures/setup-pending/README.md",
+        "evals/fixtures/setup-pending/src/reset.js",
+        "evals/fixtures/setup-pending/docs/specs/password-reset-email/spec.md"
+      ],
+      "expectations": [
+        "It rechecks the done conditions instead of trusting the user's statement alone.",
+        "It names the domain verification as still unfinished with its done condition.",
+        "It does not start source changes while a condition fails."
+      ]
     }
   ]
 }
