@@ -5,8 +5,8 @@
 A composable, model-agnostic set of skills for product definition, shaping,
 prototyping, task splitting, implementation, runtime verification, human
 review, project knowledge, verified follow-up resolution, test-first
-development, writing publications and pieces, project skill updates with
-cross-client custom-agent synchronization, and safe Git delivery. Install selected skills or the complete plugin.
+development, project skill updates with cross-client custom-agent
+synchronization, and safe Git delivery. Install selected skills or the complete plugin.
 
 ## Install
 
@@ -275,66 +275,6 @@ new session or a closing-message handoff is not required for correctness.
   time. Includes rules for stable seams and behavioral tests.
   Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
-
-## The writing pipeline
-
-Three skills carry the same premise → brief → draft structure over to prose,
-for a publication that lives in the same repository as its code, such as a
-product blog inside a monorepo. They share `GLOSSARY.md`,
-`docs/decisions/README.md`, and `project-knowledge` with the code pipeline, so
-a piece about the product uses the product's own terms.
-
-```mermaid
-flowchart LR
-    DPUB["define-publication<br/>(one medium)"] --> PUB[/"docs/publications/&lt;slug&gt;.md"/]
-    PUB -. "read when briefing" .-> DPI["define-piece<br/>(one topic)"]
-    DPI --> BRIEF[/"docs/briefs/&lt;slug&gt;/brief.md"/]
-    BRIEF --> DR["draft-piece<br/>(brief folder)"]
-    DR --> SEC["write one section,<br/>run its code"]
-    SEC --> CHANGE{"thesis, reader, or<br/>scope must change?"}
-    CHANGE -- "yes" --> DPI
-    CHANGE -- "no" --> MORE{"more sections?"}
-    MORE -- "yes" --> SEC
-    MORE -- "no" --> CHECK["reader questions by a<br/>fresh-context agent<br/>+ every marked command runs"]
-    CHECK --> FIX["revise once:<br/>failed questions and facts only"]
-    FIX --> HAND["draft at the content location<br/>+ local preview"]
-    HAND -. "after the user reads" .-> GIT["commit / pr"]
-```
-
-Skill bodies are medium-neutral. Everything that differs by medium, such as
-form, length, where finished pieces live, how they are previewed, and what
-evidences a finished piece, lives in the publication file, so a newsletter or
-brand site later adds a file rather than a skill.
-
-- **[define-publication](./skills/writing/define-publication/SKILL.md)**: Interview
-  the user about one medium's readers, promised change, voice, coverage,
-  conventions, and evidence, then preserve the confirmed premise in
-  `docs/publications/<slug>.md`, one file per medium. Recommend voice with a
-  short sample paragraph and retain the accepted example.
-- **[define-piece](./skills/writing/define-piece/SKILL.md)**: Turn one topic into a
-  confirmed brief through correctable candidates: thesis, titles, outline,
-  three to five checkable reader questions, scope, material, and which code is
-  execution-checked. Reuse confirmed writing criteria and preserve feedback as
-  it is settled. Writes no body prose into the brief.
-- **[draft-piece](./skills/writing/draft-piece/SKILL.md)**: Write the piece from its
-  brief folder section by section, running embedded code as it is written.
-  Verify with a fresh-context agent answering the reader questions and with
-  every marked command, and compare confirmed writing criteria. Use one bounded
-  automatic revision, preview locally, and stop before commit. Later user
-  corrections, including edits to an article without a brief, preserve scoped
-  reusable feedback in the repository for either Claude or Codex to read.
-
-Claude Code:
-
-```text
-/draft-piece docs/briefs/monorepo-move/
-```
-
-Codex:
-
-```text
-$draft-piece docs/briefs/monorepo-move/
-```
 
 ## Git delivery
 

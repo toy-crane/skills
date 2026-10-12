@@ -6,8 +6,8 @@ toy-crane's agent skills, distributed two ways: copy-in via **skills.sh**
 
 ## The published set is `skills/`
 
-`skills/<group>/<name>/SKILL.md` is what ships. Use the settled `git`, `workflow`,
-`expo`, or `writing` group from [skill-layout](docs/decisions/skill-layout.md). Each
+`skills/<group>/<name>/SKILL.md` is what ships. Use the settled `git`, `workflow`, or
+`expo` group from [skill-layout](docs/decisions/skill-layout.md). Each
 published skill must also appear in
 `.claude-plugin/plugin.json`'s `skills` array: the plugin ships exactly that
 array, while skills.sh discovers everything under `skills/`. Adding a skill =
