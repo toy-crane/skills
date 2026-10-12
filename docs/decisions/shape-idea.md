@@ -6,9 +6,10 @@
   evidence, and present a concrete draft for the user to correct.
 - Close with `spec.md` as the stable product contract for implementation:
   user-visible outcomes, approved scope, observable acceptance criteria,
-  settled constraints and rationale, assumptions, off-limits areas and reasons,
-  deferred points, and remaining risks. Record behavior rather than predicted
-  files, functions, code structure, technical layers, or implementation steps.
+  settled constraints and rationale, assumptions, off-limits areas and
+  reasons, deferred points, remaining risks, and setup before implementation.
+  Record behavior rather than predicted files, functions, code structure,
+  technical layers, or implementation steps.
 - Summarize that complete contract at close-out and make the approved change
   understandable and judgeable from the user's point of view. Choose the
   explanation and approved visual evidence that best reveal the intended

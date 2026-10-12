@@ -118,10 +118,11 @@ When ready for implementation, write `docs/specs/<slug>/spec.md` as the stable
 product contract, creating the kebab-case folder when needed. Include the
 user-visible outcomes, approved scope, observable acceptance criteria, settled
 constraints and rationale, assumptions, off-limits areas and why, deferred
-points, and remaining risks. Record behavior and decisions without predicting
-files, functions, code structure, technical layers, or implementation steps.
-Carry only applicable app-level constraints from `PRODUCT.md`; keep the file as
-their canonical product context rather than duplicating its full contents.
+points, remaining risks, and setup before implementation. Record behavior and
+decisions without predicting files, functions, code structure, technical
+layers, or implementation steps. Carry only applicable app-level constraints
+from `PRODUCT.md`; keep the file as their canonical product context rather than
+duplicating its full contents.
 
 When this work depends on another spec folder finishing first, add a
 `Blocked by: docs/specs/<other>/` line beside the linked sources, one per
