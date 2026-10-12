@@ -248,19 +248,20 @@
   [stack-context](stack-context.md) contract owns discovery, source acceptance,
   live vendor-document routing, and the audit used during setup, stack changes,
   and entry into an unchecked project.
-- Setup that lives outside the repository and that implementation needs,
-  such as a vendor account, an issued key, or a console or DNS setting, is
-  listed by `shape-idea` in the spec's `## Setup before implementation`
-  section: one line per item naming what is needed, which outcome it serves,
-  and the observable condition that shows it is done. The section reads
-  `None.` when nothing is needed and never holds a secret value. Each done
-  condition must be observable without the work the spec delivers. After
-  claiming the folder and before its first source change, `implement` does
-  what it can of each item itself, then checks every done condition. If any
-  item remains, it reports all remaining items at once and stops before
-  changing source; it resumes when the user says they are done and the
-  conditions pass. `babysit-specs` keeps the section when it rewrites a spec.
-  A spec without the section proceeds as before.
+- Setup that lives outside the repository and that implementation needs, such
+  as a vendor account, an issued key, or a console or DNS setting, is listed
+  by `shape-idea`, or `build-prototype` when it writes the spec, in the spec's
+  `## Setup before implementation` section: one line per item naming what is
+  needed, which outcome it serves, and the observable condition that shows it
+  is done. The section reads `None.` when nothing is needed and never holds a
+  secret value. Each done condition must be observable without the work the
+  spec delivers. After claiming the folder and before its first source change,
+  `implement` does what it can of each item itself, then checks every done
+  condition. If any item remains, it reports all remaining items at once and
+  stops before changing source; it resumes when the user says they are done
+  and the conditions pass, never asking for or printing a secret value.
+  `babysit-specs` keeps the section when it rewrites a spec. A spec without
+  the section proceeds as before.
 - Before building on or working around a third-party package or tool,
   `shape-idea` grounds its conclusion in evidence of how that dependency
   actually behaves and confirms it in the project. The spec records what was
