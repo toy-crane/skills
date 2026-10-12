@@ -75,13 +75,14 @@ correction is an assumption under standing veto, never a settled constraint.
 
 ## Write the revision
 
-Rewrite `spec.md` in place under the same slug. Keep the product contract's
-own fields: user-visible outcomes, approved scope, observable acceptance
-criteria, settled constraints and rationale, assumptions, off-limits areas and
-why, deferred points, and remaining risks. Preserve its links to the approved
-prototype and to the decision contracts the work depends on, pointing at each
-rather than restating it. Where a deferred point's interim behavior is stated
-again elsewhere in the contract, keep it marked interim there.
+Rewrite `spec.md` in place under the same slug. Keep the product contract's own
+fields: user-visible outcomes, approved scope, observable acceptance criteria,
+settled constraints and rationale, assumptions, off-limits areas and why,
+deferred points, remaining risks, and setup before implementation. Preserve its
+links to the approved prototype and to the decision contracts the work depends
+on, pointing at each rather than restating it. Where a deferred point's interim
+behavior is stated again elsewhere in the contract, keep it marked interim
+there.
 
 Add no change log section and no revision file; Git holds the history. Never
 edit product source, configuration, or dependencies, and run any experiment in

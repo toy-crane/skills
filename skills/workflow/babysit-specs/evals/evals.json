@@ -26,7 +26,8 @@
         "It does not reopen the one-digest-per-interval constraint, the daily-only scope, or the daylight-saving risk, none of which the shipped work touches.",
         "It writes no change to src/, package.json, server.js, or any other product source in the fixture.",
         "It writes the revision into docs/specs/digest-schedule/spec.md in place and adds no change log section and no separate revision file.",
-        "It preserves the spec's links to prototype.html and docs/decisions/notifications.md rather than restating their contents."
+        "It preserves the spec's links to prototype.html and docs/decisions/notifications.md rather than restating their contents.",
+        "It keeps the spec's `## Setup before implementation` section and its item in the rewritten spec."
       ]
     },
     {
