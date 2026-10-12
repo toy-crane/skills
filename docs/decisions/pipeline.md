@@ -253,11 +253,13 @@
   listed by `shape-idea` in the spec's `## Setup before implementation`
   section: one line per item naming what is needed, which outcome it serves,
   and the observable condition that shows it is done. The section reads
-  `None.` when nothing is needed and never holds a secret value. Before its
-  first source change, `implement` does what it can of each item itself, then
-  checks every done condition. If any item remains, it reports all remaining
-  items at once and stops before changing source; it resumes when the user
-  says they are done and the conditions pass. A spec without the section
+  `None.` when nothing is needed and never holds a secret value. Each done
+  condition must be observable without the work the spec delivers. After
+  claiming the folder and before its first source change, `implement` does
+  what it can of each item itself, then checks every done condition. If any
+  item remains, it reports all remaining items at once and stops before
+  changing source; it resumes when the user says they are done and the
+  conditions pass. A spec without the section
   proceeds as before.
 - Before building on or working around a third-party package or tool,
   `shape-idea` grounds its conclusion in evidence of how that dependency
