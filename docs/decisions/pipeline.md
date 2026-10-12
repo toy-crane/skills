@@ -259,8 +259,8 @@
   what it can of each item itself, then checks every done condition. If any
   item remains, it reports all remaining items at once and stops before
   changing source; it resumes when the user says they are done and the
-  conditions pass. A spec without the section
-  proceeds as before.
+  conditions pass. `babysit-specs` keeps the section when it rewrites a spec.
+  A spec without the section proceeds as before.
 - Before building on or working around a third-party package or tool,
   `shape-idea` grounds its conclusion in evidence of how that dependency
   actually behaves and confirms it in the project. The spec records what was
