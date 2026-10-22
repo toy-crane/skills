@@ -8,6 +8,7 @@ of truth. Read only the subjects relevant to the work.
 - [app-context](app-context.md) — Read when creating, consuming, or changing the permanent app-level product context.
 - [skill-naming](skill-naming.md) — Read when adding or renaming a skill or command.
 - [skill-layout](skill-layout.md) — Read when adding, moving, or categorizing a published skill or changing its distribution path.
+- [mod-layout](mod-layout.md) — Read when adding, moving, or distributing a mod (a hooks-module plugin).
 - [skill-design](skill-design.md) — Read when changing a skill's trigger, instructions, dependencies, or eval strategy.
 - [pr-descriptions](pr-descriptions.md) — Read when changing PR body explanations, visual comparisons, attachments, or review evidence.
 - [worktree-cleanup](worktree-cleanup.md) — Read when changing how a skill releases a worktree's resources, detects processes inside it, or removes it.
