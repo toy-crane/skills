@@ -26,12 +26,19 @@ export function world(on: On, options: { files?: Record<string, string>; ignored
     // Symbolic links in the project: link path -> target path, both absolute.
     links?: Record<string, string>
     env?: Record<string, string>
+    isStoreBroken?: boolean
   } = {}): World {
   const files = new Map(Object.entries(options.files ?? {}).map(([path, text]) => [`${ROOT}/${path}`, text]))
   const ignored = new Set(options.ignored ?? ['.env', '.env.local'])
   const state: World = { files, opened: [], closed: [], unreadable: new Set(), ran: [] }
 
-  mock.store(on, options.store ?? {})
+  const store = new Map(Object.entries(options.store ?? {}))
+  on('store.get', (_, e) => ({ value: store.get(e.key) }))
+  on('store.set', (_, e) => {
+    if (options.isStoreBroken) throw new Error('store is read-only')
+    store.set(e.key, JSON.parse(JSON.stringify(e.value)))
+    return { value: undefined }
+  })
   mock.clock(on, { now: NOW })
   mock.env(on, options.env ?? {})
   on('session.root', () => ({ value: ROOT }))

@@ -3,6 +3,7 @@ import type { EngineInterface as Engine, Register, RenderChildren } from 'claude
 
 import type { Form, ManagedKey, Saved } from '../types'
 import { encodeValue, readValue, removeKey, upsertKey } from './dotenv'
+import { normalizePath } from './paths'
 import { MIN_LENGTH, scrub } from './scrub'
 
 const PANE = 'secret-env'
@@ -61,10 +62,12 @@ async function loadSecrets($: Engine) {
   unreadable = [...failed]
 }
 
+// Memory and hiding change first, so a failed store write never leaves a written value unhidden.
 async function setKeys($: Engine, next: ManagedKey[]) {
   keys = next
-  await $.store.set(`keys:${root}`, keys)
+  await loadSecrets($)
   await update($, keysAtom, () => keys)
+  await $.store.set(`keys:${root}`, keys)
 }
 
 // Whether git would commit the file (exit 1 from check-ignore), and whether the name is already set.
@@ -113,7 +116,6 @@ async function writeKey($: Engine, form: Form, value: string) {
     ...keys.filter(key => keyId(key) !== keyId(form)),
     { name: form.name, file: form.file, savedAt: await $.clock.now() },
   ])
-  await loadSecrets($)
 }
 
 const reasonOf = (err: unknown) => (err instanceof Error ? err.message : String(err))
@@ -132,25 +134,14 @@ async function deleteKey($: Engine, id: string): Promise<string | undefined> {
     }
   }
   await setKeys($, keys.filter(one => one !== key))
-  await loadSecrets($)
   return undefined
-}
-
-function lexical(path: string): string {
-  const parts: string[] = []
-  for (const part of path.split('/')) {
-    if (part === '' || part === '.') continue
-    if (part === '..') parts.pop()
-    else parts.push(part)
-  }
-  return `/${parts.join('/')}`
 }
 
 // One spelling per file: links and . or .. resolved, so another spelling cannot slip past a guard.
 async function canonical($: Engine, path: string): Promise<string> {
-  const absolute = lexical(path.startsWith('/') ? path : `${root}/${path}`)
+  const absolute = normalizePath(path, root)
   const stat = await $.fs.stat(absolute, { resolve: true }).catch(() => undefined)
-  return stat?.realPath ?? absolute
+  return stat?.realPath === undefined ? absolute : normalizePath(stat.realPath, root)
 }
 
 // The managed key names kept in the file at `path`, absolute or relative to the project.
@@ -179,7 +170,7 @@ function savedWhen(ms: number): string {
 
 function refusal(name: string, file: string): string | undefined {
   if (!NAME.test(name)) return `${name} is not a valid environment variable name.`
-  if (!ENV_FILE.test(file)) return `${file} must be a .env file inside the project, such as .env or .env.local.`
+  if (file.includes('\\') || /^[A-Za-z]:/.test(file) || !ENV_FILE.test(file)) return `${file} must be a .env file inside the project, such as .env or .env.local.`
   return undefined
 }
 
@@ -271,11 +262,20 @@ export const register: Register = on => {
       : next(e)
   }).catch(($, e, next) => (next.called ? next(e) : { deny: 'secret-env could not check this file.' }))
 
+  // Judged on the file as the edit would leave it, so renaming or reshaping a managed line is caught too.
   on('tool.call', { tool: 'Edit' }, async ($, e, next) => {
-    const touched = (await managedIn($, e.file_path)).filter(name => {
-      const line = new RegExp(`(^|\\n)\\s*(export\\s+)?${name}\\s*=`)
-      return line.test(e.old_string) || line.test(e.new_string)
-    })
+    const names = await managedIn($, e.file_path)
+    if (names.length === 0) return next(e)
+    const before = await $.fs.read(normalizePath(e.file_path, root))
+    // An old_string the file does not hold (Claude saw [hidden]) is judged by the names it mentions.
+    const touched = before.includes(e.old_string)
+      ? names.filter(name => {
+          const after = e.replace_all
+            ? before.split(e.old_string).join(e.new_string)
+            : before.replace(e.old_string, () => e.new_string)
+          return readValue(before, name) !== readValue(after, name)
+        })
+      : names.filter(name => e.old_string.includes(name) || e.new_string.includes(name))
     return touched.length > 0
       ? { deny: `${touched.join(', ')} can only be changed by the user. Ask them to run /secret-env.` }
       : next(e)

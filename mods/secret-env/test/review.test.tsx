@@ -77,3 +77,47 @@ test('Write is refused for a managed file named through ./ or a symbolic link', 
   expect(dotted.deny).toContain('STRIPE_SECRET_KEY')
   expect(linked.deny).toContain('STRIPE_SECRET_KEY')
 })
+
+test('a target using backslashes or a drive letter is refused', async ($, on) => {
+  const w = world(on)
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+
+  const back = await $.tool.call({ ...ASK, file: '.env\\..\\..\\outside.txt' })
+  const drive = await $.tool.call({ ...ASK, file: 'C:\\other\\.env' })
+
+  expect(back.result).toContain('must be a .env file inside the project')
+  expect(drive.result).toContain('must be a .env file inside the project')
+  expect(w.opened).toEqual([])
+})
+
+test('an Edit that renames a managed key without touching its = is refused', async ($, on) => {
+  world(on, { files: FILES, store: STORED })
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+
+  const renamed = await $.tool.call({
+    tool: 'Edit',
+    file_path: `${ROOT}/.env.local`,
+    old_string: 'STRIPE_SECRET_KEY',
+    new_string: 'RENAMED_KEY',
+  })
+
+  expect(renamed.deny).toContain('STRIPE_SECRET_KEY')
+})
+
+test('a saved value stays hidden this session even when recording its name fails', async ($, on) => {
+  const w = world(on, { files: { '.env.local': '' }, isStoreBroken: true })
+  on('tool.call', { tool: 'Bash' }, () => ({ result: { stdout: 'sk_live_9fK2xQ', stderr: '', interrupted: false } }))
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+
+  const asked = $.tool.call({ ...ASK, file: '.env.local' })
+  await until(() => w.opened.includes('secret-env'))
+  const ui = await $.ui.mount(PANE)
+  await ui.input({ key: 'value', text: 'sk_live_9fK2xQ', kind: 'change' })
+  await ui.press({ key: 'save' })
+  await ui.press({ key: 'cancel' })
+  await asked
+
+  const ran = await $.tool.call({ tool: 'Bash', command: 'cat .env.local' })
+  expect((ran.result as { stdout: string }).stdout).toBe('[hidden]')
+  await ui.unmount()
+})
