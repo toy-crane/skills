@@ -135,3 +135,17 @@ test('the list draws on the terminal, desktop, and VS Code alike', async ($, on)
     await ui.unmount()
   }
 })
+
+test('running /secret-env again returns to the list even if an add form was left open', async ($, on) => {
+  world(on, { files: FILES, store: STORED })
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+  await $.command.run(SLASH)
+  const first = await $.ui.mount(PANE)
+  await first.press({ key: 'add' })
+  await first.unmount()
+
+  await $.command.run(SLASH)
+  const again = await $.ui.mount(PANE)
+  expect(await again.find({ type: 'Button', key: 'add' })).toBeDefined()
+  await again.unmount()
+})
