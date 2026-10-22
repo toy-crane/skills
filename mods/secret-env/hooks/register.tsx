@@ -2,8 +2,8 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface as Engine, Register } from 'claude-code'
 
 import type { Form, ManagedKey, Saved } from '../types'
-import { readValue, removeKey, upsertKey } from './dotenv'
-import { scrub } from './scrub'
+import { encodeValue, readValue, removeKey, upsertKey } from './dotenv'
+import { MIN_LENGTH, scrub } from './scrub'
 
 const PANE = 'secret-env'
 const TOOL = 'request_secret'
@@ -39,7 +39,8 @@ async function loadSecrets($: Engine) {
   for (const key of keys) {
     const text = await readText($, `${root}/${key.file}`)
     const value = text === undefined ? undefined : readValue(text, key.name)
-    if (value !== undefined) values.push(value)
+    // The file may spell the value quoted and escaped; hide that spelling as well.
+    if (value !== undefined) values.push(value, encodeValue(value))
   }
   secrets = values
 }
@@ -52,10 +53,12 @@ async function setKeys($: Engine, next: ManagedKey[]) {
 
 // Whether git would commit the file (exit 1 from check-ignore), and whether the name is already set.
 async function conflictsOf($: Engine, name: string, file: string) {
-  const check = await $.process.run(['git', 'check-ignore', '-q', file], { cwd: root })
+  const check = await $.process
+    .run(['git', 'check-ignore', '-q', file], { cwd: root })
+    .catch(() => undefined)
   const text = await readText($, `${root}/${file}`)
   return {
-    isUnignored: check.exitCode === 1,
+    isUnignored: check?.exitCode === 1,
     exists: text !== undefined && readValue(text, name) !== undefined,
   }
 }
@@ -158,12 +161,12 @@ export const register: Register = on => {
     isWaiting = true
     draft = ''
     outcome = undefined
-    const conflicts = await conflictsOf($, input.name, input.file)
-    await update($, savedAtom, () => null)
-    const asked: Form = { source: 'claude', name: input.name, file: input.file, purpose: input.purpose, ...conflicts }
-    await update($, formAtom, () => asked)
-    await $.ui.open({ id: PANE, title: '비밀 키 입력', focus: true })
     try {
+      const conflicts = await conflictsOf($, input.name, input.file)
+      await update($, savedAtom, () => null)
+      const asked: Form = { source: 'claude', name: input.name, file: input.file, purpose: input.purpose, ...conflicts }
+      await update($, formAtom, () => asked)
+      await $.ui.open({ id: PANE, title: '비밀 키 입력', focus: true })
       // Each sleep is a $ call, so the wait does not spend the hook's own time budget.
       while (outcome === undefined && !next.signal.aborted) {
         await $.process.run(['/bin/sleep', '0.3'])
@@ -242,18 +245,26 @@ export const register: Register = on => {
       const save = async () => {
         const current = { ...form, ...(form.source === 'user' ? { name: draftName.trim(), file: draftFile.trim() } : {}) }
         const missing =
-          current.name === '' ? '키 이름을 입력해 주세요.' : draft === '' ? '값을 입력해 주세요.' : undefined
+          current.name === ''
+            ? '키 이름을 입력해 주세요.'
+            : draft === ''
+              ? '값을 입력해 주세요.'
+              : draft.length < MIN_LENGTH
+                ? `값은 ${MIN_LENGTH}자 이상이어야 가릴 수 있습니다.`
+                : undefined
         const invalid = missing ?? (refusal(current.name, current.file) && '키 이름이나 저장 위치가 올바르지 않습니다.')
         if (invalid) {
           await update($, formAtom, () => ({ ...form, error: invalid }))
           return
         }
-        if (current.source === 'user' && !current.isChecked) {
+        const target = keyId(current)
+        if (current.source === 'user' && current.checked !== target) {
           const conflicts = await conflictsOf($, current.name, current.file)
           if (conflicts.isUnignored || conflicts.exists) {
-            await update($, formAtom, () => ({ ...current, ...conflicts, isChecked: true, error: undefined }))
+            await update($, formAtom, () => ({ ...current, ...conflicts, checked: target, error: undefined }))
             return
           }
+          Object.assign(current, conflicts)
         }
         await writeKey($, current, draft)
         draft = ''

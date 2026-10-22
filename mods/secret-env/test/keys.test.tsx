@@ -102,3 +102,23 @@ test('with no saved keys the list says how to add the first one', async ($, on) 
   expect(await ui.find({ type: 'Text', text: /아직 저장한 키가 없습니다/ })).toBeDefined()
   await ui.unmount()
 })
+
+test('changing the file after a warning checks the new file before saving', async ($, on) => {
+  const w = world(on, { files: { ...FILES, '.gitignore': 'node_modules\n' }, store: STORED, ignored: ['.env', '.env.local'] })
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+  await $.command.run(SLASH)
+
+  const ui = await $.ui.mount(PANE)
+  await ui.press({ key: 'add' })
+  await ui.input({ key: 'name', text: 'OPENAI_API_KEY', kind: 'change' })
+  await ui.input({ key: 'value', text: 'sk-proj-new77', kind: 'change' })
+  await ui.press({ key: 'save' })
+  expect((await ui.find({ type: 'Button', key: 'save' }))?.text).toBe('새 값으로 바꾸기')
+
+  await ui.input({ key: 'file', text: '.env.prod', kind: 'change' })
+  await ui.press({ key: 'save' })
+
+  expect(w.files.get(`${ROOT}/.env.prod`)).toBe(undefined)
+  expect((await ui.find({ type: 'Button', key: 'save' }))?.text).toBe('.gitignore에 추가하고 저장')
+  await ui.unmount()
+})

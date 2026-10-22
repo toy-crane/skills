@@ -15,7 +15,7 @@ export type World = {
   closed: string[]
 }
 
-export function world(on: On, options: { files?: Record<string, string>; ignored?: string[]; store?: Record<string, unknown> } = {}): World {
+export function world(on: On, options: { files?: Record<string, string>; ignored?: string[]; store?: Record<string, unknown>; isGitBroken?: boolean } = {}): World {
   const files = new Map(Object.entries(options.files ?? {}).map(([path, text]) => [`${ROOT}/${path}`, text]))
   const ignored = new Set(options.ignored ?? ['.env', '.env.local'])
   const state: World = { files, opened: [], closed: [] }
@@ -37,6 +37,7 @@ export function world(on: On, options: { files?: Record<string, string>; ignored
     const [cmd, ...args] = e.argv
     // A real sleep, so a plugin polling with it leaves room for the test to act.
     if (cmd === '/bin/sleep') await new Promise(r => setTimeout(r, 5))
+    if (cmd === 'git' && options.isGitBroken) throw new Error('git: command not found')
     if (cmd === 'git' && args[0] === 'check-ignore') {
       return { value: { exitCode: ignored.has(args[args.length - 1] ?? '') ? 0 : 1, stdout: '', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
     }

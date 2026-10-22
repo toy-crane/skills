@@ -148,3 +148,52 @@ test('on a phone, which has no text field, the pane says where to enter the key'
   await asked
   await desk.unmount()
 })
+
+test('a value with quotes stays hidden in the spelling the file stores it in', async ($, on) => {
+  const w = world(on, { files: { '.env.local': '' } })
+  on('tool.call', { tool: 'Bash' }, () => ({
+    result: { stdout: w.files.get(`${ROOT}/.env.local`) ?? '', stderr: '', interrupted: false },
+  }))
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+
+  const asked = $.tool.call(REQUEST)
+  await until(() => w.opened.includes('secret-env'))
+  const ui = await $.ui.mount(PANE)
+  await ui.input({ key: 'value', text: 'pa"ss word\\9fK2', kind: 'change' })
+  await ui.press({ key: 'save' })
+  await asked
+
+  const ran = await $.tool.call({ tool: 'Bash', command: 'cat .env.local' })
+  expect((ran.result as { stdout: string }).stdout).toBe('STRIPE_SECRET_KEY=[hidden]\n')
+  await ui.unmount()
+})
+
+test('a value too short to hide is refused with a reason', async ($, on) => {
+  const w = world(on, { files: { '.env.local': '' } })
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+
+  const asked = $.tool.call(REQUEST)
+  await until(() => w.opened.includes('secret-env'))
+  const ui = await $.ui.mount(PANE)
+  await ui.input({ key: 'value', text: 'abc', kind: 'change' })
+  await ui.press({ key: 'save' })
+
+  expect(await ui.find({ type: 'Text', text: /4자 이상/ })).toBeDefined()
+  expect(w.files.get(`${ROOT}/.env.local`)).toBe('')
+  await ui.press({ key: 'cancel' })
+  await asked
+  await ui.unmount()
+})
+
+test('without a working git the request still opens the pane, with no .gitignore warning', async ($, on) => {
+  const w = world(on, { files: { '.env.local': '' }, isGitBroken: true })
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+
+  const asked = $.tool.call(REQUEST)
+  await until(() => w.opened.includes('secret-env'))
+  const ui = await $.ui.mount(PANE)
+  expect((await ui.find({ type: 'Button', key: 'save' }))?.text).toBe('저장')
+  await ui.press({ key: 'cancel' })
+  expect((await asked).result).toBe('The user cancelled entering STRIPE_SECRET_KEY.')
+  await ui.unmount()
+})

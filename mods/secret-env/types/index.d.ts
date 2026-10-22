@@ -8,8 +8,8 @@ export type Form = {
   purpose?: string
   isUnignored: boolean
   exists: boolean
-  // For a key added from the list: the warnings were shown once, so the next save writes.
-  isChecked?: boolean
+  // For a key added from the list: the file:name the warnings were shown for, so saving it again writes.
+  checked?: string
   error?: string
 }
 

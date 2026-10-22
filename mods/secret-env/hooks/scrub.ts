@@ -1,7 +1,7 @@
 // Replaces every known secret value inside any JSON-shaped value.
 
 export const HIDDEN = '[hidden]'
-const MIN_LENGTH = 4
+export const MIN_LENGTH = 4
 
 export function scrub<T>(value: T, secrets: readonly string[]): T {
   const needles = secrets

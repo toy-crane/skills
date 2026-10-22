@@ -30,7 +30,8 @@ Run it in a terminal session. Add the marketplace first with
   delete one, which removes its line from the file.
 - When the file is not covered by `.gitignore`, the pane warns you and offers
   to add it before saving. A name that already exists is replaced only after
-  you confirm.
+  you confirm. Values shorter than four characters are refused, since they
+  could not be hidden without blanking ordinary output.
 - Claude cannot change a managed key's line with Write or Edit. It can still
   edit the other lines of the same file.
 
@@ -40,7 +41,6 @@ Run it in a terminal session. Add the marketplace first with
   to load, Claude reads it like any other file.
 - Only the exact value is hidden. A command that encodes it or prints part of
   it gets past the filter, and Claude can still run commands that use the key.
-- Values shorter than four characters are not hidden.
 - The text field does not mask what you type; mind screen sharing.
 - The phone app has no text field, so enter keys from the desktop app or a
   terminal.
