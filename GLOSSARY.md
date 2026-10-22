@@ -57,3 +57,7 @@ _Avoid_: Standing-position summary, ADR list
 **Decision contract**:
 The settled current decisions for one durable subject, stored in one mutable `docs/decisions/<subject>.md` file. A decision settles when the user confirms it or it is made under authority the user explicitly delegated for that class of decision. The contract carries the rules and minimum reasons needed now, plus boundaries, reconsideration conditions, still-relevant rejected alternatives, and expensive evidence when they matter. Git history carries prior versions.
 _Avoid_: ADR, decision log, record cluster
+
+**Mod**:
+A Claude Code plugin whose behavior comes from a hooks module that changes Claude Code's own interface or behavior, such as a pane, a slash command, or a hook on tool calls. Lives in `mods/<name>/` and installs separately from the skills plugin.
+_Avoid_: Hook plugin, extension
