@@ -15,15 +15,25 @@ export type World = {
   closed: string[]
   // Project-relative paths that fail to read from now on.
   unreadable: Set<string>
+  // Every argv the plugin ran.
+  ran: string[][]
 }
 
-export function world(on: On, options: { files?: Record<string, string>; ignored?: string[]; store?: Record<string, unknown>; isGitBroken?: boolean; tracked?: string[] } = {}): World {
+export function world(on: On, options: { files?: Record<string, string>; ignored?: string[]; store?: Record<string, unknown>; isGitBroken?: boolean
+    tracked?: string[]
+    // Paths a .gitignore line cannot cover, so check-ignore keeps answering 1.
+    stubborn?: string[]
+    // Symbolic links in the project: link path -> target path, both absolute.
+    links?: Record<string, string>
+    env?: Record<string, string>
+  } = {}): World {
   const files = new Map(Object.entries(options.files ?? {}).map(([path, text]) => [`${ROOT}/${path}`, text]))
   const ignored = new Set(options.ignored ?? ['.env', '.env.local'])
-  const state: World = { files, opened: [], closed: [], unreadable: new Set() }
+  const state: World = { files, opened: [], closed: [], unreadable: new Set(), ran: [] }
 
   mock.store(on, options.store ?? {})
   mock.clock(on, { now: NOW })
+  mock.env(on, options.env ?? {})
   on('session.root', () => ({ value: ROOT }))
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('fs.read', (_, e) => {
@@ -33,21 +43,41 @@ export function world(on: On, options: { files?: Record<string, string>; ignored
     return { value: text }
   })
   on('fs.exists', (_, e) => ({ value: files.has(e.path) }))
+  on('fs.stat', (_, e) => {
+    const parts: string[] = []
+    for (const part of e.path.split('/')) {
+      if (part === '' || part === '.') continue
+      if (part === '..') parts.pop()
+      else parts.push(part)
+    }
+    const lexical = `/${parts.join('/')}`
+    const real = options.links?.[lexical] ?? lexical
+    if (!files.has(real)) throw new Error(`ENOENT: ${e.path}`)
+    return { value: { kind: 'file', size: 0, mtimeMs: 0, isLink: real !== lexical, realPath: real } }
+  })
   on('fs.write', (_, e) => {
     files.set(e.path, e.text)
     return { value: undefined }
   })
   on('process.run', async (_, e) => {
+    state.ran.push([...e.argv])
     const [cmd, ...args] = e.argv
     // A real sleep, so a plugin polling with it leaves room for the test to act.
-    if (cmd === '/bin/sleep') await new Promise(r => setTimeout(r, 5))
+    if (cmd === '/bin/sleep' || cmd === 'powershell') await new Promise(r => setTimeout(r, 5))
     if (cmd === 'git' && options.isGitBroken) throw new Error('git: command not found')
     if (cmd === 'git' && args[0] === 'ls-files') {
       const isTracked = (options.tracked ?? []).includes(args[args.length - 1] ?? '')
       return { value: { exitCode: isTracked ? 0 : 1, stdout: '', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
     }
     if (cmd === 'git' && args[0] === 'check-ignore') {
-      return { value: { exitCode: ignored.has(args[args.length - 1] ?? '') ? 0 : 1, stdout: '', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
+      const file = args[args.length - 1] ?? ''
+      // Lines starting with # are comments and ! negates; a backslash makes either literal.
+      const rules = (files.get(`${ROOT}/.gitignore`) ?? '')
+        .split('\n')
+        .filter(line => line !== '' && !line.startsWith('#') && !line.startsWith('!'))
+        .map(line => line.replace(/^\\/, ''))
+      const isIgnored = !(options.stubborn ?? []).includes(file) && (ignored.has(file) || rules.includes(file))
+      return { value: { exitCode: isIgnored ? 0 : 1, stdout: '', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
     }
     return { value: { exitCode: 0, stdout: '', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
   })

@@ -21,6 +21,9 @@ const noticeAtom = atom({ plugin: 'secret-env', key: 'notice' } as const, null a
 let root = ''
 let keys: ManagedKey[] = []
 let secrets: string[] = []
+// Managed files that exist but could not be read; while any remain, results are withheld.
+let unreadable: string[] = []
+let isWindows = false
 // What is typed in the pane lives only in these, never in session state.
 let draft = ''
 let draftName = ''
@@ -39,13 +42,23 @@ async function readText($: Engine, path: string): Promise<string | undefined> {
 
 async function loadSecrets($: Engine) {
   const values: string[] = []
+  const failed = new Set<string>()
   for (const key of keys) {
-    const text = await readText($, `${root}/${key.file}`)
-    const value = text === undefined ? undefined : readValue(text, key.name)
+    const path = `${root}/${key.file}`
+    let text: string
+    try {
+      if (!(await $.fs.exists(path))) continue
+      text = await $.fs.read(path)
+    } catch {
+      failed.add(key.file)
+      continue
+    }
+    const value = readValue(text, key.name)
     // The file may spell the value quoted and escaped; hide that spelling as well.
     if (value !== undefined) values.push(value, encodeValue(value))
   }
   secrets = values
+  unreadable = [...failed]
 }
 
 async function setKeys($: Engine, next: ManagedKey[]) {
@@ -56,9 +69,7 @@ async function setKeys($: Engine, next: ManagedKey[]) {
 
 // Whether git would commit the file (exit 1 from check-ignore), and whether the name is already set.
 async function conflictsOf($: Engine, name: string, file: string) {
-  const check = await $.process
-    .run(['git', 'check-ignore', '-q', file], { cwd: root })
-    .catch(() => undefined)
+  const ignored = await isIgnored($, file)
   // A tracked file stays committed whatever .gitignore says.
   const listed = await $.process
     .run(['git', 'ls-files', '--error-unmatch', '--', file], { cwd: root })
@@ -66,7 +77,7 @@ async function conflictsOf($: Engine, name: string, file: string) {
   const text = await readText($, `${root}/${file}`)
   return {
     isTracked: listed?.exitCode === 0,
-    isUnignored: check?.exitCode === 1,
+    isUnignored: ignored === false,
     exists: text !== undefined && readValue(text, name) !== undefined,
   }
 }
@@ -76,11 +87,22 @@ async function readForEdit($: Engine, path: string): Promise<string> {
   return (await $.fs.exists(path)) ? $.fs.read(path) : ''
 }
 
+async function isIgnored($: Engine, file: string): Promise<boolean | undefined> {
+  const check = await $.process
+    .run(['git', 'check-ignore', '-q', file], { cwd: root })
+    .catch(() => undefined)
+  return check === undefined || check.exitCode > 1 ? undefined : check.exitCode === 0
+}
+
 async function addToGitignore($: Engine, file: string) {
   const path = `${root}/.gitignore`
   const text = await readForEdit($, path)
   const head = text === '' || text.endsWith('\n') ? text : `${text}\n`
-  await $.fs.write(path, `${head}${file}\n`)
+  // A leading # or ! would make the line a comment or a negation.
+  await $.fs.write(path, `${head}${file.replace(/^([#!])/, '\\$1')}\n`)
+  if ((await isIgnored($, file)) === false) {
+    throw new Error(`.gitignore에 ${file}을 추가했지만 git이 여전히 이 파일을 무시하지 않습니다.`)
+  }
 }
 
 async function writeKey($: Engine, form: Form, value: string) {
@@ -114,10 +136,31 @@ async function deleteKey($: Engine, id: string): Promise<string | undefined> {
   return undefined
 }
 
+function lexical(path: string): string {
+  const parts: string[] = []
+  for (const part of path.split('/')) {
+    if (part === '' || part === '.') continue
+    if (part === '..') parts.pop()
+    else parts.push(part)
+  }
+  return `/${parts.join('/')}`
+}
+
+// One spelling per file: links and . or .. resolved, so another spelling cannot slip past a guard.
+async function canonical($: Engine, path: string): Promise<string> {
+  const absolute = lexical(path.startsWith('/') ? path : `${root}/${path}`)
+  const stat = await $.fs.stat(absolute, { resolve: true }).catch(() => undefined)
+  return stat?.realPath ?? absolute
+}
+
 // The managed key names kept in the file at `path`, absolute or relative to the project.
-function managedIn(path: string): string[] {
-  const absolute = path.startsWith('/') ? path : `${root}/${path}`
-  return keys.filter(key => `${root}/${key.file}` === absolute).map(key => key.name)
+async function managedIn($: Engine, path: string): Promise<string[]> {
+  const target = await canonical($, path)
+  const names: string[] = []
+  for (const key of keys) {
+    if ((await canonical($, `${root}/${key.file}`)) === target) names.push(key.name)
+  }
+  return names
 }
 
 function trackedMessage(file: string): string {
@@ -143,6 +186,7 @@ function refusal(name: string, file: string): string | undefined {
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     root = await $.session.root()
+    isWindows = (await $.env.get('OS')) === 'Windows_NT'
     keys = ((await $.store.get(`keys:${root}`)) as ManagedKey[] | undefined) ?? []
     await update($, keysAtom, () => keys)
     await loadSecrets($)
@@ -197,7 +241,9 @@ export const register: Register = on => {
       await $.ui.open({ id: PANE, title: '비밀 키 입력', focus: true, columns: PANE_COLUMNS })
       // Each sleep is a $ call, so the wait does not spend the hook's own time budget.
       while (outcome === undefined && !next.signal.aborted) {
-        await $.process.run(['/bin/sleep', '0.3'])
+        await $.process.run(
+          isWindows ? ['powershell', '-NoProfile', '-Command', 'Start-Sleep -Milliseconds 300'] : ['/bin/sleep', '0.3'],
+        )
       }
     } finally {
       isWaiting = false
@@ -218,15 +264,15 @@ export const register: Register = on => {
   })
 
   // Claude never knows a managed value, so any rewrite of its line would destroy it.
-  on('tool.call', { tool: 'Write' }, ($, e, next) => {
-    const guarded = managedIn(e.file_path)
+  on('tool.call', { tool: 'Write' }, async ($, e, next) => {
+    const guarded = await managedIn($, e.file_path)
     return guarded.length > 0
       ? { deny: `${e.file_path} holds ${guarded.join(', ')}, which only the user can change. Use Edit on other lines.` }
       : next(e)
   }).catch(($, e, next) => (next.called ? next(e) : { deny: 'secret-env could not check this file.' }))
 
-  on('tool.call', { tool: 'Edit' }, ($, e, next) => {
-    const touched = managedIn(e.file_path).filter(name => {
+  on('tool.call', { tool: 'Edit' }, async ($, e, next) => {
+    const touched = (await managedIn($, e.file_path)).filter(name => {
       const line = new RegExp(`(^|\\n)\\s*(export\\s+)?${name}\\s*=`)
       return line.test(e.old_string) || line.test(e.new_string)
     })
@@ -239,6 +285,10 @@ export const register: Register = on => {
   on('tool.call', async ($, e, next) => {
     const ran = await next(e)
     if (ran.deny !== undefined) return ran
+    if (unreadable.length > 0) await loadSecrets($)
+    if (unreadable.length > 0) {
+      return { deny: `secret-env could not read ${unreadable.join(', ')} to hide its keys, so this result was withheld.` }
+    }
     return { ...ran, result: scrub(ran.result, secrets), text: scrub(ran.text, secrets) }
   }).catch(($, e, next) =>
     // Fail closed: a result that could not be scrubbed is withheld, never passed on.
