@@ -22,6 +22,7 @@ declare module 'claude-code' {
       saved: Saved | null
       keys: ManagedKey[]
       deleting: string | null
+      notice: string | null
     }
   }
 }

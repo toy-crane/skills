@@ -197,3 +197,21 @@ test('without a working git the request still opens the pane, with no .gitignore
   expect((await asked).result).toBe('The user cancelled entering STRIPE_SECRET_KEY.')
   await ui.unmount()
 })
+
+test('a save the file refuses keeps the pane open with the reason', async ($, on) => {
+  const w = world(on, { files: { '.env.local': 'DEBUG=1\n' } })
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+
+  const asked = $.tool.call(REQUEST)
+  await until(() => w.opened.includes('secret-env'))
+  w.unreadable.add('.env.local')
+  const ui = await $.ui.mount(PANE)
+  await ui.input({ key: 'value', text: 'sk_test_51Q8xK2LmZq', kind: 'change' })
+  await ui.press({ key: 'save' })
+
+  expect(w.files.get(`${ROOT}/.env.local`)).toBe('DEBUG=1\n')
+  expect(await ui.find({ type: 'Text', text: /저장하지 못했습니다/ })).toBeDefined()
+  await ui.press({ key: 'cancel' })
+  await asked
+  await ui.unmount()
+})

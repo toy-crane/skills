@@ -13,22 +13,26 @@ export type World = {
   files: Map<string, string>
   opened: string[]
   closed: string[]
+  // Project-relative paths that fail to read from now on.
+  unreadable: Set<string>
 }
 
 export function world(on: On, options: { files?: Record<string, string>; ignored?: string[]; store?: Record<string, unknown>; isGitBroken?: boolean } = {}): World {
   const files = new Map(Object.entries(options.files ?? {}).map(([path, text]) => [`${ROOT}/${path}`, text]))
   const ignored = new Set(options.ignored ?? ['.env', '.env.local'])
-  const state: World = { files, opened: [], closed: [] }
+  const state: World = { files, opened: [], closed: [], unreadable: new Set() }
 
   mock.store(on, options.store ?? {})
   mock.clock(on, { now: NOW })
   on('session.root', () => ({ value: ROOT }))
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('fs.read', (_, e) => {
+    if ([...state.unreadable].some(path => e.path === `${ROOT}/${path}`)) throw new Error('EACCES: permission denied')
     const text = files.get(e.path)
     if (text === undefined) throw new Error(`ENOENT: ${e.path}`)
     return { value: text }
   })
+  on('fs.exists', (_, e) => ({ value: files.has(e.path) }))
   on('fs.write', (_, e) => {
     files.set(e.path, e.text)
     return { value: undefined }

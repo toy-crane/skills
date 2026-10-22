@@ -16,6 +16,7 @@ const formAtom = atom({ plugin: 'secret-env', key: 'form' } as const, null as Fo
 const savedAtom = atom({ plugin: 'secret-env', key: 'saved' } as const, null as Saved | null)
 const keysAtom = atom({ plugin: 'secret-env', key: 'keys' } as const, [] as ManagedKey[])
 const deletingAtom = atom({ plugin: 'secret-env', key: 'deleting' } as const, null as string | null)
+const noticeAtom = atom({ plugin: 'secret-env', key: 'notice' } as const, null as string | null)
 
 let root = ''
 let keys: ManagedKey[] = []
@@ -65,9 +66,14 @@ async function conflictsOf($: Engine, name: string, file: string) {
   }
 }
 
+// The file's text, '' when it does not exist yet; a file that exists but cannot be read throws.
+async function readForEdit($: Engine, path: string): Promise<string> {
+  return (await $.fs.exists(path)) ? $.fs.read(path) : ''
+}
+
 async function addToGitignore($: Engine, file: string) {
   const path = `${root}/.gitignore`
-  const text = (await readText($, path)) ?? ''
+  const text = await readForEdit($, path)
   const head = text === '' || text.endsWith('\n') ? text : `${text}\n`
   await $.fs.write(path, `${head}${file}\n`)
 }
@@ -75,7 +81,7 @@ async function addToGitignore($: Engine, file: string) {
 async function writeKey($: Engine, form: Form, value: string) {
   if (form.isUnignored) await addToGitignore($, form.file)
   const path = `${root}/${form.file}`
-  await $.fs.write(path, upsertKey((await readText($, path)) ?? '', form.name, value))
+  await $.fs.write(path, upsertKey(await readForEdit($, path), form.name, value))
   await setKeys($, [
     ...keys.filter(key => keyId(key) !== keyId(form)),
     { name: form.name, file: form.file, savedAt: await $.clock.now() },
@@ -83,14 +89,24 @@ async function writeKey($: Engine, form: Form, value: string) {
   await loadSecrets($)
 }
 
-async function deleteKey($: Engine, id: string) {
+const reasonOf = (err: unknown) => (err instanceof Error ? err.message : String(err))
+
+// Removes the key's line, and stops managing the key only once the file no longer holds it.
+async function deleteKey($: Engine, id: string): Promise<string | undefined> {
   const key = keys.find(one => keyId(one) === id)
-  if (key === undefined) return
+  if (key === undefined) return undefined
   const path = `${root}/${key.file}`
-  const text = await readText($, path)
-  if (text !== undefined) await $.fs.write(path, removeKey(text, key.name))
+  if (await $.fs.exists(path)) {
+    try {
+      await $.fs.write(path, removeKey(await $.fs.read(path), key.name))
+      if (readValue(await $.fs.read(path), key.name) !== undefined) throw new Error('the line is still there')
+    } catch (err) {
+      return `${key.file}에서 ${key.name}를 지우지 못했습니다. ${reasonOf(err)}`
+    }
+  }
   await setKeys($, keys.filter(one => one !== key))
   await loadSecrets($)
+  return undefined
 }
 
 // The managed key names kept in the file at `path`, absolute or relative to the project.
@@ -149,6 +165,7 @@ export const register: Register = on => {
   on('command.run', { command: 'secret-env' }, async $ => {
     await update($, savedAtom, () => null)
     await update($, deletingAtom, () => null)
+    await update($, noticeAtom, () => null)
     if (!isWaiting) await update($, formAtom, () => null)
     await $.ui.open({ id: PANE, title: '비밀 키', focus: true, columns: PANE_COLUMNS })
     return { text: '비밀 키 패널을 열었습니다.' }
@@ -268,7 +285,12 @@ export const register: Register = on => {
           }
           Object.assign(current, conflicts)
         }
-        await writeKey($, current, draft)
+        try {
+          await writeKey($, current, draft)
+        } catch (err) {
+          await update($, formAtom, () => ({ ...form, error: `${current.file}에 저장하지 못했습니다. ${reasonOf(err)}` }))
+          return
+        }
         draft = ''
         await update($, formAtom, () => null)
         if (current.source === 'claude') {
@@ -324,10 +346,14 @@ export const register: Register = on => {
             Claude에게는 전달되지 않습니다.
           </Text>
           {form.isUnignored && (
-            <Text>{form.file}이 .gitignore에 없습니다. 이대로 저장하면 키가 커밋될 수 있습니다.</Text>
+            <Text color="warning">{form.file}이 .gitignore에 없습니다. 이대로 저장하면 키가 커밋될 수 있습니다.</Text>
           )}
-          {form.exists && <Text>{form.file}에 {form.name}가 이미 있습니다. 저장하면 새 값으로 바뀝니다.</Text>}
-          {form.error !== undefined && <Text>{form.error}</Text>}
+          {form.exists && (
+            <Text color="warning">
+              {form.file}에 {form.name}가 이미 있습니다. 저장하면 새 값으로 바뀝니다.
+            </Text>
+          )}
+          {form.error !== undefined && <Text color="error">{form.error}</Text>}
           <Box flexDirection="row" gap={1}>
             <Button key="save" label={saveLabel(form)} variant="primary" onPress={save} />
             <Button key="cancel" label="취소" onPress={cancel} />
@@ -348,6 +374,7 @@ export const register: Register = on => {
 
     const list = await read($, keysAtom)
     const deleting = await read($, deletingAtom)
+    const notice = await read($, noticeAtom)
     const startAdding = async () => {
       draft = ''
       draftName = ''
@@ -360,6 +387,7 @@ export const register: Register = on => {
         <Text dimColor size="footnote">
           이 프로젝트에서 관리하는 키입니다. 값은 여기서도 보여 주지 않습니다.
         </Text>
+        {notice !== null && <Text color="error">{notice}</Text>}
         {list.length === 0 && (
           <Text dimColor>아직 저장한 키가 없습니다. 새 키를 추가하거나, Claude가 요청할 때 입력하면 여기에 나타납니다.</Text>
         )}
@@ -386,7 +414,8 @@ export const register: Register = on => {
                   label="지우기"
                   variant="primary"
                   onPress={async () => {
-                    await deleteKey($, keyId(key))
+                    const failed = await deleteKey($, keyId(key))
+                    await update($, noticeAtom, () => failed ?? null)
                     await update($, deletingAtom, () => null)
                   }}
                 />

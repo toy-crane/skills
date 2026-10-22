@@ -149,3 +149,24 @@ test('running /secret-env again returns to the list even if an add form was left
   expect(await again.find({ type: 'Button', key: 'add' })).toBeDefined()
   await again.unmount()
 })
+
+test('a key whose file cannot be read stays listed and hidden, and the pane says why', async ($, on) => {
+  const w = world(on, { files: FILES, store: STORED })
+  on('tool.call', { tool: 'Bash' }, () => ({ result: { stdout: 'sk-proj-9xQ2wL', stderr: '', interrupted: false } }))
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+  await $.command.run(SLASH)
+  const ui = await $.ui.mount(PANE)
+
+  // The file turns unreadable after the session loaded its value.
+  w.unreadable.add('.env')
+  await ui.press({ key: 'delete:.env:OPENAI_API_KEY' })
+  await ui.press({ key: 'confirm-delete' })
+
+  expect(w.files.get(`${ROOT}/.env`)).toBe(FILES['.env'])
+  const drawn = JSON.stringify(await ui.drawn())
+  expect(drawn).toContain('OPENAI_API_KEY')
+  expect(drawn).toContain('지우지 못했습니다')
+  const ran = await $.tool.call({ tool: 'Bash', command: 'cat .env' })
+  expect((ran.result as { stdout: string }).stdout).toBe('[hidden]')
+  await ui.unmount()
+})
