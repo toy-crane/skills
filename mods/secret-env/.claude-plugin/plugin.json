@@ -1,0 +1,12 @@
+{
+  "name": "secret-env",
+  "version": "0.1.0",
+  "description": "Type secret keys into a Claude Code pane; they go to .env files and Claude only ever sees [hidden].",
+  "author": {
+    "name": "toy-crane",
+    "url": "https://github.com/toy-crane"
+  },
+  "repository": "https://github.com/toy-crane/skills",
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}
