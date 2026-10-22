@@ -122,3 +122,16 @@ test('changing the file after a warning checks the new file before saving', asyn
   expect((await ui.find({ type: 'Button', key: 'save' }))?.text).toBe('.gitignore에 추가하고 저장')
   await ui.unmount()
 })
+
+test('the list draws on the terminal, desktop, and VS Code alike', async ($, on) => {
+  world(on, { files: FILES, store: STORED })
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+  await $.command.run(SLASH)
+
+  for (const surface of ['terminal', 'desktop', 'vscode'] as const) {
+    const ui = await $.ui.mount({ ...PANE, surface })
+    expect(await ui.find({ type: 'Text', text: /STRIPE_SECRET_KEY/ })).toBeDefined()
+    expect(await ui.find({ type: 'Button', key: 'delete:.env.local:STRIPE_SECRET_KEY' })).toBeDefined()
+    await ui.unmount()
+  }
+})

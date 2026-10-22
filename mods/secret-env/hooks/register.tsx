@@ -7,6 +7,8 @@ import { MIN_LENGTH, scrub } from './scrub'
 
 const PANE = 'secret-env'
 const TOOL = 'request_secret'
+// Narrow enough to leave the chat readable beside the docked pane.
+const PANE_COLUMNS = 44
 const NAME = /^[A-Za-z_][A-Za-z0-9_]*$/
 const ENV_FILE = /^(?!\/)(?!.*(^|\/)\.\.(\/|$))(.*\/)?\.env[^/]*$/
 
@@ -148,7 +150,7 @@ export const register: Register = on => {
     await update($, savedAtom, () => null)
     await update($, deletingAtom, () => null)
     if (!isWaiting) await update($, formAtom, () => null)
-    await $.ui.open({ id: PANE, title: '비밀 키', focus: true })
+    await $.ui.open({ id: PANE, title: '비밀 키', focus: true, columns: PANE_COLUMNS })
     return { text: '비밀 키 패널을 열었습니다.' }
   })
 
@@ -166,7 +168,7 @@ export const register: Register = on => {
       await update($, savedAtom, () => null)
       const asked: Form = { source: 'claude', name: input.name, file: input.file, purpose: input.purpose, ...conflicts }
       await update($, formAtom, () => asked)
-      await $.ui.open({ id: PANE, title: '비밀 키 입력', focus: true })
+      await $.ui.open({ id: PANE, title: '비밀 키 입력', focus: true, columns: PANE_COLUMNS })
       // Each sleep is a $ call, so the wait does not spend the hook's own time budget.
       while (outcome === undefined && !next.signal.aborted) {
         await $.process.run(['/bin/sleep', '0.3'])
@@ -284,22 +286,43 @@ export const register: Register = on => {
         }
       }
 
+      // Each label sits above its value, so fields line up whatever the label's length.
+      const field = (label: string, body: unknown) => (
+        <Box flexDirection="column" width="100%">
+          <Text dimColor size="footnote">
+            {label}
+          </Text>
+          {body}
+        </Box>
+      )
+
       return (
-        <Box flexDirection="column" gap={1}>
+        <Box flexDirection="column" gap={1} width="100%">
           {form.source === 'claude' ? (
-            <Box flexDirection="column">
-              <Text>키 이름  {form.name}</Text>
-              {form.purpose !== undefined && <Text>용도  {form.purpose}</Text>}
-              <Text>저장 위치  {form.file}</Text>
+            <Box flexDirection="column" gap={1} width="100%">
+              {field('키 이름', <Text mono>{form.name}</Text>)}
+              {form.purpose !== undefined && field('용도', <Text>{form.purpose}</Text>)}
+              {field('저장 위치', <Text mono>{form.file}</Text>)}
             </Box>
           ) : (
-            <Box flexDirection="column" gap={1}>
-              <Input key="name" label="키 이름" placeholder="OPENAI_API_KEY" value={draftName} onInput={(v: string) => (draftName = v)} onSubmit={save} />
-              <Input key="file" label="저장 위치" value={draftFile} onInput={(v: string) => (draftFile = v)} onSubmit={save} />
+            <Box flexDirection="column" gap={1} width="100%">
+              {field(
+                '키 이름',
+                <Input key="name" placeholder="OPENAI_API_KEY" value={draftName} onInput={(v: string) => (draftName = v)} onSubmit={save} />,
+              )}
+              {field(
+                '저장 위치',
+                <Input key="file" value={draftFile} onInput={(v: string) => (draftFile = v)} onSubmit={save} />,
+              )}
             </Box>
           )}
-          <Input key="value" label="값" autoFocus value={draft} onInput={(v: string) => (draft = v)} onSubmit={save} />
-          <Text dimColor>Claude에게는 전달되지 않습니다.</Text>
+          {field(
+            '값',
+            <Input key="value" autoFocus value={draft} onInput={(v: string) => (draft = v)} onSubmit={save} />,
+          )}
+          <Text dimColor size="footnote">
+            Claude에게는 전달되지 않습니다.
+          </Text>
           {form.isUnignored && (
             <Text>{form.file}이 .gitignore에 없습니다. 이대로 저장하면 키가 커밋될 수 있습니다.</Text>
           )}
@@ -333,19 +356,27 @@ export const register: Register = on => {
     }
 
     return (
-      <Box flexDirection="column" gap={1}>
-        <Text dimColor>이 프로젝트에서 관리하는 키입니다. 값은 여기서도 보여 주지 않습니다.</Text>
+      <Box flexDirection="column" gap={1} width="100%">
+        <Text dimColor size="footnote">
+          이 프로젝트에서 관리하는 키입니다. 값은 여기서도 보여 주지 않습니다.
+        </Text>
         {list.length === 0 && (
           <Text dimColor>아직 저장한 키가 없습니다. 새 키를 추가하거나, Claude가 요청할 때 입력하면 여기에 나타납니다.</Text>
         )}
         {list.map(key => (
-          <Box flexDirection="column">
-            <Box flexDirection="row" gap={1}>
-              <Text bold>{key.name}</Text>
-              <Text dimColor>
-                {key.file} · {savedWhen(key.savedAt)}
-              </Text>
-              <Button key={`delete:${keyId(key)}`} label="삭제" onPress={() => update($, deletingAtom, () => keyId(key))} />
+          <Box flexDirection="column" width="100%">
+            <Box flexDirection="row" gap={1} alignItems="center" justifyContent="space-between" width="100%">
+              <Box flexDirection="column" flexGrow={1} flexShrink={1} minWidth={0}>
+                <Text bold mono wrap="truncate-end">
+                  {key.name}
+                </Text>
+                <Text dimColor size="footnote" wrap="truncate-end">
+                  {key.file} · {savedWhen(key.savedAt)}
+                </Text>
+              </Box>
+              <Box flexShrink={0}>
+                <Button key={`delete:${keyId(key)}`} label="삭제" onPress={() => update($, deletingAtom, () => keyId(key))} />
+              </Box>
             </Box>
             {deleting === keyId(key) && (
               <Box flexDirection="row" gap={1}>
