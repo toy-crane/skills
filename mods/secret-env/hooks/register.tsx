@@ -288,7 +288,7 @@ export const register: Register = on => {
 
       // Each label sits above its value, so fields line up whatever the label's length.
       const field = (label: string, body: unknown) => (
-        <Box flexDirection="column" width="100%">
+        <Box flexDirection="column" gap="xs" width="100%">
           <Text dimColor size="footnote">
             {label}
           </Text>
@@ -297,15 +297,15 @@ export const register: Register = on => {
       )
 
       return (
-        <Box flexDirection="column" gap={1} width="100%">
+        <Box flexDirection="column" gap="md" width="100%">
           {form.source === 'claude' ? (
-            <Box flexDirection="column" gap={1} width="100%">
+            <Box flexDirection="column" gap="md" width="100%">
               {field('키 이름', <Text mono>{form.name}</Text>)}
               {form.purpose !== undefined && field('용도', <Text>{form.purpose}</Text>)}
               {field('저장 위치', <Text mono>{form.file}</Text>)}
             </Box>
           ) : (
-            <Box flexDirection="column" gap={1} width="100%">
+            <Box flexDirection="column" gap="md" width="100%">
               {field(
                 '키 이름',
                 <Input key="name" placeholder="OPENAI_API_KEY" value={draftName} onInput={(v: string) => (draftName = v)} onSubmit={save} />,
