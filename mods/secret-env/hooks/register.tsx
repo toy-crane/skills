@@ -226,7 +226,7 @@ export const register: Register = on => {
     const elements = $.ui.resolve(e)
     const { Box, Text, Button } = elements
     // The phone surface has no text field, so keys are entered elsewhere.
-    const Input = 'Input' in elements ? elements.Input : undefined
+    const Input = e.surface !== 'mobile' && 'Input' in elements ? elements.Input : undefined
     const form = await read($, formAtom)
     const saved = await read($, savedAtom)
 
