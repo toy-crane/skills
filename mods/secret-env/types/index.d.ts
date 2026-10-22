@@ -6,6 +6,8 @@ export type Form = {
   name: string
   file: string
   purpose?: string
+  // Git already tracks the file, so a key saved there would be committed.
+  isTracked: boolean
   isUnignored: boolean
   exists: boolean
   // For a key added from the list: the file:name the warnings were shown for, so saving it again writes.

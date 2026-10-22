@@ -59,8 +59,13 @@ async function conflictsOf($: Engine, name: string, file: string) {
   const check = await $.process
     .run(['git', 'check-ignore', '-q', file], { cwd: root })
     .catch(() => undefined)
+  // A tracked file stays committed whatever .gitignore says.
+  const listed = await $.process
+    .run(['git', 'ls-files', '--error-unmatch', '--', file], { cwd: root })
+    .catch(() => undefined)
   const text = await readText($, `${root}/${file}`)
   return {
+    isTracked: listed?.exitCode === 0,
     isUnignored: check?.exitCode === 1,
     exists: text !== undefined && readValue(text, name) !== undefined,
   }
@@ -113,6 +118,10 @@ async function deleteKey($: Engine, id: string): Promise<string | undefined> {
 function managedIn(path: string): string[] {
   const absolute = path.startsWith('/') ? path : `${root}/${path}`
   return keys.filter(key => `${root}/${key.file}` === absolute).map(key => key.name)
+}
+
+function trackedMessage(file: string): string {
+  return `${file}은 git이 이미 추적하는 파일이라 저장할 수 없습니다. git rm --cached ${file}로 추적을 멈춘 뒤 다시 시도해 주세요.`
 }
 
 function saveLabel(form: Form): string {
@@ -279,11 +288,15 @@ export const register: Register = on => {
         const target = keyId(current)
         if (current.source === 'user' && current.checked !== target) {
           const conflicts = await conflictsOf($, current.name, current.file)
-          if (conflicts.isUnignored || conflicts.exists) {
+          if (conflicts.isTracked || conflicts.isUnignored || conflicts.exists) {
             await update($, formAtom, () => ({ ...current, ...conflicts, checked: target, error: undefined }))
             return
           }
           Object.assign(current, conflicts)
+        }
+        if (current.isTracked) {
+          await update($, formAtom, () => ({ ...current, error: trackedMessage(current.file) }))
+          return
         }
         try {
           await writeKey($, current, draft)
@@ -345,7 +358,8 @@ export const register: Register = on => {
           <Text dimColor size="footnote">
             Claude에게는 전달되지 않습니다.
           </Text>
-          {form.isUnignored && (
+          {form.isTracked && <Text color="error">{trackedMessage(form.file)}</Text>}
+          {!form.isTracked && form.isUnignored && (
             <Text color="warning">{form.file}이 .gitignore에 없습니다. 이대로 저장하면 키가 커밋될 수 있습니다.</Text>
           )}
           {form.exists && (
@@ -379,7 +393,7 @@ export const register: Register = on => {
       draft = ''
       draftName = ''
       draftFile = '.env'
-      await update($, formAtom, () => ({ source: 'user', name: '', file: '.env', isUnignored: false, exists: false }))
+      await update($, formAtom, () => ({ source: 'user', name: '', file: '.env', isTracked: false, isUnignored: false, exists: false }))
     }
 
     return (

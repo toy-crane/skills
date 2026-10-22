@@ -38,3 +38,17 @@ test('reading a key handles export, single quotes, and a missing key', () => {
 test('removing a key drops only its line', () => {
   expect(removeKey('A=1\nSTRIPE_SECRET_KEY=sk\nB=2\n', 'STRIPE_SECRET_KEY')).toBe('A=1\nB=2\n')
 })
+
+test('saving a name defined more than once leaves one line with the new value', () => {
+  expect(upsertKey('KEY=old1\nA=1\nKEY=old2\n', 'KEY', 'new_value')).toBe('KEY=new_value\nA=1\n')
+})
+
+test('the effective value is the last definition, as shells and dotenv loaders read it', () => {
+  expect(readValue('KEY=first\nKEY=second\n', 'KEY')).toBe('second')
+})
+
+test('a quoted value escapes $ and backticks so sourcing the file keeps it literal', () => {
+  const text = upsertKey('', 'PASS', 'pa$$word `id` x')
+  expect(text).toBe('PASS="pa\\$\\$word \\`id\\` x"\n')
+  expect(readValue(text, 'PASS')).toBe('pa$$word `id` x')
+})

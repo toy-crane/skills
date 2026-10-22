@@ -215,3 +215,20 @@ test('a save the file refuses keeps the pane open with the reason', async ($, on
   await asked
   await ui.unmount()
 })
+
+test('a file git already tracks is refused even if .gitignore matches it', async ($, on) => {
+  const w = world(on, { files: { '.env.local': 'DEBUG=1\n' }, tracked: ['.env.local'] })
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+
+  const asked = $.tool.call(REQUEST)
+  await until(() => w.opened.includes('secret-env'))
+  const ui = await $.ui.mount(PANE)
+  expect(await ui.find({ type: 'Text', text: /git이 이미 추적/ })).toBeDefined()
+  await ui.input({ key: 'value', text: 'sk_test_51Q8xK2LmZq', kind: 'change' })
+  await ui.press({ key: 'save' })
+
+  expect(w.files.get(`${ROOT}/.env.local`)).toBe('DEBUG=1\n')
+  await ui.press({ key: 'cancel' })
+  await asked
+  await ui.unmount()
+})

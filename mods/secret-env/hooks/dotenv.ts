@@ -10,7 +10,8 @@ function keyOf(line: string): string | undefined {
 // How a value is spelled on its line: bare when it can be, else double-quoted.
 export function encodeValue(value: string): string {
   if (BARE.test(value)) return value
-  return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`
+  // $ and backticks are escaped too, so sourcing the file keeps the value literal.
+  return `"${value.replace(/[\\"$`]/g, ch => `\\${ch}`).replace(/\n/g, '\\n')}"`
 }
 
 function decodeValue(raw: string): string {
@@ -41,8 +42,9 @@ export function upsertKey(text: string, name: string, value: string): string {
   const lines = text.split('\n')
   const at = lines.findIndex(one => keyOf(one) === name)
   if (at >= 0) {
+    // Later duplicates would win when the file is loaded, so only one line remains.
     lines[at] = line
-    return lines.join('\n')
+    return lines.filter((one, i) => i === at || keyOf(one) !== name).join('\n')
   }
   const head = text === '' || text.endsWith('\n') ? text : `${text}\n`
   return `${head}${line}\n`
@@ -55,10 +57,12 @@ export function removeKey(text: string, name: string): string {
     .join('\n')
 }
 
+// The last definition wins, as it does when a shell or dotenv loader reads the file.
 export function readValue(text: string, name: string): string | undefined {
+  let value: string | undefined
   for (const line of text.split('\n')) {
     const match = KEY_LINE.exec(line)
-    if (match?.[1] === name) return decodeValue(match[2] ?? '')
+    if (match?.[1] === name) value = decodeValue(match[2] ?? '')
   }
-  return undefined
+  return value
 }
