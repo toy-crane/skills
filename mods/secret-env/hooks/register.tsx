@@ -25,6 +25,9 @@ let draftFile = '.env'
 let outcome: 'saved' | 'cancelled' | undefined
 let isWaiting = false
 
+// Read through a call so the wait loop's narrowing does not stick to the variable.
+const outcomeNow = () => outcome
+
 const keyId = (key: { file: string; name: string }) => `${key.file}:${key.name}`
 
 async function readText($: Engine, path: string): Promise<string | undefined> {
@@ -85,6 +88,12 @@ async function deleteKey($: Engine, id: string) {
   await loadSecrets($)
 }
 
+// The managed key names kept in the file at `path`, absolute or relative to the project.
+function managedIn(path: string): string[] {
+  const absolute = path.startsWith('/') ? path : `${root}/${path}`
+  return keys.filter(key => `${root}/${key.file}` === absolute).map(key => key.name)
+}
+
 function saveLabel(form: Form): string {
   if (form.isUnignored) return form.exists ? '.gitignore에 추가하고 바꾸기' : '.gitignore에 추가하고 저장'
   return form.exists ? '새 값으로 바꾸기' : '저장'
@@ -140,7 +149,7 @@ export const register: Register = on => {
     return { text: '비밀 키 패널을 열었습니다.' }
   })
 
-  on('tool.call', { tool: `mcp__secret-env__${TOOL}` }, async ($, e, next) => {
+  on('tool.call', { tool: 'mcp__secret-env__request_secret' }, async ($, e, next) => {
     const input = e as unknown as { name: string; purpose: string; file: string }
     const refused = refusal(input.name, input.file)
     if (refused !== undefined) return { result: refused }
@@ -151,13 +160,8 @@ export const register: Register = on => {
     outcome = undefined
     const conflicts = await conflictsOf($, input.name, input.file)
     await update($, savedAtom, () => null)
-    await update($, formAtom, () => ({
-      source: 'claude',
-      name: input.name,
-      file: input.file,
-      purpose: input.purpose,
-      ...conflicts,
-    }))
+    const asked: Form = { source: 'claude', name: input.name, file: input.file, purpose: input.purpose, ...conflicts }
+    await update($, formAtom, () => asked)
     await $.ui.open({ id: PANE, title: '비밀 키 입력', focus: true })
     try {
       // Each sleep is a $ call, so the wait does not spend the hook's own time budget.
@@ -173,20 +177,42 @@ export const register: Register = on => {
         await $.ui.close({ id: PANE })
       }
     }
+    const ended = outcomeNow()
     return {
       result:
-        outcome === 'saved'
+        ended === 'saved'
           ? `The user saved ${input.name} to ${input.file}. Its value is hidden from you; use it by name.`
           : `The user cancelled entering ${input.name}.`,
     }
   })
+
+  // Claude never knows a managed value, so any rewrite of its line would destroy it.
+  on('tool.call', { tool: 'Write' }, ($, e, next) => {
+    const guarded = managedIn(e.file_path)
+    return guarded.length > 0
+      ? { deny: `${e.file_path} holds ${guarded.join(', ')}, which only the user can change. Use Edit on other lines.` }
+      : next(e)
+  }).catch(($, e, next) => (next.called ? next(e) : { deny: 'secret-env could not check this file.' }))
+
+  on('tool.call', { tool: 'Edit' }, ($, e, next) => {
+    const touched = managedIn(e.file_path).filter(name => {
+      const line = new RegExp(`(^|\\n)\\s*(export\\s+)?${name}\\s*=`)
+      return line.test(e.old_string) || line.test(e.new_string)
+    })
+    return touched.length > 0
+      ? { deny: `${touched.join(', ')} can only be changed by the user. Ask them to run /secret-env.` }
+      : next(e)
+  }).catch(($, e, next) => (next.called ? next(e) : { deny: 'secret-env could not check this edit.' }))
 
   // Every tool result, from the main loop or a subagent, passes here on its way to the model.
   on('tool.call', async ($, e, next) => {
     const ran = await next(e)
     if (ran.deny !== undefined) return ran
     return { ...ran, result: scrub(ran.result, secrets), text: scrub(ran.text, secrets) }
-  })
+  }).catch(($, e, next) =>
+    // Fail closed: a result that could not be scrubbed is withheld, never passed on.
+    next.called ? { deny: 'secret-env could not hide secrets in this result, so it was withheld.' } : next(e),
+  )
 
   on('ui.close', { id: PANE }, async ($, e, next) => {
     if (isWaiting && outcome === undefined) {
@@ -197,11 +223,22 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
-    const { Box, Text, Input, Button } = $.ui.resolve(e)
+    const elements = $.ui.resolve(e)
+    const { Box, Text, Button } = elements
+    // The phone surface has no text field, so keys are entered elsewhere.
+    const Input = 'Input' in elements ? elements.Input : undefined
     const form = await read($, formAtom)
     const saved = await read($, savedAtom)
 
-    if (form !== null) {
+    if (form !== null && Input === undefined) {
+      return (
+        <Text>
+          {form.name} 입력은 이 화면에서 할 수 없습니다. 데스크톱 앱이나 터미널에서 이 패널을 열어 주세요.
+        </Text>
+      )
+    }
+
+    if (form !== null && Input !== undefined) {
       const save = async () => {
         const current = { ...form, ...(form.source === 'user' ? { name: draftName.trim(), file: draftFile.trim() } : {}) }
         const missing =
@@ -246,11 +283,11 @@ export const register: Register = on => {
             </Box>
           ) : (
             <Box flexDirection="column" gap={1}>
-              <Input key="name" label="키 이름" placeholder="OPENAI_API_KEY" value={draftName} onInput={v => (draftName = v)} onSubmit={save} />
-              <Input key="file" label="저장 위치" value={draftFile} onInput={v => (draftFile = v)} onSubmit={save} />
+              <Input key="name" label="키 이름" placeholder="OPENAI_API_KEY" value={draftName} onInput={(v: string) => (draftName = v)} onSubmit={save} />
+              <Input key="file" label="저장 위치" value={draftFile} onInput={(v: string) => (draftFile = v)} onSubmit={save} />
             </Box>
           )}
-          <Input key="value" label="값" autoFocus value={draft} onInput={v => (draft = v)} onSubmit={save} />
+          <Input key="value" label="값" autoFocus value={draft} onInput={(v: string) => (draft = v)} onSubmit={save} />
           <Text dimColor>Claude에게는 전달되지 않습니다.</Text>
           {form.isUnignored && (
             <Text>{form.file}이 .gitignore에 없습니다. 이대로 저장하면 키가 커밋될 수 있습니다.</Text>

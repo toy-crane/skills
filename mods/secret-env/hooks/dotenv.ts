@@ -58,7 +58,7 @@ export function removeKey(text: string, name: string): string {
 export function readValue(text: string, name: string): string | undefined {
   for (const line of text.split('\n')) {
     const match = KEY_LINE.exec(line)
-    if (match?.[1] === name) return decodeValue(match[2])
+    if (match?.[1] === name) return decodeValue(match[2] ?? '')
   }
   return undefined
 }

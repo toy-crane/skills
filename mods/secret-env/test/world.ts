@@ -1,6 +1,9 @@
 // A fake machine beneath the plugin: a project folder in memory, git, and the pane host.
 import { mock } from 'claude-code/testing'
-import type { On } from 'claude-code/testing'
+import type { On } from 'claude-code'
+
+// The test environment has timers; the hooks typings leave them out.
+declare function setTimeout(fn: (value?: unknown) => void, ms: number): unknown
 
 export const ROOT = '/work/shop'
 // 2026-10-22 14:32 KST
@@ -35,7 +38,7 @@ export function world(on: On, options: { files?: Record<string, string>; ignored
     // A real sleep, so a plugin polling with it leaves room for the test to act.
     if (cmd === '/bin/sleep') await new Promise(r => setTimeout(r, 5))
     if (cmd === 'git' && args[0] === 'check-ignore') {
-      return { value: { exitCode: ignored.has(args[args.length - 1]) ? 0 : 1, stdout: '', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
+      return { value: { exitCode: ignored.has(args[args.length - 1] ?? '') ? 0 : 1, stdout: '', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
     }
     return { value: { exitCode: 0, stdout: '', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
   })

@@ -7,7 +7,7 @@ const REQUEST = {
   name: 'STRIPE_SECRET_KEY',
   purpose: 'Stripe 테스트 결제 호출',
   file: '.env.local',
-}
+} as const
 
 test('a key Claude asks for is typed in the pane, saved to the file, and never returned', async ($, on) => {
   const w = world(on, { files: { '.env.local': 'NEXT_PUBLIC_URL=http://localhost:3000\n' } })
@@ -131,4 +131,20 @@ test('a request for a file outside the project or not a .env file is refused wit
   expect(outside.result).toContain('must be a .env file inside the project')
   expect(notEnv.result).toContain('must be a .env file inside the project')
   expect(w.opened).toEqual([])
+})
+
+test('on a phone, which has no text field, the pane says where to enter the key', async ($, on) => {
+  const w = world(on, { files: { '.env.local': '' } })
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+
+  const asked = $.tool.call(REQUEST)
+  await until(() => w.opened.includes('secret-env'))
+  const phone = await $.ui.mount({ ...PANE, surface: 'mobile' })
+  expect(await phone.find({ type: 'Text', text: /데스크톱 앱이나 터미널/ })).toBeDefined()
+  await phone.unmount()
+
+  const desk = await $.ui.mount(PANE)
+  await desk.press({ key: 'cancel' })
+  await asked
+  await desk.unmount()
 })

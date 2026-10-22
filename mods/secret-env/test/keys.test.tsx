@@ -2,6 +2,13 @@ import { expect, test } from 'claude-code/testing'
 
 import { PANE, ROOT, world } from './world'
 
+const SLASH = {
+  command: 'secret-env',
+  args: '',
+  origin: { kind: 'composer' },
+  presentation: { isFullscreen: false, columns: 120 },
+} as const
+
 const STORED = {
   [`keys:${ROOT}`]: [
     { name: 'STRIPE_SECRET_KEY', file: '.env.local', savedAt: 1792647120000 },
@@ -17,7 +24,7 @@ test('/secret-env lists each key by name and file without its value', async ($, 
   const w = world(on, { files: FILES, store: STORED })
   await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
 
-  await $.command.run({ command: 'secret-env', args: '' })
+  await $.command.run(SLASH)
   expect(w.opened).toContain('secret-env')
 
   const ui = await $.ui.mount(PANE)
@@ -34,7 +41,7 @@ test('deleting a key asks once, removes its line, and stops hiding it', async ($
   const w = world(on, { files: FILES, store: STORED })
   on('tool.call', { tool: 'Bash' }, () => ({ result: { stdout: 'sk-proj-9xQ2wL', stderr: '', interrupted: false } }))
   await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
-  await $.command.run({ command: 'secret-env', args: '' })
+  await $.command.run(SLASH)
 
   const ui = await $.ui.mount(PANE)
   await ui.press({ key: 'delete:.env:OPENAI_API_KEY' })
@@ -51,7 +58,7 @@ test('deleting a key asks once, removes its line, and stops hiding it', async ($
 test('a key added from the list is saved to the chosen file and listed', async ($, on) => {
   const w = world(on, { files: FILES, store: STORED })
   await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
-  await $.command.run({ command: 'secret-env', args: '' })
+  await $.command.run(SLASH)
 
   const ui = await $.ui.mount(PANE)
   await ui.press({ key: 'add' })
@@ -69,7 +76,7 @@ test('a key added from the list is saved to the chosen file and listed', async (
 test('a key added to a file git would commit is saved only after confirming the .gitignore change', async ($, on) => {
   const w = world(on, { files: { ...FILES, '.gitignore': 'node_modules\n' }, store: STORED, ignored: [] })
   await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
-  await $.command.run({ command: 'secret-env', args: '' })
+  await $.command.run(SLASH)
 
   const ui = await $.ui.mount(PANE)
   await ui.press({ key: 'add' })
@@ -89,7 +96,7 @@ test('a key added to a file git would commit is saved only after confirming the 
 test('with no saved keys the list says how to add the first one', async ($, on) => {
   world(on)
   await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
-  await $.command.run({ command: 'secret-env', args: '' })
+  await $.command.run(SLASH)
 
   const ui = await $.ui.mount(PANE)
   expect(await ui.find({ type: 'Text', text: /아직 저장한 키가 없습니다/ })).toBeDefined()
