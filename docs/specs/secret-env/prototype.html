@@ -1,0 +1,457 @@
+<meta charset="utf-8">
+<!--
+  prototype shell: the review chrome every prototype starts from.
+
+  Keep this comment in the prototype you grow from here: it is the contract,
+  and later turns work from that file rather than from this one.
+
+  Contract (extend product screens; keep the review shell):
+  - Product:  .sh-stage contains only end-user product UI. Keep review notes,
+               rationale, instructions, and approval controls in conversation.
+  - Screens:  <section data-screen="slug" data-title="Label"> inside .sh-stage.
+               The selector, arrow keys, and #hash routing build themselves.
+               Use one option per product destination or distinct surface,
+               named by its product role. Keep baselines, variants, comparison
+               labels, steps, indexes, and progress out of names and states.
+               Links may use href="#slug".
+  - States:   "Default" is automatic. A screen declares only representative
+               presets in data-states="Empty,Error". Use natural, screen-specific
+               names. Reserve presets for important multi-step results, forced
+               data or errors, or materially different structure; keep one-click
+               and transient states as interactions. Use data-when="Empty" on
+               preset-only elements. Call prototypeShell.setState("Name") on
+               entry and setState("Default") on exit, including when repeated
+               actions cross a preset condition.
+  - Viewport: "vp (m)" cycles full / 390 / 768. The 390 preset is a
+               fixed-height, internally scrolling phone frame. Start a
+               mobile-first prototype by adding class="sh-vp-390" to <body>
+               (or a bootstrap classList.add before the chrome script runs).
+  - Pinning:  keep in-frame bars (tab bars, CTAs) inside the phone with
+               position: sticky; position: fixed pins to the browser window.
+  - Tokens:   replace the project-tokens block with project tokens copied
+               verbatim. Map differing names to --background, --foreground, and
+               --font afterwards; replace network fonts with a system stack and
+               note that substitution. Without a design system, keep this
+               palette as the finished style. When the project ships dark
+               tokens, copy them under .sh-theme-dark, which the shell sets
+               on both the root element and body, so :root.sh-theme-dark and
+               body.sh-theme-dark work too. A .dark class or a
+               prefers-color-scheme media query copied verbatim would follow
+               the reviewer's system instead of the toggle.
+  - Theme:    the light / dark switch (t) changes the product surface only.
+               It appears only when a .sh-theme-dark rule declares dark tokens,
+               so a prototype without them carries no theme control. Prototypes
+               always load light; the review bar keeps its own dark styling in
+               both themes so it still reads as chrome.
+  - Placeholders: .wf-pic stands in for pictures the prototype has no real
+               files for. Use real text everywhere text belongs.
+
+  - Chrome:   Keep exactly the screen selector, selected-screen state selector,
+               viewport cycle, and theme toggle.
+
+  Self-contained by design: no build, no framework, no network.
+-->
+<title>secret-env 프로토타입</title>
+<style>
+  /* Layout: desktop Code tab, chat column left, docked mod pane right; stacks under 760px. */
+  :root {
+    --background: #f4f3f0;
+    --surface: #ffffff;
+    --foreground: #2f2e2b;
+    --muted: #807d75;
+    --line: #dedbd3;
+    --accent: #c4633f;
+    --accent-ink: #ffffff;
+    --code-bg: #f0eee9;
+    --ok-bg: #e7f1e3; --ok-fg: #2f6a24;
+    --warn-bg: #fbf0dc; --warn-fg: #7a4d07; --warn-line: #e9c98d;
+    --radius: 8px;
+    --font: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", system-ui, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .sh-theme-dark {
+    --background: #1f1e1c; --surface: #2a2926; --foreground: #ecebe6; --muted: #a29f97;
+    --line: #3d3b37; --accent: #e07c55; --accent-ink: #1f1e1c; --code-bg: #34332f;
+    --ok-bg: #233a1e; --ok-fg: #a8d79a; --warn-bg: #3d2f14; --warn-fg: #f1cf8e; --warn-line: #6b5426;
+    color-scheme: dark;
+  }
+
+  /* ── review chrome (sh-*): keep; extend product styles elsewhere ── */
+  * { box-sizing: border-box }
+  body {
+    margin: 0; padding: 0 0 40px;
+    background: var(--background, #f6f6f6); color: var(--foreground, #3a3a3a);
+    font-family: var(--font, system-ui, sans-serif);
+  }
+  .sh-bar {
+    position: sticky; top: 0; z-index: 999;
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    padding: 8px 12px; background: #191a1c; color: #d7d7d7;
+    font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .sh-bar b, .sh-control-label { color: #8a8f98; font-weight: 500 }
+  .sh-control { display: inline-flex; gap: 5px; align-items: center }
+  .sh-bar button {
+    border: 1px solid #3a3d42; background: none; color: inherit;
+    font: inherit; padding: 2px 9px; border-radius: 99px; cursor: pointer;
+  }
+  .sh-bar select {
+    width: 170px; border: 1px solid #3a3d42; background: #232428; color: inherit;
+    font: inherit; padding: 3px 28px 3px 9px; border-radius: 7px; cursor: pointer;
+    color-scheme: dark;
+  }
+  #sh-screen { width: 190px }
+  .sh-bar button.on { background: #d7d7d7; color: #191a1c; border-color: #d7d7d7 }
+  .sh-theme { display: inline-flex; border: 1px solid #3a3d42; border-radius: 99px; overflow: hidden }
+  .sh-theme button { border: 0; border-radius: 0; padding: 2px 10px }
+  .sh-spacer { flex: 1 }
+  .sh-stage { max-width: 1100px; margin: 0 auto; padding: 12px 16px 0 }
+  [hidden] { display: none !important }
+  .sh-vp-390 .sh-stage {
+    max-width: 390px; background: var(--background, #f6f6f6);
+    border: 10px solid #191a1c; border-radius: 28px;
+    padding: 16px 12px; height: min(844px, calc(100dvh - 52px));
+    overflow-y: auto; margin-top: 12px;
+  }
+  .sh-vp-768 .sh-stage {
+    max-width: 768px; border: 1px solid #c4c4c4; border-radius: 12px;
+    padding: 16px; margin-top: 12px;
+  }
+  .wf-pic  { border-radius: 4px; background:
+             repeating-linear-gradient(45deg, #e9e9e9, #e9e9e9 6px, #f2f2f2 6px, #f2f2f2 12px) }
+
+  /* ── product ── */
+  .app { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 0; min-height: 620px;
+         border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); font-size: 14px; line-height: 1.6 }
+  .sh-vp-390 .app, .sh-vp-768 .app { grid-template-columns: minmax(0, 1fr) }
+  @media (max-width: 760px) { .app { grid-template-columns: minmax(0, 1fr) } }
+  .chat { padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; min-width: 0; background: var(--background) }
+  .msg-user { align-self: flex-end; max-width: 80%; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 8px 14px }
+  .msg-claude { max-width: 92% }
+  .tool { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; min-width: 0 }
+  .tool-head { display: flex; gap: 8px; align-items: center; padding: 7px 12px; font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--line) }
+  .tool-head strong { color: var(--foreground); font-weight: 600 }
+  .tool-body { padding: 8px 12px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; overflow-x: auto; background: var(--code-bg) }
+  .tool-note { padding: 8px 12px; font-size: 13px }
+  .spin { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent); animation: sp 1s linear infinite; flex: none }
+  @keyframes sp { to { transform: rotate(360deg) } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation: none } }
+  .hid { background: var(--warn-bg); color: var(--warn-fg); border-radius: 3px; padding: 0 3px }
+  .prompt { margin-top: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 10px 14px; color: var(--muted) }
+
+  .pane { border-left: 1px solid var(--line); display: flex; flex-direction: column; min-width: 0; background: var(--surface) }
+  @media (max-width: 760px) { .pane { border-left: 0; border-top: 1px solid var(--line) } }
+  .sh-vp-390 .pane, .sh-vp-768 .pane { border-left: 0; border-top: 1px solid var(--line) }
+  .pane-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-weight: 600 }
+  .pane-head .src { font-weight: 400; color: var(--muted); font-size: 12px }
+  .pane-head .x { margin-left: auto; border: 0; background: none; color: var(--muted); font-size: 16px; cursor: pointer }
+  .pane-body { padding: 16px 14px; display: flex; flex-direction: column; gap: 14px }
+  .kv { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 4px 10px; font-size: 13px }
+  .kv dt { color: var(--muted) } .kv dd { margin: 0; overflow-wrap: anywhere }
+  code, .mono { font-family: var(--mono); font-size: 12.5px }
+  label.fl { display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: var(--muted) }
+  input.f { font: 13px var(--mono); padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--background); color: var(--foreground); width: 100% }
+  input.f:focus { outline: 2px solid var(--accent); outline-offset: -1px }
+  .hint { font-size: 12px; color: var(--muted) }
+  .row { display: flex; gap: 8px; flex-wrap: wrap }
+  .btn { font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--foreground); cursor: pointer }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
+  .btn.primary:disabled { opacity: .45; cursor: default }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+  .warn { background: var(--warn-bg); color: var(--warn-fg); border: 1px solid var(--warn-line); border-radius: 6px; padding: 10px 12px; font-size: 13px; display: flex; flex-direction: column; gap: 8px }
+  .ok { background: var(--ok-bg); color: var(--ok-fg); border-radius: 6px; padding: 10px 12px; font-size: 13px }
+  .keys { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 6px }
+  .key { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; padding: 9px 11px; border-top: 1px solid var(--line) }
+  .key:first-child { border-top: 0 }
+  .key .n { font-family: var(--mono); font-size: 12.5px; overflow-wrap: anywhere }
+  .key .m { font-size: 12px; color: var(--muted); grid-column: 1 }
+  .key .del { grid-row: 1 / span 2; grid-column: 2; align-self: center }
+  .key .confirm { grid-column: 1 / -1; font-size: 12.5px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px }
+  .empty { padding: 18px 12px; text-align: center; color: var(--muted); font-size: 13px }
+</style>
+
+<header class="sh-bar">
+  <b>proto</b>
+  <label class="sh-control"><span class="sh-control-label">screen</span><select id="sh-screen"></select></label>
+  <span class="sh-spacer"></span>
+  <label class="sh-control"><span class="sh-control-label">state</span><select id="sh-state"></select></label>
+  <button id="sh-vp">vp: full (m)</button>
+  <div class="sh-theme" id="sh-theme" role="group" aria-label="theme (t)" hidden>
+    <button data-theme="light">light</button><button data-theme="dark">dark</button>
+  </div>
+</header>
+
+<main class="sh-stage">
+
+  <section data-screen="request" data-title="Claude가 키 요청" data-states="파일이 .gitignore에 없음,같은 이름이 이미 있음">
+    <div class="app">
+      <div class="chat">
+        <div class="msg-user">결제 흐름 붙이고 테스트 결제까지 돌려 줘</div>
+        <div class="msg-claude">Stripe 테스트 결제를 호출하려면 <code>STRIPE_SECRET_KEY</code>가 필요합니다. 옆 패널에 입력해 주세요. 값은 저에게 전달되지 않고 <code>.env.local</code>에만 저장됩니다.</div>
+        <div class="tool" data-component="new:ToolRow">
+          <div class="tool-head"><span class="spin" id="rq-spin"></span><strong>secret-env</strong> 키 요청 · STRIPE_SECRET_KEY</div>
+          <div class="tool-note" id="rq-status">입력을 기다리는 중</div>
+        </div>
+        <div id="rq-after" hidden>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="msg-claude">키가 저장됐습니다. 테스트 결제를 돌려 보겠습니다.</div>
+            <div class="tool">
+              <div class="tool-head"><strong>Bash</strong> grep STRIPE .env.local</div>
+              <div class="tool-body">STRIPE_SECRET_KEY=<span class="hid">[hidden]</span>
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51Q8xK2LmZq</div>
+            </div>
+            <div class="tool">
+              <div class="tool-head"><strong>Bash</strong> npm run test:payments</div>
+              <div class="tool-body">&gt; stripe client ready (key <span class="hid">[hidden]</span>)
+ ✓ creates a test charge of ₩12,900 (412 ms)
+ ✓ refunds the charge (288 ms)
+2 passed</div>
+            </div>
+            <div class="msg-claude">테스트 결제 두 건이 모두 통과했습니다.</div>
+          </div>
+        </div>
+        <div id="rq-cancel" hidden class="msg-claude">키 입력이 취소됐습니다. 결제 테스트는 키를 넣어 주실 때까지 미뤄 두겠습니다.</div>
+        <div class="prompt">Claude에게 메시지 보내기</div>
+      </div>
+
+      <aside class="pane" data-component="new:Pane" id="rq-pane">
+        <div class="pane-head">비밀 키 입력 <span class="src">secret-env</span><button class="x" aria-label="패널 닫기" id="rq-x">×</button></div>
+        <div class="pane-body" id="rq-form">
+          <dl class="kv">
+            <dt>키 이름</dt><dd class="mono">STRIPE_SECRET_KEY</dd>
+            <dt>용도</dt><dd>Stripe 테스트 결제 호출</dd>
+            <dt>저장 위치</dt><dd class="mono">.env.local</dd>
+          </dl>
+          <label class="fl" for="rq-value">값
+            <input class="f" id="rq-value" autocomplete="off" spellcheck="false" placeholder="sk_test_…">
+          </label>
+          <div class="hint">Claude에게는 전달되지 않습니다.</div>
+
+          <div class="warn" data-when="파일이 .gitignore에 없음">
+            <div><code>.env.local</code>이 <code>.gitignore</code>에 없습니다. 이대로 저장하면 키가 커밋될 수 있습니다.</div>
+          </div>
+          <div class="warn" data-when="같은 이름이 이미 있음">
+            <div><code>.env.local</code>에 <code>STRIPE_SECRET_KEY</code>가 이미 있습니다. 저장하면 새 값으로 바뀝니다.</div>
+          </div>
+
+          <div class="row">
+            <button class="btn primary" id="rq-save" disabled>저장</button>
+            <button class="btn" id="rq-cancel-btn">취소</button>
+          </div>
+        </div>
+        <div class="pane-body" id="rq-done" hidden>
+          <div class="ok"><code>STRIPE_SECRET_KEY</code>를 <code>.env.local</code>에 저장했습니다.</div>
+          <div class="hint">Claude가 보는 모든 도구 결과에서 이 값은 [hidden]으로 바뀝니다.</div>
+          <div class="row"><button class="btn" id="rq-close">닫기</button></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section data-screen="keys" data-title="/secret-env 키 목록" data-states="저장된 키 없음">
+    <div class="app">
+      <div class="chat">
+        <div class="msg-user"><code>/secret-env</code></div>
+        <div class="msg-claude" style="color:var(--muted);font-size:13px">비밀 키 패널을 열었습니다.</div>
+        <div class="prompt">Claude에게 메시지 보내기</div>
+      </div>
+      <aside class="pane" data-component="new:Pane">
+        <div class="pane-head">비밀 키 <span class="src">secret-env</span><button class="x" aria-label="패널 닫기">×</button></div>
+        <div class="pane-body">
+          <div class="hint">이 프로젝트에서 관리하는 키입니다. 값은 여기서도 보여 주지 않습니다.</div>
+          <div class="keys" id="k-list"></div>
+          <div class="row" id="k-add-row"><button class="btn primary" id="k-add">새 키 추가</button></div>
+          <div id="k-form" hidden style="display:flex;flex-direction:column;gap:10px">
+            <label class="fl" for="k-name">키 이름<input class="f" id="k-name" placeholder="OPENAI_API_KEY" spellcheck="false"></label>
+            <label class="fl" for="k-file">저장 위치<input class="f" id="k-file" value=".env" spellcheck="false"></label>
+            <label class="fl" for="k-val">값<input class="f" id="k-val" autocomplete="off" spellcheck="false"></label>
+            <div class="hint" id="k-err" style="color:var(--accent)" hidden>키 이름과 값을 모두 입력해 주세요.</div>
+            <div class="row"><button class="btn primary" id="k-save">저장</button><button class="btn" id="k-cancel">취소</button></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const stage = document.querySelector('.sh-stage');
+  const screens = [...stage.querySelectorAll('[data-screen]')];
+  const screenSelect = document.getElementById('sh-screen');
+  const stateSelect = document.getElementById('sh-state');
+  const vpBtn = document.getElementById('sh-vp');
+  const themeCtl = document.getElementById('sh-theme');
+  const themeBtns = [...themeCtl.querySelectorAll('button')];
+  let current = null;
+  let currentStates = [];
+
+  screens.forEach(s => {
+    const option = document.createElement('option');
+    option.textContent = s.dataset.title || s.dataset.screen;
+    option.value = s.dataset.screen;
+    screenSelect.append(option);
+  });
+  screenSelect.onchange = () => show(screenSelect.value);
+
+  function show(slug) {
+    current = screens.find(s => s.dataset.screen === slug) || screens[0];
+    screens.forEach(s => s.hidden = s !== current);
+    screenSelect.value = current.dataset.screen;
+    history.replaceState(null, '', '#' + current.dataset.screen);
+    buildStates();
+  }
+
+  function buildStates() {
+    const declared = (current.dataset.states || '').split(',').map(x => x.trim()).filter(Boolean);
+    currentStates = ['Default', ...declared.filter(name => name !== 'Default')];
+    stateSelect.innerHTML = '';
+    currentStates.forEach(name => {
+      const option = document.createElement('option');
+      option.textContent = name;
+      option.value = name;
+      stateSelect.append(option);
+    });
+    applyState('Default');
+  }
+
+  function applyState(name) {
+    const active = currentStates.includes(name) ? name : 'Default';
+    current.querySelectorAll('[data-when]').forEach(el => {
+      el.hidden = !el.dataset.when.split(',').map(x => x.trim()).includes(active);
+    });
+    stateSelect.value = active;
+    if (window.onPrototypeState) window.onPrototypeState(current.dataset.screen, active);
+  }
+  stateSelect.onchange = () => applyState(stateSelect.value);
+
+  window.prototypeShell = {
+    showScreen: show,
+    setState: applyState,
+    getScreen: () => current?.dataset.screen,
+    getState: () => stateSelect.value
+  };
+
+  const VPS = ['full', '390', '768'];
+  let vp = VPS.find(v => document.body.classList.contains('sh-vp-' + v)) || 'full';
+  function applyVp() {
+    VPS.forEach(v => document.body.classList.toggle('sh-vp-' + v, v === vp && v !== 'full'));
+    vpBtn.textContent = 'vp: ' + vp + ' (m)';
+    vpBtn.classList.toggle('on', vp !== 'full');
+  }
+  vpBtn.onclick = () => { vp = VPS[(VPS.indexOf(vp) + 1) % VPS.length]; applyVp(); };
+  applyVp();
+
+  const hasDark = [...document.styleSheets].some(sheet => {
+    try {
+      return [...sheet.cssRules].some(rule => (rule.selectorText || '')
+        .split(',').some(part => /\.sh-theme-dark$/.test(part.trim())));
+    } catch { return false }
+  });
+  let dark = false;
+  function applyTheme() {
+    document.documentElement.classList.toggle('sh-theme-dark', dark);
+    document.body.classList.toggle('sh-theme-dark', dark);
+    themeBtns.forEach(b => b.classList.toggle('on', (b.dataset.theme === 'dark') === dark));
+  }
+  themeCtl.hidden = !hasDark;
+  themeBtns.forEach(b => b.onclick = () => { dark = b.dataset.theme === 'dark'; applyTheme(); });
+  applyTheme();
+
+  addEventListener('keydown', e => {
+    if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    const i = screens.indexOf(current);
+    if (e.key === 'ArrowRight') show(screens[(i + 1) % screens.length].dataset.screen);
+    if (e.key === 'ArrowLeft') show(screens[(i - 1 + screens.length) % screens.length].dataset.screen);
+    if (e.key === 'm') vpBtn.click();
+    if (e.key === 't' && !themeCtl.hidden) { dark = !dark; applyTheme(); }
+  });
+
+  /* ── product interactions ── */
+  const $ = id => document.getElementById(id);
+
+  function resetRequest(state) {
+    $('rq-value').value = '';
+    $('rq-save').disabled = true;
+    $('rq-save').textContent = state === '파일이 .gitignore에 없음' ? '.gitignore에 추가하고 저장'
+      : state === '같은 이름이 이미 있음' ? '새 값으로 바꾸기' : '저장';
+    $('rq-form').hidden = false; $('rq-done').hidden = true; $('rq-pane').hidden = false;
+    $('rq-after').hidden = true; $('rq-cancel').hidden = true;
+    $('rq-spin').hidden = false; $('rq-status').textContent = '입력을 기다리는 중';
+  }
+  $('rq-value').addEventListener('input', e => { $('rq-save').disabled = !e.target.value.trim(); });
+  $('rq-save').onclick = () => {
+    const fixGitignore = prototypeShell.getState() === '파일이 .gitignore에 없음';
+    $('rq-form').hidden = true; $('rq-done').hidden = false;
+    $('rq-spin').hidden = true;
+    $('rq-status').textContent = 'STRIPE_SECRET_KEY를 .env.local에 저장했습니다.'
+      + (fixGitignore ? ' .gitignore에 .env.local을 추가했습니다.' : '') + ' 값은 전달되지 않았습니다.';
+    $('rq-after').hidden = false;
+  };
+  function cancelRequest() {
+    $('rq-pane').hidden = true; $('rq-spin').hidden = true;
+    $('rq-status').textContent = '사용자가 입력을 취소했습니다.';
+    $('rq-cancel').hidden = false;
+  }
+  $('rq-cancel-btn').onclick = cancelRequest;
+  $('rq-x').onclick = () => { if (!$('rq-form').hidden) cancelRequest(); else $('rq-pane').hidden = true; };
+  $('rq-close').onclick = () => { $('rq-pane').hidden = true; };
+
+  const SEED = [
+    { name: 'STRIPE_SECRET_KEY', file: '.env.local', when: '오늘 14:32' },
+    { name: 'OPENAI_API_KEY', file: '.env', when: '10월 18일' },
+    { name: 'SUPABASE_SERVICE_ROLE_KEY', file: '.env.local', when: '9월 30일' }
+  ];
+  let keys = [];
+  function renderKeys() {
+    const list = $('k-list');
+    list.innerHTML = '';
+    if (!keys.length) {
+      list.innerHTML = '<div class="empty">아직 저장한 키가 없습니다. 새 키를 추가하거나, Claude가 요청할 때 입력하면 여기에 나타납니다.</div>';
+      return;
+    }
+    keys.forEach((k, i) => {
+      const row = document.createElement('div');
+      row.className = 'key';
+      row.innerHTML = `<span class="n">${k.name}</span><span class="m">${k.file} · ${k.when}</span>
+        <button class="btn del">삭제</button>`;
+      row.querySelector('.del').onclick = () => {
+        if (row.querySelector('.confirm')) return;
+        const c = document.createElement('div');
+        c.className = 'confirm';
+        c.innerHTML = `<span><code>${k.file}</code>에서 지웁니다.</span><button class="btn primary">지우기</button><button class="btn">취소</button>`;
+        const [yes, no] = c.querySelectorAll('button');
+        yes.onclick = () => { keys.splice(i, 1); renderKeys(); syncKeysState(); };
+        no.onclick = () => c.remove();
+        row.append(c);
+      };
+      list.append(row);
+    });
+  }
+  function syncKeysState() {
+    const want = keys.length ? 'Default' : '저장된 키 없음';
+    if (prototypeShell.getState() !== want) { keysSyncing = true; prototypeShell.setState(want); keysSyncing = false; }
+  }
+  let keysSyncing = false;
+  function closeKeyForm() { $('k-form').hidden = true; $('k-add-row').hidden = false; $('k-err').hidden = true; }
+  $('k-add').onclick = () => { $('k-form').hidden = false; $('k-add-row').hidden = true; $('k-name').value = ''; $('k-file').value = '.env'; $('k-val').value = ''; $('k-name').focus(); };
+  $('k-cancel').onclick = closeKeyForm;
+  ['k-name', 'k-val'].forEach(id => $(id).addEventListener('input', () => { $('k-err').hidden = true; }));
+  $('k-save').onclick = () => {
+    const name = $('k-name').value.trim(), val = $('k-val').value.trim();
+    if (!name || !val) { $('k-err').hidden = false; return; }
+    keys.unshift({ name, file: $('k-file').value.trim() || '.env', when: '방금' });
+    closeKeyForm(); renderKeys(); syncKeysState();
+  };
+
+  window.onPrototypeState = (screen, state) => {
+    if (screen === 'request') resetRequest(state);
+    if (screen === 'keys' && !keysSyncing) {
+      keys = state === '저장된 키 없음' ? [] : SEED.map(k => ({ ...k }));
+      closeKeyForm(); renderKeys();
+    }
+  };
+
+  addEventListener('hashchange', () => show(location.hash.slice(1)));
+  show(location.hash.slice(1));
+</script>
