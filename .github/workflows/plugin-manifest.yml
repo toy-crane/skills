@@ -29,3 +29,5 @@ jobs:
         run: npm install -g @anthropic-ai/claude-code
       - name: Validate the plugin and marketplace manifests
         run: claude plugin validate . --strict
+      - name: Validate each mod
+        run: for mod in mods/*/; do claude plugin validate "$mod" --strict; done

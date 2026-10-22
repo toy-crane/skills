@@ -82,7 +82,8 @@ see an update. No changeset or CI automation.
 
 `.github/workflows/` holds two pull request checks.
 `plugin-manifest` runs the same `claude plugin validate . --strict` this file
-already asks for and reports a broken manifest.
+already asks for, then the same check on each `mods/<name>/`, and reports a
+broken manifest.
 `codex-review-gate` republishes Codex's review summary as a check run on the
 pull request's current head commit, because Codex itself publishes no check.
 

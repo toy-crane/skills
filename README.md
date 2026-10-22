@@ -434,6 +434,17 @@ available for an affected product surface.
   skills.sh copies skill folders, not output styles. Select it with
   `/output-style` after installing the plugin.
 
+## Mods
+
+Mods change Claude Code itself through a hooks module. Each one installs on
+its own, separate from the skills plugin, and ships through the plugin channel
+only.
+
+- **[secret-env](./mods/secret-env/README.md)**: Type an API key or token into
+  a pane beside the chat. The value goes straight to a `.env` file, and every
+  tool result Claude reads shows `[hidden]` in its place. Install with
+  `/plugin install secret-env@toycrane`.
+
 ## Acknowledgements
 
 The skill-writing philosophy behind this project is deeply inspired by

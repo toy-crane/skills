@@ -28,6 +28,18 @@
         "tdd",
         "testing"
       ]
+    },
+    {
+      "name": "secret-env",
+      "source": "./mods/secret-env",
+      "description": "Type secret keys into a pane beside the chat; they go to .env files and Claude only ever sees [hidden].",
+      "category": "security",
+      "keywords": [
+        "secrets",
+        "env",
+        "api-key",
+        "mod"
+      ]
     }
   ]
 }
