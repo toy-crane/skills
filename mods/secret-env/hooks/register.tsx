@@ -1,5 +1,5 @@
 import { atom, read, update } from 'claude-code'
-import type { EngineInterface as Engine, Register } from 'claude-code'
+import type { EngineInterface as Engine, Register, RenderChildren } from 'claude-code'
 
 import type { Form, ManagedKey, Saved } from '../types'
 import { encodeValue, readValue, removeKey, upsertKey } from './dotenv'
@@ -309,7 +309,7 @@ export const register: Register = on => {
       }
 
       // Each label sits above its value, so fields line up whatever the label's length.
-      const field = (label: string, body: unknown) => (
+      const field = (label: string, body: RenderChildren) => (
         <Box flexDirection="column" gap="xs" width="100%">
           <Text dimColor size="footnote">
             {label}
