@@ -288,11 +288,14 @@ export const register: Register = on => {
 
       // Each label sits above its value, so fields line up whatever the label's length.
       const field = (label: string, body: unknown) => (
-        <Box flexDirection="column" gap="xs" width="100%">
+        <Box flexDirection="column" gap="xs" width="100%" alignItems="stretch">
           <Text dimColor size="footnote">
             {label}
           </Text>
-          {body}
+          {/* An Input takes no width of its own; this row stretches it across the pane. */}
+          <Box flexDirection="column" width="100%" alignItems="stretch">
+            {body}
+          </Box>
         </Box>
       )
 
