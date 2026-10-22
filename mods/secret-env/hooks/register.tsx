@@ -1,41 +1,129 @@
 import { atom, read, update } from 'claude-code'
-import type { Register } from 'claude-code'
+import type { EngineInterface as Engine, Register } from 'claude-code'
 
 import type { Form, ManagedKey, Saved } from '../types'
-import { readValue, upsertKey } from './dotenv'
+import { readValue, removeKey, upsertKey } from './dotenv'
 import { scrub } from './scrub'
 
 const PANE = 'secret-env'
 const TOOL = 'request_secret'
+const NAME = /^[A-Za-z_][A-Za-z0-9_]*$/
+const ENV_FILE = /^(?!\/)(?!.*(^|\/)\.\.(\/|$))(.*\/)?\.env[^/]*$/
+
 const formAtom = atom({ plugin: 'secret-env', key: 'form' } as const, null as Form | null)
 const savedAtom = atom({ plugin: 'secret-env', key: 'saved' } as const, null as Saved | null)
+const keysAtom = atom({ plugin: 'secret-env', key: 'keys' } as const, [] as ManagedKey[])
+const deletingAtom = atom({ plugin: 'secret-env', key: 'deleting' } as const, null as string | null)
 
 let root = ''
 let keys: ManagedKey[] = []
 let secrets: string[] = []
-// The value being typed lives only here, never in session state.
+// What is typed in the pane lives only in these, never in session state.
 let draft = ''
+let draftName = ''
+let draftFile = '.env'
 let outcome: 'saved' | 'cancelled' | undefined
+let isWaiting = false
+
+const keyId = (key: { file: string; name: string }) => `${key.file}:${key.name}`
+
+async function readText($: Engine, path: string): Promise<string | undefined> {
+  return $.fs.read(path).catch(() => undefined)
+}
+
+async function loadSecrets($: Engine) {
+  const values: string[] = []
+  for (const key of keys) {
+    const text = await readText($, `${root}/${key.file}`)
+    const value = text === undefined ? undefined : readValue(text, key.name)
+    if (value !== undefined) values.push(value)
+  }
+  secrets = values
+}
+
+async function setKeys($: Engine, next: ManagedKey[]) {
+  keys = next
+  await $.store.set(`keys:${root}`, keys)
+  await update($, keysAtom, () => keys)
+}
+
+// Whether git would commit the file (exit 1 from check-ignore), and whether the name is already set.
+async function conflictsOf($: Engine, name: string, file: string) {
+  const check = await $.process.run(['git', 'check-ignore', '-q', file], { cwd: root })
+  const text = await readText($, `${root}/${file}`)
+  return {
+    isUnignored: check.exitCode === 1,
+    exists: text !== undefined && readValue(text, name) !== undefined,
+  }
+}
+
+async function addToGitignore($: Engine, file: string) {
+  const path = `${root}/.gitignore`
+  const text = (await readText($, path)) ?? ''
+  const head = text === '' || text.endsWith('\n') ? text : `${text}\n`
+  await $.fs.write(path, `${head}${file}\n`)
+}
+
+async function writeKey($: Engine, form: Form, value: string) {
+  if (form.isUnignored) await addToGitignore($, form.file)
+  const path = `${root}/${form.file}`
+  await $.fs.write(path, upsertKey((await readText($, path)) ?? '', form.name, value))
+  await setKeys($, [
+    ...keys.filter(key => keyId(key) !== keyId(form)),
+    { name: form.name, file: form.file, savedAt: await $.clock.now() },
+  ])
+  await loadSecrets($)
+}
+
+async function deleteKey($: Engine, id: string) {
+  const key = keys.find(one => keyId(one) === id)
+  if (key === undefined) return
+  const path = `${root}/${key.file}`
+  const text = await readText($, path)
+  if (text !== undefined) await $.fs.write(path, removeKey(text, key.name))
+  await setKeys($, keys.filter(one => one !== key))
+  await loadSecrets($)
+}
+
+function saveLabel(form: Form): string {
+  if (form.isUnignored) return form.exists ? '.gitignore에 추가하고 바꾸기' : '.gitignore에 추가하고 저장'
+  return form.exists ? '새 값으로 바꾸기' : '저장'
+}
+
+function savedWhen(ms: number): string {
+  const at = new Date(ms)
+  return `${at.getFullYear()}-${String(at.getMonth() + 1).padStart(2, '0')}-${String(at.getDate()).padStart(2, '0')}`
+}
+
+function refusal(name: string, file: string): string | undefined {
+  if (!NAME.test(name)) return `${name} is not a valid environment variable name.`
+  if (!ENV_FILE.test(file)) return `${file} must be a .env file inside the project, such as .env or .env.local.`
+  return undefined
+}
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     root = await $.session.root()
     keys = ((await $.store.get(`keys:${root}`)) as ManagedKey[] | undefined) ?? []
-    secrets = []
-    for (const key of keys) {
-      const value = readValue(await $.fs.read(`${root}/${key.file}`), key.name)
-      if (value !== undefined) secrets.push(value)
-    }
+    await update($, keysAtom, () => keys)
+    await loadSecrets($)
+    await $.command.register({
+      name: 'secret-env',
+      description: 'List, add, or delete the secret keys Claude cannot see',
+    })
     await $.tool.register({
       name: TOOL,
       description:
-        'Ask the user to type a secret (API key, token) into a pane. The value is written to the given .env file and is never shown to you; refer to it by name. Waits until the user saves or cancels.',
+        'Ask the user to type a secret (API key, token) into a pane beside the chat. The value is written to the given .env file and never shown to you; refer to it by its variable name. Waits until the user saves or cancels.',
       inputSchema: {
         type: 'object',
         properties: {
           name: { type: 'string', description: 'Environment variable name, e.g. STRIPE_SECRET_KEY' },
           purpose: { type: 'string', description: 'What the key is for, shown to the user' },
-          file: { type: 'string', description: 'The .env file relative to the project root, e.g. .env.local' },
+          file: {
+            type: 'string',
+            description: 'The .env file relative to the project root that the app reads, e.g. .env.local',
+          },
         },
         required: ['name', 'purpose', 'file'],
       },
@@ -44,22 +132,46 @@ export const register: Register = on => {
     return next(e)
   })
 
+  on('command.run', { command: 'secret-env' }, async $ => {
+    await update($, savedAtom, () => null)
+    await update($, deletingAtom, () => null)
+    if (!isWaiting) await update($, formAtom, () => null)
+    await $.ui.open({ id: PANE, title: '비밀 키', focus: true })
+    return { text: '비밀 키 패널을 열었습니다.' }
+  })
+
   on('tool.call', { tool: `mcp__secret-env__${TOOL}` }, async ($, e, next) => {
     const input = e as unknown as { name: string; purpose: string; file: string }
+    const refused = refusal(input.name, input.file)
+    if (refused !== undefined) return { result: refused }
+    if (isWaiting) return { result: 'Another key request is still open in the pane; wait for it first.' }
+
+    isWaiting = true
     draft = ''
     outcome = undefined
+    const conflicts = await conflictsOf($, input.name, input.file)
     await update($, savedAtom, () => null)
     await update($, formAtom, () => ({
       source: 'claude',
       name: input.name,
       file: input.file,
       purpose: input.purpose,
-      isUnignored: false,
-      exists: false,
+      ...conflicts,
     }))
     await $.ui.open({ id: PANE, title: '비밀 키 입력', focus: true })
-    while (outcome === undefined && !next.signal.aborted) {
-      await $.process.run(['/bin/sleep', '0.3'])
+    try {
+      // Each sleep is a $ call, so the wait does not spend the hook's own time budget.
+      while (outcome === undefined && !next.signal.aborted) {
+        await $.process.run(['/bin/sleep', '0.3'])
+      }
+    } finally {
+      isWaiting = false
+      draft = ''
+      if (outcome === undefined) {
+        outcome = 'cancelled'
+        await update($, formAtom, () => null)
+        await $.ui.close({ id: PANE })
+      }
     }
     return {
       result:
@@ -69,40 +181,142 @@ export const register: Register = on => {
     }
   })
 
+  // Every tool result, from the main loop or a subagent, passes here on its way to the model.
   on('tool.call', async ($, e, next) => {
     const ran = await next(e)
     if (ran.deny !== undefined) return ran
     return { ...ran, result: scrub(ran.result, secrets), text: scrub(ran.text, secrets) }
   })
 
+  on('ui.close', { id: PANE }, async ($, e, next) => {
+    if (isWaiting && outcome === undefined) {
+      outcome = 'cancelled'
+      await update($, formAtom, () => null)
+    }
+    return next(e)
+  })
+
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const { Box, Text, Input, Button } = $.ui.resolve(e)
     const form = await read($, formAtom)
-    if (form === null) return <Text dimColor>관리 중인 키가 없습니다.</Text>
+    const saved = await read($, savedAtom)
 
-    const save = async () => {
-      const path = `${root}/${form.file}`
-      const before = await $.fs.read(path).catch(() => '')
-      await $.fs.write(path, upsertKey(before, form.name, draft))
-      secrets.push(draft)
+    if (form !== null) {
+      const save = async () => {
+        const current = { ...form, ...(form.source === 'user' ? { name: draftName.trim(), file: draftFile.trim() } : {}) }
+        const missing =
+          current.name === '' ? '키 이름을 입력해 주세요.' : draft === '' ? '값을 입력해 주세요.' : undefined
+        const invalid = missing ?? (refusal(current.name, current.file) && '키 이름이나 저장 위치가 올바르지 않습니다.')
+        if (invalid) {
+          await update($, formAtom, () => ({ ...form, error: invalid }))
+          return
+        }
+        if (current.source === 'user' && !current.isChecked) {
+          const conflicts = await conflictsOf($, current.name, current.file)
+          if (conflicts.isUnignored || conflicts.exists) {
+            await update($, formAtom, () => ({ ...current, ...conflicts, isChecked: true, error: undefined }))
+            return
+          }
+        }
+        await writeKey($, current, draft)
+        draft = ''
+        await update($, formAtom, () => null)
+        if (current.source === 'claude') {
+          outcome = 'saved'
+          await update($, savedAtom, () => ({ name: current.name, file: current.file }))
+        }
+      }
+
+      const cancel = async () => {
+        draft = ''
+        await update($, formAtom, () => null)
+        if (form.source === 'claude') {
+          outcome = 'cancelled'
+          await $.ui.close({ id: PANE })
+        }
+      }
+
+      return (
+        <Box flexDirection="column" gap={1}>
+          {form.source === 'claude' ? (
+            <Box flexDirection="column">
+              <Text>키 이름  {form.name}</Text>
+              {form.purpose !== undefined && <Text>용도  {form.purpose}</Text>}
+              <Text>저장 위치  {form.file}</Text>
+            </Box>
+          ) : (
+            <Box flexDirection="column" gap={1}>
+              <Input key="name" label="키 이름" placeholder="OPENAI_API_KEY" value={draftName} onInput={v => (draftName = v)} onSubmit={save} />
+              <Input key="file" label="저장 위치" value={draftFile} onInput={v => (draftFile = v)} onSubmit={save} />
+            </Box>
+          )}
+          <Input key="value" label="값" autoFocus value={draft} onInput={v => (draft = v)} onSubmit={save} />
+          <Text dimColor>Claude에게는 전달되지 않습니다.</Text>
+          {form.isUnignored && (
+            <Text>{form.file}이 .gitignore에 없습니다. 이대로 저장하면 키가 커밋될 수 있습니다.</Text>
+          )}
+          {form.exists && <Text>{form.file}에 {form.name}가 이미 있습니다. 저장하면 새 값으로 바뀝니다.</Text>}
+          {form.error !== undefined && <Text>{form.error}</Text>}
+          <Box flexDirection="row" gap={1}>
+            <Button key="save" label={saveLabel(form)} variant="primary" onPress={save} />
+            <Button key="cancel" label="취소" onPress={cancel} />
+          </Box>
+        </Box>
+      )
+    }
+
+    if (saved !== null) {
+      return (
+        <Box flexDirection="column" gap={1}>
+          <Text>{saved.name}를 {saved.file}에 저장했습니다.</Text>
+          <Text dimColor>Claude가 보는 모든 도구 결과에서 이 값은 [hidden]으로 바뀝니다.</Text>
+          <Button key="close" label="닫기" onPress={() => $.ui.close({ id: PANE })} />
+        </Box>
+      )
+    }
+
+    const list = await read($, keysAtom)
+    const deleting = await read($, deletingAtom)
+    const startAdding = async () => {
       draft = ''
-      outcome = 'saved'
-      await update($, formAtom, () => null)
-      await update($, savedAtom, () => ({ name: form.name, file: form.file }))
+      draftName = ''
+      draftFile = '.env'
+      await update($, formAtom, () => ({ source: 'user', name: '', file: '.env', isUnignored: false, exists: false }))
     }
 
     return (
       <Box flexDirection="column" gap={1}>
-        <Box flexDirection="column">
-          <Text>키 이름  {form.name}</Text>
-          {form.purpose !== undefined && <Text>용도  {form.purpose}</Text>}
-          <Text>저장 위치  {form.file}</Text>
-        </Box>
-        <Input key="value" label="값" value={draft} onInput={value => (draft = value)} onSubmit={() => void save()} />
-        <Text dimColor>Claude에게는 전달되지 않습니다.</Text>
-        <Box flexDirection="row" gap={1}>
-          <Button key="save" label="저장" variant="primary" onPress={() => void save()} />
-        </Box>
+        <Text dimColor>이 프로젝트에서 관리하는 키입니다. 값은 여기서도 보여 주지 않습니다.</Text>
+        {list.length === 0 && (
+          <Text dimColor>아직 저장한 키가 없습니다. 새 키를 추가하거나, Claude가 요청할 때 입력하면 여기에 나타납니다.</Text>
+        )}
+        {list.map(key => (
+          <Box flexDirection="column">
+            <Box flexDirection="row" gap={1}>
+              <Text bold>{key.name}</Text>
+              <Text dimColor>
+                {key.file} · {savedWhen(key.savedAt)}
+              </Text>
+              <Button key={`delete:${keyId(key)}`} label="삭제" onPress={() => update($, deletingAtom, () => keyId(key))} />
+            </Box>
+            {deleting === keyId(key) && (
+              <Box flexDirection="row" gap={1}>
+                <Text>{key.file}에서 지웁니다.</Text>
+                <Button
+                  key="confirm-delete"
+                  label="지우기"
+                  variant="primary"
+                  onPress={async () => {
+                    await deleteKey($, keyId(key))
+                    await update($, deletingAtom, () => null)
+                  }}
+                />
+                <Button key="cancel-delete" label="취소" onPress={() => update($, deletingAtom, () => null)} />
+              </Box>
+            )}
+          </Box>
+        ))}
+        <Button key="add" label="새 키 추가" variant="primary" onPress={startAdding} />
       </Box>
     )
   })

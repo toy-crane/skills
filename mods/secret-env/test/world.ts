@@ -3,6 +3,8 @@ import { mock } from 'claude-code/testing'
 import type { On } from 'claude-code/testing'
 
 export const ROOT = '/work/shop'
+// 2026-10-22 14:32 KST
+export const NOW = 1792647120000
 
 export type World = {
   files: Map<string, string>
@@ -16,6 +18,7 @@ export function world(on: On, options: { files?: Record<string, string>; ignored
   const state: World = { files, opened: [], closed: [] }
 
   mock.store(on, options.store ?? {})
+  mock.clock(on, { now: NOW })
   on('session.root', () => ({ value: ROOT }))
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('fs.read', (_, e) => {

@@ -18,3 +18,13 @@ test('a key saved in an earlier session stays hidden in every tool result', asyn
   expect(ran.text).toBe('STRIPE_SECRET_KEY=[hidden]')
   expect((ran.result as { stdout: string }).stdout).toBe('STRIPE_SECRET_KEY=[hidden]')
 })
+
+test('a managed key whose file is gone does not stop the session from starting', async ($, on) => {
+  world(on, { store: { [`keys:${ROOT}`]: [{ name: 'GONE_KEY', file: '.env.removed', savedAt: 1792640000000 }] } })
+  on('tool.call', { tool: 'Bash' }, () => ({ result: { stdout: 'ok', stderr: '', interrupted: false } }))
+
+  await $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true })
+  const ran = await $.tool.call({ tool: 'Bash', command: 'true' })
+
+  expect((ran.result as { stdout: string }).stdout).toBe('ok')
+})

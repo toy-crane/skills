@@ -8,6 +8,8 @@ export type Form = {
   purpose?: string
   isUnignored: boolean
   exists: boolean
+  // For a key added from the list: the warnings were shown once, so the next save writes.
+  isChecked?: boolean
   error?: string
 }
 
@@ -19,6 +21,7 @@ declare module 'claude-code' {
       form: Form | null
       saved: Saved | null
       keys: ManagedKey[]
+      deleting: string | null
     }
   }
 }
