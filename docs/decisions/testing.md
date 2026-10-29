@@ -87,6 +87,29 @@ after a large implementation fails it.
 - Sessions show agents claiming a red they never observed often enough that a
   harness check would be cheaper than the misses.
 
+## Evidence worth preserving
+
+- Forward comparison on 2026-10-29 (`scripts/run-tdd-comparison.sh`,
+  claude-opus-5-5, Claude Code 2.1.312, a feature task and a bug task, three
+  runs per version each; the baseline is the one-test cycle at `0154388`):
+
+  | | one-test cycle | revised |
+  |---|---|---|
+  | acceptance criteria met | all 7 in 3/3 runs | all 7 in 3/3 runs |
+  | new tests | 42 | 46 |
+  | fake reds on the stub or unfixed code | 0 | 0 |
+  | seeded mutants caught | 24/27 | 25/27 |
+  | new tests never seen failing on an assertion | 12 | 0 |
+  | bug runs reproducing before the fix | 3/3 | 3/3 |
+  | tests labeled as protecting nothing | 0 | 0 |
+  | turns | 126 | 56 |
+  | tokens, cache reads included | 3.12M | 1.57M |
+  | cost | $2.32 | $1.54 |
+
+  The cycle's unseen reds were tests that passed at once because an earlier
+  minimal step already covered them. Two tasks and three runs each cannot
+  separate small differences from noise.
+
 ## Still-rejected alternatives
 
 - Keep the one-test-at-a-time cycle and only relax enforcement, as Matt
