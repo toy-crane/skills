@@ -255,6 +255,7 @@ for (const arm of arms) {
     bugRunsFailingBeforeFix: mine.filter((r) => r.task === 'bug' && r.trace.failedOnAssertionBeforeSourceEdit).length,
     bugRuns: mine.filter((r) => r.task === 'bug').length,
     bugRunsWithReproduction: mine.filter((r) => r.task === 'bug' && r.reproductions > 0).length,
+    runsWithFailingFinalSuite: mine.filter((r) => r.finalFailing.length > 0).length,
     reasonless: grade && mine.every((r) => r.graded?.reasonless != null)
       ? mine.reduce((n, r) => n + r.graded.reasonless, 0) : null,
     gradingErrors: grade ? mine.filter((r) => r.graded?.reasonless == null).length : null,
@@ -273,8 +274,15 @@ if (summary.baseline && summary.revised) {
   const perTaskRuns = (arm, key) => valid.filter((r) => r.arm === arm && r.task === key.split(':')[0]).length;
   const criteriaKept = Object.keys(base.criteriaMet).filter((key) => majority(base.criteriaMet[key], perTaskRuns('baseline', key)))
     .every((key) => majority(next.criteriaMet[key] ?? 0, perTaskRuns('revised', key)));
+  // Totals compare only when both arms scored the same nonzero runs per task.
+  const comparableRuns = Object.keys(tasks).every((task) => {
+    const count = (arm) => valid.filter((r) => r.arm === arm && r.task === task).length;
+    return count('baseline') > 0 && count('baseline') === count('revised');
+  });
   gates = {
+    comparableRuns,
     criteriaKept,
+    finalSuitesPass: next.runsWithFailingFinalSuite === 0,
     fakeRedNotWorse: next.fakeRed <= base.fakeRed,
     mutantsNotWorse: next.mutantsCaught >= base.mutantsCaught,
     everyNewTestSeenFailing: next.newTestsNeverSeenFailing === 0,
