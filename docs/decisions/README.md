@@ -13,6 +13,7 @@ of truth. Read only the subjects relevant to the work.
 - [pr-descriptions](pr-descriptions.md) — Read when changing PR body explanations, visual comparisons, attachments, or review evidence.
 - [worktree-cleanup](worktree-cleanup.md) — Read when changing how a skill releases a worktree's resources, detects processes inside it, or removes it.
 - [companion-agent-distribution](companion-agent-distribution.md) — Read when a published skill carries, installs, updates, or retires custom agents for Claude Code and Codex.
+- [testing](testing.md) — Read when changing how tests are chosen, written, or proven, or how `testing` is triggered.
 - [pipeline](pipeline.md) — Read when changing how discovery, shaping, specs, tasks, or implementation hand off.
 - [stack-context](stack-context.md) — Read when changing how stack technologies get current agent skills, vendor guidance, or repository instruction routes.
 - [shape-idea](shape-idea.md) — Read when changing shaping questions, drafts, visuals, authority, or write boundaries.

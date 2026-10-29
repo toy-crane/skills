@@ -99,11 +99,15 @@
   names both sources and the affected behavior or screen-state coordinate,
   blocks that outcome and its dependents, and returns the decision to shaping;
   neither source silently overrides the other.
-- `implement` selects public test seams from the agreed behavior and existing
-  interfaces under its implementation authority. It briefly states what the
-  seam will verify, then uses `tdd`. Technical uncertainty is
-  resolved through repository evidence; only unresolved expected behavior or a
-  change to the agreed product contract requires a user decision.
+- `implement` maps every acceptance criterion to one check: an automated test
+  or runtime evidence. It hands `testing` the spec and the criteria to prove
+  by automated tests, and gets back passing tests, each tied to its criterion
+  or named reason, with how each was seen failing. `testing` designs from the
+  whole behavior and selects the public test seams; `implement` gathers the
+  runtime evidence and reports each criterion with its check and evidence.
+  Technical uncertainty is resolved through repository evidence; only
+  unresolved expected behavior or a change to the agreed product contract
+  requires a user decision.
 - For each affected product surface, `implement` uses an available matching
   runtime-verification skill. When none is available, implementation authority
   covers investigating the repository and current environment, selecting the

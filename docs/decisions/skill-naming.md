@@ -74,6 +74,12 @@
   for its run unit, and `prune-worktrees` because it reads as `git worktree
   prune`, which only drops registrations whose folder is gone. The
   description says it leaves remote branches alone.
+- `testing` names the discipline of choosing, writing, and proving tests, as a
+  discipline noun because `implement` invokes it more often than users do. It
+  replaced `tdd` when the skill stopped requiring a test-first cycle, because
+  `tdd` promised an order the skill no longer imposes. Its description still
+  carries "TDD", "test-first", and "red-green-refactor" so users who ask that
+  way reach it.
 - `update-project-skills` names the outcome a user asks for: every skill
   installed in the project brought to its latest published version. The object
   is the project's installed set from every source, and the Toycrane-specific
@@ -132,6 +138,10 @@ repository.
   rather than an agent-driven verification loop.
 - A bare `smoke-test` without the stack marker — installed skill names share one
   flat namespace, so the same concept for another stack would collide.
+- Keeping `tdd` after the test-first cycle was dropped — the name promises an
+  order the skill no longer imposes.
+- `test-design` for the testing skill — it names choosing what to test but
+  hides writing the tests and reproducing bugs.
 - `sync-toycrane-skills` for the installed-skill update — it named one source
   and the reconciliation mechanism; once the skill refreshes every installed
   skill, a source-branded name under-describes the outcome the user asks for.
