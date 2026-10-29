@@ -6,8 +6,8 @@
   failing on an assertion: missing symbols are stubbed first so the failure is
   the wrong or missing behavior, not a compile error. The agent may write
   several such tests before implementing them together; there is no
-  one-test-at-a-time cycle. When the user explicitly asks for TDD or
-  red-green-refactor, it follows that cycle.
+  one-test-at-a-time cycle. When the user explicitly asks for one test at a
+  time or red-green-refactor, it follows that cycle.
 - A test that guards existing behavior is seen failing by breaking the
   implementation or by running it against the unfixed code.
 - A bug fix starts with a reproduction test that fails against the existing
@@ -32,7 +32,7 @@
 
 ## Boundaries
 
-- These rules govern how tests are chosen and written. Which check proves each
+- These rules govern how the `tdd` skill chooses and writes tests. Which check proves each
   acceptance criterion, and the runtime evidence still owed for the running
   product, belong to `implement` ([pipeline](pipeline.md)).
 - Enforcement stays in the skill text. No hook blocks production edits until a
@@ -81,7 +81,7 @@ after a large implementation fails it.
 
 ## Reconsider when
 
-- The forward comparison shows `testing` meets fewer acceptance criteria,
+- The forward comparison shows the revised `tdd` meets fewer acceptance criteria,
   lets more seeded bugs through, or produces more tests that never failed on
   an assertion than the one-test cycle it replaced.
 - Sessions show agents claiming a red they never observed often enough that a

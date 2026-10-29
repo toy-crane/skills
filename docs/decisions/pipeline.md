@@ -102,10 +102,10 @@
 - `implement` maps every acceptance criterion of the active outcome to at
   least one check: an automated test, runtime evidence, or both. Runtime
   evidence stays owed for behavior in the running product even when a test
-  also proves it. `implement` hands `testing` the active outcome, the criteria
+  also proves it. `implement` hands `tdd` the active outcome, the criteria
   to prove by automated tests, the active task's constraints and approved
   references, and the spec as design context; it is not permission to build
-  later or blocked outcomes. `testing` selects the public test seams and hands
+  later or blocked outcomes. `tdd` selects the public test seams and hands
   back the code change, the passing tests each tied to its criterion or named
   reason with the failing assertion it was seen to produce, and any handed
   criterion it could not prove automatically with the reason. `implement`
