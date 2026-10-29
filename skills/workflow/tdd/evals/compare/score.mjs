@@ -3,7 +3,7 @@
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { basename, dirname, join } from 'node:path';
+import { basename, dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const compareRoot = dirname(fileURLToPath(import.meta.url));
@@ -53,7 +53,10 @@ function parseTap(text) {
 
 function withModule(workspace, task, implementation, extra = () => {}) {
   const dir = mkdtempSync(join(tmpdir(), 'tdd-score-'));
-  cpSync(workspace, dir, { recursive: true, filter: (p) => !/\/(node_modules|\.git|\.claude)(\/|$)/.test(p) });
+  cpSync(workspace, dir, {
+    recursive: true,
+    filter: (p) => !/(^|\/)(node_modules|\.git|\.claude)(\/|$)/.test(relative(workspace, p)),
+  });
   if (implementation) cpSync(implementation, join(dir, tasks[task].module));
   extra(dir);
   return dir;
@@ -65,6 +68,7 @@ function scoreWorkspace(workspace, task, originalNames) {
   const final = runTests(finalDir);
   rmSync(finalDir, { recursive: true, force: true });
   const newTests = final.filter((t) => !originalNames.has(t.name));
+  const passingOnFinal = new Set(final.filter((t) => t.ok).map((t) => t.name));
 
   const stubDir = withModule(workspace, task, join(hidden, 'stub.js'));
   const onStub = new Map(runTests(stubDir).map((t) => [t.name, t]));
@@ -85,7 +89,8 @@ function scoreWorkspace(workspace, task, originalNames) {
   const mutantsDir = join(hidden, 'mutants');
   const mutants = readdirSync(mutantsDir).map((file) => {
     const dir = withModule(workspace, task, join(mutantsDir, file));
-    const caught = runTests(dir).some((t) => !t.ok);
+    // Only tests that pass on the agent's own code can catch a mutant.
+    const caught = runTests(dir).some((t) => !t.ok && passingOnFinal.has(t.name));
     rmSync(dir, { recursive: true, force: true });
     return { mutant: basename(file, '.js'), caught };
   });
@@ -249,7 +254,10 @@ for (const arm of arms) {
     newTestsNeverSeenFailing: mine.reduce((n, r) => n + r.trace.newTestsNeverSeenFailing.length, 0),
     bugRunsFailingBeforeFix: mine.filter((r) => r.task === 'bug' && r.trace.failedOnAssertionBeforeSourceEdit).length,
     bugRuns: mine.filter((r) => r.task === 'bug').length,
-    reasonless: grade ? mine.reduce((n, r) => n + (r.graded?.reasonless ?? 0), 0) : null,
+    bugRunsWithReproduction: mine.filter((r) => r.task === 'bug' && r.reproductions > 0).length,
+    reasonless: grade && mine.every((r) => r.graded?.reasonless != null)
+      ? mine.reduce((n, r) => n + r.graded.reasonless, 0) : null,
+    gradingErrors: grade ? mine.filter((r) => r.graded?.reasonless == null).length : null,
     tokens: mine.reduce((n, r) => n + tokens(r.trace.usage), 0),
     costUsd: Number(mine.reduce((n, r) => n + (r.trace.costUsd ?? 0), 0).toFixed(2)),
     turns: mine.reduce((n, r) => n + (r.trace.turns ?? 0), 0),

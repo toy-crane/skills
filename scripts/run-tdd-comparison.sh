@@ -3,18 +3,26 @@
 set -euo pipefail
 
 task_repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-# Usage: run-tdd-comparison.sh [baseline-ref] [runs] [workers]
+# Usage: run-tdd-comparison.sh <baseline-ref> [runs] [workers]
 # Runs the tdd skill at baseline-ref and in the working tree on the same
 # comparison tasks, then scores both. Set TASK_CLAUDE_MODEL to pin the model and
 # TASK_RESULTS_ROOT to keep results somewhere other than a new temp folder.
-task_baseline_ref=${1:-$(git -C "$task_repo_root" merge-base HEAD main)}
+if [ "$#" -lt 1 ]; then
+  echo 'usage: run-tdd-comparison.sh <baseline-ref> [runs] [workers]' >&2
+  exit 2
+fi
+task_baseline_ref=$1
+if git -C "$task_repo_root" diff --quiet "$task_baseline_ref" -- skills/workflow/tdd/SKILL.md; then
+  echo "baseline $task_baseline_ref has the same tdd SKILL.md as the working tree" >&2
+  exit 2
+fi
 task_runs=${2:-3}
 task_workers=${3:-4}
 task_compare_root="$task_repo_root/skills/workflow/tdd/evals/compare"
 task_results_root=${TASK_RESULTS_ROOT:-$(mktemp -d "${TMPDIR:-/tmp}/tdd-comparison.XXXXXX")}
 mkdir -p "$task_results_root"
 
-# Stage each arm's skill: only SKILL.md and agent metadata, never the evals.
+# Stage each arm's skill: only SKILL.md, never the evals.
 task_skill_root="$task_results_root/skills"
 mkdir -p "$task_skill_root/baseline" "$task_skill_root/revised"
 git -C "$task_repo_root" archive "$task_baseline_ref" skills/workflow/tdd/SKILL.md \
@@ -31,6 +39,10 @@ run_comparison_case() {
   task_run=$3
   task_run_dir="$task_results_root/$task_arm/$task_name/$task_run"
   task_workspace="$task_run_dir/workspace"
+  if [ -e "$task_run_dir" ]; then
+    echo "$task_run_dir already exists; use a fresh TASK_RESULTS_ROOT" >&2
+    return 1
+  fi
   mkdir -p "$task_run_dir"
   cp -R "$task_compare_root/$task_name/workspace" "$task_workspace"
   mkdir -p "$task_workspace/.claude/skills/tdd"

@@ -10,7 +10,7 @@ task_file=$(jq -r '.tool_input.file_path // empty' <<<"$task_input")
 task_cwd=$(jq -r '.cwd // empty' <<<"$task_input")
 
 if [ "$task_tool" = Bash ] \
-  && grep -qE 'node[^|;&]*--test|npm +(run +)?test|npm +t( |$)' <<<"$task_command"; then
+  && grep -qE 'node[^|;&]*(--test|\.test\.[cm]?js)|npm +(run +)?test|npm +t( |$)|npx +[^|;&]*test' <<<"$task_command"; then
   {
     printf '=== test-run\n'
     (cd "$task_cwd" && node --test --test-reporter=tap 2>&1)
