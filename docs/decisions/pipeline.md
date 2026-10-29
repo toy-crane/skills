@@ -99,12 +99,18 @@
   names both sources and the affected behavior or screen-state coordinate,
   blocks that outcome and its dependents, and returns the decision to shaping;
   neither source silently overrides the other.
-- `implement` maps every acceptance criterion to one check: an automated test
-  or runtime evidence. It hands `testing` the spec and the criteria to prove
-  by automated tests, and gets back passing tests, each tied to its criterion
-  or named reason, with how each was seen failing. `testing` designs from the
-  whole behavior and selects the public test seams; `implement` gathers the
-  runtime evidence and reports each criterion with its check and evidence.
+- `implement` maps every acceptance criterion of the active outcome to at
+  least one check: an automated test, runtime evidence, or both. Runtime
+  evidence stays owed for behavior in the running product even when a test
+  also proves it. `implement` hands `testing` the active outcome, the criteria
+  to prove by automated tests, the active task's constraints and approved
+  references, and the spec as design context; it is not permission to build
+  later or blocked outcomes. `testing` selects the public test seams and hands
+  back the code change, the passing tests each tied to its criterion or named
+  reason with the failing assertion it was seen to produce, and any handed
+  criterion it could not prove automatically with the reason. `implement`
+  covers those through runtime evidence or reports them incomplete, and
+  reports each criterion with its checks and evidence.
   Technical uncertainty is resolved through repository evidence; only
   unresolved expected behavior or a change to the agreed product contract
   requires a user decision.
