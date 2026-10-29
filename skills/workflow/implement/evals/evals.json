@@ -68,14 +68,16 @@
     },
     {
       "id": 6,
-      "prompt": "/implement docs/specs/checkout/를 구현해줘. 승인된 spec에 Checkout API가 public test seam으로 합의돼 있어.",
-      "expected_output": "The response implements the approved spec through the tdd skill at the pre-agreed Checkout API seam, completes deterministic verification and one whole-diff automated review, then verifies the final runtime after any repairs.",
+      "prompt": "/implement docs/specs/checkout/를 구현해줘. 승인된 spec에는 수용 기준 1–4가 있고, 1–3은 Checkout API 동작이며 4는 결제 완료 화면의 안내 문구야.",
+      "expected_output": "The response maps each acceptance criterion to at least one check, hands criteria 1-3 with the active outcome, task constraints, and spec context to the tdd skill without choosing the seam itself, still gathers runtime evidence for the running checkout flow, covers criterion 4 through the running screen, and reports every criterion with its checks and evidence after one whole-diff automated review.",
       "files": [],
       "expectations": [
-        "It uses the tdd skill because the behavior can be verified through a public seam.",
-        "It uses the approved Checkout API seam without inventing an implementation-only test boundary.",
-        "It still completes the required verification and one automated review pass.",
-        "It does not open a review round after each refactor."
+        "It maps every acceptance criterion to at least one check before changing source.",
+        "It hands the tdd skill the active outcome, the criteria to prove by automated tests, applicable task constraints and references, and the spec as design context, and leaves seam selection to tdd.",
+        "It still collects runtime evidence for the running checkout flow even though tests prove criteria 1-3.",
+        "It covers criterion 4 through runtime evidence on the actual screen rather than claiming a test proves the copy is right.",
+        "Its final report lists each criterion with its checks and evidence.",
+        "It completes the required verification and one automated review pass without opening a review round after each refactor."
       ]
     },
     {
@@ -743,6 +745,18 @@
         "It rechecks the done conditions instead of trusting the user's statement alone.",
         "It names the domain verification as still unfinished with its done condition.",
         "It does not start source changes while a condition fails."
+      ]
+    },
+    {
+      "id": 60,
+      "prompt": "/implement docs/specs/notifications/를 마무리해줘. tdd가 돌려준 테스트는 수용 기준 1–3을 모두 통과했지만, 이 환경에서는 푸시 알림을 받는 실제 앱을 띄울 수 없어.",
+      "expected_output": "The response keeps completion pending: passing automated tests do not replace runtime evidence for the running product, so it names the exact failed runtime gate and prerequisite while reporting each criterion with the checks and evidence it does have.",
+      "files": [],
+      "expectations": [
+        "It does not report the work complete on the strength of passing tests alone.",
+        "It names the runtime gate that could not run and what is needed to run it.",
+        "It reports each acceptance criterion with its passing tests and the missing runtime evidence.",
+        "It preserves the verified test results and the change for a later runtime check instead of discarding them."
       ]
     }
   ]

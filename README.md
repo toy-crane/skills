@@ -127,7 +127,7 @@ flowchart LR
     FINAL -- "blocked" --> BLOCKED["runtime pending<br/>share evidence + prerequisite"]
     BLOCKED -- "prerequisite restored" --> FINAL
     FINAL -- "passes" --> DONE["verified and runnable<br/>reviewed or explicitly waived"]
-    IM -. "uses at public seams" .-> TDD[tdd]
+    IM -. "hands criteria to test" .-> TDD[tdd]
     IM -. "proves affected surfaces" .-> RV["matching runtime skill<br/>or strongest usable path"]
     IM -. "open workaround or<br/>out-of-scope defect" .-> FU["follow-up"]
 ```
@@ -191,9 +191,10 @@ pending while verified outcomes, the blocker, and the next action are provided.
 When the repository exposes the result through a
 user-reviewable local server, `implement` verifies the changed surface and
 shares an address while leaving that server available until the user finishes
-review or later delivery cleanup. `implement` uses `tdd` where behavior can be
-verified through public seams it selects from the agreed behavior and existing
-interfaces. For an affected product surface, it
+review or later delivery cleanup. `implement` maps every acceptance criterion
+to automated tests, runtime evidence, or both, and hands the criteria to prove
+by tests to `tdd`, which selects the public seams. For an affected product
+surface, it
 uses an available matching runtime-verification skill. When none is available,
 it autonomously investigates the repository and current environment and builds
 the strongest usable runtime path instead of asking the user to approve the
@@ -270,9 +271,11 @@ new session or a closing-message handoff is not required for correctness.
   review, unless explicitly waived by the user. Recover review execution
   failures and reuse granted authority; blocked review leaves completion pending
   while the verified result and runnable product address remain available.
-- **[tdd](./skills/workflow/tdd/SKILL.md)**: Select public test seams from the agreed
-  behavior and existing interfaces, then implement one red → green slice at a
-  time. Includes rules for stable seams and behavioral tests.
+- **[tdd](./skills/workflow/tdd/SKILL.md)**: Write each new behavior's test
+  before the behavior and see it fail on an assertion, with several tests
+  allowed before one implementation. Acceptance criteria set the floor of what
+  gets tested, bug fixes start from a reproduction, and failing tests are never
+  weakened to reach green. Includes rules for stable seams and behavioral tests.
   Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 
