@@ -112,63 +112,52 @@ function scoreWorkspace(workspace, task, originalNames) {
   };
 }
 
-function textOf(content) {
-  if (typeof content === 'string') return content;
-  if (Array.isArray(content)) return content.map((part) => part.text ?? '').join('\n');
-  return '';
-}
-
-const isTestRun = (command) => /\bnode\b[^|;&]*--test|\bnpm\s+(run\s+)?test\b|\bnpm\s+t\b/.test(command);
 const isTestFile = (path) => /(^|\/)(test|tests|__tests__)\/|\.test\.[cm]?[jt]s$/.test(path);
-const assertionNear = (lines, index) => lines.slice(index, index + 40).some((l) => /AssertionError|ERR_ASSERTION/.test(l));
 
-function scoreTrace(tracePath, task, newTests) {
-  const events = readFileSync(tracePath, 'utf8').split('\n').filter(Boolean).map((line) => {
-    try {
-      return JSON.parse(line);
-    } catch {
-      return null;
-    }
-  }).filter(Boolean);
-  const calls = [];
-  const results = new Map();
+// Reads the final result event from the agent's stream for cost and model.
+function readTrace(tracePath) {
   let model = null;
   let final = null;
-  for (const event of events) {
+  for (const line of readFileSync(tracePath, 'utf8').split('\n')) {
+    let event;
+    try {
+      event = JSON.parse(line);
+    } catch {
+      continue;
+    }
     if (event.type === 'system' && event.subtype === 'init') model = event.model;
     if (event.type === 'result') final = event;
-    for (const block of event.message?.content ?? []) {
-      if (event.type === 'assistant' && block.type === 'tool_use') calls.push({ id: block.id, name: block.name, input: block.input ?? {} });
-      if (event.type === 'user' && block.type === 'tool_result') results.set(block.tool_use_id, textOf(block.content));
-    }
   }
-  const steps = calls.map((call, index) => ({ ...call, index, output: results.get(call.id) ?? '' }));
-  const runs = steps.filter((s) => s.name === 'Bash' && isTestRun(s.input.command ?? ''));
-  const edits = steps.filter((s) => ['Edit', 'Write', 'MultiEdit', 'NotebookEdit'].includes(s.name));
-  const firstRun = runs[0]?.index ?? Infinity;
-
-  const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const seenFailing = newTests.filter((name) => runs.some((run) => {
-    const lines = run.output.split('\n');
-    const pattern = new RegExp(`(not ok \\d+ - |✖ )${escape(name)}`);
-    return lines.some((line, i) => pattern.test(line) && assertionNear(lines, i));
-  }));
-
-  const sourceEdit = edits.find((s) => (s.input.file_path ?? '').endsWith(tasks[task].module));
-  const runsBeforeFix = runs.filter((run) => run.index < (sourceEdit?.index ?? Infinity));
-  const failedOnAssertionBeforeFix = runsBeforeFix.some((run) => /AssertionError|ERR_ASSERTION/.test(run.output));
-
   return {
     model,
-    testRuns: runs.length,
-    testEditsAfterFirstRun: edits.filter((s) => s.index > firstRun && isTestFile(s.input.file_path ?? '')).length,
-    newTestsSeenFailingOnAssertion: seenFailing.length,
-    newTestsNeverSeenFailing: newTests.filter((name) => !seenFailing.includes(name)),
-    failedOnAssertionBeforeSourceEdit: failedOnAssertionBeforeFix,
     turns: final?.num_turns ?? null,
     costUsd: final?.total_cost_usd ?? null,
     usage: final?.usage ?? null,
     resultSubtype: final?.subtype ?? 'missing',
+  };
+}
+
+// Reads the hook log: each test run's full TAP result and each edit, in order.
+function scoreSteps(stepsPath, task, newTests, originalNames) {
+  const steps = [];
+  const text = existsSync(stepsPath) ? readFileSync(stepsPath, 'utf8') : '';
+  for (const chunk of text.split(/^=== /m).filter(Boolean)) {
+    const [header, ...body] = chunk.split('\n');
+    if (header === 'test-run') steps.push({ kind: 'run', tests: parseTap(body.join('\n')) });
+    else if (header.startsWith('edit ')) steps.push({ kind: 'edit', file: header.slice(5) });
+  }
+  const runs = steps.filter((s) => s.kind === 'run');
+  const firstRun = steps.findIndex((s) => s.kind === 'run');
+  const seenFailing = newTests.filter((name) => runs.some((run) => run.tests.some((t) => t.name === name && !t.ok && t.assertion)));
+  const sourceEdit = steps.findIndex((s) => s.kind === 'edit' && s.file.endsWith(tasks[task].module));
+  const runsBeforeFix = steps.slice(0, sourceEdit === -1 ? steps.length : sourceEdit).filter((s) => s.kind === 'run');
+  return {
+    testRuns: runs.length,
+    testEditsAfterFirstRun: firstRun === -1 ? 0
+      : steps.slice(firstRun).filter((s) => s.kind === 'edit' && isTestFile(s.file)).length,
+    newTestsSeenFailingOnAssertion: seenFailing.length,
+    newTestsNeverSeenFailing: newTests.filter((name) => !seenFailing.includes(name)),
+    failedOnAssertionBeforeSourceEdit: runsBeforeFix.some((run) => run.tests.some((t) => !t.ok && t.assertion && !originalNames.has(t.name))),
   };
 }
 
@@ -226,7 +215,7 @@ for (const arm of readdirSync(resultsRoot).filter((d) => existsSync(join(results
       const workspace = join(runDir, 'workspace');
       if (!existsSync(workspace)) continue;
       const scored = scoreWorkspace(workspace, task, originalNames[task]);
-      const trace = scoreTrace(join(runDir, 'trace.jsonl'), task, scored.newTests);
+      const trace = { ...readTrace(join(runDir, 'trace.jsonl')), ...scoreSteps(join(runDir, 'steps.log'), task, scored.newTests, originalNames[task]) };
       const graded = grade ? gradeTests(workspace, task, scored.newTests) : null;
       const record = { arm, task, run, ...scored, trace, graded };
       writeFileSync(join(runDir, 'score.json'), `${JSON.stringify(record, null, 2)}\n`);

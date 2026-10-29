@@ -35,6 +35,10 @@ run_comparison_case() {
   cp -R "$task_compare_root/$task_name/workspace" "$task_workspace"
   mkdir -p "$task_workspace/.claude/skills/tdd"
   cp "$task_skill_root/$task_arm/SKILL.md" "$task_workspace/.claude/skills/tdd/SKILL.md"
+  jq -n --arg command "bash '$task_compare_root/record-step.sh' '$task_run_dir/steps.log'" \
+    '{hooks: {PostToolUse: [{matcher: "Bash|Edit|Write|MultiEdit",
+      hooks: [{type: "command", command: $command}]}]}}' \
+    > "$task_workspace/.claude/settings.json"
   git -C "$task_workspace" init -q
   git -C "$task_workspace" add -A
   git -C "$task_workspace" -c user.name=eval -c user.email=eval@example.com \
