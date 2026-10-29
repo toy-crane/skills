@@ -74,6 +74,10 @@
   for its run unit, and `prune-worktrees` because it reads as `git worktree
   prune`, which only drops registrations whose folder is gone. The
   description says it leaves remote branches alone.
+- `tdd` keeps its name after dropping the one-test-at-a-time alternation,
+  because it still writes each new-behavior test before the behavior and sees
+  it fail first, which is what the name promises. The skill body states that
+  several tests may precede one implementation.
 - `update-project-skills` names the outcome a user asks for: every skill
   installed in the project brought to its latest published version. The object
   is the project's installed set from every source, and the Toycrane-specific
@@ -132,6 +136,10 @@ repository.
   rather than an agent-driven verification loop.
 - A bare `smoke-test` without the stack marker — installed skill names share one
   flat namespace, so the same concept for another stack would collide.
+- Renaming `tdd` to `testing` — chosen while test order was to be left to the
+  agent, then dropped once test-first stayed. The rename would touch every
+  install, strand `/tdd` users and lone `implement` installs, and put a generic
+  name into the flat skill namespace, with no gain in accuracy.
 - `sync-toycrane-skills` for the installed-skill update — it named one source
   and the reconciliation mechanism; once the skill refreshes every installed
   skill, a source-branded name under-describes the outcome the user asks for.

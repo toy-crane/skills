@@ -109,10 +109,16 @@ nothing here.
 
 ## Implement and reconcile one outcome
 
-Select a public test seam from the agreed behavior and existing interfaces.
-Briefly state the seam and the behavior it will verify, then hand both to the
-`tdd` skill, which implements one red-to-green behavior at a time through that
-seam and hands back the passing tests and the change they establish.
+Map every acceptance criterion of the active outcome to at least one check: an
+automated test, runtime evidence, or both. Behavior in the running product
+still owes runtime evidence when a test also proves it. Hand the `tdd` skill
+the active outcome, the criteria to prove by automated tests, the active
+task's constraints and approved references, and `spec.md` as design context;
+the handoff does not authorize later or blocked outcomes. `tdd` selects the
+public test seams and hands back the code change, each new test tied to its
+criterion or named reason with the failing assertion it was seen to produce,
+and any handed criterion it could not prove automatically with the reason.
+Cover those through runtime evidence or keep them incomplete.
 Resolve technical uncertainty through repository evidence;
 ask the user only when expected behavior remains unclear or proceeding would
 change the agreed product contract.
@@ -298,7 +304,8 @@ been explicitly waived by the user, and the must-fix findings to be repaired and
 reverified. An uninspected required source or uncompared applicable criterion
 keeps the result incomplete. A completed review may leave recorded findings; zero
 findings is not the gate. Report the sources and reviewed scope used for the
-claim, the result or explicit waiver, what changed, and what remains open.
+claim, each acceptance criterion with its checks and evidence, the result or
+explicit waiver, what changed, and what remains open.
 
 ## Make the delivered change directly reviewable
 
