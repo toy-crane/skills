@@ -48,7 +48,9 @@ node skills/workflow/tdd/evals/compare/compare.mjs
 - Add `--cases feature --reps 1` for the pilot, and `--dry-run` to print the
   resolved scope and the cost estimated from finished runs.
 - A rerun skips every (case, rep) already in `results.jsonl`. A variant keeps
-  one skill text; a different text needs a new variant.
+  one skill text; a different text needs a new variant. A flow keeps one
+  access and one `--model`, recorded in `_state.json`, so a resumed or later
+  variant cannot switch either; use another `--flow` to change them.
 
 Results land in `.claude/hillclimb/tdd/`, which version control ignores:
 `baseline/` and `v<N>/` each hold `results.jsonl`, `errors.jsonl`,
@@ -59,7 +61,8 @@ file writes were denied lands in `errors.jsonl`, not in the scores; shell
 commands outside the allowlist are the same for every variant, so those runs
 are scored and the denial count is kept in `meta`. `compare.mjs` writes
 `comparison.json` with each metric's mean and interval and these gates for the
-newer variant: every criterion the baseline met in most runs is still met in
+newer variant: both variants were served by the same model, every criterion
+the baseline met in most runs is still met in
 most runs, final suites pass, fake reds and caught mutants are not worse,
 every new test was seen failing, and every bug run reproduced before the fix.
 

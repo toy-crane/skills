@@ -120,6 +120,24 @@ function readRows(file) {
   return readFileSync(file, 'utf8').split('\n').filter(Boolean).map((line) => JSON.parse(line));
 }
 
+// One flow keeps one access and one model so its variants compare, including
+// resumed runs; _state.json records both.
+const stateFile = join(flowDir, '_state.json');
+const pinnedModel = opts.model ?? null;
+if (existsSync(stateFile)) {
+  const state = JSON.parse(readFileSync(stateFile, 'utf8'));
+  if (state.access && state.access !== opts.access) {
+    console.error(`this flow runs on ${state.access}; this run asks for ${opts.access}. Use the same access or another --flow.`);
+    process.exit(2);
+  }
+  if ('model' in state && state.model !== pinnedModel) {
+    console.error(`this flow runs on model ${state.model ?? 'unpinned'}; this run asks for ${pinnedModel ?? 'unpinned'}. Use the same --model or another --flow.`);
+    process.exit(2);
+  }
+  if (!('model' in state) && !opts['dry-run']) {
+    writeFileSync(stateFile, `${JSON.stringify({ ...state, model: pinnedModel }, null, 2)}\n`);
+  }
+}
 const resultsFile = join(variantDir, 'results.jsonl');
 const errorsFile = join(variantDir, 'errors.jsonl');
 const done = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`));
@@ -137,15 +155,6 @@ if (priced.length) {
 }
 if (opts['dry-run'] || todo.length === 0) process.exit(0);
 
-// One flow keeps one access so its variants compare; _state.json records it.
-const stateFile = join(flowDir, '_state.json');
-if (existsSync(stateFile)) {
-  const recorded = JSON.parse(readFileSync(stateFile, 'utf8')).access;
-  if (recorded && recorded !== opts.access) {
-    console.error(`this flow runs on ${recorded}; this run asks for ${opts.access}. Use the same access or another --flow.`);
-    process.exit(2);
-  }
-}
 // Comparing a text with itself spends a full run and proves nothing.
 const baselineSummary = join(flowDir, 'baseline', 'summary.json');
 if (opts.variant !== 'baseline' && existsSync(baselineSummary)) {
@@ -178,6 +187,7 @@ if (!existsSync(stateFile)) {
     goal: 'tdd SKILL.md revision does not get worse than the baseline on any signal',
     split: 'none: two cases, scores are directional',
     access: opts.access,
+    model: pinnedModel,
     reps,
     metrics: [
       { id: 'criteria_met', kind: 'float', label: 'Criteria met' },

@@ -71,7 +71,9 @@ function summarize(variant) {
 const base = summarize(opts.base);
 const next = summarize(nextName);
 const majority = (count, total) => count * 3 >= total * 2;
+const servedModels = [...new Set([...base.models, ...next.models])];
 const gates = {
+  sameModel: servedModels.length === 1,
   comparableRuns: ['feature', 'bug'].every((c) => base.runs[c] > 0 && base.runs[c] === next.runs[c]),
   criteriaKept: Object.keys(base.criteriaMet)
     .filter((key) => majority(base.criteriaMet[key], base.runs[key.split(':')[0]]))
