@@ -50,6 +50,17 @@
         "It hands back 2.3 as not provable by an automated test here, with the reason, so implement can cover it through runtime evidence.",
         "Its hand-back lists each new test with its criterion and an excerpt of the observed failing assertion."
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "/tdd implement가 넘긴 작업이야. 결과물은 '환불 문의 분류'이고, 자동 테스트로 증명할 기준은 3.1 분류 결과가 refund/other 중 하나로 저장된다, 3.2 환불 문의 분류 정확도가 held-out 사례에서 90% 이상이다야. 분류는 src/triage.js에서 Claude를 호출해서 해.",
+      "expected_output": "The response tests the code around the model, such as storing the label and handling a malformed response, with the model call mocked, writes those tests before the behavior and sees them fail on assertions, and hands 3.2 back as not provable by a test against a mocked model call because it concerns LLM output quality.",
+      "files": [],
+      "expectations": [
+        "It tests 3.1 and the surrounding code test-first with the model call mocked.",
+        "It does not claim 3.2 proven by a test against a mocked model call.",
+        "It hands 3.2 back with the reason that a mocked call proves only the code around the model."
+      ]
     }
   ]
 }
