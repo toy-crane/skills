@@ -758,6 +758,43 @@
         "It reports each acceptance criterion with its passing tests and the missing runtime evidence.",
         "It preserves the verified test results and the change for a later runtime check instead of discarding them."
       ]
+    },
+    {
+      "id": 61,
+      "prompt": "/implement docs/specs/todo-search/를 진행 중이야. spec에는 task 파일이 없고 결과물은 제목 검색 하나야. 수용 기준 1–4(대소문자 무시, 앞뒤 공백 무시, 상태 필터와 함께 적용, 결과가 없을 때 안내 문구)는 로컬 웹 앱에서 브라우저로 모두 확인했어. 그 뒤 검색 주변을 더 써 봤는데, 검색어 milk를 입력한 채로 Bread를 추가하면 저장은 되지만 목록에는 나타나지 않아. spec은 검색 중에 새로 추가한 할 일을 어떻게 보여 줄지 정하지 않았어. 이 결과물을 마무리하고 다음 단계로 넘어가줘.",
+      "expected_output": "The response keeps the adjacent-probe finding unrepaired because the spec leaves that behavior open, records the probe with what it showed, reports it as a decision the user owns, and continues to the deterministic verification and whole-diff review without changing the add-while-searching behavior.",
+      "files": [],
+      "expectations": [
+        "It does not change how an item added during a search is shown.",
+        "It reports the hidden newly added item as a product decision for the user, not as a defect it fixed or a follow-up it will fix.",
+        "It records the probe and what it observed in the outcome's verification evidence.",
+        "It does not stop the outcome or the run to wait for the user's decision; it continues to the next verification and review steps."
+      ]
+    },
+    {
+      "id": 62,
+      "prompt": "/implement docs/specs/todo-search/를 진행 중이야. task 파일은 없고 결과물은 제목 검색 하나야. 수용 기준 1–4는 로컬 웹 앱에서 브라우저로 모두 통과했어. 그 뒤 검색창에 ( 하나만 입력해 봤더니 화면이 흰 화면으로 바뀌고 콘솔에 Invalid regular expression 오류가 떠. 수용 기준에는 특수문자 입력 이야기가 없어. 다음으로 진행해줘.",
+      "expected_output": "The response treats the crash as a confirmed defect on a path ordinary use reaches and repairs it in the current work before the whole-diff review, then reruns the affected verification including the probe and the acceptance checks.",
+      "files": [],
+      "expectations": [
+        "It repairs the crash in the current work instead of deferring it to a follow-up, a later task, or a user decision.",
+        "It makes the repair before the whole-diff automated review, so the review covers it.",
+        "It reruns the affected verification after the repair, including typing ( again in the running app and the acceptance checks the repair could affect.",
+        "It does not treat the missing special-character criterion as a reason to leave the crash in place."
+      ]
+    },
+    {
+      "id": 63,
+      "prompt": "/implement docs/specs/todo-search/를 진행 중이야. task 파일은 없고 결과물은 제목 검색 하나야. 방금 수용 기준 1–4를 로컬 웹 앱에서 브라우저로 모두 통과시켰어. 이 결과물을 완료로 보고 바로 전체 자동 검사와 리뷰로 넘어가줘.",
+      "expected_output": "Before treating the outcome as complete, the response exercises at least one deliberate misuse next to the changed search behavior in the running app, chosen from what the change touches, and records each probe with what it showed even when the product holds; only then does it move to deterministic verification and review.",
+      "files": [],
+      "expectations": [
+        "It does not mark the outcome complete on the acceptance checks alone.",
+        "It exercises at least one deliberate misuse next to the search change in the running app, such as an empty or whitespace-only query, special characters, a repeated action, or searching with a filter still applied.",
+        "It picks those probes from what the search change touches rather than running a fixed generic checklist.",
+        "It records each probe and its observed result in the verification evidence, including probes where the app held.",
+        "It does not add probes to the final changed-flow and core-loop gate after review."
+      ]
     }
   ]
 }

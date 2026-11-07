@@ -154,6 +154,16 @@ available in-scope paths cannot expose the changed behavior, record the exact
 failed gate and prerequisite and keep the outcome incomplete; builds, type
 checks, tests, screenshots, and code inspection do not replace runtime evidence.
 
+Once the acceptance criteria pass, probe next to each changed behavior before
+the outcome counts as complete. At the same surface and through the same
+runtime path, try at least one deliberate misuse the change points at, such as
+an empty value, a repeated action, an action with other state still applied,
+or an interruption, rather than a fixed checklist. Record each probe with what
+it showed, including the ones the product held. Triage what probes find by the
+same rules as whole-diff review findings below, and report any behavior the
+spec leaves open as a decision the user owns. A repair made here reaches that
+review; the final gate after review adds no probes.
+
 Complete the outcome and its acceptance criteria with focused verification.
 Before marking it complete or starting dependent work, reconcile the observed
 behavior with every required handoff source and applicable acceptance or
@@ -304,8 +314,9 @@ been explicitly waived by the user, and the must-fix findings to be repaired and
 reverified. An uninspected required source or uncompared applicable criterion
 keeps the result incomplete. A completed review may leave recorded findings; zero
 findings is not the gate. Report the sources and reviewed scope used for the
-claim, each acceptance criterion with its checks and evidence, the result or
-explicit waiver, what changed, and what remains open.
+claim, each acceptance criterion with its checks and evidence, each probe with
+what it showed, the result or explicit waiver, what changed, and what remains
+open.
 
 ## Make the delivered change directly reviewable
 
