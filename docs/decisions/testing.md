@@ -46,6 +46,10 @@
   point is an agent run with the skill installed in a disposable workspace,
   graded on the end state it leaves. The baseline is the previous skill text,
   or no skill for a new one.
+- The `tdd` forward comparison is `tdd`'s eval, run through `llm-evals` rather
+  than as a standalone script. Its two tasks, hidden criteria tests, seeded
+  mutants, and scoring signals stay; with two tasks it is scored whole and
+  read as directional, not split into train and test.
 
 ## Boundaries
 
@@ -137,7 +141,8 @@ the number. The eval discipline follows claude-api's `build-eval` and
 
   The cycle's unseen reds were tests that passed at once because an earlier
   minimal step already covered them. Two tasks and three runs each cannot
-  separate small differences from noise.
+  separate small differences from noise. After the move to `llm-evals`, the
+  same comparison reruns as `tdd`'s eval against baseline `0154388`.
 
 ## Still-rejected alternatives
 
