@@ -116,10 +116,15 @@
   reports each criterion with its checks and evidence.
 - Approval of an eval is split in two. The spec states what good means for an
   LLM-output criterion: the metric, the target on held-out cases, and where
-  the cases come from, so implementation cannot lower the bar. `llm-evals`
-  builds the concrete case set and grader, then pauses once before its first
-  paid run to show the cases, graded samples, run size, and estimated cost
-  for the user's approval. After approval it climbs without asking until
+  the cases come from, so implementation cannot lower the bar. Before building
+  the eval, `llm-evals` asks once how to reach the model: an API key,
+  recommended when one exists, or a Claude Code or Codex subscription through
+  its CLI. Without a key it offers the subscription instead of stopping, and
+  stops only when neither exists. It then builds the concrete case set and
+  grader, and pauses once before its first
+  paid run to show the cases, graded samples, run size, noise floor beside the
+  target gain, and estimated cost, or estimated usage-limit consumption on a
+  subscription, for the user's approval. After approval it climbs without asking until
   green, a plateau of three rounds inside the noise floor, or the approved
   spend; an unreached target goes back to `implement` with the best held-out
   score and failure causes, and the criterion stays incomplete.

@@ -41,6 +41,11 @@
   the proposer never read. Cases and grader are never weakened, removed, or
   re-split to reach green; changing them after approval needs the user's
   approval again. Expected answers stay out of the model's reach.
+- Skill and agent behavior is LLM output too, so creating or changing a skill
+  through this workflow proves its behavior criteria with an eval. The entry
+  point is an agent run with the skill installed in a disposable workspace,
+  graded on the end state it leaves. The baseline is the previous skill text,
+  or no skill for a new one.
 
 ## Boundaries
 
