@@ -5,7 +5,8 @@ description: Implement or resume settled work from a selected spec folder as one
 
 # Implement
 
-This skill requires `tdd`, `babysit-specs`, and `project-knowledge`. Before
+This skill requires `tdd`, `llm-evals`, `babysit-specs`, and
+`project-knowledge`. Before
 doing any work, confirm each one is installed. When one is missing, stop and
 report it with its install command,
 `npx skills@latest add toy-crane/skills --skill <name>`, using the project's
@@ -110,7 +111,16 @@ nothing here.
 ## Implement and reconcile one outcome
 
 Map every acceptance criterion of the active outcome to at least one check: an
-automated test, runtime evidence, or both. Behavior in the running product
+automated test, an eval, runtime evidence, or a combination. A criterion about
+the quality of LLM output that varies run to run, including a skill's or
+agent's behavior, maps to an eval: a mocked model call proves only the code
+around it. Hand `llm-evals` that criterion with its metric, held-out target,
+and case source, the active outcome, and `spec.md` as design context. It hands
+back the behavior change, the baseline and final held-out scores with their
+noise floor, each round's change, and where the eval lives; an unreached
+target comes back with the best score and failure causes, and that criterion
+stays incomplete. Report each eval criterion with its baseline and final
+scores as evidence. Behavior in the running product
 still owes runtime evidence when a test also proves it. Hand the `tdd` skill
 the active outcome, the criteria to prove by automated tests, the active
 task's constraints and approved references, and `spec.md` as design context;
