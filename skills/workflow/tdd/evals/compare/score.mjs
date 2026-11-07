@@ -1,26 +1,18 @@
-#!/usr/bin/env node
-// Scores a run-tdd-comparison.sh results root: node score.mjs <results-root> [--grade]
+// Scoring library for tdd's eval: run.mjs scores each finished agent run with it.
 import { spawnSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const compareRoot = dirname(fileURLToPath(import.meta.url));
-const tasks = {
+export const compareRoot = dirname(fileURLToPath(import.meta.url));
+export const tasks = {
   feature: { module: 'src/shipping.js', brief: 'docs/spec.md', criterionPattern: /^(C\d+):/ },
   bug: { module: 'src/cart.js', brief: 'docs/bug.md', criterionPattern: /^(B\d+):/ },
 };
 
-const [resultsRoot, ...flags] = process.argv.slice(2);
-if (!resultsRoot) {
-  console.error('usage: score.mjs <results-root> [--grade]');
-  process.exit(2);
-}
-const grade = flags.includes('--grade');
-
 // Runs node:test with the TAP reporter and returns its leaf tests.
-function runTests(dir, files = []) {
+export function runTests(dir, files = []) {
   const result = spawnSync('node', ['--test', '--test-reporter=tap', ...files], {
     cwd: dir,
     encoding: 'utf8',
@@ -29,7 +21,7 @@ function runTests(dir, files = []) {
   return parseTap(`${result.stdout}\n${result.stderr}`);
 }
 
-function parseTap(text) {
+export function parseTap(text) {
   const lines = text.split('\n');
   const tests = [];
   for (let i = 0; i < lines.length; i += 1) {
@@ -62,7 +54,7 @@ function withModule(workspace, task, implementation, extra = () => {}) {
   return dir;
 }
 
-function scoreWorkspace(workspace, task, originalNames) {
+export function scoreWorkspace(workspace, task, originalNames) {
   const hidden = join(compareRoot, task, 'hidden');
   const finalDir = withModule(workspace, task, null);
   const final = runTests(finalDir);
@@ -120,7 +112,7 @@ function scoreWorkspace(workspace, task, originalNames) {
 const isTestFile = (path) => /(^|\/)(test|tests|__tests__)\/|\.test\.[cm]?[jt]s$/.test(path);
 
 // Reads the final result event from the agent's stream for cost and model.
-function readTrace(tracePath) {
+export function readTrace(tracePath) {
   let model = null;
   let final = null;
   for (const line of readFileSync(tracePath, 'utf8').split('\n')) {
@@ -139,11 +131,12 @@ function readTrace(tracePath) {
     costUsd: final?.total_cost_usd ?? null,
     usage: final?.usage ?? null,
     resultSubtype: final?.subtype ?? 'missing',
+    permissionDenials: final?.permission_denials ?? [],
   };
 }
 
 // Reads the hook log: each test run's full TAP result and each edit, in order.
-function scoreSteps(stepsPath, task, newTests, originalNames) {
+export function scoreSteps(stepsPath, task, newTests, originalNames) {
   const steps = [];
   const text = existsSync(stepsPath) ? readFileSync(stepsPath, 'utf8') : '';
   for (const chunk of text.split(/^=== /m).filter(Boolean)) {
@@ -167,7 +160,7 @@ function scoreSteps(stepsPath, task, newTests, originalNames) {
 }
 
 // A grader that sees no skill name labels what each new test protects.
-function gradeTests(workspace, task, newTests) {
+export function gradeTests(workspace, task, newTests, { env = process.env, model } = {}) {
   if (newTests.length === 0) return { reasonless: 0, labels: [] };
   const testFiles = [];
   const walk = (dir) => {
@@ -193,104 +186,21 @@ function gradeTests(workspace, task, newTests) {
   ].join('\n');
   const cwd = mkdtempSync(join(tmpdir(), 'tdd-grade-'));
   const args = ['-p', prompt, '--output-format', 'json', '--setting-sources', 'project', '--tools', '', '--max-turns', '1'];
-  if (process.env.TASK_CLAUDE_MODEL) args.push('--model', process.env.TASK_CLAUDE_MODEL);
-  const result = spawnSync('claude', args, { cwd, encoding: 'utf8', timeout: 300_000 });
+  if (model) args.push('--model', model);
+  const result = spawnSync('claude', args, { cwd, env, encoding: 'utf8', timeout: 300_000 });
   rmSync(cwd, { recursive: true, force: true });
   try {
     const text = JSON.parse(result.stdout).result;
     const labels = JSON.parse(text.slice(text.indexOf('['), text.lastIndexOf(']') + 1));
-    return { reasonless: labels.filter((l) => l.label === 'none').length, labels };
+    let usage = null;
+    try { usage = JSON.parse(result.stdout).usage ?? null; } catch {}
+    return { reasonless: labels.filter((l) => l.label === 'none').length, labels, usage };
   } catch {
     return { reasonless: null, labels: [], error: (result.stderr || result.stdout || '').slice(0, 400) };
   }
 }
 
-const originalNames = {
-  feature: new Set(),
-  bug: new Set(runTests(join(compareRoot, 'bug', 'workspace')).map((t) => t.name)),
-};
-
-const runs = [];
-for (const arm of readdirSync(resultsRoot).filter((d) => existsSync(join(resultsRoot, d, 'feature')) || existsSync(join(resultsRoot, d, 'bug')))) {
-  for (const task of Object.keys(tasks)) {
-    const taskDir = join(resultsRoot, arm, task);
-    if (!existsSync(taskDir)) continue;
-    for (const run of readdirSync(taskDir).sort()) {
-      const runDir = join(taskDir, run);
-      const workspace = join(runDir, 'workspace');
-      if (!existsSync(workspace)) continue;
-      const scored = scoreWorkspace(workspace, task, originalNames[task]);
-      const trace = { ...readTrace(join(runDir, 'trace.jsonl')), ...scoreSteps(join(runDir, 'steps.log'), task, scored.newTests, originalNames[task]) };
-      const graded = grade ? gradeTests(workspace, task, scored.newTests) : null;
-      const record = { arm, task, run, ...scored, trace, graded };
-      writeFileSync(join(runDir, 'score.json'), `${JSON.stringify(record, null, 2)}\n`);
-      runs.push(record);
-    }
-  }
+// Names of the tests each task's workspace carries before the agent starts.
+export function originalTestNames(task) {
+  return task === 'bug' ? new Set(runTests(join(compareRoot, 'bug', 'workspace')).map((t) => t.name)) : new Set();
 }
-
-const valid = runs.filter((r) => r.trace.resultSubtype === 'success');
-const arms = [...new Set(runs.map((r) => r.arm))].sort();
-const tokens = (usage) => (usage ? (usage.input_tokens ?? 0) + (usage.output_tokens ?? 0)
-  + (usage.cache_read_input_tokens ?? 0) + (usage.cache_creation_input_tokens ?? 0) : 0);
-const summary = {};
-for (const arm of arms) {
-  const mine = valid.filter((r) => r.arm === arm);
-  const criteriaMet = {};
-  for (const task of Object.keys(tasks)) {
-    const taskRuns = mine.filter((r) => r.task === task);
-    const ids = [...new Set(taskRuns.flatMap((r) => Object.keys(r.criteria)))].sort();
-    for (const id of ids) criteriaMet[`${task}:${id}`] = taskRuns.filter((r) => r.criteria[id]).length;
-  }
-  summary[arm] = {
-    validRuns: mine.length,
-    invalidRuns: runs.filter((r) => r.arm === arm).length - mine.length,
-    criteriaMet,
-    newTests: mine.reduce((n, r) => n + r.newTests.length, 0),
-    fakeRed: mine.reduce((n, r) => n + r.fakeRed.length, 0),
-    mutantsCaught: mine.reduce((n, r) => n + r.mutants.filter((m) => m.caught).length, 0),
-    mutantsTotal: mine.reduce((n, r) => n + r.mutants.length, 0),
-    testEditsAfterFirstRun: mine.reduce((n, r) => n + r.trace.testEditsAfterFirstRun, 0),
-    newTestsNeverSeenFailing: mine.reduce((n, r) => n + r.trace.newTestsNeverSeenFailing.length, 0),
-    bugRunsFailingBeforeFix: mine.filter((r) => r.task === 'bug' && r.trace.failedOnAssertionBeforeSourceEdit).length,
-    bugRuns: mine.filter((r) => r.task === 'bug').length,
-    bugRunsWithReproduction: mine.filter((r) => r.task === 'bug' && r.reproductions > 0).length,
-    runsWithFailingFinalSuite: mine.filter((r) => r.finalFailing.length > 0).length,
-    reasonless: grade && mine.every((r) => r.graded?.reasonless != null)
-      ? mine.reduce((n, r) => n + r.graded.reasonless, 0) : null,
-    gradingErrors: grade ? mine.filter((r) => r.graded?.reasonless == null).length : null,
-    tokens: mine.reduce((n, r) => n + tokens(r.trace.usage), 0),
-    costUsd: Number(mine.reduce((n, r) => n + (r.trace.costUsd ?? 0), 0).toFixed(2)),
-    turns: mine.reduce((n, r) => n + (r.trace.turns ?? 0), 0),
-    models: [...new Set(mine.map((r) => r.trace.model))],
-  };
-}
-
-let gates = null;
-if (summary.baseline && summary.revised) {
-  const base = summary.baseline;
-  const next = summary.revised;
-  const majority = (count, total) => count * 3 >= total * 2;
-  const perTaskRuns = (arm, key) => valid.filter((r) => r.arm === arm && r.task === key.split(':')[0]).length;
-  const criteriaKept = Object.keys(base.criteriaMet).filter((key) => majority(base.criteriaMet[key], perTaskRuns('baseline', key)))
-    .every((key) => majority(next.criteriaMet[key] ?? 0, perTaskRuns('revised', key)));
-  // Totals compare only when both arms scored the same nonzero runs per task.
-  const comparableRuns = Object.keys(tasks).every((task) => {
-    const count = (arm) => valid.filter((r) => r.arm === arm && r.task === task).length;
-    return count('baseline') > 0 && count('baseline') === count('revised');
-  });
-  gates = {
-    comparableRuns,
-    criteriaKept,
-    finalSuitesPass: next.runsWithFailingFinalSuite === 0,
-    fakeRedNotWorse: next.fakeRed <= base.fakeRed,
-    mutantsNotWorse: next.mutantsCaught >= base.mutantsCaught,
-    everyNewTestSeenFailing: next.newTestsNeverSeenFailing === 0,
-    bugReproducedBeforeFix: next.bugRunsFailingBeforeFix === next.bugRuns,
-  };
-  gates.pass = Object.values(gates).every(Boolean);
-}
-
-const report = { summary, gates };
-writeFileSync(join(resultsRoot, 'summary.json'), `${JSON.stringify(report, null, 2)}\n`);
-console.log(JSON.stringify(report, null, 2));
