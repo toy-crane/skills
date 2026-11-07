@@ -114,6 +114,7 @@ const isTestFile = (path) => /(^|\/)(test|tests|__tests__)\/|\.test\.[cm]?[jt]s$
 // Reads the final result event from the agent's stream for cost and model.
 export function readTrace(tracePath) {
   let model = null;
+  let apiKeySource = null;
   let final = null;
   for (const line of readFileSync(tracePath, 'utf8').split('\n')) {
     let event;
@@ -122,11 +123,15 @@ export function readTrace(tracePath) {
     } catch {
       continue;
     }
-    if (event.type === 'system' && event.subtype === 'init') model = event.model;
+    if (event.type === 'system' && event.subtype === 'init') {
+      model = event.model;
+      apiKeySource = event.apiKeySource ?? null;
+    }
     if (event.type === 'result') final = event;
   }
   return {
     model,
+    apiKeySource,
     turns: final?.num_turns ?? null,
     costUsd: final?.total_cost_usd ?? null,
     usage: final?.usage ?? null,

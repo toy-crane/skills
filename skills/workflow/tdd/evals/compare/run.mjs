@@ -137,6 +137,24 @@ if (priced.length) {
 }
 if (opts['dry-run'] || todo.length === 0) process.exit(0);
 
+// One flow keeps one access so its variants compare; _state.json records it.
+const stateFile = join(flowDir, '_state.json');
+if (existsSync(stateFile)) {
+  const recorded = JSON.parse(readFileSync(stateFile, 'utf8')).access;
+  if (recorded && recorded !== opts.access) {
+    console.error(`this flow runs on ${recorded}; this run asks for ${opts.access}. Use the same access or another --flow.`);
+    process.exit(2);
+  }
+}
+// Comparing a text with itself spends a full run and proves nothing.
+const baselineSummary = join(flowDir, 'baseline', 'summary.json');
+if (opts.variant !== 'baseline' && existsSync(baselineSummary)) {
+  const base = JSON.parse(readFileSync(baselineSummary, 'utf8'));
+  if (base.skill_sha === skillSha) {
+    console.error(`${opts.variant} has the same tdd SKILL.md as baseline (sha ${skillSha}); nothing to compare.`);
+    process.exit(2);
+  }
+}
 // A variant keeps one skill text so resumed rows stay comparable.
 mkdirSync(join(variantDir, 'traces'), { recursive: true });
 const summaryFile = join(variantDir, 'summary.json');
@@ -152,9 +170,9 @@ if (existsSync(summaryFile)) {
     target: 'skill',
     skill_source: skillSource,
     skill_sha: skillSha,
+    access: opts.access,
   }, null, 2)}\n`);
 }
-const stateFile = join(flowDir, '_state.json');
 if (!existsSync(stateFile)) {
   writeFileSync(stateFile, `${JSON.stringify({
     goal: 'tdd SKILL.md revision does not get worse than the baseline on any signal',
@@ -214,7 +232,11 @@ function runAgent(workspace, prompt, rawTrace, stderrFile) {
     child.stdout.on('data', (chunk) => out.push(chunk));
     child.stderr.on('data', (chunk) => err.push(chunk));
     let timedOut = false;
-    const timer = setTimeout(() => { timedOut = true; child.kill('SIGTERM'); }, timeoutMs);
+    const timer = setTimeout(() => {
+      timedOut = true;
+      child.kill('SIGTERM');
+      setTimeout(() => child.kill('SIGKILL'), 10_000).unref();
+    }, timeoutMs);
     child.on('close', (code) => {
       clearTimeout(timer);
       writeFileSync(rawTrace, Buffer.concat(out));
@@ -255,8 +277,9 @@ async function runCase({ c, rep }) {
   const trace = readTrace(rawTrace);
   writeFileSync(join(variantDir, 'traces', `${id}.json`), `${JSON.stringify(toTurns(rawTrace, prompts[c]), null, 2)}\n`);
 
+  writeFileSync(join(runDir, 'workspace.txt'), `${workspace}\n`);
   const errorRow = (failureClass, detail) => appendFileSync(errorsFile, `${JSON.stringify({
-    prompt_id: c, rep, class: failureClass, detail, exit_code: code, latency_s: latency,
+    prompt_id: c, rep, class: failureClass, detail, exit_code: code, latency_s: latency, workspace,
     model: trace.model, usage: trace.usage, reported_cost_usd: trace.costUsd, at: new Date().toISOString(),
   })}\n`);
   if (timedOut) return errorRow('timeout', `no result within ${opts['timeout-s']}s`);
@@ -268,8 +291,12 @@ async function runCase({ c, rep }) {
   if (deniedWrites.length) {
     return errorRow('harness', `file writes denied: ${deniedWrites.map((d) => d.tool_input?.file_path).join(', ')}`);
   }
-  if (opts.model && trace.model && !trace.model.startsWith(opts.model)) {
-    return errorRow('served-model-mismatch', `asked ${opts.model}, served ${trace.model}`);
+  if (opts.model && !trace.model?.startsWith(opts.model)) {
+    return errorRow('served-model-mismatch', `asked ${opts.model}, served ${trace.model ?? 'unknown'}`);
+  }
+  const expectedKeySource = opts.access === 'api' ? 'ANTHROPIC_API_KEY' : 'none';
+  if (trace.apiKeySource !== expectedKeySource) {
+    return errorRow('access-mismatch', `asked ${opts.access}, Claude Code reported key source ${trace.apiKeySource ?? 'unknown'}`);
   }
 
   const scored = scoreWorkspace(workspace, c, originals[c]);
@@ -300,7 +327,6 @@ async function runCase({ c, rep }) {
     latency_s: latency,
     meta: { ...scored, steps, denied_commands: trace.permissionDenials.length, labels: graded?.labels ?? null, grading_error: graded?.error ?? null, reported_cost_usd: trace.costUsd },
   })}\n`);
-  writeFileSync(join(runDir, 'workspace.txt'), `${workspace}\n`);
   console.log(`${id}: criteria ${grade.criteria_met.toFixed(2)}, mutants ${grade.mutants_caught.toFixed(2)}, unseen reds ${grade.never_seen_failing}, ${latency.toFixed(0)}s`);
 }
 
