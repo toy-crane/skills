@@ -120,6 +120,17 @@
   strongest usable runtime observation path, and carrying out that verification
   without pausing for approval of the technical method. Behavior not verified
   in the running product remains incomplete; static checks do not replace it.
+- Each outcome's focused runtime verification ends with adjacent probes: after
+  the acceptance criteria pass, `implement` exercises at least one deliberate
+  misuse next to each changed behavior, at the same surface and through the
+  same runtime path, chosen from what the change touches rather than from a
+  fixed checklist. A probe that holds is still recorded with what was tried.
+  Probe results are triaged by the same rules as whole-diff review findings:
+  repair what breaks an acceptance criterion or is a confirmed defect on a
+  path ordinary use reaches, record an evidenced out-of-scope defect as a
+  follow-up, and report behavior the spec leaves open as a decision the user
+  owns. Probes run before review so their repairs are reviewed; the final
+  changed-flow and core-loop gate adds none.
 - For a screen-based outcome with an approved visual or state reference,
   runtime verification compares the actual implementation at every applicable
   screen, state, and viewport coordinate. It checks composition, content,
@@ -531,6 +542,15 @@ depends on first-device state. Keeping prior-state verification as a separate
 profile prevents clean-install confidence from hiding upgrade and migration
 defects.
 
+Exercising only the flow the acceptance criteria name confirms the intended
+path and stops there, so a change can pass while the state right next to it
+misleads users. Adjacent probes cover that gap at the cost of a few extra
+interactions. Placing them in focused verification keeps any repair inside the
+reviewed diff; placing them after review would ship unreviewed repairs and
+rerun the final gate. Reusing the review triage rules keeps one standard for
+what `implement` may change on its own, so a probe never turns behavior the
+spec leaves open into an unapproved product decision.
+
 Minimal task state and meaningful code checkpoints preserve useful recovery
 evidence without turning Git and task files into a second orchestration state
 machine.
@@ -587,6 +607,12 @@ state keep automation reviewable without turning follow-up files into a queue.
 - `implement`'s load-time staleness check repeatedly stops an outcome on Git
   history that does not touch the spec's meaning, justifying a narrower scope
   for it.
+- Adjacent probes repeatedly find nothing worth reporting while adding
+  noticeable runtime cost, or their findings keep returning to the user as open
+  decisions that shaping should have settled.
+- Claude Code's bundled `/verify` becomes reliably model-invocable and
+  available in Codex, or starts mapping evidence to spec acceptance criteria,
+  making it a candidate runtime-verification specialist.
 
 ## Still-rejected alternatives
 
@@ -668,6 +694,14 @@ state keep automation reviewable without turning follow-up files into a queue.
 - A generic runtime-verification dispatcher — matching framework skills already
   own their observation loops, while `implement` owns the implementation
   completion gate and remains usable when none is installed.
+- Replacing `implement`'s runtime verification with Claude Code's bundled
+  `/verify`, or invoking it as a required step — it judges a diff and its
+  description rather than spec acceptance criteria, approved reference
+  coordinates, the core-loop journey, or per-platform evidence; it has no state
+  profiles; whether the model may invoke it depends on a server-side rollout
+  flag; it does not exist in Codex; and it leaves an uncommitted
+  `.claude/skills/verify/SKILL.md` recipe in the repository. Only its
+  adjacent-probe step was adopted, restated in `implement`.
 - A generic environment-readiness skill — readiness and state controls belong
   to the runtime that can interpret them, while a separately invoked helper
   would make a required completion gate optional and duplicate orchestration.
@@ -730,6 +764,15 @@ state keep automation reviewable without turning follow-up files into a queue.
   workflow made retrieval explicit.
 
 ## Evidence worth preserving
+
+- On 2026-11-07, two `/verify` runs (Claude Code 2.1.319, claude-opus-5-5) on
+  a Todo title-search commit each passed every intended check, cost about
+  $0.37–0.40, and took 2–4 minutes. Their adjacent probes found what the
+  intended checks did not: an item added while a non-matching search was
+  active was saved but never appeared, and a search combined with the `완료`
+  filter reported no match although the item existed under `진행중`. Both runs
+  also wrote an uncommitted `.claude/skills/verify/SKILL.md`. The skill's text
+  was read from that version's bundled files.
 
 - On 2026-10-02, while moving flyn's human conversation to a messenger with a
   resident runner, the user limited `triage-issues` to new issues and removed
