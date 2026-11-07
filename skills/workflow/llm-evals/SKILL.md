@@ -1,6 +1,6 @@
 ---
 name: llm-evals
-description: Prove LLM behavior with evals. Use when an acceptance criterion or request concerns the quality of LLM or agent output that varies run to run and no deterministic assertion can decide, such as a prompt, classifier, extractor, summarizer, tool-using agent, or a skill's instructions, whether `implement` hands the criterion over or the user asks to measure, prove, or improve that behavior. Not for deterministic code, which `tdd` covers, or for checking whether a skill triggers.
+description: Prove LLM behavior with evals. Use when an acceptance criterion or request concerns the quality of LLM or agent output that varies run to run and no deterministic assertion can decide, such as a prompt, classifier, extractor, summarizer, tool-using agent, or a skill's instructions, whether `implement` hands the criterion over or the user asks to measure, prove, or improve that behavior or raise its quality score toward a target. Not for deterministic code, which `tdd` covers, or for checking whether a skill triggers.
 ---
 
 # LLM Evals
@@ -36,13 +36,16 @@ runner's shape and the pilot depend on it. Check what exists without printing
 a secret: an API key in the environment or in the env file the product reads,
 and a logged-in `claude` or `codex` CLI.
 
-- With a key: offer the API key, recommended because it runs the real path,
-  bills exactly, and runs cases in parallel, or the subscription. For an app
-  feature, say that the subscription leaves out the app's parameters and tool
-  wiring.
-- Without a key: offer the subscription or preparing a key first. Do not stop.
+- With a key: ask whether to use the API key, recommended because it runs the
+  real path, bills exactly, and runs cases in parallel, or the subscription.
+  For an app feature, say that the subscription leaves out the app's
+  parameters and tool wiring.
+- Without a key: do not stop, and do not pick for the user. Ask whether to run
+  on the subscription or to prepare a key first.
 - With neither: stop and give both setups, a key placed where the product
   reads it or a CLI login.
+
+The user's answer is the choice; record it in `_state.json`.
 
 On a subscription, an app feature's runner swaps only the model call for a CLI
 call with the app's own system prompt and model and no tools, for example
@@ -81,6 +84,9 @@ installed in a disposable workspace. Grade the end state it leaves: hidden
 tests pass, expected files exist, nothing off-limits changed, and a no-op that
 claims success fails. Record steps through a hook when the process itself is a
 criterion. The baseline is the previous skill text, or no skill for a new one.
+Keep each workspace outside any `.claude/` folder: headless Claude Code treats
+every write there as sensitive and denies it. Record a run whose file writes
+were denied as a harness failure, not as a score.
 
 **Grader.** Choose the cheapest grader that truly measures the criterion: a
 programmatic check, then a pairwise judge against frozen baseline outputs, then
