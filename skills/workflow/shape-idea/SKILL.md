@@ -122,7 +122,10 @@ points, remaining risks, and setup before implementation. Record behavior and
 decisions without predicting files, functions, code structure, technical
 layers, or implementation steps. Carry only applicable app-level constraints
 from `PRODUCT.md`; keep the file as their canonical product context rather than
-duplicating its full contents.
+duplicating its full contents. Write an acceptance criterion about the quality
+of LLM output that varies run to run, including a skill's or agent's behavior,
+as a metric, a target on held-out cases, and where the cases come from, so
+implementation proves it with an eval and cannot lower the bar.
 
 When this work depends on another spec folder finishing first, add a
 `Blocked by: docs/specs/<other>/` line beside the linked sources, one per

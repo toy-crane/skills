@@ -29,10 +29,32 @@
 - Tests observe behavior through public seams, mock only system boundaries,
   and take expected values from a source independent of the implementation.
   Test names and interfaces use the project's current terms.
+- An acceptance criterion about the quality of LLM output, which varies run to
+  run and no deterministic assertion can decide, is proven by an eval through
+  `llm-evals`, not by a test against a mocked model call. A mocked call proves
+  only the code around the model, so `tdd` hands such a criterion back with
+  that reason and still tests the surrounding code.
+- An eval follows the same discipline as a test. Its red is the baseline
+  score measured before the behavior changes. Its green is a held-out score at
+  or above the spec's target and above the baseline outside the noise floor.
+  Changes are proposed from train cases only, and the score comes from cases
+  the proposer never read. Cases and grader are never weakened, removed, or
+  re-split to reach green; changing them after approval needs the user's
+  approval again. Expected answers stay out of the model's reach.
+- Skill and agent behavior is LLM output too, so creating or changing a skill
+  through this workflow proves its behavior criteria with an eval. The entry
+  point is an agent run with the skill installed in a disposable workspace,
+  graded on the end state it leaves. The baseline is the previous skill text,
+  or no skill for a new one.
+- The `tdd` forward comparison is `tdd`'s eval, run through `llm-evals` rather
+  than as a standalone script. Its two tasks, hidden criteria tests, seeded
+  mutants, and scoring signals stay; with two tasks it is scored whole and
+  read as directional, not split into train and test.
 
 ## Boundaries
 
-- These rules govern how the `tdd` skill chooses and writes tests. Which check proves each
+- These rules govern how the `tdd` skill chooses and writes tests and how
+  `llm-evals` builds and climbs an eval. Which check proves each
   acceptance criterion, and the runtime evidence still owed for the running
   product, belong to `implement` ([pipeline](pipeline.md)).
 - Enforcement stays in the skill text. No hook blocks production edits until a
@@ -79,6 +101,15 @@ tests guards a failure Kent Beck reported and Anthropic's long-running harness
 forbids; requiring the contract line closes the escape of calling a test wrong
 after a large implementation fails it.
 
+LLM output quality needed its own check because `tdd` mocks the model as an
+external API, so the prompt that decides the behavior went unproven and the
+criterion came back as unprovable. An eval is the same idea in a noisy
+medium: the expected answers exist before the prompt changes, the baseline is
+the red, and the held-out split plays the role of independent expected values,
+because a proposer that tunes on the cases it scores seals its own fit into
+the number. The eval discipline follows claude-api's `build-eval` and
+`hillclimb` guides (anthropics/skills, Apache-2.0).
+
 ## Reconsider when
 
 - The forward comparison shows the revised `tdd` meets fewer acceptance criteria,
@@ -86,6 +117,8 @@ after a large implementation fails it.
   an assertion than the one-test cycle it replaced.
 - Sessions show agents claiming a red they never observed often enough that a
   harness check would be cheaper than the misses.
+- LLM-output criteria turn out to be rare and small enough that a separate
+  `llm-evals` skill costs more to maintain than an eval branch inside `tdd`.
 
 ## Evidence worth preserving
 
@@ -108,7 +141,8 @@ after a large implementation fails it.
 
   The cycle's unseen reds were tests that passed at once because an earlier
   minimal step already covered them. Two tasks and three runs each cannot
-  separate small differences from noise.
+  separate small differences from noise. After the move to `llm-evals`, the
+  same comparison reruns as `tdd`'s eval against baseline `0154388`.
 
 ## Still-rejected alternatives
 
@@ -122,3 +156,12 @@ after a large implementation fails it.
 - Move test-choice rules into `implement` and keep a pure TDD skill for direct
   use — it widens the change and overlaps `implement`'s runtime evidence
   without a clearer owner for how tests are written.
+- An eval branch inside `tdd` — a deterministic red on an assertion and a
+  paid, approved, noise-bounded climb are different disciplines, and mixing
+  them would roughly double `tdd` and blur which red counts.
+- A separate eval skill reached only through its description — inside
+  `implement` nobody would invoke it, so LLM-output criteria would keep coming
+  back unproven.
+- Building evals without user approval and showing the cases only in the
+  hand-back — a wrong case set is found only after the climb has spent its
+  budget, and nobody trusts the resulting number.

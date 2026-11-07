@@ -84,6 +84,12 @@
   reconciliation of new, retired, and companion-agent-bearing skills is a step
   inside that outcome rather than the name. `project` keeps the scope distinct
   from a user-global update.
+- `llm-evals` is a discipline noun beside `tdd`: `implement` invokes it for
+  criteria about LLM output, and users may invoke it directly. It names
+  proving LLM behavior with evals in plain words. `eval-driven-development`
+  was rejected as long and unfamiliar, and `prompt-evals` as too narrow, since
+  the behavior under test may be a tool-using agent rather than one prompt.
+  Claude Code 2.1.319 and the installed Codex carry nothing under the name.
 
 ## Boundaries
 

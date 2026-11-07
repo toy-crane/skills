@@ -84,7 +84,7 @@ agents in Claude Code and Codex.
 
 ## The pipeline
 
-Six skills cover product definition through implementation.
+Eight skills cover product definition through implementation.
 
 ```mermaid
 flowchart LR
@@ -128,6 +128,7 @@ flowchart LR
     BLOCKED -- "prerequisite restored" --> FINAL
     FINAL -- "passes" --> DONE["verified and runnable<br/>reviewed or explicitly waived"]
     IM -. "hands criteria to test" .-> TDD[tdd]
+    IM -. "hands LLM-output criteria" .-> EV[llm-evals]
     IM -. "proves affected surfaces" .-> RV["matching runtime skill<br/>or strongest usable path"]
     IM -. "open workaround or<br/>out-of-scope defect" .-> FU["follow-up"]
 ```
@@ -192,8 +193,9 @@ When the repository exposes the result through a
 user-reviewable local server, `implement` verifies the changed surface and
 shares an address while leaving that server available until the user finishes
 review or later delivery cleanup. `implement` maps every acceptance criterion
-to automated tests, runtime evidence, or both, and hands the criteria to prove
-by tests to `tdd`, which selects the public seams. For an affected product
+to automated tests, evals, runtime evidence, or a combination, hands the
+criteria to prove by tests to `tdd`, which selects the public seams, and hands
+criteria about LLM output that varies run to run to `llm-evals`. For an affected product
 surface, it
 uses an available matching runtime-verification skill. When none is available,
 it autonomously investigates the repository and current environment and builds
@@ -278,6 +280,16 @@ new session or a closing-message handoff is not required for correctness.
   weakened to reach green. Includes rules for stable seams and behavioral tests.
   Adapted from
   [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
+- **[llm-evals](./skills/workflow/llm-evals/SKILL.md)**: Prove behavior whose
+  LLM output varies run to run, such as a prompt, a classifier, an agent, or a
+  skill's instructions, with an eval instead of a mocked test. Ask whether to
+  reach the model through an API key or a Claude Code or Codex subscription,
+  build an approved case set, runner, and grader, and stop once for approval
+  with the noise floor and cost. Measure the baseline as the red, then climb
+  one change per round until the held-out score reaches the spec's target.
+  Cases and grader are never weakened to pass. The eval discipline follows
+  claude-api's `build-eval` and `hillclimb` guides
+  ([anthropics/skills](https://github.com/anthropics/skills), Apache-2.0).
 
 ## Git delivery
 

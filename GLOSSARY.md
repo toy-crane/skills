@@ -65,3 +65,7 @@ _Avoid_: Hook plugin, extension
 **Adjacent probe**:
 A deliberate misuse `implement` exercises next to a changed behavior after that behavior's acceptance criteria pass, at the same surface and through the same runtime path: an empty value, a repeated action, an action with other state still applied, an interruption. Chosen from what the change touches, not from a fixed checklist, and recorded even when the product holds. Distinct from an acceptance check, which confirms the intended path, and from the final core-loop gate, which guards the product's primary journey against regression.
 _Avoid_: Fuzzing, edge-case test, push on it
+
+**Eval**:
+The check `llm-evals` uses to prove an acceptance criterion about LLM output that varies run to run: an approved case set, a runner that calls the product's entry point (for a skill, an agent run with the skill installed), and a grader, scored over repeated runs. Its red is the baseline score measured before the behavior changes; its green is a held-out score at or above the spec's target and above the baseline outside the noise floor. Distinct from an automated test, which a deterministic assertion decides.
+_Avoid_: Benchmark, LLM test, prompt test
