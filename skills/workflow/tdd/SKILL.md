@@ -33,7 +33,9 @@ Every handed acceptance criterion gets a test. Any further test names what it
 protects: a reproduced bug, a risk in logic the criteria do not reach, or
 existing behavior the change touches. Do not write a test that can name none of
 these. A handed criterion that no automated test can prove goes back with the
-reason.
+reason. A criterion about the quality of LLM output that varies run to run is
+one of these: a test against a mocked model call proves only the code around
+the model, so test that code and hand the criterion back.
 
 ## Seams
 
