@@ -100,7 +100,10 @@
   blocks that outcome and its dependents, and returns the decision to shaping;
   neither source silently overrides the other.
 - `implement` maps every acceptance criterion of the active outcome to at
-  least one check: an automated test, runtime evidence, or both. Runtime
+  least one check: an automated test, an eval, runtime evidence, or a
+  combination. An eval proves a criterion about the quality of LLM output that
+  varies run to run; `implement` hands those criteria to `llm-evals`
+  ([testing](testing.md)). Runtime
   evidence stays owed for behavior in the running product even when a test
   also proves it. `implement` hands `tdd` the active outcome, the criteria
   to prove by automated tests, the active task's constraints and approved
@@ -111,6 +114,15 @@
   criterion it could not prove automatically with the reason. `implement`
   covers those through runtime evidence or reports them incomplete, and
   reports each criterion with its checks and evidence.
+- Approval of an eval is split in two. The spec states what good means for an
+  LLM-output criterion: the metric, the target on held-out cases, and where
+  the cases come from, so implementation cannot lower the bar. `llm-evals`
+  builds the concrete case set and grader, then pauses once before its first
+  paid run to show the cases, graded samples, run size, and estimated cost
+  for the user's approval. After approval it climbs without asking until
+  green, a plateau of three rounds inside the noise floor, or the approved
+  spend; an unreached target goes back to `implement` with the best held-out
+  score and failure causes, and the criterion stays incomplete.
   Technical uncertainty is resolved through repository evidence; only
   unresolved expected behavior or a change to the agreed product contract
   requires a user decision.

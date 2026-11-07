@@ -24,6 +24,12 @@
   `setup-issue-tracker`", or in a boundary sentence, is not a dependency.
 - Skills outside this set, such as `find-skills`, stay optional: a skill uses
   one when it is present and keeps the same outcome itself when it is not.
+- `llm-evals` carries the eval discipline it needs in its own text, distilled
+  from claude-api's `build-eval` and `hillclimb` guides, plus the red/green
+  contract and `implement` hand-back those guides lack. `claude-api` stays an
+  optional skill outside this set: when it is installed and the model under
+  test is Claude, `llm-evals` may use its runner scaffold and report builder;
+  otherwise it builds the same runner contract in the project's language.
 - `resolve-follow-ups` keeps intent, reproduction, and reporting guidance in
   its standalone skill while a bundled dispatcher owns the low-freedom
   operations whose races are costly: fetched ordering, attempt identity,
@@ -208,6 +214,11 @@ approval alone is insufficient evidence of better review.
   only for a one-skill skills.sh install, yet agents took it as the main path:
   28 of 42 PR-creating sessions used `merge`'s copied rules instead of `pr`. A
   shortened fallback also degrades silently where a stop is visible.
+- Requiring `claude-api` for `llm-evals` — it contradicts the rule that skills
+  outside this set stay optional, it skips projects on other model providers,
+  and its roughly 800 lines of interactive eval guides carry no red/green
+  contract or `implement` hand-back. Vendoring those guides whole, which their
+  Apache-2.0 license allows, was rejected for size and upstream drift.
 - A full copy of `pr`'s body guidance in `merge`, kept identical by a CI
   check — it prevents drift but keeps the long duplicate and needs
   section-comparison tooling.
