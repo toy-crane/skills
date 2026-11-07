@@ -61,3 +61,7 @@ _Avoid_: ADR, decision log, record cluster
 **Mod**:
 A Claude Code plugin whose behavior comes from a hooks module that changes Claude Code's own interface or behavior, such as a pane, a slash command, or a hook on tool calls. Lives in `mods/<name>/` and installs separately from the skills plugin.
 _Avoid_: Hook plugin, extension
+
+**Adjacent probe**:
+A deliberate misuse `implement` exercises next to a changed behavior after that behavior's acceptance criteria pass, at the same surface and through the same runtime path: an empty value, a repeated action, an action with other state still applied, an interruption. Chosen from what the change touches, not from a fixed checklist, and recorded even when the product holds. Distinct from an acceptance check, which confirms the intended path, and from the final core-loop gate, which guards the product's primary journey against regression.
+_Avoid_: Fuzzing, edge-case test, push on it
