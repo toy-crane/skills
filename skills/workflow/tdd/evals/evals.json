@@ -39,11 +39,11 @@
     },
     {
       "id": 4,
-      "prompt": "/tdd implement가 넘긴 작업이야. 진행 중인 결과는 Task 02 '주문 취소'이고, 자동 테스트로 증명할 기준은 2.1 취소 시 재고 복구, 2.2 배송 시작 후 취소 거부, 2.3 취소 알림 문구가 화면에 보임이야. 스펙 전체는 docs/specs/orders/spec.md이고 Task 03 '부분 환불'은 아직 막혀 있어.",
-      "expected_output": "The response designs from Task 02, selects the public seams itself, writes tests for 2.1 and 2.2 before the behavior and sees them fail on assertions, does not build Task 03, and hands back 2.3 as a criterion no automated test here can prove, with the reason, alongside each new test's criterion and observed failure.",
+      "prompt": "/tdd implement가 넘긴 작업이야. 진행 중인 결과는 '주문 취소'이고, 자동 테스트로 증명할 기준은 2.1 취소 시 재고 복구, 2.2 배송 시작 후 취소 거부, 2.3 취소 알림 문구가 화면에 보임이야. 스펙 전체는 docs/specs/orders/spec.md이고, 같은 spec의 다음 결과인 '부분 환불'은 아직 시작 전이야.",
+      "expected_output": "The response designs from the order-cancellation outcome, selects the public seams itself, writes tests for 2.1 and 2.2 before the behavior and sees them fail on assertions, does not build partial refunds, and hands back 2.3 as a criterion no automated test here can prove, with the reason, alongside each new test's criterion and observed failure.",
       "files": [],
       "expectations": [
-        "It builds only Task 02 and does not implement the blocked Task 03.",
+        "It builds only order cancellation and does not implement the later partial-refund outcome.",
         "It selects the public test seams itself.",
         "Tests for 2.1 and 2.2 are written before the behavior and seen failing on assertions.",
         "It writes no test that names neither a criterion nor a protected bug, risk, or touched existing behavior.",
