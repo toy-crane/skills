@@ -18,9 +18,9 @@ silently choosing one. Use current terms in test names and public interfaces.
 ## Start from the behavior
 
 When `implement` hands over work, it names the active outcome, the acceptance
-criteria to prove by automated tests, the active task's constraints and
-approved references, and the spec as design context. Build only that outcome;
-the spec does not authorize later or blocked outcomes. Invoked on its own,
+criteria to prove by automated tests, the approved references that apply to
+it, and the spec as design context. Build only that outcome; the spec does not
+authorize later outcomes. Invoked on its own,
 derive the expected behavior from the user's request, and for a bug, from the
 reported wrong behavior.
 
