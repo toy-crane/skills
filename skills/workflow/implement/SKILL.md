@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Implement or resume settled work from a selected spec folder as one handoff bundle. Use when the user provides a `docs/specs/SLUG/` folder and wants its settled spec or approved tasks completed in the current checkout with verification, one completed and triaged automated code review, and a runnable product handoff when the repository exposes one through a local server.
+description: Implement or resume settled work from one selected spec folder as one handoff bundle. Use when the user provides a `docs/specs/SLUG/` folder and wants its settled spec completed in the current checkout with verification, one completed and triaged automated code review, and a runnable product handoff when the repository exposes one through a local server.
 ---
 
 # Implement
@@ -14,14 +14,14 @@ package manager runner where it pins one.
 
 ## Claim the folder when a tracker coordinates it
 
-The input is always the spec folder. When the repository's `AGENTS.md` or
+The input is always one spec folder. When the repository's `AGENTS.md` or
 `CLAUDE.md` carries an `## Issue tracker` section, read both files and use the
 first found and its linked detailed convention before finding this folder's
 issue. An `Issue: <tracker>:<id>` line in `spec.md` names the folder's one
 issue; fetch it by that ID and never search the tracker by title. Existing
 inline conventions remain valid. Use the convention's ID form, tool, and claim
 operation without requiring `setup-issue-tracker` to be installed.
-Claiming is the first write of the run, ahead of source, task, or spec edits.
+Claiming is the first write of the run, ahead of source or spec edits.
 Check the convention's active-work signal before claiming: an issue already in
 progress requires the user's explicit request to resume, even when its assignee
 is the current account. Assign eligible work to the current tracker account and
@@ -39,13 +39,13 @@ repository information and is written whether or not a tracker exists.
 ## Load the current handoff
 
 Treat the selected spec folder as one handoff bundle anchored by `spec.md`.
-Before deriving an implementation approach or changing source, identify and
-load its current required sources: the spec; every active unfinished task; any
-completed or superseded task implicated by current evidence; project decision
-contracts explicitly linked by the spec or active tasks, plus any other current
-decision contract implicated by repository evidence; and every prototype,
-screen, state, or other reference artifact that the spec or an active task
-identifies as an approved or selected implementation reference. Read textual
+Each run takes exactly one folder; when several are named, ask which one to
+run, because the order of folders belongs to whoever starts each run. Before
+deriving an implementation approach or changing source, identify and load its
+current required sources: the spec; project decision contracts it explicitly
+links, plus any other current decision contract implicated by repository
+evidence; and every prototype, screen, state, or other reference artifact that
+the spec identifies as an approved or selected implementation reference. Read textual
 sources and render or otherwise inspect visual artifacts so their operative
 content is available before work starts. Presence in the folder alone does not
 establish approval. An approved visual reference is a required, complementary
@@ -55,27 +55,18 @@ them, record the exact sources and affected behavior or screen-state coordinate,
 and keep that outcome and its dependents blocked for shaping instead of choosing
 a winner.
 
-Non-superseded approved task files form the bundle's current shallow delivery
-map: `pending`, `in-progress`, and `blocked` tasks are active unfinished work,
-while `completed` tasks are current proof. A `superseded` task is inactive
-recovery history; exclude it from the frontier, blockers, reconciliation, and
-completion gates, but inspect it when current evidence implicates its prior
-implementation. If an active task still names superseded history as a blocker,
-reconcile that stale reference before continuing.
-
 Before selecting or starting each outcome, and again after an interruption,
 reconstruct current truth from the required handoff sources, code, Git state and
 current diff, and verification evidence. Repository evidence outranks
 remembered conversation; rerun verification that predates the relevant code.
 Preserve completed outcomes whose current evidence still passes, and confirm
-ownership before absorbing ambiguous dirty changes. Then work sequentially from
-the current unblocked frontier; when no task files exist, implement `spec.md`
-directly.
+ownership before absorbing ambiguous dirty changes. Then implement `spec.md`
+directly, one outcome at a time.
 
 Before changing source for an outcome, check the spec against what the
 repository has done since. Compare its assumptions, settled constraints, and
 acceptance criteria with the current code and the Git history since the spec
-folder's last commit; your own code-plus-task checkpoints advance that
+folder's last commit; your own commits advance that
 baseline, so each check covers only what happened since the previous outcome.
 A mismatch that would change an approved outcome, acceptance criterion,
 off-limits area, or other product constraint stops that outcome before any
@@ -88,7 +79,7 @@ never read a sibling spec folder. A stale spec caught here
 costs nothing, while the same discovery made mid-implementation discards work
 already done.
 
-Derive only the active outcome's technical approach just in time. A task
+Derive only the active outcome's technical approach just in time. An outcome
 boundary requires this reload; it does not by itself require a new session,
 worker, or reviewer. Keep the spec folder as the single handoff instead of
 adding a roadmap, execution ledger, durable implementation plan, or run-state
@@ -122,9 +113,9 @@ target comes back with the best score and failure causes, and that criterion
 stays incomplete. Report each eval criterion with its baseline and final
 scores as evidence. Behavior in the running product
 still owes runtime evidence when a test also proves it. Hand the `tdd` skill
-the active outcome, the criteria to prove by automated tests, the active
-task's constraints and approved references, and `spec.md` as design context;
-the handoff does not authorize later or blocked outcomes. `tdd` selects the
+the active outcome, the criteria to prove by automated tests, the approved
+references that apply to it, and `spec.md` as design context; the handoff does
+not authorize later outcomes. `tdd` selects the
 public test seams and hands back the code change, each new test tied to its
 criterion or named reason with the failing assertion it was seen to produce,
 and any handed criterion it could not prove automatically with the reason.
@@ -177,28 +168,17 @@ review; the final gate after review adds no probes.
 Complete the outcome and its acceptance criteria with focused verification.
 Before marking it complete or starting dependent work, reconcile the observed
 behavior with every required handoff source and applicable acceptance or
-reference criterion. This gate also applies when implementing `spec.md` without
-task files.
+reference criterion.
 
-For a verified discovery that preserves the product contract:
-
-- Correct the active outcome's disposable technical approach and any recorded
-  technical assumption.
-- Persist actual downstream effects in affected active unfinished task
-  boundaries, order, blockers, task-specific constraints, verification, or
-  observably equivalent task-acceptance wording. Record concise revision
-  evidence and preserve unaffected task contracts.
-
-When tasks exist, record current status and whichever verification, blocker, or
-revision evidence applies. Where commits are expected, commit code, tests, and
-the task update as one meaningful checkpoint. Run only task-declared
-intermediate review checkpoints, each one pass over its declared scope and risk,
-triaged by the rules below; reconciliation adds no checkpoint.
+For a verified discovery that preserves the product contract, correct the
+active outcome's disposable technical approach and any recorded technical
+assumption, and let it inform the approach of later outcomes when you derive
+them. Where commits are expected, commit each verified outcome's code and tests
+together. Reconciliation adds no review pass.
 
 ## Preserve authority and durable discoveries
 
-Implementation authority covers the technical path and active unfinished task
-map only while the approved product contract stays intact. When a discovery
+Implementation authority covers the technical path only while the approved product contract stays intact. When a discovery
 would change an approved outcome, scope, observable spec acceptance criterion,
 off-limits area, or other product constraint, preserve the current artifacts
 and evidence, leave the affected outcome and its dependents blocked, and stop
@@ -208,12 +188,12 @@ than treating either as a silent override. Present the exact decision for the
 user to settle through shaping.
 
 If later code, integration, verification, or review invalidates a completed
-task, preserve its prior evidence and return it to `in-progress` or `blocked`.
-Keep dependent and final work blocked until that task's acceptance criteria and
-focused verification pass again. `completed` means current proof, not historical
+outcome, preserve its prior evidence and treat it as unfinished again. Keep
+later and final work blocked until that outcome's acceptance criteria and
+focused verification pass again. Complete means current proof, not historical
 success.
 
-Resolve in-scope discrepancies and affected tasks in the current work. Route a
+Resolve in-scope discrepancies in the current work. Route a
 workaround whose root cause remains open, or an evidenced out-of-scope defect,
 through `project-knowledge` at discovery time, handing it the symptom, observed
 evidence, suspected cause, what was tried, and proposed next step, and keep
@@ -247,7 +227,7 @@ select. Take the harness's standard mode when nothing argues either way:
 `code-review medium` in Claude Code, while Codex has no dial. Wherever the
 reviewer accepts context, give it the required handoff sources or their
 repository paths: the spec's approved scope, off-limits areas and remaining
-risks, the active task contract, linked project decisions, any approved
+risks, linked project decisions, any approved
 reference artifacts whose criteria apply to the diff, and the focused
 verification evidence already collected. Check the reviewer's
 reported scope against both that handoff and the diff you meant to review.
@@ -275,15 +255,14 @@ When review cannot finish because of permissions, a user-only or absent
 reviewer, or an unresolved execution failure, keep overall completion pending.
 Preserve verified outcomes, provide their evidence and runnable handoff, and
 name the exact blocker and next required action. Offer a user command only
-when the active harness confirms it. For a declared intermediate checkpoint,
-dependent work also waits for its review or explicit waiver.
+when the active harness confirms it. A folder whose `Blocked by:` line names
+this one waits for this review or its explicit waiver.
 
 Repair a finding only when it breaks an approved acceptance criterion, or is a
 defect or regression you confirm by reproducing it on a path ordinary use
 reaches; a reviewer's assertion is not that confirmation. Rerun the affected
-verification after repairs. Send no scope through the reviewer twice, repairs
-included. Each scope gets one pass: a
-declared checkpoint's cumulative scope, then the whole diff. Point anyone asking
+verification after repairs. Send the diff through the reviewer once, repairs
+included. Point anyone asking
 for another look at a confirmed user command instead of invoking the reviewer
 again.
 
@@ -319,7 +298,7 @@ prerequisite.
 
 Completion needs every required handoff source to have been inspected, every
 applicable acceptance and approved-reference criterion to be reconciled with the
-executable revision being handed off, each required review to have completed or
+executable revision being handed off, the whole-diff review to have completed or
 been explicitly waived by the user, and the must-fix findings to be repaired and
 reverified. An uninspected required source or uncompared applicable criterion
 keeps the result incomplete. A completed review may leave recorded findings; zero
