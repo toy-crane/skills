@@ -67,11 +67,16 @@
   outcome that first needs it. Outcomes that pass that test still stay in one
   folder unless one is wanted earlier than the rest, a wait outside the
   repository such as a legal review or store release separates them, a later
-  outcome builds on a foundation that needs its own review before a defect
-  compounds through it, or they are unrelated changes with no reason to share
-  a pull request. Operations or states inside one workflow, technical layers,
-  and session size never divide a folder. Work done only outside the
-  repository never becomes a folder: preparation goes to
+  outcome builds on a foundation whose material risk tests cannot settle, such
+  as security, permissions, a data migration, or an external contract, so it
+  needs its own review before a defect compounds through it, or they are
+  unrelated changes with no reason to share a pull request. Each reason must be
+  a fact of the change that the user stated or the repository shows. Dependence
+  alone never separates outcomes, nor does a risk inferred from the kind of
+  work or the general value of smaller reviews. Operations or states inside one
+  workflow, technical layers, including a server, API, or data layer only the
+  rest of the change uses, and session size never divide a folder. Work done
+  only outside the repository never becomes a folder: preparation goes to
   `Setup before implementation`, and actions after release stay in the spec.
   Dependent folders carry `Blocked by: docs/specs/<other>/` lines.
 - `implement` receives one selected `docs/specs/<slug>/` folder as a single
@@ -764,6 +769,16 @@ state keep automation reviewable without turning follow-up files into a queue.
   workflow made retrieval explicit.
 
 ## Evidence worth preserving
+
+- On 2026-11-08 a folder-division eval of `shape-idea` (claude-opus-5-5, ten
+  held-out cases run twice: three real divisions, six former
+  `split-into-tasks` cases, one outside-work case) scored 16/20 exact with the
+  rule as first settled and three over-divisions. Saying that dependence alone
+  never separates raised it to 18/20; also excluding inferred risk and
+  technical layers kept 18/20 at 9/10 per repetition with one over-division,
+  on the todo-api case, where the judge counted an API addition placed with
+  the UI that first needs it as split across folders. This narrowed the
+  foundation reason to a stated material risk.
 
 - On 2026-11-07, two `/verify` runs (Claude Code 2.1.319, claude-opus-5-5) on
   a Todo title-search commit each passed every intended check, cost about
