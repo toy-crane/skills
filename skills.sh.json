@@ -9,7 +9,6 @@
         "define-product",
         "shape-idea",
         "build-prototype",
-        "split-into-tasks",
         "implement",
         "tdd",
         "add-stack-context",

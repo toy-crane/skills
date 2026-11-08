@@ -3,7 +3,7 @@
 [![skills.sh](https://skills.sh/b/toy-crane/skills)](https://skills.sh/toy-crane/skills)
 
 A composable, model-agnostic set of skills for product definition, shaping,
-prototyping, task splitting, implementation, runtime verification, human
+prototyping, implementation, runtime verification, human
 review, project knowledge, verified follow-up resolution, test-first
 development, project skill updates with cross-client custom-agent
 synchronization, and safe Git delivery. Install selected skills or the complete plugin.
@@ -99,15 +99,13 @@ flowchart LR
     CONFIRM -- "yes" --> PRODUCT
     PRODUCT -. "read when present" .-> SI["shape-idea<br/>(one work unit)"]
     SI --> BP["build-prototype<br/>(judge it by using it)"]
-    SI --> SPEC[/spec folder/]
+    SI --> SPEC[/"spec folders<br/>(one per outcome that can land alone)"/]
     BP --> SPEC
-    SPEC --> ST["split-into-tasks<br/>(shallow outcome map)"]
-    SPEC --> IM["implement<br/>(spec folder)"]
-    ST --> IM
+    SPEC --> IM["implement<br/>(one folder per run)"]
     IM --> ONE["build one outcome"]
     ONE --> CHECK["check real behavior"]
-    CHECK --> MATCH{"still matches the spec<br/>and remaining tasks?"}
-    MATCH -- "technical facts changed" --> UPDATE["update active tasks"]
+    CHECK --> MATCH{"still matches<br/>the spec?"}
+    MATCH -- "technical facts changed" --> UPDATE["correct the technical approach"]
     UPDATE --> ONE
     MATCH -- "work-unit promise changed" --> SI
     MATCH -- "app premise changed" --> DP
@@ -153,26 +151,27 @@ criteria, settled constraints and rationale, assumptions, off-limits areas and
 reasons, deferrals, and risks. `build-prototype` can start from the current
 conversation alone; when a whole interface is approved and consequential
 non-visual behavior is settled or explicitly deferred, it creates or updates
-that same contract and preserves `prototype.html` beside it. Use
-`split-into-tasks` only
-when the spec contains outcomes that should be delivered separately. It also
-creates the complete shallow outcome map without predicting files, functions,
-code structure, or a step-by-step implementation sequence. It marks only the
-few intermediate reviews justified by material or downstream risk.
+that same contract and preserves `prototype.html` beside it.
 
-Then pass the spec folder to `implement`. Before each outcome, it reloads the
-current spec, active unfinished tasks, and any completed or superseded task
-implicated by current evidence, plus code, Git state, and verification evidence,
-then plans only that outcome in detail. After focused verification, it checks
-the observed result against the product contract and every active unfinished
-task. It may update technical assumptions and affected active tasks when the
+One coherent workflow stays one spec. When a shaped change has several
+outcomes, `shape-idea` proposes the whole division at once and writes one spec
+folder per outcome only after you approve it. A folder holds an outcome that
+could land on the default branch and stay there even if the rest never
+arrives; outcomes that pass that test still share a folder unless one is
+wanted earlier, a wait outside the repository separates them, a later outcome
+builds on a foundation that needs its own review, or they are unrelated. A
+folder that must wait for another carries a `Blocked by: docs/specs/<other>/`
+line, and you, a tracker, or a runner picks which folder runs next.
+
+Then pass one spec folder to `implement`. Before each outcome, it reloads the
+current spec, code, Git state, and verification evidence, then plans only that
+outcome in detail. After focused verification, it checks the observed result
+against the product contract. It may correct technical assumptions when the
 approved product behavior stays the same. If an approved outcome, observable
 acceptance criterion, scope, or other product constraint must change, it stops
-and returns that exact decision to shaping. A task marked `completed` is
-reopened if later evidence shows its criteria no longer pass. When an approved
-breakdown replaces historically completed work, its still-required obligations
-move to the replacement; the old task remains only as inactive `superseded`
-evidence and cannot block or re-enter the delivery frontier.
+and returns that exact decision to shaping. An outcome is reopened if later
+evidence shows its criteria no longer pass. Each folder ends with its own
+review, so a folder blocked by another starts only after that review.
 
 After every outcome passes that check, the current harness's automated
 code-review process reads the integrated result once against the selected spec
@@ -210,7 +209,7 @@ and final verification of the repaired revision without a second review.
 Current-scope gaps stay in implementation. A workaround with an open root cause
 or an evidenced out-of-scope defect becomes a durable follow-up.
 
-Pass the folder itself, not an individual spec or task file.
+Pass the folder itself, not the `spec.md` file inside it.
 
 Claude Code:
 
@@ -229,8 +228,7 @@ The handoff lives at one stable path:
 ```text
 docs/specs/checkout/
 ├── spec.md
-├── prototype.html      # optional
-└── tasks/              # optional approved task files
+└── prototype.html      # optional
 ```
 
 Invoke the same folder again after an interruption. `implement` reconstructs
@@ -246,28 +244,21 @@ new session or a closing-message handoff is not required for correctness.
 - **[shape-idea](./skills/workflow/shape-idea/SKILL.md)**: Clarify a chosen problem and
   direction through correctable drafts, project evidence, and rendered UI
   variants. Maintain project terms and write the stable product contract that
-  later task splitting and implementation must preserve.
+  implementation must preserve. Divide a change with several outcomes into
+  linked spec folders after you approve the division.
 - **[build-prototype](./skills/workflow/build-prototype/SKILL.md)**: Build every screen in
   one dummy-data HTML file using the project's design system, or the shell's
   minimal style when none exists. Review the rendered screens and preserve the
   approved prototype beside the same product contract used by shaping.
-- **[split-into-tasks](./skills/workflow/split-into-tasks/SKILL.md)**: Split an existing
-  spec into the complete shallow map of the fewest approved, independently
-  deliverable vertical tasks, without predicting code-level implementation.
-  Include explicit blockers, acceptance criteria, focused verification, minimal
-  state, and only risk-justified intermediate review checkpoints, each one
-  bounded review pass.
-  Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
 - **[babysit-specs](./skills/workflow/babysit-specs/SKILL.md)**: Bring queued spec
   folders back in line with what shipped since their last commit. Fix the
   staleness that preserves the approved meaning as an overridable assumption,
-  ask one question about each point that would change it, and hand affected
-  tasks, drifted prototypes, and retirement candidates to their owners without
-  editing product source.
-- **[implement](./skills/workflow/implement/SKILL.md)**: Implement an approved spec
-  folder one outcome at a time. Reload repository evidence before each outcome,
-  reconcile verified behavior with the product contract and active unfinished
-  tasks, ignore superseded history unless current evidence implicates it, reopen
+  ask one question about each point that would change it, and hand folders
+  that need re-dividing, drifted prototypes, and retirement candidates to
+  their owners without editing product source.
+- **[implement](./skills/workflow/implement/SKILL.md)**: Implement one approved spec
+  folder per run, one outcome at a time. Reload repository evidence before each
+  outcome, reconcile verified behavior with the product contract, reopen
   invalidated work, and return to shaping when a product decision must change.
   Then finish with full verification and one completed, triaged automated
   review, unless explicitly waived by the user. Recover review execution
