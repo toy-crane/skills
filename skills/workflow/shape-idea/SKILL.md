@@ -17,7 +17,7 @@ Shaping settles decisions; implementation applies them. Do not change product
 source, configuration, or dependencies, even for an edit you plan to revert. A
 changed line mixes alignment with delivery and leaves unreviewed code behind.
 
-Write only to the spec folder, glossary, decision contracts, the root
+Write only to spec folders, the glossary, decision contracts, the root
 `DESIGN.md` and its read route that recording a screen decision updates, and
 vendor agent context. Run every experiment, benchmark, and preview in a scratch directory
 outside the working tree. If no experiment can answer a question, record an
@@ -157,6 +157,50 @@ rules, thresholds, and screen compositions in that source instead of copying
 them back into a constraint the spec states; keep the links beside the
 contract's fields rather than turning them into one.
 
+## Divide the change into spec folders
+
+Before writing, decide how many spec folders the shaped change needs. Most
+changes are one folder. Each folder costs its own implementation run, review,
+and pull request, so divide only where this rule asks for it.
+
+A folder holds an outcome that could land on the default branch and stay there
+even if the rest never arrives. Preparation useful only to a later outcome, or
+a part that would regress current behavior on its own, joins the folder of the
+outcome that first needs it. Outcomes that pass that test still share one
+folder unless one of these separates them:
+
+- one is wanted earlier than the rest;
+- a wait outside the repository, such as a legal review or a store release,
+  stands between them;
+- a later outcome builds on a foundation that needs its own review before a
+  defect compounds through it, because the foundation carries a material risk
+  that tests cannot settle, such as security, permissions, a data migration,
+  or an external contract;
+- they are unrelated changes with no reason to share a pull request.
+
+Each reason must be a fact of this change that the user stated or the
+repository shows. Dependence alone is not one: an outcome that needs an
+earlier one usually shares its folder, and the general value of smaller
+reviews never separates outcomes. A risk you infer from the kind of work, such
+as authentication or a call to an outside provider, is not a stated fact. A
+server, API, or data layer that only the rest of this change uses is a
+technical layer, not an outcome that lands alone.
+
+Operations or states inside one workflow, technical layers, and session size
+never divide a folder. Work done only outside the repository never becomes a
+folder: preparation goes under `Setup before implementation` of the folder
+that needs it, and actions after release stay in the spec of the outcome they
+follow.
+
+When the rule yields more than one folder, show the whole division at once
+before writing anything: each folder's slug, the outcomes it delivers, why it
+stands apart, and the folders it waits on. Write the folders only after the
+user approves that division; one folder needs no separate approval. Give the
+folders a shared slug prefix so they read as one group. Make each folder a
+complete product contract and restate in it the shared constraints it needs,
+because implementation reads one folder at a time. A folder that must wait for
+another of them carries a `Blocked by:` line for each folder it waits on.
+
 ## Make the shaped change judgeable
 
 Close by summarizing the complete product contract and making the approved
@@ -170,7 +214,8 @@ attention to consequences that are easy to miss when reviewing only the
 surface being changed.
 
 List the setup items from the spec in the close-out so the user can finish
-them before implementation starts.
+them before implementation starts. When you wrote several folders, list them
+with the order their `Blocked by:` lines set.
 
 Distinguish the intended experience from implemented evidence, keep the
 close-out consistent with the product contract, and do not prompt for another
