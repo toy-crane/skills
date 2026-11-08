@@ -197,9 +197,7 @@
   code-review process over the entire implementation diff against the selected
   spec and acceptance criteria, covering interactions between outcomes and
   omitted requirements. It stays inside `implement` because must-fix findings
-  return to implementation; it neither invokes nor replaces the explicitly
-  requested human judgment owned by `human-review`. Because each folder runs
-  separately, this pass also
+  return to implementation. Because each folder runs separately, this pass also
   finishes before any folder that names it in `Blocked by:` starts, which is
   what an intermediate review between dependent outcomes used to buy.
 - The review depth is `implement`'s judgment for the change at hand, weighing
@@ -440,7 +438,7 @@
   repository-supported local server. Preserve other checkouts and unrelated
   processes, and report an exact launch command and blocker when the environment
   cannot provide a reachable address. Server access is evidence delivery, not
-  human approval or an automatic `human-review` invocation.
+  human approval.
 - A harness-specific review command may be named only when the active
   installation confirms it for that reviewer. Such guidance remains conditional
   and preserves the portable completion contract: deliver verified outcomes and
@@ -528,8 +526,7 @@ prevents a return to the zero-findings loop. An execution failure supplies no
 review evidence, so verified implementation and pending review stay distinct.
 
 The runnable handoff lets the user inspect the verified implementation without
-turning server mechanics into a separate pipeline phase. Keeping the outcome in
-`implement` also keeps `human-review` focused on unresolved human judgment.
+turning server mechanics into a separate pipeline phase.
 
 Specialized runtime-verification skills own framework-specific observation
 loops, while `implement` owns their selection and the completion gates that

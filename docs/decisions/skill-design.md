@@ -80,60 +80,10 @@
   preserves dirty work rather than silently committing, stashing, or discarding
   it. PR and merge requests authorize the in-scope commits needed to complete
   their larger outcomes.
-- `human-review` helps the human understand AI-authored repository work, inspect
-  actual results and supporting evidence, and independently examine assumptions
-  or implementation choices, including those the AI considers settled. Human
-  understanding is a central review outcome; resolving open product decisions
-  is one possible result. It activates when the user explicitly asks to
-  understand and inspect the work; completion, size, or consequence alone does
-  not trigger an automatic handoff. AI handles mechanically checkable defects
-  and makes the behavior, mechanisms, and consequences needed for human
-  inspection understandable. The zero-to-three active-question limit applies
-  to unresolved product decisions, not to the scope of inspection or discussion
-  needed to understand the work.
-- `human-review` reduces the effort of reconstructing context, finding evidence,
-  and connecting changes so the human can spend attention on understanding and
-  judgment across sessions. On entry, reconnect the work to the request and
-  settled intent, and distinguish what changed since the human's known prior
-  context. Present a coherent behavior with its before-and-after relationship
-  and supporting evidence, while keeping its place in the whole change visible.
-  Let the human explore beyond the AI's suggested focus and adjust depth to
-  unfamiliar parts. Use questions at consequential assumptions or boundaries
-  rather than requiring an acknowledgment after every explanation.
-- A review that is interrupted preserves the inspected scope, open questions,
-  and next useful action. When the underlying change advances, identify which
-  prior observations need revisiting. Keep inspected scope separate from
-  acceptance, and derive prior understanding or acceptance only from what the
-  human actually expressed. Evaluate the workflow through the human's ability
-  to explain behavior, notice unflagged assumptions, and resume after a switch,
-  alongside the effort it takes to review.
-- Before `human-review` compresses a change, it accounts for every changed
-  behavior: what to explain, what needs a product decision, and any confirmed
-  defect. Separately record what was observed, inferred from source, or remains
-  unverified. Important choices and consequences left open by the request or
-  project decisions remain unresolved. The complete list of changes stays
-  accessible; release blockers and important unknowns remain visible in the
-  overview.
-  This fixed check prevents compression from making an omitted change invisible.
-- A result labeled observed must come from the named change in a real runnable
-  environment and retain its change reference, route or command, and environment.
-  A mock or intended UI cannot stand in for the product result. Missing evidence
-  alone does not become a human question. When more than three human questions
-  remain, the current surface names every deferred decision and brings them
-  forward as earlier questions are resolved.
-- Browser verification completes the temporary review surface, not the product
-  change. Human choices become resolved only through an explicit conversational
-  response; the temporary surface is not a canonical project decision record.
-- `human-review` chooses the smallest useful representation. Simple reviews
-  can stay in conversation; comparison, navigation, or continued review may
-  warrant HTML. Its template keeps behavior explanations available even when no
-  product decision is open. Use concrete actions and outcomes in instructions
-  and visible labels, keeping necessary technical names in context.
-- `build-prototype` and HTML output from `human-review` use the same
-  host-independent handoff: run the finished HTML using a method supported by
-  the current harness and share an address the user can open. This delivery
-  contract is separate from browser verification and each skill carries it
-  directly.
+- `build-prototype`'s HTML output uses a host-independent handoff: run the
+  finished HTML using a method supported by the current harness and share an
+  address the user can open. This delivery contract is separate from browser
+  verification and the skill carries it directly.
 - `implement` requires one completed and triaged automated review, unless the
   user explicitly waives it. Failed execution supplies no review evidence.
   It also owns the runnable product handoff after its acceptance criteria pass,
@@ -142,8 +92,8 @@
   the actual result through a user-reviewable local server, run and verify the
   changed routes and states, share an address, and keep the current checkout's
   server available until review finishes or later delivery cleanup, without
-  disrupting another checkout or unrelated process. This access is not
-  `human-review` and does not imply human approval.
+  disrupting another checkout or unrelated process. This access does not
+  imply human approval.
 - A skill that drives an external CLI takes its runner from the target
   project's package manager. `update-project-skills` runs the `skills.sh` CLI
   as `<runner> skills@latest`, and the Expo skills name `expo run:ios` and
@@ -174,25 +124,6 @@ constraint tied to an observed failure or project-specific truth.
 Positive direction keeps attention on the result the agent must produce.
 Unnecessary prohibitions narrow useful judgment, duplicate harness policy, and
 make a skill brittle across capable models.
-
-AI output can grow faster than human review capacity. Prioritizing API, database,
-UI, or another layer categorically misses both harmless changes in a sensitive
-layer and consequential commitments elsewhere. Human review needs enough
-understanding of the work to uncover mistaken assumptions and mismatches with
-intent, including ones the AI did not flag. The user reported granting approval
-without understanding the work. Limiting the review to AI-selected unresolved
-decisions can leave that failure intact even when the user explicitly agrees.
-Actual results and evidence support this understanding as well as decisions
-about product intent, local context, and acceptable risk.
-
-The user switches between AI work sessions and reports that reconstructing
-context consumes attention and lowers review quality. The review therefore
-needs continuity as well as an understandable explanation. Research on
-[programming task resumption](https://www.microsoft.com/en-us/research/publication/evaluating-cues-for-resuming-interrupted-programming-tasks/)
-and [the cost of verifying AI predictions](https://arxiv.org/html/2212.06823v2)
-motivates this direction; the resulting multi-session review experience still
-needs evaluation with the user on actual changes. Easier reading or an explicit
-approval alone is insufficient evidence of better review.
 
 ## Reconsider when
 
@@ -231,18 +162,16 @@ approval alone is insufficient evidence of better review.
   the completion gate.
 - Compressing instructions into aphorisms — short text with floating referents
   can lose executable meaning even when its argument is correct.
-- Exhaustive diff summaries, review-time estimates, severity codes, and
-  layer-based review queues for `human-review` — they spend the limited attention
-  the skill exists to protect without making behavior, mechanisms, or
-  consequences easier for the human to understand and inspect.
+
+- Keeping `human-review` as a published skill — PR bodies already show
+  before-and-after results, reasons, and evidence separated into observed,
+  inferred, and unverified ([pr-descriptions](pr-descriptions.md)), and
+  `explain-visually` explains what the human does not follow. Its only unique
+  part was resuming a review across sessions, used in about ten sessions
+  against 290 for `implement`, so the user retired it without a new home.
 
 ## Evidence worth preserving
 
-- Executing the human-review Todo fixture showed that clearing writes storage
-  but reloading restores the hardcoded list. Its old evaluation expected local
-  persistence and irreversible clearing without establishing either. The
-  revised case requires the reload observation and keeps the demonstrated
-  defect separate from the choice about undo behavior.
 - A trigger eval showed the phase-based `project-knowledge` description missing
   all plan-mode decision queries; activity-based wording improved routing while
   remaining imperfect, so trigger prompts stay in the repository.
@@ -261,31 +190,6 @@ approval alone is insufficient evidence of better review.
   but retained the over-rendering brake. Later renderer testing required fresh
   held-out controls because each revised clause fitted the prompt that produced
   it.
-- A fresh `human-review` audit found a fixed five-step queue duplicating the
-  template contract and conflicting with this file's situational-method rule, so
-  the skill now states selection constraints while the asset owns presentation
-  detail. A separate stress test found that a short surface could hide omitted
-  commitments and that a hand-drawn UI could be mistaken for evidence, producing
-  the coverage and provenance rules above.
-- An initial forward run left template placeholders while claiming browser
-  verification, so the asset now renders a blocking incomplete-template banner
-  until its guard is removed. Held-out Todo, API and invoice runs then preserved
-  real provenance, kept mechanical release blockers out of the human queue, and
-  produced zero to two human questions without leaving template residue.
-- A zero-question control later called its review complete while browser
-  verification was unavailable. Browser verification is therefore an explicit
-  completion gate: an unchecked surface remains a draft. A fresh isolated
-  control found an installed headless browser, verified overview, evidence,
-  disclosures and a narrow viewport, and only then reported completion.
-- A later section-by-section `human-review` audit separated review disposition
-  from evidence status, treated specification silence as unresolved, and defined
-  three questions as the active set rather than the total scope. Fresh controls
-  kept a text-only summary out of the visual workflow, separated two newly
-  introduced account-deactivation policies from a mechanical blocker and
-  unverified production evidence, and presented five decisions as three active
-  questions plus two named deferred commitments. The account control passed
-  browser verification; the five-question control correctly remained an
-  unverified draft when browser verification did not finish.
 - Two held-out forward runs exercised the revised `implement` review text on a
   fixture whose implementation carried two planted defects. Given six findings
   of mixed kinds, the run repaired only the acceptance-criterion break and the
@@ -317,7 +221,8 @@ approval alone is insufficient evidence of better review.
   reviewed as the payments module was separated from an ordinary out-of-scope
   finding. A conclusion without its reason survives compression as text and not
   as behavior.
-- Baseline `build-prototype` and `human-review` controls created and sometimes
+- Baseline `build-prototype` controls, and those of a since-retired review
+  skill, created and sometimes
   browser-verified their temporary HTML while still returning only a file path,
   offering to run it later, or never reaching a usable link. Isolated post-build
   controls showed that a single host-independent outcome sentence makes both
