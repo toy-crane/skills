@@ -36,7 +36,8 @@
   that would change an approved outcome, criterion, constraint, off-limits
   area, or deferred point is settled by one question with a recommendation. It
   rewrites `spec.md` in place with no change log, never edits product source,
-  names affected task files rather than editing them, routes prototype drift to
+  names a folder whose revised outcomes no longer fit the folder-division rule
+  for `shape-idea` to re-divide, routes prototype drift to
   `build-prototype` or records it as a risk, and reports a fully delivered spec
   as a retirement candidate instead of deleting it.
 - `maintain-project-context` periodically reconciles the durable context left by
@@ -58,28 +59,35 @@
   that surface is settled or explicitly deferred.
 - Implementation planning is just-in-time against current code. There is no
   separate plan-writing skill or durable `plan.md` lifecycle.
-- A spec with multiple outcomes that should be delivered separately is split by
-  `split-into-tasks` into the fewest independently usable vertical tasks with
-  explicit blockers. The split also declares only the intermediate review
-  checkpoints justified by downstream or material risk. Together the tasks are
-  the work unit's shallow roadmap: non-superseded tasks preserve current
-  outcomes, acceptance criteria, blockers, and task-specific constraints
-  without predicting file-level implementation work.
+- A shaped change with several outcomes is divided into spec folders by
+  `shape-idea`, not into task files inside one folder. A folder holds an
+  outcome that could land on the default branch and stay there even if the
+  rest never arrives. Preparation useful only to a later outcome, or a part
+  that would regress current behavior on its own, joins the folder of the
+  outcome that first needs it. Outcomes that pass that test still stay in one
+  folder unless one is wanted earlier than the rest, a wait outside the
+  repository such as a legal review or store release separates them, a later
+  outcome builds on a foundation that needs its own review before a defect
+  compounds through it, or they are unrelated changes with no reason to share
+  a pull request. Operations or states inside one workflow, technical layers,
+  and session size never divide a folder. Work done only outside the
+  repository never becomes a folder: preparation goes to
+  `Setup before implementation`, and actions after release stay in the spec.
+  Dependent folders carry `Blocked by: docs/specs/<other>/` lines.
 - `implement` receives one selected `docs/specs/<slug>/` folder as a single
   handoff bundle anchored by `spec.md`. Before implementation it loads the spec,
-  active tasks, implicated task history, explicitly linked decision contracts,
+  explicitly linked decision contracts,
   any other decision contract implicated by repository evidence, and every
   prototype or screen-state artifact the handoff identifies as an approved or
   selected implementation reference. It reads textual sources and renders or
   otherwise inspects visual artifacts; mere presence in the folder does not
-  establish approval. When approved task files
-  exist, it implements them sequentially in dependency order; otherwise it
-  implements `spec.md` directly. It derives the active outcome's implementation
+  establish approval. It implements `spec.md` directly, one folder per run,
+  and derives the active outcome's implementation
   approach just in time from the current repository state.
 - Before changing source for an outcome, `implement` compares the spec's
   assumptions, settled constraints, and acceptance criteria with the current
   code and the Git history since the spec folder's last commit; its own
-  code-plus-task checkpoints advance that baseline. A mismatch that would
+  commits advance that baseline. A mismatch that would
   change an approved outcome, acceptance criterion, off-limits area, or product
   constraint stops that outcome before any source change, names the stale point
   and its evidence, and routes it to `babysit-specs` for that folder alone.
@@ -88,9 +96,7 @@
   folders.
 - The spec-writing skills own the producer side of that loading rule. A spec
   links the approved prototype and the decision contracts its work unit depends
-  on; a task adds only the references scoped to that task, the prototype screens
-  and states it delivers and a contract only it depends on, which leaves the
-  spec's own links and `spec.md` out of it. Linked sources are pointed at
+  on. Linked sources are pointed at
   rather than restated, and a link names a complementary source beside the
   product contract rather than adding a field to it.
 - Explicit product contracts and approved references complement one another:
@@ -106,9 +112,8 @@
   ([testing](testing.md)). Runtime
   evidence stays owed for behavior in the running product even when a test
   also proves it. `implement` hands `tdd` the active outcome, the criteria
-  to prove by automated tests, the active task's constraints and approved
-  references, and the spec as design context; it is not permission to build
-  later or blocked outcomes. `tdd` selects the public test seams and hands
+  to prove by automated tests, the approved references, and the spec as
+  design context. `tdd` selects the public test seams and hands
   back the code change, the passing tests each tied to its criterion or named
   reason with the failing assertion it was seen to produce, and any handed
   criterion it could not prove automatically with the reason. `implement`
@@ -176,40 +181,27 @@
 - Each outcome is complete after its acceptance criteria and focused
   deterministic verification pass, followed by reconciliation of the observed
   behavior with every required handoff source and applicable acceptance or
-  approved-reference criterion. Task files hold only durable status plus
-  concise verification, blocker, or revision evidence. When repository policy
-  calls for commits, code, tests, and the task update form one meaningful
-  checkpoint.
+  approved-reference criterion. When repository policy calls for commits,
+  code and tests form one meaningful checkpoint.
 - During reconciliation, `implement` may update technical assumptions,
-  active unfinished task boundaries and order, blockers, task-specific
-  constraints, verification, and acceptance wording while preserving the
+  verification, and acceptance wording while preserving the
   approved observable product contract. A proposed change to a user-approved
   outcome, scope, observable acceptance criterion, off-limits area, or other
   product constraint preserves current artifacts and evidence, blocks affected
   and dependent work, and pauses implementation for a shaping decision.
 - A previously completed outcome whose acceptance criteria no longer pass is
-  not current completion evidence. Preserve its task and prior evidence, return
-  it to a non-completed state, and repair or block it before dependent work or
-  final completion continues.
-- When an approved breakdown replaces a task with recorded completion history,
-  move every still-required obligation and blocker reference to the replacement,
-  mark the retained task `superseded`, and preserve its evidence in place.
-  Superseded tasks are inactive history outside the frontier, blockers,
-  reconciliation, and completion gates; inspect them only when current evidence
-  implicates their prior implementation. Never retain or archive a superseded
-  task that has no completion history.
-- A task's declared intermediate review checkpoint remains part of that task's
-  contract. The active harness reviews the stated cumulative scope once,
-  focused on the stated risk, before substantial dependent work continues. The
-  same mode, triage, and single-pass rule as the final review apply.
+  not current completion evidence. Repair or block it before final completion
+  continues.
 - After every outcome is implemented, rerun the complete deterministic
   verification, then complete one pass of the active harness's automated
   code-review process over the entire implementation diff against the selected
-  spec and acceptance criteria. The pass applies to split and unsplit specs and
-  covers cross-task interactions and omitted requirements. It stays inside
-  `implement` because must-fix findings return to implementation; it neither
-  invokes nor replaces the explicitly requested human judgment owned by
-  `human-review`.
+  spec and acceptance criteria, covering interactions between outcomes and
+  omitted requirements. It stays inside `implement` because must-fix findings
+  return to implementation; it neither invokes nor replaces the explicitly
+  requested human judgment owned by `human-review`. Because each folder runs
+  separately, this pass also
+  finishes before any folder that names it in `Blocked by:` starts, which is
+  what an intermediate review between dependent outcomes used to buy.
 - The review depth is `implement`'s judgment for the change at hand, weighing
   what the change touches against what verification already settles. It names
   the mode explicitly where the harness offers modes, because one given no mode
@@ -217,7 +209,7 @@
   nothing argues either way. The run stays single at any depth. Wherever the
   harness accepts review context, the reviewer receives the required handoff
   sources or their repository paths: the spec's approved scope, off-limits
-  areas and remaining risks, the active task contract, linked decision
+  areas and remaining risks, linked decision
   contracts, applicable approved reference artifacts, and the focused
   verification evidence already collected. A pass counts only
   when the reviewer finishes inspecting the intended scope and returns findings
@@ -264,8 +256,7 @@
   and source scope and ask for that permission; a confirmed manual command does
   not resolve the authorization blocker.
 - A user-only or absent reviewer, missing permission, or unresolved execution
-  failure leaves overall completion pending. A blocked intermediate checkpoint
-  also blocks dependent work. Preserve verified outcomes and provide their
+  failure leaves overall completion pending. Preserve verified outcomes and provide their
   evidence, exact review blocker, and next required action. Name a user command
   only when the active harness confirms it. Only the user can waive review.
 - After the review pass and any must-fix repairs, or while review is pending,
@@ -274,13 +265,12 @@
   server, verifies the changed routes and essential states, and shares a
   reachable address while keeping the current checkout's server available until
   review finishes or later delivery cleanup.
-- Context or harness interruption resumes from the spec folder, task status,
-  Git history, current diff, and test results. Preserve completed outcomes and
+- Context or harness interruption resumes from the spec folder, Git history, current diff, and test results. Preserve completed outcomes and
   request user confirmation before absorbing dirty state of uncertain
   ownership.
 - Before beginning another outcome, `implement` reloads the current handoff and
   repository evidence. The same context may continue, but remembered
-  conversation alone cannot supply the next task's plan or current truth.
+  conversation alone cannot supply the next outcome's plan or current truth.
 - When shaping settles on a framework or hosted service, route its current
   agent context through `add-stack-context`. The
   [stack-context](stack-context.md) contract owns discovery, source acceptance,
@@ -319,7 +309,7 @@
   lists come from current tool help; general guidance stays with the skill.
   Consumers read the linked convention without requiring the setup skill to be
   installed and continue to support existing inline conventions. This avoids
-  loading MCP recipes into every task while preserving custom tracker behavior.
+  loading MCP recipes into every session while preserving custom tracker behavior.
   When scheduled general-issue triage is enabled, the same convention records
   its triage states.
   An active issue requires an explicit user request to resume even when the
@@ -427,32 +417,20 @@
   until the user supplies it or delegates the exact choice. A less central gap
   crosses the handoff only when the user accepts it as an assumption or chooses
   to leave it unknown.
-- Tasks are vertical, independently deliverable and verifiable, and separated
-  only at outcomes that can stand on their own. Work that becomes meaningful
-  only when completed together remains one task. A task is not a fine-grained
-  implementation to-do list or a predicted file, function, code-structure, or
-  session plan.
-- `split-into-tasks` ends when the approved task handoff is current;
-  implementation begins through `implement`.
 - `implement` follows only the selected folder's formal handoff and material it
   explicitly links or current repository evidence implicates; it does not read
-  every sibling file merely because it is present. Verified discoveries may
-  revise unfinished task structure without silently changing an approved
-  product contract or reference.
-- The standard task workflow inside one spec folder is sequential. Parallel
-  work runs across spec folders, coordinated by an opt-in issue tracker: when
+  every sibling file merely because it is present. Verified discoveries never
+  silently change an approved product contract or reference.
+- Work inside one spec folder is sequential. Parallel work runs across spec
+  folders, coordinated by an opt-in issue tracker: when
   the repository's agent instructions carry an `## Issue tracker` section,
   each `docs/specs/<slug>/` folder names its issue with an `Issue:` line that
   `pr` writes when it creates the issue. `implement` claims that issue as its
   first write, and the implementation pull request closes it.
   `maintain-project-context` later repairs drift folder by folder through the
   recorded IDs. Without the section every skill
-  behaves as before. Parallel bulk migrations or independent task queues inside
-  one folder still require a separately chosen execution model.
-- An intermediate review is warranted only when delayed review could compound a
-  material defect through dependent work, or when deterministic checks cannot
-  adequately settle a security, data, permission, migration, recovery, or
-  external-contract risk. The existence of a task alone is not sufficient.
+  behaves as before. Parallel bulk migrations inside one folder still require a
+  separately chosen execution model.
 - The active harness is authoritative for reviewer topology and mechanics.
   `implement` requires one completed review pass and its triage, unless the
   user explicitly waives that review, without prescribing a universal reviewer
@@ -478,17 +456,16 @@
   follow-up recording, commit, and durable follow-up-only pull-request handoff
   before that disposable worker is cleaned up.
 - Reconciliation is an outcome-completion responsibility inside `implement`,
-  not a separate installed skill or a substitute for the risk-selected or final
-  review pass.
+  not a separate installed skill or a substitute for the final review pass.
 - Preserve unrelated changes and confirm ownership when dirty-state ownership
   or overlap cannot be established safely.
 - Pause when a proposed product-contract change invalidates an outcome,
   acceptance criterion, off-limits area, or other approved constraint; the same
   blocker persists without evidence of progress; or continuing needs authority
-  the user has not granted. Keep retries and unfinished-task reconciliation
+  the user has not granted. Keep retries and reconciliation
   within the approved authority and work boundaries.
-- Work-unit product constraints belong in `spec.md`; constraints that expire
-  with one task belong in that task file. A settled constraint that later work
+- Work-unit product constraints belong in `spec.md`. A settled constraint that
+  later work
   should reuse belongs in a decision contract when it passes the project
   decision gate.
 - Vendor context uses official sources only and must not be hardcoded to a fixed
@@ -506,11 +483,21 @@ each shaping session must still converge on one implementation-ready work unit.
 Keeping their skills separate lets either be invoked without the other and
 prevents app identity from becoming feature scope. Plans derived at execution
 time age better than stored implementation predictions. Delivery outcomes,
-rather than predicted session duration, remain the durable task unit.
+rather than predicted session duration, remain the durable unit of work.
 
-The complete shallow task set keeps scope and dependencies visible without
-freezing technical predictions. Planning only the active outcome lets current
-code and earlier verified discoveries inform the implementation path.
+The spec folder is that unit. Task files inside a folder duplicated what spec
+folders already provide, independent delivery, dependency order, and a tracker
+issue, while carrying their own status, supersession, and frontier rules that
+`implement` had to keep. Use had fallen to almost nothing once spec folders
+could block one another: across the user's projects 27 of about 450 specs were
+ever split, at 12% in August 2026 and 1% in October, while `Blocked by:` lines
+between folders rose from none to twenty a month. As models carry longer work
+in one run, splitting for model limits disappears; what remains is splitting
+for delivery and coordination, which a folder and its issue express directly.
+The bar is higher than the old task bar because each folder costs its own run,
+review, and pull request. Applied to the last three task breakdowns, it turned
+thirteen tasks into eight folders. Planning only the active outcome lets
+current code and earlier verified discoveries inform the implementation path.
 
 Focused reconciliation closes the flow-back path that verification alone does
 not: it makes observed implementation facts update unfinished work before stale
@@ -522,13 +509,10 @@ rule governs new choices during shaping. Applied to revising approved text it
 would raise a question on almost every touch, which removes the reason to
 invoke `babysit-specs` at all.
 
-The spec folder is the stable implementation address. It already says whether
-the work remains one coherent spec or has approved tasks, so `implement` needs
-one input contract and one deterministic branch instead of separate invocation
-paths.
-
-Task files carry exceptional intermediate review checkpoints, so the execution
-skill does not need to restate their procedure. Complete verification proves
+The spec folder is the stable implementation address, so `implement` needs one
+input contract. Keeping one folder per run leaves the order of dependent folders
+to the person, tracker, or runner that starts each run, and keeps `implement`
+free of a loop across folders. Complete verification proves
 known behavior; one automated review pass adds an independent look at the diff
 without forcing every host through the same reviewer topology. That independent
 look is what the standard mode buys, which is why the default is the harness's
@@ -568,9 +552,8 @@ rerun the final gate. Reusing the review triage rules keeps one standard for
 what `implement` may change on its own, so a probe never turns behavior the
 spec leaves open into an unapproved product decision.
 
-Minimal task state and meaningful code checkpoints preserve useful recovery
-evidence without turning Git and task files into a second orchestration state
-machine.
+Meaningful code checkpoints preserve useful recovery evidence without turning
+Git into a second orchestration state machine.
 
 Follow-up sweeps need stricter mechanics than ordinary implementation because
 the backlog may move after a scheduled checkout starts and concurrent workers
@@ -583,11 +566,11 @@ state keep automation reviewable without turning follow-up files into a queue.
 - Setup items listed during shaping are regularly wrong or stale by the time
   implementation starts, so deriving them at implementation start would be
   more accurate than recording them in the spec.
-- Spec folders routinely contain ambiguous or competing implementation
-  handoffs that the tasks-first rule cannot resolve.
-- Selected intermediate reviews regularly cost more than the defects or
-  avoided rework they produce, or material defects repeatedly appear before an
-  undeclared checkpoint.
+- Folders divided by the folder-division rule repeatedly need to land
+  together, or one folder repeatedly hides a material defect that a review
+  between its outcomes would have caught.
+- Running dependent folders one at a time costs enough runs, reviews, and pull
+  requests that a single run across several folders would pay for itself.
 - Defects a deeper review mode would have caught repeatedly surface after
   handoff, or depth selection collapses in practice into always taking the
   fallback mode, making the criteria inert.
@@ -599,13 +582,12 @@ state keep automation reviewable without turning follow-up files into a queue.
 - Authorized reviews still fail repeatedly after accurate destination and
   source-scope requests and supported execution paths; revisit the integration
   with current evidence rather than silently relaxing completion.
-- The minimal task state cannot reconstruct real interrupted runs safely.
+- Git history and the spec folder cannot reconstruct real interrupted runs
+  safely.
 - Outcome reconciliation repeatedly misses downstream contract changes or its
-  reread and task-revision cost exceeds the rework it prevents.
-- AI-authored unfinished-task revisions repeatedly change practical product
-  behavior without surfacing a shaping decision.
-- Parallel spec work needs task-level claims inside one folder, or the active
-  state and explicit resumption rule cannot prevent competing claims.
+  reread cost exceeds the rework it prevents.
+- Parallel spec work needs claims inside one folder, or the active state and
+  explicit resumption rule cannot prevent competing claims.
 - Merges made outside `merge` leave folders unpublished long enough that
   sessions claim the same folder before the next catch-up.
 - Vendor workaround failures are repeatedly observed outside `shape-idea`,
@@ -637,7 +619,8 @@ state keep automation reviewable without turning follow-up files into a queue.
   the need is already known when shaping selects the service, and deriving it
   later tells the user at the last moment. Implementing outcomes that do not
   need the setup while the user finishes it was also rejected: it interleaves
-  waiting with delivery, and a spec without tasks has only one outcome.
+  waiting with delivery, and outcomes that do not need the setup belong in
+  their own folder.
 - Triage that detects human answers from comment authors, timestamps, and body
   fingerprints and re-evaluates waiting issues — the runner already knows when
   a person replied, and a shared skill should not guess it from tracker
@@ -660,11 +643,18 @@ state keep automation reviewable without turning follow-up files into a queue.
   cross the boundary that keeps `implement` on one selected folder, and the
   scan is speculative because a sibling may be reshaped before it is built.
 - Durable `plan.md` and a plan-writing skill — implementation predictions age,
-  while decision-level corrections already have homes in specs, tasks, project
+  while decision-level corrections already have homes in specs, project
   decisions, or repository instructions.
-- A separate roadmap, execution ledger, or run-state file — the spec and shallow
-  task set already carry the authoritative contract and current work frontier;
-  duplicating them creates another artifact that can drift.
+- A separate roadmap, execution ledger, or run-state file — spec folders and
+  their `Blocked by:` lines already carry the authoritative contract and the
+  order of work; duplicating them creates another artifact that can drift.
+- Task files inside a spec folder, cut by `split-into-tasks` — they duplicate
+  what separate folders provide and need their own status, supersession, and
+  frontier rules. Existing `tasks/` folders get no compatibility path.
+- Letting `implement` take several folders and run them in `Blocked by:` order
+  — it would restore the old one-run task loop, but the user kept one folder
+  per run so `implement` stays simple and ordering stays with whoever starts
+  each run.
 - Hand-editing a second spec contract in an issue, as Matt Pocock's `to-spec`
   does — the folder holds several documents an issue cannot carry, and a
   hand-written copy drifted in this repository, where three of nine queued
@@ -701,10 +691,8 @@ state keep automation reviewable without turning follow-up files into a queue.
   between implementations rather than inside one, and `implement`'s load-time
   staleness check keeps correctness from depending on anyone remembering to
   invoke `babysit-specs`.
-- Session duration as the task boundary — predicted limits fragment coherent
+- Session duration as a work boundary — predicted limits fragment coherent
   outcomes prematurely.
-- Separate `implement-spec` and `implement-tasks` entry points — the spec folder
-  already contains the information needed to choose the implementation path.
 - A `run-server` pipeline skill — it exposes a technical mechanism rather than
   the handoff outcome; reconsider a separately invokable preview workflow only
   after repeated independent user requests establish a separate outcome.
@@ -761,20 +749,18 @@ state keep automation reviewable without turning follow-up files into a queue.
 - Treating a skill's review requirement as user authorization, describing
   service-backed review as no transmission, or requesting the same already
   granted authority again — these obscure the real execution boundary.
-- Review after every task or edit — it adds fixed cost without requiring a
-  material risk boundary.
-- Forbidding every intermediate review — a late permission, migration, or
-  external-contract finding can invalidate substantial dependent work.
+- Review after every edit — it adds fixed cost without requiring a material
+  risk boundary.
 - One universal fresh-reviewer protocol — it duplicates or constrains the
   review capabilities already provided by each harness.
-- State-only phase commits, correction counters, exact anchors in every task,
-  or a separate run-state file — they create more orchestration state than the
+- State-only phase commits, correction counters, or a separate run-state
+  file — they create more orchestration state than the
   implementation needs and can drift from code.
 - Unlimited repair loops — they turn a persistent blocker into unbounded cost
   without adding new evidence.
-- Skipping a blocked dependency — later tasks would inherit an unresolved
+- Skipping a blocked dependency — later folders would inherit an unresolved
   foundation and make integrated verification ambiguous.
-- Fine-grained tickets or horizontal layer tasks — they become stale and
+- Fine-grained tickets or horizontal layer folders — they become stale and
   produce changes that are not independently usable end to end.
 - Depending on agents to discover vendor context on their own — official
   evaluations showed installed context was frequently left unused unless the
@@ -821,8 +807,9 @@ state keep automation reviewable without turning follow-up files into a queue.
   boundaries rather than relying on final review or session memory alone.
 - In that Todo eval, a risk-selected intermediate review and the final review
   found distinct blocking security issues; a final-review-only variant finished
-  in similar time. This supports declaring intermediate review only where risk
-  justifies it and always retaining the integrated final review.
+  in similar time. This supported declaring intermediate review only where risk
+  justified it and always retaining the integrated final review. Dividing such
+  work into separate folders now gives each boundary its own final review.
 - Vendor evaluations cited when the context-installation rule was adopted
   measured large gains from version-matched official context and also showed
   that agents frequently failed to invoke an installed skill without an

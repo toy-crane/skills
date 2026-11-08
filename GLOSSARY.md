@@ -31,19 +31,15 @@ The durable product contract a shape-idea or build-prototype session writes for 
 _Avoid_: Alignment brief, summary
 
 **Spec folder**:
-The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor, prototype.html when a surface was approved, tasks/ when the work was cut into multiple delivery outcomes. Lives per unit and retires wholesale when the work ships.
-_Avoid_: Dossier, issue folder
+The per-work-unit folder `docs/specs/<slug>/` that carries one unit's whole handoff: spec.md as the anchor and prototype.html when a surface was approved. It holds one outcome that could land on the default branch and stay there even if related work never arrives; a change with several such outcomes becomes several folders linked by `Blocked by:` lines. One `implement` run takes one folder. Lives per unit and retires wholesale when the work ships.
+_Avoid_: Dossier, issue folder, task
 
 **Comprehension gap**:
 A point where the user does not understand the system: a level, a mechanism, why not the alternative, or a single word. Not the same as the interviewer not understanding the user. The first is closed by rendering from the code and docs, in whatever form the gap calls for; the second by rendering for the user to correct.
 _Avoid_: Confusion, knowledge gap
 
-**Task**:
-A delivery-sized unit cut from a spec: a complete, independently deliverable and verifiable path through every layer it touches, separated only when it can stand on its own. Work that becomes meaningful only when completed together remains one task. Together the non-superseded tasks are the work unit's shallow roadmap; implementation plans only the active outcome in detail and may revise active unfinished tasks after verified discoveries while preserving the approved product contract. A task retained as `superseded` after an approved replacement is inactive recovery history, not current work or completion proof. Tasks whose genuine blockers are all done form the frontier implementation may continue through. A task boundary always carries focused verification and reconciliation, but is not automatically a context or automated-review boundary. Distinct from a pre-cut to-do list, which lacks these properties and stays rejected.
-_Avoid_: Ticket, slice, subtask, to-do
-
 **Setup before implementation**:
-Work outside the repository that implementation needs before it can run, such as a vendor account, an issued key, or a console or DNS setting. Listed in a spec's `## Setup before implementation` section, one line per item with what it serves and the condition that shows it is done. The agent does what it can of each item; the rest is the user's. Distinct from a task's blockers, which are dependencies between tasks, and from the runtime prerequisite `implement` reports when a check fails.
+Work outside the repository that implementation needs before it can run, such as a vendor account, an issued key, or a console or DNS setting. Listed in a spec's `## Setup before implementation` section, one line per item with what it serves and the condition that shows it is done. The agent does what it can of each item; the rest is the user's. Distinct from `Blocked by:` lines, which are dependencies between spec folders, and from the runtime prerequisite `implement` reports when a check fails.
 _Avoid_: Prerequisite, manual setup
 
 **Follow-up**:
