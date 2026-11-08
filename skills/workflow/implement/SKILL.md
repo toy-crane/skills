@@ -45,8 +45,8 @@ deriving an implementation approach or changing source, identify and load its
 current required sources: the spec; project decision contracts it explicitly
 links, plus any other current decision contract implicated by repository
 evidence; and every prototype, screen, state, or other reference artifact that
-the spec identifies as an approved or selected implementation reference. Read textual
-sources and render or otherwise inspect visual artifacts so their operative
+the spec identifies as an approved or selected implementation reference. Read
+textual sources and render or otherwise inspect visual artifacts so their operative
 content is available before work starts. Presence in the folder alone does not
 establish approval. An approved visual reference is a required, complementary
 contract for the concrete screens and states it covers; explicit product
@@ -178,14 +178,15 @@ together. Reconciliation adds no review pass.
 
 ## Preserve authority and durable discoveries
 
-Implementation authority covers the technical path only while the approved product contract stays intact. When a discovery
-would change an approved outcome, scope, observable spec acceptance criterion,
-off-limits area, or other product constraint, preserve the current artifacts
-and evidence, leave the affected outcome and its dependents blocked, and stop
-before absorbing the change. Apply the same boundary when an approved reference
-and an explicit product contract disagree: report their exact difference rather
-than treating either as a silent override. Present the exact decision for the
-user to settle through shaping.
+Implementation authority covers the technical path only while the approved
+product contract stays intact. When a discovery would change an approved
+outcome, scope, observable spec acceptance criterion, off-limits area, or other
+product constraint, preserve the current artifacts and evidence, leave the
+affected outcome and its dependents blocked, and stop before absorbing the
+change. Apply the same boundary when an approved reference and an explicit
+product contract disagree: report their exact difference rather than treating
+either as a silent override. Present the exact decision for the user to settle
+through shaping.
 
 If later code, integration, verification, or review invalidates a completed
 outcome, preserve its prior evidence and treat it as unfinished again. Keep
