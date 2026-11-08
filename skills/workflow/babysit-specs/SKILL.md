@@ -100,9 +100,12 @@ its rationale, and the rejected alternatives, and link the
   parts. It no longer fits when the revision lets one part land alone while
   that part is wanted earlier than the rest, a wait outside the repository
   such as a legal review or store release now stands between the parts, a
-  later part builds on a foundation that needs its own review first, or the
-  parts became unrelated; or when the folder's outcome can no longer land
-  without work held in another folder.
+  later part builds on a foundation whose material risk tests cannot settle,
+  such as security, permissions, a data migration, or an external contract,
+  or the parts became unrelated; or when the folder's outcome can no longer
+  land without work held in another folder. Each reason must be a fact the
+  shipped work or the user establishes. Dependence between parts, a risk
+  inferred from the kind of work, or a technical layer never separates them.
 - A drifted prototype: regenerate the affected screens through
   `build-prototype`, handing it the drifted screens and states and the
   current surface they must match; it hands back the updated
