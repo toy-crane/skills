@@ -23,10 +23,6 @@
 - `explain-visually` is the deliberate exception to verb-object grammar: the
   object changes on every invocation, while visual rendering is the capability
   the skill adds.
-- `human-review` names the human judgment that remains after AI handles
-  mechanically checkable review. It is not named after its HTML output or a
-  technical layer because the capability is deciding whether consequential
-  commitments should be accepted.
 - `implement` is a deliberate one-word exception to verb-object grammar: the
   object is the selected spec folder and changes on every invocation. It names
   the complete responsibility without exposing task, agent, or orchestrator
@@ -135,8 +131,6 @@ repository.
 - Naming the maintenance pass after decision compaction — decisions are only
   one of the durable context surfaces it reconciles, while compaction omits
   currency and consistency from the user-visible outcome.
-- `show-results` for human review — it centers presentation rather than the
-  scarce human judgment the skill protects.
 - `expo-e2e-check` for the both-platform pass — E2E names a test-suite runner
   category in the React Native ecosystem, where Maestro and Detox own the term,
   rather than an agent-driven verification loop.
