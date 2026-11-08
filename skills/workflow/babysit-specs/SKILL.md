@@ -16,8 +16,8 @@ package manager runner where it pins one.
 Take the spec folders the user names. With none named, take every folder
 present under `docs/specs/`. Handle one spec at a time.
 
-For each spec, read `spec.md`, the active task files, the prototype and
-decision contracts the spec links, and `GLOSSARY.md` when it exists, since a
+For each spec, read `spec.md`, the prototype and decision contracts the spec
+links, and `GLOSSARY.md` when it exists, since a
 term the shipped work renamed now lives there.
 
 The baseline is that spec's last commit, including a previous revision of your
@@ -93,10 +93,16 @@ its rationale, and the rejected alternatives, and link the
 
 ## Hand off what you do not own
 
-- A revised outcome that reaches a task: name that task for `split-into-tasks`
-  to re-cut. Leave task files unedited.
-- A completed task whose delivered outcome the revision changed: leave its
-  evidence untouched and name it for re-verification.
+- A folder whose revised outcomes no longer belong together: report it for
+  `shape-idea` to re-divide, and do not split or merge folders yourself. A
+  folder belongs together when its outcome could land on the default branch
+  and stay there even if the rest never arrives, and nothing separates its
+  parts. It no longer fits when the revision lets one part land alone while
+  that part is wanted earlier than the rest, a wait outside the repository
+  such as a legal review or store release now stands between the parts, a
+  later part builds on a foundation that needs its own review first, or the
+  parts became unrelated; or when the folder's outcome can no longer land
+  without work held in another folder.
 - A drifted prototype: regenerate the affected screens through
   `build-prototype`, handing it the drifted screens and states and the
   current surface they must match; it hands back the updated
@@ -114,5 +120,6 @@ decision. Report, in conversation and without writing a report file:
   meaning;
 - what you asked and how it settled;
 - which specs are retirement candidates;
-- which task files and prototypes await a follow-up pass;
+- which folders await re-dividing and which prototypes await a follow-up
+  pass;
 - any comparison that was weaker than a rendered or committed one, and why.
