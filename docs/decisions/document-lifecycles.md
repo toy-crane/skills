@@ -16,8 +16,10 @@
   product premise. `shape-idea` reads it when present but neither requires,
   creates, nor edits it. Its product-only content contract lives in
   [app-context](app-context.md).
-- `docs/specs/<slug>/` carries one unit of work: `spec.md` as the anchor,
-  `prototype.html` when a surface was approved, and `tasks/` when work was split.
+- `docs/specs/<slug>/` carries one unit of work: `spec.md` as the anchor and
+  `prototype.html` when a surface was approved. A change with several
+  separately deliverable outcomes becomes several folders, not task files
+  inside one ([pipeline](pipeline.md)).
   `shape-idea` and `build-prototype` write the contract; `babysit-specs`
   revises an active one in place when later work ships and makes it stale,
   keeping the same slug and adding no change log because Git is the archive.
@@ -133,7 +135,7 @@ without turning it into feature scope or implementation prediction.
   addresses for folder cosmetics; Git already preserves the deleted files.
 - Loading the whole decisions folder — file growth becomes context growth and
   exposes obsolete claims to the model.
-- Flat `docs/specs/<slug>.md` files — related prototypes and task files would
+- Flat `docs/specs/<slug>.md` files — related prototypes would
   require a later address migration.
 - A hosted issue tracker as the follow-up carrier — it survives worktree
   deletion but adds a remote dependency to a record the repository can hold

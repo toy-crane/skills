@@ -14,7 +14,7 @@ of truth. Read only the subjects relevant to the work.
 - [worktree-cleanup](worktree-cleanup.md) — Read when changing how a skill releases a worktree's resources, detects processes inside it, or removes it.
 - [companion-agent-distribution](companion-agent-distribution.md) — Read when a published skill carries, installs, updates, or retires custom agents for Claude Code and Codex.
 - [testing](testing.md) — Read when changing how tests or evals are chosen, written, or proven, or how `tdd` or `llm-evals` is triggered.
-- [pipeline](pipeline.md) — Read when changing how discovery, shaping, specs, tasks, or implementation hand off.
+- [pipeline](pipeline.md) — Read when changing how discovery, shaping, specs, dividing work into spec folders, or implementation hand off.
 - [stack-context](stack-context.md) — Read when changing how stack technologies get current agent skills, vendor guidance, or repository instruction routes.
 - [shape-idea](shape-idea.md) — Read when changing shaping questions, drafts, visuals, authority, or write boundaries.
 - [build-prototype](build-prototype.md) — Read when changing the product prototype, temporary situation-specific comparisons, shells, fidelity, or preserved artifact.
