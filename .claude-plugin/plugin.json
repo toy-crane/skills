@@ -1,6 +1,6 @@
 {
   "name": "toycrane-skills",
-  "version": "0.71.0",
+  "version": "0.72.0",
   "description": "Skills for product definition, shaping, implementation, runtime verification, project skill updates with cross-client agent synchronization, review, session log review, project knowledge, test-first development, LLM evals, and safe Git delivery.",
   "author": {
     "name": "toy-crane",
@@ -29,7 +29,6 @@
     "subagent",
     "update-project-skills",
     "sync",
-    "human-review",
     "implement",
     "parallel-implementation",
     "issue-tracker",
@@ -66,7 +65,6 @@
     "./skills/workflow/build-prototype",
     "./skills/workflow/define-product",
     "./skills/workflow/explain-visually",
-    "./skills/workflow/human-review",
     "./skills/workflow/implement",
     "./skills/workflow/maintain-project-context",
     "./skills/workflow/project-knowledge",

@@ -421,10 +421,6 @@ available for an affected product surface.
 - **[explain-visually](./skills/workflow/explain-visually/SKILL.md)**: Render explanations
   with the best available tool. Use one sentence instead when one sentence fully
   answers the question.
-- **[human-review](./skills/workflow/human-review/SKILL.md)**: Help a human understand
-  AI-authored work through before-and-after behavior and nearby evidence. Keep
-  the whole change available to inspect, surface unsettled choices, and leave
-  a clear place to resume after switching tasks.
 - **[maintain-project-context](./skills/workflow/maintain-project-context/SKILL.md)**:
   Periodically reconcile `PRODUCT.md`, the glossary, decision contracts, shipped
   specs, agent instructions, and any configured spec issues after work

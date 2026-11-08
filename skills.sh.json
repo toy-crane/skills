@@ -30,11 +30,10 @@
       ]
     },
     {
-      "title": "Review and explanation",
-      "description": "Skills for making complex ideas and completed work easier to understand and judge.",
+      "title": "Explanation",
+      "description": "Skills for making complex ideas and completed work easier to understand.",
       "skills": [
-        "explain-visually",
-        "human-review"
+        "explain-visually"
       ]
     }
   ]

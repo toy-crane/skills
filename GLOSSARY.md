@@ -43,7 +43,7 @@ Work outside the repository that implementation needs before it can run, such as
 _Avoid_: Prerequisite, manual setup
 
 **Follow-up**:
-An open item a session discovered but did not resolve, kept in `docs/follow-ups/<slug>.md`: a temporary workaround whose root cause stays open, or an out-of-scope defect observed with evidence. Carries symptom, observed evidence, suspected cause, what was tried, and a proposed next step, so a later session can act without the original conversation. Distinct from a spec's deferred points, which are decisions postponed during shaping, and from human-review's deferred commitments, which are unresolved questions inside one review.
+An open item a session discovered but did not resolve, kept in `docs/follow-ups/<slug>.md`: a temporary workaround whose root cause stays open, or an out-of-scope defect observed with evidence. Carries symptom, observed evidence, suspected cause, what was tried, and a proposed next step, so a later session can act without the original conversation. Distinct from a spec's deferred points, which are decisions postponed during shaping.
 _Avoid_: Backlog item, ticket, TODO
 
 **Decision index**:
