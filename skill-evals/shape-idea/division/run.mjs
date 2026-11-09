@@ -117,6 +117,13 @@ if (existsSync(stateFile)) {
   if (state.access !== opts.access) { console.error(`this flow runs on ${state.access}; use the same access or another --flow.`); process.exit(2); }
   if (state.model !== opts.model) { console.error(`this flow runs on model ${state.model}; use the same --model or another --flow.`); process.exit(2); }
 }
+// A variant keeps one skill text. Check it before any early exit, so a finished
+// variant never passes off its old scores as the edited skill's.
+const summaryFile = join(variantDir, 'summary.json');
+if (existsSync(summaryFile)) {
+  const previous = JSON.parse(readFileSync(summaryFile, 'utf8'));
+  if (previous.skill_sha !== skillSha) { console.error(`${opts.variant} already holds runs of skill sha ${previous.skill_sha}; this run is ${skillSha}. Use a new variant.`); process.exit(2); }
+}
 const done = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`));
 const todo = [];
 for (let rep = 0; rep < reps; rep += 1) for (const c of cases) if (!done.has(`${c.id}#${rep}`)) todo.push({ c, rep });
@@ -131,11 +138,7 @@ if (priced.length) {
 if (opts['dry-run'] || todo.length === 0) process.exit(0);
 
 mkdirSync(join(variantDir, 'traces'), { recursive: true });
-const summaryFile = join(variantDir, 'summary.json');
-if (existsSync(summaryFile)) {
-  const previous = JSON.parse(readFileSync(summaryFile, 'utf8'));
-  if (previous.skill_sha !== skillSha) { console.error(`${opts.variant} already holds runs of skill sha ${previous.skill_sha}; this run is ${skillSha}. Use a new variant.`); process.exit(2); }
-} else {
+if (!existsSync(summaryFile)) {
   writeFileSync(summaryFile, `${JSON.stringify({ description: `shape-idea from ${skillSource}`, target: 'skill', skill_source: skillSource, skill_sha: skillSha, access: opts.access }, null, 2)}\n`);
 }
 if (!existsSync(stateFile)) {

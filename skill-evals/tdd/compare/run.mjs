@@ -140,6 +140,26 @@ if (existsSync(stateFile)) {
     writeFileSync(stateFile, `${JSON.stringify({ ...state, model: pinnedModel }, null, 2)}\n`);
   }
 }
+// Comparing a text with itself spends a full run and proves nothing.
+const baselineSummary = join(flowDir, 'baseline', 'summary.json');
+if (opts.variant !== 'baseline' && existsSync(baselineSummary)) {
+  const base = JSON.parse(readFileSync(baselineSummary, 'utf8'));
+  if (base.skill_sha === skillSha) {
+    console.error(`${opts.variant} has the same tdd SKILL.md as baseline (sha ${skillSha}); nothing to compare.`);
+    process.exit(2);
+  }
+}
+// A variant keeps one skill text so resumed rows stay comparable. Check it
+// before any early exit, so a finished variant never passes off its old scores
+// as the edited skill's.
+const summaryFile = join(variantDir, 'summary.json');
+if (existsSync(summaryFile)) {
+  const previous = JSON.parse(readFileSync(summaryFile, 'utf8'));
+  if (previous.skill_sha !== skillSha) {
+    console.error(`${opts.variant} already holds runs of skill sha ${previous.skill_sha}; this run is ${skillSha}. Use a new variant.`);
+    process.exit(2);
+  }
+}
 const resultsFile = join(variantDir, 'results.jsonl');
 const errorsFile = join(variantDir, 'errors.jsonl');
 const done = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`));
@@ -157,25 +177,8 @@ if (priced.length) {
 }
 if (opts['dry-run'] || todo.length === 0) process.exit(0);
 
-// Comparing a text with itself spends a full run and proves nothing.
-const baselineSummary = join(flowDir, 'baseline', 'summary.json');
-if (opts.variant !== 'baseline' && existsSync(baselineSummary)) {
-  const base = JSON.parse(readFileSync(baselineSummary, 'utf8'));
-  if (base.skill_sha === skillSha) {
-    console.error(`${opts.variant} has the same tdd SKILL.md as baseline (sha ${skillSha}); nothing to compare.`);
-    process.exit(2);
-  }
-}
-// A variant keeps one skill text so resumed rows stay comparable.
 mkdirSync(join(variantDir, 'traces'), { recursive: true });
-const summaryFile = join(variantDir, 'summary.json');
-if (existsSync(summaryFile)) {
-  const previous = JSON.parse(readFileSync(summaryFile, 'utf8'));
-  if (previous.skill_sha !== skillSha) {
-    console.error(`${opts.variant} already holds runs of skill sha ${previous.skill_sha}; this run is ${skillSha}. Use a new variant.`);
-    process.exit(2);
-  }
-} else {
+if (!existsSync(summaryFile)) {
   writeFileSync(summaryFile, `${JSON.stringify({
     description: opts.variant === 'baseline' ? `baseline tdd from ${skillSource}` : `tdd from ${skillSource}`,
     target: 'skill',
