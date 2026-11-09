@@ -120,7 +120,8 @@ show:
 
 - every case, or a balanced sample when the set is large;
 - graded pilot samples with their transcripts;
-- the run size, cases × reps, and the model;
+- the run size, cases × reps, and the model, counting the baseline, the
+  rounds, the gates, and the rerun graduation needs after green;
 - the noise floor next to the gain the target needs;
 - the cost estimated from the pilot's usage and the spend ceiling, or on a
   subscription the expected usage-limit draw with dollars only as the API
@@ -132,7 +133,9 @@ approval needs approval again.
 ## Red, then climb to green
 
 Run the full set on the unchanged behavior and record it as the baseline: this
-is the red, for train and for test alike. When that baseline already sits near
+is the red, for train, for test, and for the project's regression suite, so a
+suite already failing before this climb is not later read as its doing. When
+that baseline already sits near
 the target there is no hill to climb: report that the cases are too easy for
 this behavior and ask for harder ones instead of climbing. Then climb in
 rounds:
@@ -148,7 +151,9 @@ rounds:
   When the held-out score does not follow train, the climb fitted train:
   revert to the last gate that passed and bisect the changes between them.
 - Stop at green, after three rounds in a row that move only inside the noise
-  floor, or at the approved spend.
+  floor, or at the approved spend. However it stops, open the final gate
+  before handing back, so the result rests on a held-out score rather than a
+  train one.
 - When rounds stall, sort the remaining train failures into content gap,
   grader disagreement, harness, structure, and variance before another content
   round.
