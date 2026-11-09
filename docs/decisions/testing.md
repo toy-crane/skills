@@ -52,7 +52,10 @@
   in a capability eval while the criterion is open, and are recorded as known
   failures once it closes.
 - A regression suite is held at the level its cases reached, so a score below
-  it means something broke. A climb runs it at its gates, not every round.
+  it means something broke. A climb runs it at its gates, not every round, and
+  a gate fails when the suite drops below the baseline recorded for it outside
+  the noise floor on cases that baseline passed; nothing graduates from a
+  failed gate, and failures the baseline already carried are not that climb's.
   Outside a climb, `implement` runs it when the change touches the behavior it
   guards and reports the result as evidence ([pipeline](pipeline.md)).
 - A regression case is changed or removed only when a decision to change that
