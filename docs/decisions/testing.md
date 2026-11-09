@@ -51,6 +51,14 @@
   deleted and one scored line is kept. Cases that did not pass repeatedly stay
   in a capability eval while the criterion is open, and are recorded as known
   failures once it closes.
+- An eval never runs a (variant, case, repetition) that already has a scored
+  result from the same cases and grader; it reads that result instead. A gate
+  on an unsplit set takes the variant's round score, a second gate on the same
+  variant takes the first gate's score, and graduation picks its cases from the
+  final variant's existing results rather than a fresh full run. The
+  regression suite and attempts that failed before a scorable output are still
+  run. Cost is cut by not repeating runs, not by testing on a cheaper model
+  than the one the product or skill actually runs on.
 - A regression suite is held at the level its cases reached, so a score below
   it means something broke. A climb runs it at its gates, not every round, and
   a gate fails when the suite drops below the baseline recorded for it outside
@@ -237,6 +245,13 @@ which is the half of the behavior code checks cannot reach.
 - Keeping only the code checks when a case graduates — cheaper on every
   regression run, but the behavior a judge was needed for stops being guarded;
   revisit if regression cost blocks runs.
+- Running the eval on a cheaper model than the one users run, such as Sonnet
+  for a skill used on Opus — it halves the price but measures another reader,
+  and a score gained there need not hold on the real model; removing repeated
+  runs saves the same half without changing what is measured.
+- Rerunning the final variant to graduate or to score a gate it was already
+  scored on — the same variant on the same cases adds no information, and on a
+  5-case set at 2 reps it doubled a climb from 20 runs to 40.
 - A size cap on the regression suite, or dropping the oldest cases — cost
   control was deferred rather than designed, and an age-based rule removes
   cases no decision retired.
