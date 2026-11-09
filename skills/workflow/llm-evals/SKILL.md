@@ -11,6 +11,13 @@ It is a test in a noisy medium. The bar exists before the behavior changes, the
 baseline score is the red, and the green is a held-out score at or above the
 target and above the baseline outside the noise floor.
 
+An eval is one of two kinds. A capability eval starts below the target so there
+is a hill to climb, and it is finished once it reaches green. A regression
+suite holds the cases a capability eval finished with, at the level they
+reached, so a score below that level means something broke rather than that
+there is room to improve. Every criterion starts as a capability eval and ends
+by graduating into the project's one regression suite.
+
 Read `GLOSSARY.md`, then use `docs/decisions/README.md` to load only the
 decision subjects relevant to the behavior under evaluation. Surface a conflict
 between code, spec, and a decision contract instead of choosing silently.
@@ -67,14 +74,18 @@ confirm any revision made after seeing failures on cases not seen before.
 
 **Runner.** Call the product's real entry point; never rebuild the model call
 from the prompt you found. Write each (case, rep) as it finishes, so a restart
-skips what is already written. Keep the layout claude-api's report tools read:
-a flow folder, by default `.claude/hillclimb/<flow>/`, holding `_state.json`
-(metrics with the headline first, train and test ids, the access choice, the
-approved spend) and one folder per variant named `baseline` or `v<N>`. Each
-variant holds `results.jsonl`, one row per (case, rep) with `prompt_id`, `rep`,
-`tags`, `grade` as `{metric: number}`, `status`, `model` read from the
-response, and `usage`; `traces/<id>_rep<k>.json` with the whole exchange; and
-`errors.jsonl` for attempts that failed before a scorable output. An infra
+skips what is already written. The project chooses where its eval root lives:
+use the one its agent instructions name, else the folder its existing evals sit
+in, else `.claude/hillclimb/`. The layout under that root is fixed. The root
+holds the runner, `regression/`, and one folder per capability eval named after
+the spec folder whose criterion it proves. This eval's folder holds
+`cases.jsonl`, its grader, `_state.json` (metrics with the headline first,
+train and test ids, the access choice, the approved spend), and one results
+folder per variant named `baseline` or `v<N>`, in the shape claude-api's report
+tools read. Each variant holds `results.jsonl`, one row per (case, rep) with
+`prompt_id`, `rep`, `tags`, `grade` as `{metric: number}`, `status`, `model`
+read from the response, and `usage`; `traces/<id>_rep<k>.json` with the whole
+exchange; and `errors.jsonl` for attempts that failed before a scorable output. An infra
 failure is recorded with its class there, never scored as zero. Give each case
 a wall-clock ceiling, back off with jitter on rate limits, and fail an attempt
 whose served model differs from the requested one.
@@ -121,14 +132,21 @@ approval needs approval again.
 ## Red, then climb to green
 
 Run the full set on the unchanged behavior and record it as the baseline: this
-is the red. Then climb in rounds:
+is the red, for train and for test alike. When that baseline already sits near
+the target there is no hill to climb: report that the cases are too easy for
+this behavior and ask for harder ones instead of climbing. Then climb in
+rounds:
 
 - One round, one idea. A fresh analyzer, a subagent where the harness has one,
   reads only train traces and proposes a change that names the failing
   behavior, not the content of the cases. Record it in the variant's
   `change.md`.
-- Run the full set every round. Keep a change that raises the test score;
-  revert one that raises train while test stays flat, or that regresses.
+- Score train only. Keep a change whose train score rises outside the train
+  noise floor; revert one that does not.
+- Open a gate when the train score first reaches the target, and again at the
+  end. A gate scores the held-out split and the project's regression suite.
+  When the held-out score does not follow train, the climb fitted train:
+  revert to the last gate that passed and bisect the changes between them.
 - Stop at green, after three rounds in a row that move only inside the noise
   floor, or at the approved spend.
 - When rounds stall, sort the remaining train failures into content gap,
@@ -138,14 +156,40 @@ is the red. Then climb in rounds:
 Reach green only by changing the behavior. Never weaken, drop, or re-split
 cases or the grader to pass.
 
-## Keep the eval and hand back
+## Graduate the eval, then hand back
 
-Leave the runner, cases, and grader in the project ready to commit, and keep
-traces and reports out of version control. Hand back:
+Green ends the capability eval, so finish it instead of leaving it in place.
+Run the final variant over the whole set once more and take the cases it passed
+on every repetition. Move their `cases.jsonl` rows and this eval's grader into
+`regression/<slug>/` under the eval root, carrying the grader whole: the code
+checks and the rubric both go, because dropping the rubric stops guarding the
+regressions only a judge can see. Delete the rest of this eval's folder, append
+one line to `regression/log.md` with the date, the criterion, the baseline and
+final scores, the noise floor, the model, and the commit, and record the eval
+root's path in the project's agent instructions — `AGENTS.md`, created when
+missing, and `CLAUDE.md` too when it exists and does not load `AGENTS.md` — so
+later work finds the suite without guessing.
+
+A case whose passes were not repeatable does not graduate: a suite that starts
+amber reports nothing. Leave it in a capability eval while the criterion is
+open, and record it as a known failure once the criterion closes.
+
+A regression suite is scored against the level its cases reached, over the same
+repetitions, so a drop outside the noise floor means something broke. Change or
+remove one of its cases only when a decision to change that behavior exists, or
+when the feature it covers is gone; a failing score is never that reason.
+
+Cases, graders, the runner, and everything under `regression/` are ready to
+commit. The variant results folders are not, and graduation deletes them.
+
+Hand back:
 
 - the behavior change;
-- the baseline and final held-out scores with their noise floor, and a table
-  of each round's change with its train and test scores;
-- where the eval lives and how to rerun it;
+- the baseline and final held-out scores with their noise floor, a table of
+  each round's change with its train score, and each gate's held-out score;
+- which cases graduated, which did not and why, and where the regression suite
+  lives;
+- how to rerun the regression suite, and the capability eval too when one
+  stays open;
 - for an unreached target, the best held-out score and the failure buckets,
   so the criterion stays incomplete.
