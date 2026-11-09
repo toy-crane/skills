@@ -55,9 +55,9 @@
   result from the same cases and grader; it reads that result instead. A gate
   on an unsplit set takes the variant's round score, a second gate on the same
   variant takes the first gate's score, and graduation picks its cases from the
-  final variant's existing results rather than a fresh full run. The
-  regression suite and attempts that failed before a scorable output are still
-  run. Cost is cut by not repeating runs, not by testing on a cheaper model
+  final variant's existing results rather than a fresh full run. A gate still
+  runs the regression suite for a variant whose suite rows do not exist yet,
+  and attempts that failed before a scorable output run again. Cost is cut by not repeating runs, not by testing on a cheaper model
   than the one the product or skill actually runs on.
 - A regression suite is held at the level its cases reached, so a score below
   it means something broke. A climb runs it at its gates, not every round, and
