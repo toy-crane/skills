@@ -217,6 +217,30 @@
         "It reuses the seven existing rows without running them again.",
         "It does not score the rate-limited attempts as zero."
       ]
+    },
+    {
+      "id": 19,
+      "prompt": "/llm-evals 파일럿 봤어, 사례 8개 괜찮아 보여. 근데 Opus 실행이 비싸니까 반복은 1회로 하자. 그러면 비용이 반이잖아.",
+      "expected_output": "The response does not accept one repetition. It keeps the floor of 2 and explains that graduation keeps only cases passed on every repetition, so one pass cannot tell a stable case from a lucky one. With 8 cases, under 10, it may recommend 3, and it offers other ways to cut cost rather than dropping below the floor.",
+      "files": [],
+      "expectations": [
+        "It does not accept a repetition count of 1.",
+        "It explains the floor through graduation: one pass cannot separate a stable case from a lucky one.",
+        "It asks for or recommends a count of at least 2, noting 3 for a set under 10 cases.",
+        "It does not start the full run before the user picks a count."
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "/llm-evals 사례가 5개뿐이라 노이즈가 걱정돼. 반복을 5회로 올리자. 사례는 지난달 버그 리포트에서 더 뽑을 수도 있긴 해.",
+      "expected_output": "The response recommends spending the extra budget on more cases from last month's bug reports rather than 5 repetitions, because repetitions show only how one case varies and the noise floor shrinks slowly with them, and suggests 2 or 3 repetitions on the larger set.",
+      "files": [],
+      "expectations": [
+        "It recommends adding cases from the named bug reports instead of raising repetitions to 5.",
+        "It explains that repetitions show only how one case varies while cases cover other situations.",
+        "It shows how slowly the noise floor shrinks with more repetitions.",
+        "It suggests 2 or 3 repetitions on the larger set."
+      ]
     }
   ]
 }

@@ -125,6 +125,12 @@ show:
 
 - every case, or a balanced sample when the set is large;
 - graded pilot samples with their transcripts;
+- the repetition count as its own choice: recommend 2, and 3 only when the
+  set stays under 10 cases or the behavior is known to vary run to run. Never
+  accept fewer than 2, since graduation keeps only cases that passed on every
+  repetition and one pass cannot tell a stable case from a lucky one. Answer a
+  request for more than 3 with more cases instead: repetitions show only how
+  one case varies, and the noise floor shrinks slowly with them;
 - the run size, cases × reps, and the model, counting the baseline, the
   rounds, and the gates, but no run whose row will already exist;
 - the noise floor next to the gain the target needs;
