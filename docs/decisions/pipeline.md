@@ -136,10 +136,12 @@
   recommended when one exists, or a Claude Code or Codex subscription through
   its CLI. Without a key it offers the subscription instead of stopping, and
   stops only when neither exists. It then builds the concrete case set and
-  grader, and pauses once before its first
-  paid run to show the cases, graded samples, run size, noise floor beside the
+  grader, and pauses once before the full
+  run to show the cases, graded samples, run size, noise floor beside the
   target gain, and estimated cost, or estimated usage-limit consumption on a
-  subscription, for the user's approval. After approval it climbs without asking until
+  subscription, for the user's approval. The pilot of at most three cases runs
+  before that pause and is already paid: its usage is what the estimate is
+  computed from, and its graded rows are what the user reads. After approval it climbs without asking until
   green, a plateau of three rounds inside the noise floor, or the approved
   spend; an unreached target goes back to `implement` with the best held-out
   score and failure causes, and the criterion stays incomplete.

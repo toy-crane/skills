@@ -114,7 +114,8 @@ stays incomplete. Report each eval criterion with its baseline and final
 scores as evidence. When the project holds a regression suite and this change
 touches the behavior it guards, run that suite and report its result as
 evidence beside the criterion's own checks; the eval root named in the
-project's agent instructions says where it lives, and a project without one
+project's agent instructions says where it lives, or the folder its existing
+evals sit in when the instructions name none, and a project holding no suite
 needs nothing here. Behavior in the running product
 still owes runtime evidence when a test also proves it. Hand the `tdd` skill
 the active outcome, the criteria to prove by automated tests, the approved
