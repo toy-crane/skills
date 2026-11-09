@@ -4,7 +4,7 @@ set -euo pipefail
 
 task_repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 # Usage: run-claude-trigger-evals.sh [repeats] [workers] [skill ...]
-# A named skill without evals/trigger-evals.json is linked into the eval
+# A named skill without skill-evals/<name>/trigger-evals.json is linked into the eval
 # project as a routing distractor and contributes no cases.
 task_repeats=${1:-2}
 task_workers=${2:-6}
@@ -33,7 +33,7 @@ for task_skill in "${task_skills[@]}"; do
   task_skill_link="$task_repo_root/.claude/skills/$task_skill"
   test -d "$task_skill_link"
   task_skill_path=$(cd "$task_skill_link" && pwd -P)
-  task_eval_path="$task_skill_path/evals/$task_eval_filename"
+  task_eval_path="$task_repo_root/skill-evals/$task_skill/$task_eval_filename"
   test -f "$task_skill_path/SKILL.md"
   ln -s "$task_skill_path" "$task_eval_root/.claude/skills/$task_skill"
   if [ ! -f "$task_eval_path" ]; then

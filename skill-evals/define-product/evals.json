@@ -32,7 +32,7 @@
       "prompt": "/define-product 첨부한 파일은 저장소 루트의 현재 PRODUCT.md야. 이제 사용자가 확정한 방향은 2~10명 디자인 스튜디오까지 포함하고, 프로젝트 책임자가 고객 승인을 관리하는 거야. 나머지 현재 제품 의미는 유지하면서 제품 정의를 갱신해줘.",
       "expected_output": "The response reads and updates the attached root product definition in place, changes only the confirmed audience and ownership meaning, and preserves its prompt-hidden current core loop, account-free client boundary, and quantified success signal instead of creating a second artifact or appending history.",
       "files": [
-        "evals/fixtures/existing-product/PRODUCT.md"
+        "fixtures/existing-product/PRODUCT.md"
       ],
       "expectations": [
         "It updates the same PRODUCT.md rather than creating a dated, versioned, or parallel product document.",

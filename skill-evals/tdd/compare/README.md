@@ -35,9 +35,9 @@ Ask the user first: how to reach the model, and approval of the run size and
 cost, as `llm-evals` requires.
 
 ```bash
-node skills/workflow/tdd/evals/compare/run.mjs --variant baseline --skill-ref <previous-ref> --access subscription --reps 3
-node skills/workflow/tdd/evals/compare/run.mjs --variant v1 --access subscription --reps 3
-node skills/workflow/tdd/evals/compare/compare.mjs
+node skill-evals/tdd/compare/run.mjs --variant baseline --skill-ref <previous-ref> --access subscription --reps 3
+node skill-evals/tdd/compare/run.mjs --variant v1 --access subscription --reps 3
+node skill-evals/tdd/compare/compare.mjs
 ```
 
 - `--access api` passes `ANTHROPIC_API_KEY` from the environment or the repo

@@ -275,7 +275,7 @@
       "id": 20,
       "prompt": "compare.html에서 알림을 끄는 순간의 확인 표현을 비교했고 B로 확정했어. 이제 이 비교를 마무리해줘. 현재 프로젝트에는 compare.html만 있고 prototype.html은 아직 없어. 이전 대화는 남아 있지 않으니 compare.html에 보존된 계약을 기준으로 처리해줘.",
       "expected_output": "Using the contract preserved in compare.html, the response records the chosen behavior for the later prototype build and discards the finished comparison. It neither invents an existing integration target nor builds a complete prototype just to close this decision.",
-      "files": ["evals/fixtures/compare-resume/compare.html"],
+      "files": ["fixtures/compare-resume/compare.html"],
       "expectations": [
         "The comparison contract independently handles the absence of prototype.html without relying on a remembered SKILL.md exception.",
         "It records the confirmed B behavior and closes the local comparison without creating unrelated product screens or a new prototype.",
@@ -288,7 +288,7 @@
       "type": "multi_turn",
       "prompt": "/build-prototype 글 상세에서 저장을 누른 직후 표현만 비교해줘. A는 버튼을 '저장됨'으로 바꾸고, B는 버튼 아래에 '보관함에 저장했어요.'와 '실행 취소'를 계속 보여주고, C는 같은 안내와 실행 취소가 있는 토스트를 4초 보여줘. B와 C의 버튼 문구는 '저장'으로 유지해. 아직 전체 프로토타입은 필요 없고 이 상황만 눌러보고 싶어.",
       "expected_output": "Across three separately dispatched turns, the agent creates a bounded comparison, records the user's B choice and removes the comparison without creating a prototype, then a fresh agent builds a new canonical prototype from only the surviving project files. The new detail screen preserves B's persistent inline feedback and working undo, and the library reflects saving and undoing.",
-      "files": ["evals/fixtures/compare-to-prototype/project.md"],
+      "files": ["fixtures/compare-to-prototype/project.md"],
       "turns": [
         {
           "id": "compare",
@@ -325,8 +325,8 @@
       "prompt": "/build-prototype 팀 대시보드에 알림 센터를 붙이려고 해. 알림 목록, 알림 상세, 알림 설정 화면을 한 파일에서 보고 싶어. 디자인 토큰은 tokens.css에 있어.",
       "expected_output": "The response builds the three notification screens in one temporary self-contained HTML file styled through the project's own tokens. It carries the light values into :root and the project's dark values into a .sh-theme-dark rule instead of copying the prefers-color-scheme media query, so the review bar shows the light / dark switch after the viewport cycle and the prototype opens light whatever the reviewer's system prefers. It runs the file and shares an address the user can open.",
       "files": [
-        "evals/fixtures/dark-tokens/project.md",
-        "evals/fixtures/dark-tokens/tokens.css"
+        "fixtures/dark-tokens/project.md",
+        "fixtures/dark-tokens/tokens.css"
       ],
       "expectations": [
         "The prototype's :root carries the project's light token values, and its dark values appear under a .sh-theme-dark rule.",

@@ -45,11 +45,11 @@ Ask the user first: how to reach the model, and approval of the run size and
 usage, as `llm-evals` requires.
 
 ```bash
-node skills/workflow/shape-idea/evals/division/check-grader.mjs --subscription
-node skills/workflow/shape-idea/evals/division/run.mjs --variant baseline --skill-ref <previous-ref> --access subscription
-node skills/workflow/shape-idea/evals/division/run.mjs --variant v1 --access subscription
-node skills/workflow/shape-idea/evals/division/run.mjs --variant v1 --access subscription --set regression --reps 1
-node skills/workflow/shape-idea/evals/division/summarize.mjs
+node skill-evals/shape-idea/division/check-grader.mjs --subscription
+node skill-evals/shape-idea/division/run.mjs --variant baseline --skill-ref <previous-ref> --access subscription
+node skill-evals/shape-idea/division/run.mjs --variant v1 --access subscription
+node skill-evals/shape-idea/division/run.mjs --variant v1 --access subscription --set regression --reps 1
+node skill-evals/shape-idea/division/summarize.mjs
 ```
 
 - `--access api` passes `ANTHROPIC_API_KEY` from the environment or the repo

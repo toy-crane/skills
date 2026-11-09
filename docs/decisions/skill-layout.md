@@ -10,6 +10,9 @@
 - Treat the group as a source-catalog concern. Keep each skill's immediate
   folder and frontmatter name unchanged, and expose flat invocation paths
   through `.agents/skills/` and `.claude/skills/`.
+- Keep a skill's evals in `skill-evals/<name>/`, never inside its skill
+  folder. Installers copy the skill folder whole, and evals serve only the
+  people improving the skill ([testing](testing.md)).
 
 ## Boundaries
 

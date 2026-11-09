@@ -13,7 +13,8 @@ published skill must also appear in
 array, while skills.sh discovers everything under `skills/`. Adding a skill =
 create `skills/<group>/<name>/`, add its complete path to `plugin.json`,
 symlink it into both `.agents/skills/` and `.claude/skills/`, then link it from
-the README. Run
+the README. A skill's evals live in `skill-evals/<name>/`, outside its folder,
+so they never ship. Run
 `claude plugin validate . --strict` after touching either `.claude-plugin/`
 manifest.
 

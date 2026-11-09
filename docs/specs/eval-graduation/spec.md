@@ -55,9 +55,9 @@
 2. `implement` 본문은 이번 변경이 프로젝트의 회귀 묶음이 지키는 동작에 닿으면 그 묶음을 돌리고 결과를 증거로 보고한다고 적는다. 회귀 묶음이 없는 프로젝트에서는 아무 일도 하지 않는다.
 3. `docs/specs/llm-evals/spec.md`에서 승인 시점을 가리키는 문구가 전체 실행 전을 가리킨다. 파일럿이 이미 유료라는 점이 드러난다.
 4. 위 본문 변경이 실제 동작으로 나타나는 것을 eval로 증명한다.
-   - 지표: 사례별 기대 항목 충족률. 기존 `skills/workflow/llm-evals/evals/evals.json`이 쓰는 `expectations` 형식을 그대로 쓴다.
+   - 지표: 사례별 기대 항목 충족률. 기존 `skill-evals/llm-evals/evals.json`이 쓰는 `expectations` 형식을 그대로 쓴다.
    - 목표: 새로 더한 사례의 기대 항목을 전부 충족하고, 기존 사례의 충족률이 기준선 아래로 떨어지지 않는다. 기준선은 이번 변경 직전의 본문이다.
-   - 사례 출처: `skills/workflow/llm-evals/evals/evals.json`과 `skills/workflow/implement/evals/evals.json`의 기존 사례에 이번 사례를 더한다. 사례 수가 적어 train과 test로 나눌 수 없으면 전체를 재고 directional로 읽는다. 실패를 본 뒤 본문을 고쳤다면 그 수정은 보지 않은 사례에서 다시 확인한다.
+   - 사례 출처: `skill-evals/llm-evals/evals.json`과 `skill-evals/implement/evals.json`의 기존 사례에 이번 사례를 더한다. 사례 수가 적어 train과 test로 나눌 수 없으면 전체를 재고 directional로 읽는다. 실패를 본 뒤 본문을 고쳤다면 그 수정은 보지 않은 사례에서 다시 확인한다.
 5. 평가에 다음 사례가 있고 통과한다.
    - `llm-evals`: 라운드를 도는 중인 경우. 연습만 돌리고 시험은 건드리지 않으며, 남길지 되돌릴지를 연습 점수와 잡음 폭으로 정한다.
    - `llm-evals`: 연습이 목표를 넘은 경우. 관문을 열어 시험을 꺼내고, 시험이 따라오지 않으면 마지막 통과 지점까지 되돌린다.

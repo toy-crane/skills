@@ -620,10 +620,10 @@
       "prompt": "/implement docs/specs/csv-export/ 구현해줘.",
       "expected_output": "The response compares the spec with the current repository before changing source, finds that the approved comma-separated constraint and the report.csv filename contradict the shipped tab-separated serializer, stops that outcome before any source change, and names the stale point with its route.",
       "files": [
-        "evals/fixtures/stale-spec/package.json",
-        "evals/fixtures/stale-spec/README.md",
-        "evals/fixtures/stale-spec/src/rows.js",
-        "evals/fixtures/stale-spec/docs/specs/csv-export/spec.md"
+        "fixtures/stale-spec/package.json",
+        "fixtures/stale-spec/README.md",
+        "fixtures/stale-spec/src/rows.js",
+        "fixtures/stale-spec/docs/specs/csv-export/spec.md"
       ],
       "expectations": [
         "It compares the spec's settled constraints and acceptance criteria with the current code before changing any source file.",
@@ -705,10 +705,10 @@
       "prompt": "/implement docs/specs/password-reset-email/ 구현해줘. 이 환경에는 Resend 계정 로그인이나 API 키가 없어.",
       "expected_output": "The response reads the spec's setup section before any source change, does what it can, reports every remaining setup item at once with its done condition, and stops without changing source.",
       "files": [
-        "evals/fixtures/setup-pending/package.json",
-        "evals/fixtures/setup-pending/README.md",
-        "evals/fixtures/setup-pending/src/reset.js",
-        "evals/fixtures/setup-pending/docs/specs/password-reset-email/spec.md"
+        "fixtures/setup-pending/package.json",
+        "fixtures/setup-pending/README.md",
+        "fixtures/setup-pending/src/reset.js",
+        "fixtures/setup-pending/docs/specs/password-reset-email/spec.md"
       ],
       "expectations": [
         "It reads the `## Setup before implementation` section before changing any source file.",
@@ -723,10 +723,10 @@
       "prompt": "/implement docs/specs/password-reset-email/ 셋팅 다 했어. 이어서 구현해줘. (확인해 보니 Resend 콘솔의 acme.test 도메인은 아직 Pending 상태로 보여.)",
       "expected_output": "The response rechecks every done condition before starting, finds the domain condition still failing, and keeps source untouched while naming that one remaining item.",
       "files": [
-        "evals/fixtures/setup-pending/package.json",
-        "evals/fixtures/setup-pending/README.md",
-        "evals/fixtures/setup-pending/src/reset.js",
-        "evals/fixtures/setup-pending/docs/specs/password-reset-email/spec.md"
+        "fixtures/setup-pending/package.json",
+        "fixtures/setup-pending/README.md",
+        "fixtures/setup-pending/src/reset.js",
+        "fixtures/setup-pending/docs/specs/password-reset-email/spec.md"
       ],
       "expectations": [
         "It rechecks the done conditions instead of trusting the user's statement alone.",

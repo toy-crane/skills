@@ -59,7 +59,7 @@
 - `implement`에서 `human-review`를 언급하는 유일한 문장(리뷰 결과 분류에서
   "사용자 몫인 결정은 `human-review`로 판단하도록 권한다")을 지운다. 그
   결정을 사용자 몫으로 핸드오프에 적는 동작은 그대로이고, 어떤 스킬로
-  판단할지 권하는 부분만 빠진다. `implement/evals/evals.json`에서 그 권유를
+  판단할지 권하는 부분만 빠진다. `skill-evals/implement/evals.json`에서 그 권유를
   기대하는 단언도 함께 지운다. `human-review` 스킬 자체는 남는다. 이로써
   이 저장소의 다른 스킬 본문에는 `human-review`가 나오지 않는다.
 - 각 스킬은 작업을 시작하기 전에 자기가 부를 스킬이 설치돼 있는지 확인하고,
