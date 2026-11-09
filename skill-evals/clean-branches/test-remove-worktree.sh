@@ -3,7 +3,8 @@
 
 set -euo pipefail
 
-task_helper=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/scripts/remove-worktree.sh
+# skill-evals/<name>/ sits beside .claude/skills/<name>, which links to the skill.
+task_helper=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.claude/skills/clean-branches" && pwd)/scripts/remove-worktree.sh
 task_root=$(mktemp -d)
 task_root=$(cd "$task_root" && pwd -P)
 task_live_pids=()
