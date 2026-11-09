@@ -89,6 +89,11 @@
   outputs, fixtures, expected answers — into the matching folder under
   `regression/`, deletes the rest of that folder, and appends one scored line
   to `log.md`.
+- An eval root never sits inside a folder that ships to users, such as a
+  skill's own folder. Evals exist to improve the thing they measure, so its
+  users never need them, and installers copy a skill folder whole. This
+  repository keeps each skill's evals in `skill-evals/<name>/`, outside
+  `skills/`.
 - Graduation records the eval root's path in the project's agent instructions,
   so later work finds the regression suite without guessing: in `AGENTS.md`,
   created when missing, and also in `CLAUDE.md` when that file exists and does
@@ -225,6 +230,15 @@ which is the half of the behavior code checks cannot reach.
   consolidation, and a committed `results/` directory at 804MB. Its chat eval
   alone holds 676 cases and judges about 525 of them per run. Nothing in the
   workflow ever retired an eval.
+- On 2026-11-09, `npx skills add` (vercel-labs/skills `d3701c1`) copied a
+  skill folder recursively and excluded only `.git`, `__pycache__`,
+  `__pypackages__`, and `metadata.json`; no ignore file, frontmatter field, or
+  file list could narrow it (vercel-labs/skills#1241 asks for one). Every
+  skill's `evals/` therefore reached installed projects, and the shape-idea
+  and `tdd` runners failed there because they assumed this repository's
+  `skills/<group>/` layout. Anthropic's skill-creator keeps `evals/` in the
+  skill folder too, but its `.skill` packager drops that folder before
+  shipping.
 
 ## Still-rejected alternatives
 
@@ -264,6 +278,6 @@ which is the half of the behavior code checks cannot reach.
   control was deferred rather than designed, and an age-based rule removes
   cases no decision retired.
 - One fixed path for every project's eval root — projects keep evals beside the
-  code they test, such as `apps/api/eval/` or a skill's own `evals/`, so a
+  code they test, such as `apps/api/eval/` or `skill-evals/<name>/`, so a
   fixed root is broken on arrival; the layout under the chosen root is fixed
   instead and the agent instructions carry the root.

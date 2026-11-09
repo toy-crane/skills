@@ -3,16 +3,18 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
-  appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+  appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import {
   compareRoot, gradeTests, originalTestNames, readTrace, scoreSteps, scoreWorkspace, tasks,
 } from './score.mjs';
 
-const repoRoot = resolve(compareRoot, '../../../../..');
+const repoRoot = resolve(compareRoot, '../../..');
+// .claude/skills/tdd links to the published skill under skills/<group>/tdd.
+const skillPath = relative(repoRoot, join(realpathSync(join(repoRoot, '.claude/skills/tdd')), 'SKILL.md'));
 const usage = `usage: run.mjs --variant baseline|v<N> --access api|subscription [options]
   --skill-ref <git-ref>   take tdd's SKILL.md from this ref (required for baseline)
   --skill-file <path>     take SKILL.md from this file (default: the working tree's)
@@ -73,13 +75,13 @@ const variantDir = join(flowDir, opts.variant);
 let skillText;
 let skillSource;
 if (opts['skill-ref']) {
-  const shown = spawnSync('git', ['-C', repoRoot, 'show', `${opts['skill-ref']}:skills/workflow/tdd/SKILL.md`], { encoding: 'utf8' });
+  const shown = spawnSync('git', ['-C', repoRoot, 'show', `${opts['skill-ref']}:${skillPath}`], { encoding: 'utf8' });
   if (shown.status !== 0) fail(`cannot read tdd SKILL.md at ${opts['skill-ref']}: ${shown.stderr.trim()}`);
   skillText = shown.stdout;
   const sha = spawnSync('git', ['-C', repoRoot, 'rev-parse', '--short', opts['skill-ref']], { encoding: 'utf8' }).stdout.trim();
   skillSource = `git ${opts['skill-ref']} (${sha})`;
 } else {
-  const file = resolve(opts['skill-file'] ?? join(repoRoot, 'skills/workflow/tdd/SKILL.md'));
+  const file = resolve(opts['skill-file'] ?? join(repoRoot, skillPath));
   skillText = readFileSync(file, 'utf8');
   skillSource = `file ${file}`;
 }

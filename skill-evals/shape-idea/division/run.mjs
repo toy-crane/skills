@@ -3,17 +3,19 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
-  appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+  appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { collectFolders, judgeAssignment, readStream, scoreDivision } from './grade.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const skillsRoot = resolve(here, '../../../..');
-const repoRoot = resolve(skillsRoot, '..');
+const repoRoot = resolve(here, '../../..');
+// Each published skill is linked from .claude/skills/<name> to skills/<group>/<name>.
+const skillDir = (name) => realpathSync(join(repoRoot, '.claude/skills', name));
+const skillPath = relative(repoRoot, join(skillDir('shape-idea'), 'SKILL.md'));
 const usage = `usage: run.mjs --variant baseline|v<N> --access api|subscription [options]
   --skill-ref <git-ref>   take shape-idea's SKILL.md from this ref (required for baseline)
   --skill-file <path>     take SKILL.md from this file (default: the working tree's)
@@ -76,13 +78,13 @@ const timeoutMs = Number(opts['timeout-s']) * 1000;
 let skillText;
 let skillSource;
 if (opts['skill-ref']) {
-  const shown = spawnSync('git', ['-C', repoRoot, 'show', `${opts['skill-ref']}:skills/workflow/shape-idea/SKILL.md`], { encoding: 'utf8' });
+  const shown = spawnSync('git', ['-C', repoRoot, 'show', `${opts['skill-ref']}:${skillPath}`], { encoding: 'utf8' });
   if (shown.status !== 0) fail(`cannot read shape-idea SKILL.md at ${opts['skill-ref']}: ${shown.stderr.trim()}`);
   skillText = shown.stdout;
   const sha = spawnSync('git', ['-C', repoRoot, 'rev-parse', '--short', opts['skill-ref']], { encoding: 'utf8' }).stdout.trim();
   skillSource = `git ${opts['skill-ref']} (${sha})`;
 } else {
-  const file = resolve(opts['skill-file'] ?? join(skillsRoot, 'workflow/shape-idea/SKILL.md'));
+  const file = resolve(opts['skill-file'] ?? join(repoRoot, skillPath));
   skillText = readFileSync(file, 'utf8');
   skillSource = `file ${file}`;
 }
@@ -161,10 +163,8 @@ function prepareWorkspace(id) {
   writeFileSync(join(ws, 'README.md'), '# Product repository\n\nThe product code lives in other repositories. This repository holds product decisions and specs.\n');
   for (const name of skillDirs) {
     const target = join(ws, '.claude/skills', name);
-    cpSync(join(skillsRoot, 'workflow', name), target, {
-      recursive: true,
-      filter: (src) => !/\/(evals|agents)(\/|$)/.test(src.slice(join(skillsRoot, 'workflow', name).length)),
-    });
+    const source = skillDir(name);
+    cpSync(source, target, { recursive: true, filter: (src) => !/^\/agents(\/|$)/.test(src.slice(source.length)) });
   }
   writeFileSync(join(ws, '.claude/skills/shape-idea/SKILL.md'), skillText);
   for (const step of [['init', '-q'], ['add', '-A'], ['-c', 'user.name=eval', '-c', 'user.email=eval@example.com', 'commit', '-q', '-m', 'fixture']]) {

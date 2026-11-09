@@ -8,7 +8,7 @@ import { compareRoot } from './score.mjs';
 const { values: opts } = parseArgs({
   options: { flow: { type: 'string' }, base: { type: 'string', default: 'baseline' }, next: { type: 'string' } },
 });
-const flowDir = resolve(opts.flow ?? join(compareRoot, '../../../../..', '.claude/hillclimb/tdd'));
+const flowDir = resolve(opts.flow ?? join(compareRoot, '../../..', '.claude/hillclimb/tdd'));
 const variants = existsSync(flowDir) ? readdirSync(flowDir).filter((d) => /^v\d+$/.test(d)) : [];
 const nextName = opts.next ?? variants.sort((a, b) => Number(a.slice(1)) - Number(b.slice(1))).at(-1);
 if (!nextName) {

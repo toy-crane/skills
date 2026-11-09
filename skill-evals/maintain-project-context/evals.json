@@ -92,9 +92,9 @@
       "prompt": "/maintain-project-context 첨부한 저장소에서 PRODUCT.md와 product-audience 결정의 대상 정의가 어긋나 있어. 새 제품 결정을 만들지 말고 이미 확정된 의미만 반영해서 장기 맥락을 정리해줘.",
       "expected_output": "The response reads the attached decision contract, reconciles PRODUCT.md to its explicitly settled audience meaning, preserves prompt-hidden current product content, and removes obsolete audience wording without reopening product definition.",
       "files": [
-        "evals/fixtures/settled-audience/PRODUCT.md",
-        "evals/fixtures/settled-audience/docs/decisions/README.md",
-        "evals/fixtures/settled-audience/docs/decisions/product-audience.md"
+        "fixtures/settled-audience/PRODUCT.md",
+        "fixtures/settled-audience/docs/decisions/README.md",
+        "fixtures/settled-audience/docs/decisions/product-audience.md"
       ],
       "expectations": [
         "It treats the explicit settled product decision as sufficient authority to update PRODUCT.md.",
@@ -109,8 +109,8 @@
       "prompt": "/maintain-project-context 첨부한 현재 PRODUCT.md를 구현 증거에 맞춰 최신화해줘.",
       "expected_output": "The response reads the attached product context and implementation evidence, leaves PRODUCT.md byte-for-byte unchanged because no intent source confirms the apparent product pivot, reports the mismatch, and asks the exact product-intent question.",
       "files": [
-        "evals/fixtures/conflicting-code/PRODUCT.md",
-        "evals/fixtures/conflicting-code/src/team-invitations.md"
+        "fixtures/conflicting-code/PRODUCT.md",
+        "fixtures/conflicting-code/src/team-invitations.md"
       ],
       "expectations": [
         "It does not rewrite PRODUCT.md as a team product from code alone.",
