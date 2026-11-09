@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-script=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)/scripts/claim.sh
+# skill-evals/<name>/ sits beside .claude/skills/<name>, which links to the skill.
+script=$(CDPATH= cd -- "$(dirname -- "$0")/../../.claude/skills/triage-issues" && pwd)/scripts/claim.sh
 scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT
 

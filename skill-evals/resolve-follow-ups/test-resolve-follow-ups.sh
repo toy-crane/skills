@@ -2,7 +2,8 @@
 set -euo pipefail
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-SKILL_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+# skill-evals/<name>/ sits beside .claude/skills/<name>, which links to the skill.
+SKILL_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/../../.claude/skills/resolve-follow-ups" && pwd)
 DISPATCHER="$SKILL_DIR/scripts/resolve-follow-ups.sh"
 
 fail() {
