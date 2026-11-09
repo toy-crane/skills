@@ -77,8 +77,10 @@ from the prompt you found. Write each (case, rep) as it finishes, so a restart
 skips what is already written. The project chooses where its eval root lives:
 use the one its agent instructions name, else the folder its existing evals sit
 in, else `.claude/hillclimb/`. The layout under that root is fixed. The root
-holds the runner, `regression/`, and one folder per capability eval named after
-the spec folder whose criterion it proves. This eval's folder holds
+holds the runner, `regression/`, and one folder per capability eval. Name that
+folder for the spec folder whose criterion it proves, and for the criterion too
+when that spec has more than one of them, so two criteria handed over
+separately never land on the same folder. This eval's folder holds
 `cases.jsonl`, its grader, `_state.json` (metrics with the headline first,
 train and test ids, the access choice, the approved spend), and one results
 folder per variant named `baseline` or `v<N>`, in the shape claude-api's report
@@ -166,9 +168,12 @@ cases or the grader to pass.
 Green ends the capability eval, so finish it instead of leaving it in place.
 Run the final variant over the whole set once more and take the cases it passed
 on every repetition. Move their `cases.jsonl` rows and this eval's grader into
-`regression/<slug>/` under the eval root, carrying the grader whole: the code
-checks and the rubric both go, because dropping the rubric stops guarding the
-regressions only a judge can see. Delete the rest of this eval's folder, append
+`regression/` under the eval root, in a folder named the way this eval's was,
+and carry the grader whole: the code checks and the rubric both go, because
+dropping the rubric stops guarding the regressions only a judge can see. Carry
+what the grader reads as well, since the rest of the folder is about to go —
+the frozen baseline outputs a pairwise judge compares against, its fixtures,
+and the expected answers it scores from. Delete the rest of this eval's folder, append
 one line to `regression/log.md` with the date, the criterion, the baseline and
 final scores, the noise floor, the model, and the commit, and record the eval
 root's path in the project's agent instructions — `AGENTS.md`, created when

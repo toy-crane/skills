@@ -60,12 +60,16 @@
   never a reason to remove one.
 - The project chooses where its eval root lives; the layout under that root is
   fixed. The root holds the runner that calls the product's entry point, one
-  folder per capability eval named after the spec folder whose criterion it
-  proves, and `regression/`, which holds `log.md` and one folder per graduated
-  criterion carrying that criterion's cases and grader. A capability eval's
-  folder holds its cases, its grader, the climb state, and one results folder
-  per variant. Graduation moves the cases and grader into `regression/<slug>/`,
-  deletes the rest of that folder, and appends one scored line to `log.md`.
+  folder per capability eval, and `regression/`, which holds `log.md` and one
+  folder per graduated criterion carrying that criterion's cases and grader. A
+  capability eval's folder is named for the spec folder whose criterion it
+  proves, and for the criterion too when that spec has more than one, so two
+  criteria handed over separately never share a folder; it holds its cases, its
+  grader, the climb state, and one results folder per variant. Graduation moves
+  the cases, the grader, and whatever that grader reads — frozen baseline
+  outputs, fixtures, expected answers — into the matching folder under
+  `regression/`, deletes the rest of that folder, and appends one scored line
+  to `log.md`.
 - Graduation records the eval root's path in the project's agent instructions,
   so later work finds the regression suite without guessing: in `AGENTS.md`,
   created when missing, and also in `CLAUDE.md` when that file exists and does
