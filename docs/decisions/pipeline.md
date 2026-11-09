@@ -124,6 +124,11 @@
   criterion it could not prove automatically with the reason. `implement`
   covers those through runtime evidence or reports them incomplete, and
   reports each criterion with its checks and evidence.
+- When the project holds a regression suite and the change touches the
+  behavior it guards, `implement` runs that suite and reports the result as
+  evidence beside the criterion's own checks ([testing](testing.md)). A climb
+  runs it at its gates, so this covers the changes that reach the behavior
+  without one.
 - Approval of an eval is split in two. The spec states what good means for an
   LLM-output criterion: the metric, the target on held-out cases, and where
   the cases come from, so implementation cannot lower the bar. Before building

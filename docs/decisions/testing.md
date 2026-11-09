@@ -41,6 +41,37 @@
   the proposer never read. Cases and grader are never weakened, removed, or
   re-split to reach green; changing them after approval needs the user's
   approval again. Expected answers stay out of the model's reach.
+- An eval's rounds score train cases only. The held-out split is scored at the
+  gates: when the train score first reaches the target, and at the end. A gate
+  whose held-out score does not follow the train score reverts to the last gate
+  that passed.
+- A capability eval ends by graduating. The cases the final variant passed on
+  every repetition move into the project's single regression suite, carrying
+  the same runner and grader; the climb's variants, traces, and split are
+  deleted and one scored line is kept. Cases that did not pass repeatedly stay
+  in a capability eval while the criterion is open, and are recorded as known
+  failures once it closes.
+- A regression suite is held at the level its cases reached, so a score below
+  it means something broke. A climb runs it at its gates, not every round.
+  Outside a climb, `implement` runs it when the change touches the behavior it
+  guards and reports the result as evidence ([pipeline](pipeline.md)).
+- A regression case is changed or removed only when a decision to change that
+  behavior exists, or when the feature it covers is gone. A failing score is
+  never a reason to remove one.
+- The project chooses where its eval root lives; the layout under that root is
+  fixed. The root holds the runner that calls the product's entry point, one
+  folder per capability eval named after the spec folder whose criterion it
+  proves, and `regression/`, which holds `log.md` and one folder per graduated
+  criterion carrying that criterion's cases and grader. A capability eval's
+  folder holds its cases, its grader, the climb state, and one results folder
+  per variant. Graduation moves the cases and grader into `regression/<slug>/`,
+  deletes the rest of that folder, and appends one scored line to `log.md`.
+- Graduation records the eval root's path in the project's agent instructions,
+  so later work finds the regression suite without guessing: in `AGENTS.md`,
+  created when missing, and also in `CLAUDE.md` when that file exists and does
+  not load `AGENTS.md`.
+- Cases, graders, the runner, and everything under `regression/` are committed.
+  A variant's results folders are not, and graduation deletes them.
 - Skill and agent behavior is LLM output too, so creating or changing a skill
   through this workflow proves its behavior criteria with an eval. The entry
   point is an agent run with the skill installed in a disposable workspace,
@@ -59,6 +90,9 @@
   product, belong to `implement` ([pipeline](pipeline.md)).
 - Enforcement stays in the skill text. No hook blocks production edits until a
   test fails.
+- These rules fix the layout under a project's eval root, not the root's own
+  path. Where that root goes is the project's, and the agent instructions carry
+  it.
 
 ## Why
 
@@ -110,6 +144,20 @@ because a proposer that tunes on the cases it scores seals its own fit into
 the number. The eval discipline follows claude-api's `build-eval` and
 `hillclimb` guides (anthropics/skills, Apache-2.0).
 
+Scoring the held-out split every round selects on it. After twenty rounds the
+final number is the best of twenty draws against the cases that decide green,
+and at 25 cases by 2 reps a round's movement sits inside a ±14-point noise
+floor anyway, so the choice it buys is mostly a coin flip. Scoring train only
+and opening a gate when train reaches the target keeps the deciding score
+independent and drops the rounds that bought nothing.
+
+Without graduation a capability eval has no end: its cases, variants, and
+traces stay, and the next criterion builds another eval beside it. Graduating
+leaves one regression suite per project and deletes the climb. Keeping the
+grader intact across graduation costs model calls on every regression run, but
+dropping the rubric would stop guarding the regressions only a judge can see,
+which is the half of the behavior code checks cannot reach.
+
 ## Reconsider when
 
 - The forward comparison shows the revised `tdd` meets fewer acceptance criteria,
@@ -119,6 +167,12 @@ the number. The eval discipline follows claude-api's `build-eval` and
   harness check would be cheaper than the misses.
 - LLM-output criteria turn out to be rare and small enough that a separate
   `llm-evals` skill costs more to maintain than an eval branch inside `tdd`.
+- Running the regression suite costs enough that a climb's gates or an
+  `implement` run skip it; its size, its grader mix, or how often it runs then
+  needs a limit.
+- Gates turn out to be rare enough that a held-out failure leaves too many
+  rounds to unwind, or train and held-out scores track each other closely
+  enough that the separation buys nothing.
 
 ## Evidence worth preserving
 
@@ -143,6 +197,11 @@ the number. The eval discipline follows claude-api's `build-eval` and
   minimal step already covered them. Two tasks and three runs each cannot
   separate small differences from noise. After the move to `llm-evals`, the
   same comparison reruns as `tdd`'s eval against baseline `0154388`.
+- The user's `dearly` project on 2026-11-09, before any graduation step
+  existed: 21 per-feature eval tools, ten of them added after an earlier
+  consolidation, and a committed `results/` directory at 804MB. Its chat eval
+  alone holds 676 cases and judges about 525 of them per run. Nothing in the
+  workflow ever retired an eval.
 
 ## Still-rejected alternatives
 
@@ -165,3 +224,16 @@ the number. The eval discipline follows claude-api's `build-eval` and
 - Building evals without user approval and showing the cases only in the
   hand-back — a wrong case set is found only after the climb has spent its
   budget, and nobody trusts the resulting number.
+- Scoring the held-out split every round and keeping whichever change raises it
+  — the split stops being held out once it decides what to keep, and at these
+  set sizes most of its per-round movement is noise.
+- Keeping only the code checks when a case graduates — cheaper on every
+  regression run, but the behavior a judge was needed for stops being guarded;
+  revisit if regression cost blocks runs.
+- A size cap on the regression suite, or dropping the oldest cases — cost
+  control was deferred rather than designed, and an age-based rule removes
+  cases no decision retired.
+- One fixed path for every project's eval root — projects keep evals beside the
+  code they test, such as `apps/api/eval/` or a skill's own `evals/`, so a
+  fixed root is broken on arrival; the layout under the chosen root is fixed
+  instead and the agent instructions carry the root.
