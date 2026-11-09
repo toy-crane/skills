@@ -32,7 +32,7 @@ implementation set its own bar. Invoked directly, derive the criterion from the
 request and ask the user for the metric and target when it gives none.
 
 When the project already holds an eval that measures the same behavior, such
-as an `evals/` folder beside a skill or a flow under `.claude/hillclimb/`, use
+as a skill's eval folder or a flow under `.claude/hillclimb/`, use
 it instead of building another. It still goes through the access choice and
 the approval below.
 
@@ -79,7 +79,9 @@ run a (variant, case, rep) that already has a scored row from the same cases
 and grader; read that row instead. An attempt recorded only in `errors.jsonl`
 has no row and runs again. The project chooses where its eval root lives:
 use the one its agent instructions name, else the folder its existing evals sit
-in, else `.claude/hillclimb/`. The layout under that root is fixed. The root
+in, else `.claude/hillclimb/`. Never put it inside a folder that ships to
+users, such as a skill's own folder: installers copy that folder whole, and
+its users never need the eval. The layout under that root is fixed. The root
 holds the runner, `regression/`, and one folder per capability eval. Name that
 folder for the spec folder whose criterion it proves, and for the criterion too
 when that spec has more than one of them, so two criteria handed over
