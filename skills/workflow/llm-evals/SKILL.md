@@ -152,6 +152,10 @@ rounds:
   end. A gate scores the held-out split and the project's regression suite.
   When the held-out score does not follow train, the climb fitted train:
   revert to the last gate that passed and bisect the changes between them.
+  A gate fails the same way when the suite drops below the baseline recorded
+  for it, outside the noise floor, on cases that baseline passed — this climb
+  broke behavior that already worked, and failures the baseline already had
+  are not this climb's. Nothing graduates from a failed gate.
 - Stop at green, after three rounds in a row that move only inside the noise
   floor, or at the approved spend. However it stops, open the final gate
   before handing back, so the result rests on a held-out score rather than a
