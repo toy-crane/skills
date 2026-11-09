@@ -57,8 +57,16 @@
   variant takes the first gate's score, and graduation picks its cases from the
   final variant's existing results rather than a fresh full run. A gate still
   runs the regression suite for a variant whose suite rows do not exist yet,
-  and attempts that failed before a scorable output run again. Cost is cut by not repeating runs, not by testing on a cheaper model
-  than the one the product or skill actually runs on.
+  and attempts that failed before a scorable output run again. Cost is cut by
+  not repeating runs, not by testing on a cheaper model than the one the
+  product or skill actually runs on.
+- The approval asks for the repetition count as its own choice. It is never
+  below 2, because graduation keeps only cases that passed on every
+  repetition and one pass cannot tell a stable case from a lucky one. The
+  recommendation is 2; 3 only when the set stays under 10 cases or the
+  behavior is known to vary run to run. A request for more than 3 is answered
+  with more cases instead, since repetitions show only how one case varies and
+  the noise floor shrinks slowly with them.
 - A regression suite is held at the level its cases reached, so a score below
   it means something broke. A climb runs it at its gates, not every round, and
   a gate fails when the suite drops below the baseline recorded for it outside
