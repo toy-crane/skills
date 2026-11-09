@@ -112,10 +112,11 @@
     {
       "id": 10,
       "prompt": "/llm-evals refund-triage 관문에서 시험 20건이 91점 나왔어. 기준선은 58점이고 잡음 폭 ±13이야. 목표 90도 넘었고. 끝난 거지?",
-      "expected_output": "The response treats green as the start of graduation rather than the end. It reruns the final variant over the whole set, moves the cases that passed on every repetition and this eval's grader into regression/<slug>/ under the eval root, deletes the rest of the eval's folder, appends one scored line to regression/log.md, and records the eval root's path in the project's agent instructions.",
+      "expected_output": "The response treats green as the start of graduation rather than the end. It takes the cases the final variant passed on every repetition from the rows it already has, train from its round and held-out from the gate, without running it again, moves them and this eval's grader into regression/<slug>/ under the eval root, deletes the rest of the eval's folder, appends one scored line to regression/log.md, and records the eval root's path in the project's agent instructions.",
       "files": [],
       "expectations": [
         "It graduates the eval rather than stopping at the hand-back.",
+        "It reads the final variant's existing rows instead of running it over the whole set again.",
         "Only cases that passed on every repetition move into the regression suite.",
         "The grader moves whole, rubric included, rather than being reduced to code checks.",
         "The variant folders and traces are deleted and one scored line is kept in regression/log.md.",
@@ -168,6 +169,53 @@
         "It names the absence of a decision to change the behavior as the reason.",
         "It separates a real regression from an intentional change and from a stale check.",
         "It reports the red rather than making it disappear."
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "/llm-evals implement가 넘긴 기준이야. 스킬 implement의 기준 2, '사용자가 이름 붙인 스펙 폴더 하나만 돌린다', 목표 90점, 사례는 skills/workflow/implement/evals/evals.json에서 5개야. 파일럿은 끝났고 사례 하나당 Opus 실행이 $0.40쯤 들었어. 반복 2회로 승인 요청 정리해줘. 라운드는 한 번쯤 돌 것 같아.",
+      "expected_output": "The response presents the approval with a run size that counts the baseline and one round over the unsplit 5-case set at 2 reps, 20 runs, plus the regression suite at the gates. It does not add a gate rerun or a graduation rerun of the same variant on the same cases, and its cost estimate follows that count, about $8 rather than $16.",
+      "files": [],
+      "expectations": [
+        "It treats 5 cases as too few to split and scores the whole set as directional.",
+        "Its run size counts the baseline and the round at 5 × 2 each, 20 runs, not 40.",
+        "It adds no rerun of the same variant for a gate or for graduation.",
+        "Its cost estimate follows the reduced count, about $8 for the capability eval."
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "/llm-evals 5개짜리 implement 스펙 기준 eval이야. 나누지 않고 전체로 채점 중이고 반복은 2회. 기준선 40점, v1이 1라운드에서 100점으로 목표 90을 넘었어. results.jsonl 보면 v1은 5건 모두 두 번 다 통과했어. 프로젝트에 regression/ 에 12건이 있어. 다음은?",
+      "expected_output": "The response opens the final gate by taking v1's round score for the capability eval, since the round already scored the whole unsplit set, and runs only the 12-case regression suite. If the suite holds, it graduates the five cases from v1's existing rows without running v1 again.",
+      "files": [],
+      "expectations": [
+        "It does not run v1 over the 5 cases again for the gate.",
+        "It runs the regression suite at the gate.",
+        "It picks the graduating cases from v1's existing rows rather than a new full run.",
+        "It still checks the regression suite against its recorded baseline before graduating."
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "/llm-evals refund-triage, train 40건 test 20건, 반복 2회. v3가 3라운드에서 train 92점, 바로 열린 게이트에서 test 91점이 나와서 green이야. 그 뒤로는 라운드를 더 안 돌렸어. 졸업하려면 v3를 60건 전체로 한 번 더 돌려야 하지?",
+      "expected_output": "The response says no rerun is needed. v3's rows already cover the whole set, train from round 3 and test from the gate, so the end gate on the same variant takes the earlier gate's score and graduation picks the cases v3 passed on both repetitions from those rows.",
+      "files": [],
+      "expectations": [
+        "It does not run v3 over the 60 cases again.",
+        "It reads train rows from round 3 and test rows from the gate.",
+        "It treats the end gate on the same variant as already scored.",
+        "Only cases v3 passed on both repetitions graduate."
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "/llm-evals 기준선 돌리다가 rate limit에 걸렸어. baseline/results.jsonl에는 10건 중 7건이 있고, errors.jsonl에 3건이 rate_limit으로 남았어. 다시 시작하면 어떻게 돼?",
+      "expected_output": "The response resumes by running only the three attempts recorded in errors.jsonl, since they have no scored row, and reads the seven existing rows instead of running them again. It does not score the three failures as zero.",
+      "files": [],
+      "expectations": [
+        "It runs again only the three attempts that have no scored row.",
+        "It reuses the seven existing rows without running them again.",
+        "It does not score the rate-limited attempts as zero."
       ]
     }
   ]
