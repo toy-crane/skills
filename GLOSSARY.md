@@ -65,3 +65,15 @@ _Avoid_: Fuzzing, edge-case test, push on it
 **Eval**:
 The check `llm-evals` uses to prove an acceptance criterion about LLM output that varies run to run: an approved case set, a runner that calls the product's entry point (for a skill, an agent run with the skill installed), and a grader, scored over repeated runs. Its red is the baseline score measured before the behavior changes; its green is a held-out score at or above the spec's target and above the baseline outside the noise floor. Distinct from an automated test, which a deterministic assertion decides.
 _Avoid_: Benchmark, LLM test, prompt test
+
+**Capability eval**:
+The eval a climb works on: it starts below the spec's target so there is a hill to climb, and it is finished once its held-out score reaches green. A low score means there is room to improve.
+_Avoid_: Quality eval, benchmark
+
+**Regression suite**:
+The project's single graduated case set, held at the level its cases reached and carrying the same runner and grader the capability eval used. A score below that level means something broke, not that there is room to improve.
+_Avoid_: Smoke eval, regression tests
+
+**Graduation**:
+Moving a finished capability eval's repeatedly passing cases into the regression suite and deleting the climb's variants, traces, and split, so the question changes from whether the behavior can be reached to whether it still holds.
+_Avoid_: Promotion, archiving
