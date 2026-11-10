@@ -25,7 +25,8 @@ export function expectationsFor(testCase) {
 
 // What the run left behind, read without the model under test.
 export function collectEndState(workspace) {
-  const git = (args) => spawnSync('git', ['-C', workspace, ...args], { encoding: 'utf8' }).stdout ?? '';
+  // core.quotePath=false keeps non-ASCII paths, such as a Korean spec slug, unquoted for the checks below.
+  const git = (args) => spawnSync('git', ['-C', workspace, '-c', 'core.quotePath=false', ...args], { encoding: 'utf8' }).stdout ?? '';
   const status = git(['status', '--porcelain', '--untracked-files=all']).split('\n').filter(Boolean);
   const productPath = join(workspace, 'PRODUCT.md');
   const product = existsSync(productPath) ? readFileSync(productPath, 'utf8') : null;
@@ -113,9 +114,12 @@ Return one verdict per expectation index, plus the three counts about next work-
     try { data = JSON.parse(out.result.replace(/^```(?:json)?\s*|\s*```$/g, '')); } catch { /* handled below */ }
   }
   if (!Array.isArray(data?.expectations)) return { error: `judge gave no verdicts: ${String(out.result).slice(0, 500)}` };
+  // A judge that skips an expectation failed before a scorable output; never score that as unmet.
+  const missing = expectations.map((_, i) => i).filter((i) => typeof data.expectations.find((x) => x.index === i)?.met !== 'boolean');
+  if (missing.length) return { error: `judge gave no verdict for expectations ${missing.join(', ')}` };
   const verdicts = expectations.map((text, i) => {
     const v = data.expectations.find((x) => x.index === i);
-    return { text, met: v?.met === true, evidence: v?.evidence ?? '(no verdict)' };
+    return { text, met: v.met, evidence: v.evidence };
   });
   return {
     verdicts,
