@@ -12,6 +12,13 @@
   desired change, confirms the complete direction, and only then writes
   `PRODUCT.md`. It converges the chosen seed rather than discovering
   opportunities from a blank page.
+- When `define-product` finishes and the repository shows no working pass
+  through the core loop, its completion report names one next work-unit
+  candidate: the thinnest outcome that runs the `PRODUCT.md` core loop once
+  from start to end, with a request the user can hand to `shape-idea`. The
+  candidate is an AI proposal the user may correct or ignore. It is not written
+  to `PRODUCT.md` and starts no shaping. Once the loop runs, `define-product`
+  proposes nothing, and choosing each later work unit stays with the user.
 - `discover-opportunity` is not part of the pipeline. The greenfield entry point
   leaves a durable current artifact instead of handing a chosen direction to
   shaping through conversation alone.
@@ -495,6 +502,11 @@ prevents app identity from becoming feature scope. Plans derived at execution
 time age better than stored implementation predictions. Delivery outcomes,
 rather than predicted session duration, remain the durable unit of work.
 
+The first work unit is the one choice the app premise can ground. The core loop
+is already confirmed in `PRODUCT.md`, and `implement` has no core-loop journey
+to re-verify until one exists. `PRODUCT.md` carries no feature order by design,
+so an agent proposing any later unit would be guessing.
+
 The spec folder is that unit. Task files inside a folder duplicated what spec
 folders already provide, independent delivery, dependency order, and a tracker
 issue, while carrying their own status, supersession, and frontier rules that
@@ -572,6 +584,8 @@ state keep automation reviewable without turning follow-up files into a queue.
 
 ## Reconsider when
 
+- Users repeatedly ask what to shape next after the core loop runs, and a
+  criterion for that choice exists that does not rest on an AI guess.
 - Setup items listed during shaping are regularly wrong or stale by the time
   implementation starts, so deriving them at implementation start would be
   more accurate than recording them in the spec.
@@ -624,6 +638,15 @@ state keep automation reviewable without turning follow-up files into a queue.
 
 ## Still-rejected alternatives
 
+- Proposing the next work unit every time, from the start of `shape-idea` or a
+  separate skill — after the core loop runs, `PRODUCT.md` holds no order to
+  ground the choice, so the proposal would be an AI guess. The user chose the
+  first unit only.
+- An ordered feature list after `define-product` — it is the rejected roadmap
+  under another name, and the later order changes once the first outcome lands.
+- A foundation such as authentication or a data layer as the first work unit —
+  preparation useful only to a later outcome joins the folder of the outcome
+  that first needs it.
 - Letting `implement` derive outside setup from the spec only when it starts —
   the need is already known when shaping selects the service, and deriving it
   later tells the user at the last moment. Implementing outcomes that do not
