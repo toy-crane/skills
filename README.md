@@ -97,6 +97,9 @@ flowchart LR
     DRAFT --> CONFIRM{"confirmed?"}
     CONFIRM -- "not yet" --> ASK
     CONFIRM -- "yes" --> PRODUCT
+    PRODUCT --> LOOP{"core loop already<br/>runs in the repo?"}
+    LOOP -- "no" --> CAND["report names one candidate:<br/>thinnest pass through the core loop"]
+    CAND -. "user may hand it over" .-> SI
     PRODUCT -. "read when present" .-> SI["shape-idea<br/>(one work unit)"]
     SI --> BP["build-prototype<br/>(judge it by using it)"]
     SI --> SPEC[/"spec folders<br/>(one per outcome that can land alone)"/]
@@ -139,6 +142,13 @@ idea. After the complete direction is confirmed, it creates or revises root
 change, core loop, capabilities and boundaries, experience principles, success
 signals, assumptions, and unknowns. Blank-page idea discovery is outside this
 workflow.
+
+When the repository does not yet run the core loop from start to end, the
+completion report also names one next work-unit candidate: the thinnest outcome
+that runs the core loop once, with a request to hand to `shape-idea`. It is an
+AI proposal the user may correct or ignore. It never lands in `PRODUCT.md`,
+never starts shaping, and comes with no feature list or order. Once the loop
+runs, choosing each later work unit stays with the user.
 
 Start with `shape-idea` when one concrete problem and broad work-unit direction
 are already known. It reads `PRODUCT.md` when present but remains independently
