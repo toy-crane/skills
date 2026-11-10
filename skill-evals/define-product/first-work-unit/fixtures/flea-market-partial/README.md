@@ -1,0 +1,3 @@
+# booth
+
+Run `npm test`.
