@@ -14,7 +14,10 @@ array, while skills.sh discovers everything under `skills/`. Adding a skill =
 create `skills/<group>/<name>/`, add its complete path to `plugin.json`,
 symlink it into both `.agents/skills/` and `.claude/skills/`, then link it from
 the README. A skill's evals live in `skill-evals/<name>/`, outside its folder,
-so they never ship. Run
+so they never ship. That folder is the skill's eval root for `llm-evals`: its
+graduated regression suites sit in `skill-evals/<name>/regression/`, with
+`regression/log.md`, and run through the folder's own runner, such as
+`skill-evals/define-product/run.mjs`. Run
 `claude plugin validate . --strict` after touching either `.claude-plugin/`
 manifest.
 

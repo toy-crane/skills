@@ -1,5 +1,8 @@
 #!/usr/bin/env node
-// Runner for define-product's first-work-unit eval in the llm-evals layout. See README.md.
+// Runner for define-product's evals in the llm-evals layout. This folder is the skill's eval root:
+// regression/<criterion>/ holds each graduated suite's cases.jsonl, grader, and fixtures, and
+// regression/log.md records how each suite reached its level. --suite evals runs evals.json's
+// cases with their expectations unchanged, judged by the same rubric grader.
 import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
@@ -9,23 +12,23 @@ import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { collectEndState, invokedSkills, judgeRun, scoreRun } from './grade.mjs';
+import { collectEndState, invokedSkills, judgeRun, scoreRun } from './regression/define-product-first-work-unit/grade.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(here, '../../..');
+const repoRoot = resolve(here, '../..');
 // Each published skill is linked from .claude/skills/<name> to skills/<group>/<name>.
 const skillDir = (name) => realpathSync(join(repoRoot, '.claude/skills', name));
 const skillPath = relative(repoRoot, join(skillDir('define-product'), 'SKILL.md'));
-const usage = `usage: run.mjs --variant baseline|v<N> --access api|subscription [options]
+const usage = `usage: run.mjs --variant <label> --access api|subscription [options]
   --skill-ref <git-ref>   take define-product's SKILL.md from this ref (required for baseline)
   --skill-file <path>     take SKILL.md from this file (default: the working tree's)
-  --set held_out|train|regression   case set (default: held_out)
+  --suite <name>|evals    a suite under regression/, or evals.json (default: define-product-first-work-unit)
   --cases a,b             run only these case ids
   --reps <n>              runs per case (default: 2)
   --workers <n>           runs in parallel (default: 4)
   --model <id>            agent model (default: claude-sonnet-5-5)
   --judge-model <id>      judge model (default: claude-opus-5-5)
-  --flow <dir>            flow folder (default: .claude/hillclimb/define-product-first-work-unit)
+  --flow <dir>            flow folder (default: .claude/hillclimb/define-product/<suite>)
   --timeout-s <n>         wall-clock ceiling per run (default: 600)
   --max-budget-usd <n>    per-run budget passed to claude (default: 2)
   --dry-run               print the resolved scope and stop`;
@@ -36,7 +39,7 @@ const { values: opts } = parseArgs({
     access: { type: 'string' },
     'skill-ref': { type: 'string' },
     'skill-file': { type: 'string' },
-    set: { type: 'string', default: 'held_out' },
+    suite: { type: 'string', default: 'define-product-first-work-unit' },
     cases: { type: 'string' },
     reps: { type: 'string', default: '2' },
     workers: { type: 'string', default: '4' },
@@ -55,24 +58,26 @@ function fail(message) {
   process.exit(2);
 }
 if (opts.help) { console.log(usage); process.exit(0); }
-if (!/^(baseline|v\d+)$/.test(opts.variant ?? '')) fail('--variant must be baseline or v<N>');
+if (!/^[\w.-]+$/.test(opts.variant ?? '')) fail('--variant needs a label such as baseline, v1, or 2026-11-10');
 if (!['api', 'subscription'].includes(opts.access)) fail('--access must be api or subscription');
 if (opts.variant === 'baseline' && !opts['skill-ref'] && !opts['skill-file']) fail('baseline needs --skill-ref or --skill-file');
 if (opts.model === opts['judge-model']) fail('the judge must be a different model from the agent under test');
-const caseFile = JSON.parse(readFileSync(join(here, 'cases.json'), 'utf8'));
-if (!caseFile[opts.set]) fail(`unknown set: ${opts.set}`);
-let cases = caseFile[opts.set];
-if (opts.set === 'regression') {
+let cases;
+let suiteDir;
+if (opts.suite === 'evals') {
   // The skill's existing behavior cases, with their expectations unchanged.
-  const evals = JSON.parse(readFileSync(join(here, '..', 'evals.json'), 'utf8')).evals;
-  cases = cases.map((c) => {
-    const e = evals.find((x) => x.id === c.eval_id);
-    return { ...c, kind: 'regression', tags: ['regression'], prompt: e.prompt, expectations: e.expectations, files: e.files, skills: ['define-product', 'shape-idea'] };
-  });
+  suiteDir = here;
+  cases = JSON.parse(readFileSync(join(here, 'evals.json'), 'utf8')).evals.map((e) => ({
+    id: `evals-${e.id}`, kind: 'regression', tags: ['evals'], prompt: e.prompt, expectations: e.expectations, files: e.files, skills: ['define-product', 'shape-idea'],
+  }));
+} else {
+  suiteDir = join(here, 'regression', opts.suite);
+  if (!existsSync(join(suiteDir, 'cases.jsonl'))) fail(`unknown suite: ${opts.suite}`);
+  cases = readFileSync(join(suiteDir, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 }
 if (opts.cases) {
   const wanted = opts.cases.split(',').map((c) => c.trim());
-  for (const id of wanted) if (!cases.some((c) => c.id === id)) fail(`unknown case in ${opts.set}: ${id}`);
+  for (const id of wanted) if (!cases.some((c) => c.id === id)) fail(`unknown case in ${opts.suite}: ${id}`);
   cases = cases.filter((c) => wanted.includes(c.id));
 }
 const reps = Number(opts.reps);
@@ -108,9 +113,9 @@ if (opts.access === 'api') {
   delete childEnv.ANTHROPIC_AUTH_TOKEN;
 }
 
-const flowDir = resolve(opts.flow ?? join(repoRoot, '.claude/hillclimb/define-product-first-work-unit'));
+const flowDir = resolve(opts.flow ?? join(repoRoot, '.claude/hillclimb/define-product', opts.suite));
 const variantDir = join(flowDir, opts.variant);
-const setDir = join(variantDir, opts.set);
+const setDir = variantDir;
 const resultsFile = join(setDir, 'results.jsonl');
 const errorsFile = join(setDir, 'errors.jsonl');
 const readRows = (file) => (existsSync(file) ? readFileSync(file, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []);
@@ -135,13 +140,24 @@ const todo = [];
 for (let rep = 0; rep < reps; rep += 1) for (const c of cases) if (!done.has(`${c.id}#${rep}`)) todo.push({ c, rep });
 
 console.log(`variant ${opts.variant}: define-product SKILL.md from ${skillSource} (sha ${skillSha})`);
-console.log(`access ${opts.access}, model ${opts.model}, judge ${opts['judge-model']}; set ${opts.set}: ${cases.length} cases × ${reps} reps; ${done.size} done, ${todo.length} to run`);
+console.log(`access ${opts.access}, model ${opts.model}, judge ${opts['judge-model']}; suite ${opts.suite}: ${cases.length} cases × ${reps} reps; ${done.size} done, ${todo.length} to run`);
 const priced = readRows(resultsFile).filter((r) => typeof r.meta?.cost_usd === 'number');
 if (priced.length) {
   const mean = priced.reduce((n, r) => n + r.meta.cost_usd + (r.meta.judge_cost_usd ?? 0), 0) / priced.length;
   console.log(`estimate from ${priced.length} finished runs: ~$${(mean * todo.length).toFixed(2)} ${opts.access === 'api' ? 'billed' : 'API equivalent, drawn from the subscription'}`);
 }
-if (opts['dry-run'] || todo.length === 0) process.exit(0);
+function report() {
+  const rows = readRows(resultsFile);
+  if (!rows.length) return;
+  const sum = (metric) => rows.reduce((n, r) => n + (r.grade[metric] ?? 0), 0);
+  const byCase = new Map();
+  for (const r of rows) byCase.set(r.prompt_id, [...(byCase.get(r.prompt_id) ?? []), r.grade.pass]);
+  const unstable = [...byCase].filter(([, p]) => !p.every(Boolean)).map(([id, p]) => `${id}(${p.join('')})`);
+  console.log(`score: pass ${sum('pass')}/${rows.length} (±${(100 / Math.sqrt(rows.length)).toFixed(0)} points), cases passing every rep ${byCase.size - unstable.length}/${byCase.size}, `
+    + `multi_candidate ${sum('multi_candidate')}, overreach ${sum('overreach')}, errors ${readRows(errorsFile).length}`);
+  if (unstable.length) console.log(`not every rep: ${unstable.join(' ')}`);
+}
+if (opts['dry-run'] || todo.length === 0) { report(); process.exit(0); }
 
 mkdirSync(join(setDir, 'traces'), { recursive: true });
 if (!existsSync(summaryFile)) {
@@ -149,8 +165,9 @@ if (!existsSync(summaryFile)) {
 }
 if (!existsSync(stateFile)) {
   writeFileSync(stateFile, `${JSON.stringify({
-    goal: 'define-product names exactly one next work-unit candidate only when it wrote PRODUCT.md and the core loop does not run yet; target 7 of 8 held-out cases, with no multi-candidate and no overreach row',
-    split: { train: caseFile.train.map((c) => c.id), test: caseFile.held_out.map((c) => c.id), regression: caseFile.regression.map((c) => c.id) },
+    goal: `define-product holds the level recorded in regression/log.md for suite ${opts.suite}`,
+    suite: opts.suite,
+    cases: cases.map((c) => c.id),
     access: opts.access,
     model: opts.model,
     judge_model: opts['judge-model'],
@@ -167,8 +184,8 @@ if (!existsSync(stateFile)) {
 function prepareWorkspace(c, id) {
   // Outside any .claude/ folder: headless Claude Code denies writes under one.
   const ws = mkdtempSync(join(tmpdir(), `define-product-${opts.variant}-${id}-`));
-  if (c.fixture) cpSync(join(here, 'fixtures', c.fixture), ws, { recursive: true });
-  for (const file of c.files ?? []) cpSync(join(here, '..', file), join(ws, basename(file)));
+  if (c.fixture) cpSync(join(suiteDir, 'fixtures', c.fixture), ws, { recursive: true });
+  for (const file of c.files ?? []) cpSync(join(here, file), join(ws, basename(file)));
   for (const name of c.skills) {
     const target = join(ws, '.claude/skills', name);
     const source = skillDir(name);
@@ -302,3 +319,4 @@ await Promise.all(Array.from({ length: Math.min(workers, todo.length) }, async (
   }
 }));
 console.log(`results: ${resultsFile}`);
+report();

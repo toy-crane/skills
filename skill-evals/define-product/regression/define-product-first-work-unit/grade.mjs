@@ -1,4 +1,4 @@
-// Grading for define-product's first-work-unit eval. See README.md beside this file.
+// Grader for define-product's first-work-unit regression suite. Run it through ../../run.mjs.
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
