@@ -47,6 +47,18 @@
         "It still runs one project-scoped update call, then the companion synchronizer, and finishes with the inventory and companion checks.",
         "It does not edit package.json, the devEngines pin, or onFail to make npx usable."
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Use $update-project-skills in this project from Claude Code. skills-lock.json manages commit from toy-crane/skills. The toycrane marketplace publishes toycrane-skills plus two mods, secret-env and status-band; secret-env@toycrane is already installed at local scope for this project and status-band is not installed anywhere.",
+      "expected_output": "The response updates the locked skills as usual, refreshes the toycrane marketplace, updates secret-env@toycrane in place, then lists status-band with its description and asks whether to install it, installing it only at local scope after the user picks it, and says mod changes need a new session.",
+      "files": [],
+      "expectations": [
+        "It runs claude plugin update secret-env@toycrane because that mod is already installed for this project.",
+        "It does not install status-band before the user picks it, and any install it proposes uses --scope local rather than project or user scope.",
+        "It treats toycrane-skills as the skill plugin, not a mod, and does not offer it as one.",
+        "It uninstalls no mod and reports that mod changes take effect in a new Claude Code session."
+      ]
     }
   ]
 }

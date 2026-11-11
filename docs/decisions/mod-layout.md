@@ -14,6 +14,8 @@
   and never carries one.
 - A mod's own `plugin.json` carries `author` and `license`, which
   `claude plugin validate --strict` requires of every marketplace entry.
+- `update-project-skills` updates mods already installed for a project, but
+  installs a mod only after the user picks it, at `local` scope.
 - Mods are not symlinked into `.agents/skills/` or `.claude/skills/`; while
   developing one, load it with `--plugin-dir mods/<name>`.
 
