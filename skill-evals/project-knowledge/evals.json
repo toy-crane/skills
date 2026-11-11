@@ -214,6 +214,61 @@
         "DESIGN.md gains one rejected-pattern line for shrinking text to fit, linking typography, with no rule text or rationale.",
         "The Values and Components sections and AGENTS.md are unchanged."
       ]
+    },
+    {
+      "id": 18,
+      "prompt": "/project-knowledge 이번 세션에서 큰 사진 업로드가 자꾸 실패해서 app/upload.js 재시도 횟수를 3에서 6으로 임시로 올려 막았어. 로그를 보니 20MB 넘는 파일에서 CDN이 30초 타임아웃으로 끊고 있었어(업로드 서버 로그에 504, 전부 20MB 초과 파일). 근본적으로는 CDN 타임아웃을 늘릴지, 앱에서 업로드 크기를 20MB로 제한할지 정해야 하는데 이건 비용과 사용자 경험이 걸린 문제라 내가 정해야 해. 나중 일로 남겨줘.",
+      "expected_output": "Because the item needs a person's decision and the repository has an issue tracker convention, the response creates one tracker issue through `scripts/tracker.mjs` carrying the evidence and the decision needed, writes no `docs/follow-ups/` file, and reports the issue ID.",
+      "files": [
+        "fixtures/tracker-local/"
+      ],
+      "expectations": [
+        "One issue exists under `.tracker/`, created through the convention's create command.",
+        "Its body carries the symptom, the evidence (504s on files over 20MB), the suspected cause, the temporary retry change, and the decision a person must make (raise the CDN timeout or cap uploads).",
+        "No `docs/follow-ups/` file is written.",
+        "The report names the created issue ID.",
+        "It writes no decision contract or glossary entry for the open choice."
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "/project-knowledge 작업하다 보니 app/upload.js 의 UPLOAD_RETRIES 가 3인데 docs 의 업로드 설명에는 재시도 5회라고 되어 있어. 지난주 합의대로 코드 값 3이 맞고 문서가 틀린 거야. 이번 작업 범위가 아니라 안 고쳤어. 나중 일로 남겨줘.",
+      "expected_output": "The correct behavior is already settled and an agent can fix it alone, so the response writes one `docs/follow-ups/<slug>.md` with the five template fields and creates no tracker issue, even though a tracker convention exists.",
+      "files": [
+        "fixtures/tracker-local/"
+      ],
+      "expectations": [
+        "One `docs/follow-ups/<slug>.md` exists with Symptom, Observed evidence, Suspected cause, What was tried, and Proposed next step.",
+        "No tracker issue is created (no `.tracker/` file).",
+        "It does not change app/upload.js or the docs while recording."
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "/project-knowledge 오늘 앨범 자동 정리 기능을 켰는데, 정리 결과를 사용자가 되돌리는 비율은 일주일은 쌓여야 볼 수 있어. 2026-11-18에 analytics 로그로 되돌림 비율이 10% 아래인지 확인해야 하고, 넘으면 자동 정리를 기본값에서 끌지 내가 정할 거야. 나중 일로 남겨줘.",
+      "expected_output": "The item waits for time and then needs a person's decision, so the response creates one tracker issue with the due date 2026-11-18 set through the convention's `Due date` method and writes no follow-up file.",
+      "files": [
+        "fixtures/tracker-local/"
+      ],
+      "expectations": [
+        "One issue exists under `.tracker/` with `due` set to 2026-11-18.",
+        "The issue body says what to measure, the 10% criterion, and the decision that follows a miss.",
+        "No `docs/follow-ups/` file is written.",
+        "The report names the issue ID and its due date."
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "/project-knowledge 이번 세션에서 큰 사진 업로드가 자꾸 실패해서 app/upload.js 재시도 횟수를 3에서 6으로 임시로 올려 막았어. 로그를 보니 20MB 넘는 파일에서 CDN이 30초 타임아웃으로 끊고 있었어(업로드 서버 로그에 504, 전부 20MB 초과 파일). 근본적으로는 CDN 타임아웃을 늘릴지, 앱에서 업로드 크기를 20MB로 제한할지 정해야 하는데 이건 비용과 사용자 경험이 걸린 문제라 내가 정해야 해. 나중 일로 남겨줘.",
+      "expected_output": "Without an issue tracker convention, the response writes the item to one `docs/follow-ups/<slug>.md` that also names the decision needed, and reports that it went to a file because no tracker convention exists.",
+      "files": [
+        "fixtures/no-tracker/"
+      ],
+      "expectations": [
+        "One `docs/follow-ups/<slug>.md` exists with the five template fields and names the decision a person must make.",
+        "The report says the item went to a file because the repository has no issue tracker convention.",
+        "It invents no tracker and creates no issue."
+      ]
     }
   ]
 }
