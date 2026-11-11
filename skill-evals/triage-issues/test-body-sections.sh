@@ -36,4 +36,11 @@ if python3 "$script" upsert --body "$scratch/broken.md" --content "$scratch/tria
   exit 1
 fi
 
+printf 'Spec-Folder: docs/specs/reply-card/\nDue: 2026-11-18\n' > "$scratch/check.md"
+python3 "$script" upsert --body "$scratch/final.md" --content "$scratch/check.md" \
+  --section check > "$scratch/checked.md"
+grep -Fq '<!-- triage-issues:check:start -->' "$scratch/checked.md"
+grep -Fq '## Post-release check' "$scratch/checked.md"
+grep -Fq 'Next action: implement.' "$scratch/checked.md"
+
 echo 'body section behavior passed'
