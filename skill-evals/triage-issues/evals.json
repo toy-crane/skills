@@ -58,6 +58,67 @@
         "It reports `npx skills@latest add toy-crane/skills --skill pr`, in the project's package manager runner form when one is pinned.",
         "It does not claim #52, implement the copy change, or open a PR with a brief body as a substitute for pr."
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "/triage-issues\n\n오늘은 2026-11-18이다. Linear 규약이 있고 Due date는 Linear 기한 필드, Notifications는 None이다. 아직 triage하지 않은 열린 이슈:\n- DLY-90: 2026-11-01에 들어온 기한 없는 일반 이슈. \"설정 화면 글자가 잘린다\"는 요청이다.\n- DLY-95: 기한이 2026-11-25인 일반 이슈.\n- DLY-97: 기한이 2026-11-17인 일반 이슈. \"연말 공지 문구를 정해야 한다\"는 요청이다.\n각 이슈를 어떤 순서로 고르는지 설명하고 진행해.",
+      "expected_output": "The run leaves DLY-95 alone because its due date is ahead, takes the overdue DLY-97 before the undated DLY-90, and ends with one report of what it left for a person.",
+      "files": [],
+      "expectations": [
+        "It does not select DLY-95, whose due date is still ahead.",
+        "It selects DLY-97 before DLY-90 because a due-dated issue whose date has arrived comes before undated issues.",
+        "It still handles DLY-90 in the same run within the three-issue limit.",
+        "It ends with one report listing what each handled issue left for a person, with links, and sends no notification because Notifications is None."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "/triage-issues linear:DLY-120\n\n오늘은 2026-11-18이다. DLY-120은 기한이 2026-11-18인 확인 이슈다. 본문에 <!-- triage-issues:check:start --> 구역이 있고 다음 내용이 있다.\nSpec-Folder: docs/specs/reply-card-request-check/\nMerged: https://github.com/acme/app/pull/546 at 2026-11-11T08:01:00Z\nDue: 2026-11-18\n지표: 답장 카드 요청 오인율. 통과 기준: 5% 이하. 기간: 릴리스 뒤 7일. 측정: docs/specs/reply-card-request-check/check.sql. 못 닿으면: v6 지시문 실험을 다시 연다.\ncheck.sql은 기본 브랜치에 있고, 세션에 그 쿼리를 실행할 데이터베이스 도구가 있다. 쿼리를 실행하면 misfires=41, total=702, passed=false 한 행이 돌아온다고 하자.",
+      "expected_output": "The run treats DLY-120 as a check issue, runs check.sql as written, records misfires=41, total=702, passed=false verbatim in a comment, sets needs-decision with choices drawn from the section, writes Triage 요약, raises no PR, and reports the result.",
+      "files": [],
+      "expectations": [
+        "It recognizes DLY-120 as a check issue from the check section and takes the check route, not the implementation or spec PR route.",
+        "It runs docs/specs/reply-card-request-check/check.sql as written rather than writing its own query.",
+        "It records the returned values misfires=41, total=702, and passed=false as returned, and reports the measurement's own verdict, passed=false.",
+        "It does not compute a percentage such as 5.8% or compare the values against the 5% criterion itself.",
+        "It sets needs-decision with choices such as closing, reopening the v6 experiment as the section's plan says, or measuring again, plus a recommendation citing the returned values.",
+        "It writes the Triage 요약 section and includes the check result with its link in the run's report."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "/triage-issues linear:DLY-121\n\n오늘은 2026-11-18이다. DLY-121은 기한이 오늘인 확인 이슈로 본문의 check 구역에 측정 파일 docs/specs/onboarding-copy/check.sql이 적혀 있다. 파일은 기본 브랜치에 있지만 이 세션에는 데이터베이스나 분석 도구가 하나도 없다. 규약의 Notifications는 \"Slack #dearly-ops에 slack MCP로 보낸다\"인데, 이번 실행에서는 slack MCP 전송이 권한 오류로 실패한다.",
+      "expected_output": "The run records that no available tool can run the measurement, sets needs-info without estimating a result, writes Triage 요약, attempts the notification, and returns a successful run whose report notes the failed send.",
+      "files": [],
+      "expectations": [
+        "It does not invent, estimate, or substitute a result for the measurement.",
+        "It comments exactly what is missing, a tool to run check.sql, and sets needs-info.",
+        "It writes the Triage 요약 section so later runs do not pick DLY-121 again.",
+        "It treats the failed notification as a reported failure inside a successful run, not as a run failure, and keeps the tracker as the record."
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "/triage-issues 요약 포함\n\n오늘은 2026-11-16이다. GitHub Issues 규약이 있고 기한은 본문의 Due: 줄로 읽는다. Notifications는 None이다. 아직 triage하지 않았고 기한이 지난 일반 이슈는 #55(Due: 2026-11-05), #56(Due: 2026-11-08), #57(Due: 2026-11-10), #58(Due: 2026-11-12) 네 개다. 기한 없는 새 이슈는 없다. needs-decision 이슈는 #40(2026-10-20부터 대기)과 #52(2026-11-10부터 대기)다. 확인 이슈 #60은 Due: 2026-11-20, #61은 Due: 2026-12-01이고 둘 다 아직 triage하지 않았다.",
+      "expected_output": "The run handles #55, #56, and #57, earliest due first, within the three-issue limit; because the caller asked for a summary, the report adds #40 before #52 as waiting decisions, #60 (not #61) as due within seven days, and #58 as overdue and still unhandled after this run.",
+      "files": [],
+      "expectations": [
+        "It includes a summary because the caller asked, without checking the day of the week or any interval itself.",
+        "It handles #55, #56, and #57 in that order and stops at the three-issue limit.",
+        "It lists #40 before #52 as decisions waiting, oldest wait first.",
+        "It lists #60 as due within seven days and leaves out #61.",
+        "It lists #58 as overdue and still unhandled after this run."
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "/triage-issues\n\nGitHub Issues 규약이 있고 Notifications 항목은 없다. 아직 triage하지 않았고 기한이 된 이슈가 하나도 없다.",
+      "expected_output": "The run selects nothing and returns a one-line report that nothing needs a person, sending no notification.",
+      "files": [],
+      "expectations": [
+        "It returns a one-line report saying nothing needs a person.",
+        "It sends no notification and does not treat the missing Notifications item as an error."
+      ]
     }
   ]
 }
