@@ -169,6 +169,35 @@
         "It recommends rerunning setup-issue-tracker and tells the user to rename `Source-Issue:` to `Issue:` in active spec folders.",
         "It finishes the repository context cleanup and does not claim the tracker was reconciled."
       ]
+    },
+    {
+      "id": 14,
+      "prompt": "/maintain-project-context docs/specs 아래 네 spec(ai-photo-caption, share-link-expiry, album-auto-organize, recent-searches)은 모두 구현 PR이 병합되고 배포까지 끝나 출시가 확인됐어. 출시된 spec 폴더를 정리해줘.",
+      "expected_output": "recent-searches (`None.`) and share-link-expiry (check issue local:2 closed) are deleted after preserving any qualifying decision. ai-photo-caption (check issue local:1 open, due 2026-11-21) and album-auto-organize (check section but no check issue found) stay, each reported with its reason.",
+      "files": [
+        "fixtures/shipped-specs-tracker/"
+      ],
+      "expectations": [
+        "docs/specs/recent-searches/ is deleted.",
+        "docs/specs/share-link-expiry/ is deleted, after its check issue was found closed through the convention's Spec-Folder lookup.",
+        "docs/specs/ai-photo-caption/ and its measure.mjs remain, and the report says its check issue local:1 is still open.",
+        "docs/specs/album-auto-organize/ remains, and the report says no check issue exists for it.",
+        "It creates, closes, or edits no tracker issue to make a folder deletable."
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "/maintain-project-context docs/specs 아래 두 spec(ai-photo-caption, recent-searches)은 구현 PR이 병합되고 배포까지 끝나 출시가 확인됐어. 출시된 spec 폴더를 정리해줘.",
+      "expected_output": "Without a tracker convention, recent-searches (`None.`) is deleted, while ai-photo-caption, whose post-release check is pending, stays and the response asks whether that check is done.",
+      "files": [
+        "fixtures/shipped-specs-no-tracker/"
+      ],
+      "expectations": [
+        "docs/specs/recent-searches/ is deleted.",
+        "docs/specs/ai-photo-caption/ remains with its measure.mjs.",
+        "The report asks the user whether the ai-photo-caption post-release check is done before deleting it.",
+        "It invents no tracker and creates no issue."
+      ]
     }
   ]
 }

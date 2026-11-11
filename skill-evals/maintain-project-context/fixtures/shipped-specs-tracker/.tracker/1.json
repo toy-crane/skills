@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "title": "Check: ai-photo-caption",
+  "body": "<!-- triage-issues:check:start -->\n## Post-release check\nSpec-Folder: docs/specs/ai-photo-caption/\nMerged: https://example.test/pr/41\nMerge-Commit: abc41\nDue: 2026-11-21\n## Post-release check\n\n- Metric: Edit or delete rate of AI captions\n- Pass criterion: below 30%\n- Period: 14 days after release\n- Measurement: `docs/specs/ai-photo-caption/measure.mjs` \u2014 reads `analytics/events.jsonl` and the release time, prints the value and `PASS` or `FAIL`.\n- When not met: rework the caption prompt.\n<!-- triage-issues:check:end -->\n",
+  "labels": [
+    "post-release-check"
+  ],
+  "due": "2026-11-21",
+  "state": "open"
+}
