@@ -40,7 +40,7 @@ setup() { # fresh workspace with PR #12 merged on main and its implementation is
     sqlite3 data/ops.db < data/seed.sql
     git init -q -b main
     git config user.name fixture && git config user.email fixture@localhost
-    git init -q --bare "$ws.origin.git"
+    git init -q --bare -b main "$ws.origin.git"
     git remote add origin "$ws.origin.git"
     git add -A && git commit -qm 'docs(specs): add reply-card spec'
     git push -q origin main
