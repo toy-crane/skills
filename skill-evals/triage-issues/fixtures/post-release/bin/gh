@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Stand-in for the GitHub CLI: answers for PR #12, already merged, from .gh/pr-12.json.
+set -euo pipefail
+state="${GH_FIXTURE:-.gh/pr-12.json}"
+if [[ "${1:-}" == "pr" && ( "${2:-}" == "view" || "${2:-}" == "list" ) ]]; then
+  fields=''; jqexpr=''
+  args=("$@")
+  for ((i=0; i<${#args[@]}; i++)); do
+    case "${args[$i]}" in
+      --json) fields="${args[$((i+1))]}" ;;
+      --jq|-q) jqexpr="${args[$((i+1))]}" ;;
+    esac
+  done
+  data=$(cat "$state")
+  [[ "$2" == "list" ]] && data="[$data]"
+  if [[ -n "$fields" ]]; then
+    keys=$(printf '%s' "$fields" | jq -R 'split(",")')
+    if [[ "$2" == "list" ]]; then data=$(jq --argjson k "$keys" 'map(with_entries(select(.key as $x | $k | index($x))))' <<<"$data")
+    else data=$(jq --argjson k "$keys" 'with_entries(select(.key as $x | $k | index($x)))' <<<"$data"); fi
+  fi
+  if [[ -n "$jqexpr" ]]; then jq -r "$jqexpr" <<<"$data"; else printf '%s\n' "$data"; fi
+  exit 0
+fi
+if [[ "${1:-}" == "repo" && "${2:-}" == "view" ]]; then
+  echo '{"defaultBranchRef":{"name":"main"},"nameWithOwner":"acme/reply-app","url":"https://github.com/acme/reply-app"}' | { if [[ " $* " == *" --jq "* ]]; then jq -r "${@: -1}"; else cat; fi; }
+  exit 0
+fi
+if [[ "${1:-}" == "auth" ]]; then echo "Logged in to github.com as fixture"; exit 0; fi
+echo "gh fixture: unsupported command: gh $*" >&2
+exit 1
