@@ -1,0 +1,10 @@
+{
+  "id": 2,
+  "title": "Check: share-link-expiry",
+  "body": "<!-- triage-issues:check:start -->\n## Post-release check\nSpec-Folder: docs/specs/share-link-expiry/\nMerged: https://example.test/pr/38\nMerge-Commit: abc38\nDue: 2026-11-05\n## Post-release check\n\n- Metric: Expired-link opens that returned album content\n- Pass criterion: 0\n- Period: 7 days after release\n- Measurement: `docs/specs/share-link-expiry/measure.mjs` \u2014 reads `analytics/events.jsonl` and the release time, prints the value and `PASS` or `FAIL`.\n- When not met: treat as a security defect and fix it.\n<!-- triage-issues:check:end -->\n\nResult: 0 violations, PASS.\n",
+  "labels": [
+    "post-release-check"
+  ],
+  "due": "2026-11-05",
+  "state": "closed"
+}
