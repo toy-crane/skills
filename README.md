@@ -340,7 +340,9 @@ project's declared cleanup commands and removes it.
 - **[merge](./skills/git/merge/SKILL.md)**: Carry a change through verified pull
   request merge, synchronizing through `pull` and creating or updating the PR
   through `pr`, choose squash or rebase by commit meaning, then hand the
-  merged branch to `clean-branches` for cleanup.
+  merged branch to `clean-branches` for cleanup. When a delivered spec asks
+  for a post-release check and a tracker is configured, open one check issue
+  due after the spec's period.
 - **[clean-branches](./skills/git/clean-branches/SKILL.md)**: Sweep a
   repository's finished local work in one pass. Remove worktrees and local
   branches whose pull request merged or closed, detached worktrees the base
@@ -387,10 +389,16 @@ available for an affected product surface.
   `Issue:` line: the PR that first carries the folder creates the issue, and a
   spec that starts from an existing issue records that one. Every lookup uses
   the recorded ID. `implement` claims the issue, and context maintenance repairs
-  drift. Without the convention every skill behaves as before.
+  drift. The convention also records due dates, how `merge` opens a
+  post-release check issue, and an optional notification method. Without the
+  convention every skill behaves as before.
 - **[triage-issues](./skills/workflow/triage-issues/SKILL.md)**: On a schedule or
-  by hand, handle one named issue or up to three new human-written issues no
-  earlier run triaged, including Backlog, each once.
+  by hand, handle one named issue or up to three issues no earlier run
+  triaged, including Backlog, each once when it comes due: on arrival, or on
+  its due date. Run due post-release checks and leave their measured values
+  for a person's decision. Return one report of what needs a person, with an
+  optional summary of what is waiting, and copy it through the project's
+  notification method when one is configured.
   Investigate and raise one verified implementation or spec PR when ready, or
   ask for only the missing information or product decision with evidence.
   Preserve the original issue throughout and prevent competing runs from

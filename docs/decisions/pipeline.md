@@ -379,16 +379,39 @@
   transition after the branch and trailers are gone. Blocker edges come from
   the `Issue:` lines of the folders a `Blocked by` line names; when one has no
   line, the dependent issue's blocker set stays unchanged and is reported.
-- `triage-issues` handles each issue once, when it is new: the one issue a
+- `triage-issues` handles each issue once, when it comes due: the one issue a
   request names, or otherwise only the issues the convention's not-yet-judged
   query returns, those with no `Triage 요약` or spec section and no triage
-  result.
+  result. An issue without a due date comes due when it arrives, one with a
+  due date on that date; issues whose date is ahead wait, and due-dated issues
+  come before undated ones.
   Its outcomes are unchanged: a duplicate closes, a clear small change becomes
   a verified PR, a designed change becomes a spec PR, and a missing fact or
   product choice becomes a question. It does not re-select a waiting issue on
   a human comment or body edit and reads comments only as evidence. Continuing
   a waiting issue after a person answers belongs to whoever runs the skills,
   through `shape-idea`; without a runner, a person invokes it.
+- Everything a person must see or decide later becomes a tracker issue, and
+  `triage-issues` is the one skill that handles those issues; there is no
+  separate check-running skill. When an implementation PR merges and its
+  spec's `## Post-release check` section is not `None.`, `merge` opens one
+  check issue through the convention's `Check issue` item, due on the merge
+  date plus the section's period, and skips a folder that already has one.
+  The issue body carries a section bounded by
+  `<!-- triage-issues:check:start -->` and `<!-- triage-issues:check:end -->`
+  with a `Spec-Folder:` line, which is how triage recognizes it and how
+  `merge` finds a duplicate. When it comes due, triage runs the measurement
+  the section names, copies the returned values and any verdict the
+  measurement itself returns, and leaves the choice under `needs-decision`;
+  the model computes no ratio and makes no comparison against the criterion.
+  Without a tool to run it, the check waits under `needs-info`.
+- Each triage run returns one report of what it left for a person, a single
+  line when there is nothing. The caller may ask for a summary of decisions
+  waiting, checks due within seven days, and overdue issues; the schedule
+  that asks lives outside the skill. A `Notifications` item in the convention
+  copies the report to people; without one, or when sending fails, the run
+  still succeeds, because the tracker is the record. Service names, days, and
+  times live only in the repository's convention and schedule.
 - The old `Source-Issue` line, `spec:<slug>` title key, and managed-issue
   listing are not read for compatibility. Each project renames the line in its
   active spec folders when it updates the skills, and rerunning
@@ -825,6 +848,12 @@ state keep automation reviewable without turning follow-up files into a queue.
   hand off, let `implement` take issues, and let `shape-idea` hand small
   changes to `implement` was deferred to keep the shared skills unchanged where
   not needed.
+- On 2026-11-11 in dearly, a prompt change shipped with a one-week
+  operational measurement written only in its spec's post-release section;
+  nothing raised it when the week passed. The user chose to route every
+  later check or decision through tracker issues handled by `triage-issues`,
+  with due dates, optional notifications, and a weekly summary requested by
+  the project's routine, rather than add a check-running skill.
 - A Flyn work unit linked an approved `prototype.html` from `spec.md` and
   recorded 25 screen-state cases checked at three widths, with 98 prototype
   checks passing. The later implementation session listed the artifact but
