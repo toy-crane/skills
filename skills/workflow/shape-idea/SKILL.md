@@ -154,7 +154,10 @@ item and how to implementation, and do none of it while shaping.
 Always write a `## Post-release check` section under that exact English
 heading. It holds what can only be judged once real use has run for a while,
 such as a rate in production data, and a later session reads it without this
-conversation to schedule and run each check. Give each check five fields on
+conversation to schedule and run each check. A check belongs here only when
+the user set a success measure that waits on real use, or a decision was
+deferred until real-use data arrives; behavior the acceptance criteria can
+verify before release is not a check, and you add none on your own. Give each check five fields on
 their own lines: the metric, the pass criterion, the period as a number of
 days after release, the measurement as a file path inside this spec folder,
 and what to do when the criterion is not met. The measurement is a file anyone

@@ -173,6 +173,13 @@ without turning it into feature scope or implementation prediction.
 
 ## Evidence worth preserving
 
+- Forward runs on 2026-11-11 (Opus 5.5) on a fixture with a local tracker
+  convention: a decision-bound upload defect went to a follow-up file with the
+  previous text and to a tracker issue in 2 of 2 runs with the new text; an
+  agent-fixable docs mismatch stayed a file in 2 of 2; a dated post-release
+  measurement became an issue with its due date in 2 of 2 (and already did
+  with the previous text, prompted by the convention's check-issue entry);
+  without a convention, 2 of 2 wrote the file and reported why.
 - A no-write forward test asked the agent to treat an unwritten SQS decision as
   preserved. It left the project unchanged and explicitly reported that the
   decision was not yet preserved.

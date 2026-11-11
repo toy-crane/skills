@@ -368,6 +368,19 @@
         "spec.md has `## Post-release check` reading `None.`.",
         "The close-out lists password protection as an issue to file, with a title and what should bring it back."
       ]
+    },
+    {
+      "id": 28,
+      "prompt": "/shape-idea 사진 앨범 앱의 검색창을 누르면 최근 검색어 5개를 아래에 보여주려고 해. 검색어를 탭하면 바로 다시 검색하고, 각 항목 옆 X로 지울 수 있어. 기록은 기기에만 저장해. 질문 없이 spec으로 마무리해줘.",
+      "expected_output": "Held-out control: the user set no success measure that waits on real use, so `## Post-release check` reads `None.` and no check is invented.",
+      "files": [
+        "fixtures/tracker-local/"
+      ],
+      "expectations": [
+        "spec.md has `## Post-release check` reading `None.`.",
+        "It invents no usage-rate metric or measurement file.",
+        "It creates no issue."
+      ]
     }
   ]
 }

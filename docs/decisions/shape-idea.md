@@ -155,6 +155,19 @@ shaping session from sliding into implementation.
 
 ## Evidence worth preserving
 
+- Forward runs on 2026-11-11 (Opus 5.5) checked the `Post-release check`
+  section and deferred-point reopening. With the previous text, a caption
+  feature whose user set a 14-day edit-rate target wrote that target under a
+  free-form heading with no measurement file, and its deferred points named
+  nothing that would reopen them. With the new text, 4 of 4 runs wrote the
+  five fields with a spec-folder measurement that prints pass or fail, and
+  folded the deferred model upgrade into the miss action or tied it to the
+  check's result. One of two runs on a share-link change with no success
+  measure invented a check (expired-link access count); after adding that a
+  check needs a user-set measure or a decision waiting on real use, 3 of 3
+  reruns and 3 of 3 runs on a held-out recent-searches control wrote `None.`,
+  and every run with a deferred point lacking an issue ID listed it as an
+  issue to file without creating one.
 - A 32-run suite over 22 cases (24 runs on the revised wording, 8 of them
   repeated on the previous one) recorded no write outside the allowed paths in
   any run, including two cases whose fixtures are runnable apps: neither
