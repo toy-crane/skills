@@ -7,9 +7,23 @@
 - Close with `spec.md` as the stable product contract for implementation:
   user-visible outcomes, approved scope, observable acceptance criteria,
   settled constraints and rationale, assumptions, off-limits areas and
-  reasons, deferred points, remaining risks, and setup before implementation.
+  reasons, deferred points, remaining risks, setup before implementation, and
+  the post-release check.
   Record behavior rather than predicted files, functions, code structure,
   technical layers, or implementation steps.
+- `spec.md` always carries a `## Post-release check` section under that exact
+  English heading, `None.` when nothing waits on real use. Each check names the
+  metric, the pass criterion, the period in days after release, a measurement
+  file path inside the spec folder, and what to do when the criterion is not
+  met. The measurement reports pass or fail itself, so the later session that
+  runs it never copies or compares numbers. `merge` reads the section to open
+  a check issue and `triage-issues` runs the measurement when it falls due;
+  `shape-idea` only writes what those readers need.
+- Every deferred point names what brings it back: a date, a condition on other
+  work's result, or a tracker issue. A condition that is a post-release check
+  falling short lives in that check's miss action instead. An issue the user
+  has not given an ID for is listed at close-out as an issue to file, never
+  created while shaping.
 - Summarize that complete contract at close-out and make the approved change
   understandable and judgeable from the user's point of view. Choose the
   explanation and approved visual evidence that best reveal the intended
