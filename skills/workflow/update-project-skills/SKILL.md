@@ -140,10 +140,11 @@ stays the user's choice. Skip this section when the `claude` CLI is not on
    A mod counts as installed for this project when its `<name>@toycrane`
    entry has `user` scope, or `project` or `local` scope with a
    `projectPath` equal to the project root.
-2. Update each installed mod:
+2. Update each installed mod at the scope its entry records, since older
+   Claude Code versions default an update to `user` scope:
 
    ```bash
-   claude plugin update <mod-name>@toycrane -y
+   claude plugin update <mod-name>@toycrane --scope <entry-scope> -y
    ```
 
 3. List each published mod that is not installed with its marketplace
