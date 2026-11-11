@@ -181,8 +181,10 @@ section, in any state; when one exists, create nothing and report it. The due
 date is the remote's merge timestamp plus the period the section states,
 taken as a calendar date in the time zone the `Due date` item names, or UTC
 when it names none, and written in that item's form. The body is the item's bounded
-check section: the `Spec-Folder:` line, the merged PR, the due date, and the
-section's content copied as written. Do not run the measurement or judge the
+check section: the `Spec-Folder:` line, the merged PR, a `Merge-Commit:` line
+with the merge commit the remote reports on the base, the due date, and the
+section's content copied as written. The commit keeps the measurement file
+readable after the spec folder is retired. Do not run the measurement or judge the
 target here; the check is read when it comes due. When the repository has no
 tracker convention, the convention has no `Check issue` item, its tool is
 unavailable, or the section states no period, create nothing and report the

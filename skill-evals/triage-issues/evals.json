@@ -73,7 +73,7 @@
     },
     {
       "id": 7,
-      "prompt": "/triage-issues linear:DLY-120\n\n오늘은 2026-11-18이다. DLY-120은 기한이 2026-11-18인 확인 이슈다. 본문에 <!-- triage-issues:check:start --> 구역이 있고 다음 내용이 있다.\nSpec-Folder: docs/specs/reply-card-request-check/\nMerged: https://github.com/acme/app/pull/546 at 2026-11-11T08:01:00Z\nDue: 2026-11-18\n지표: 답장 카드 요청 오인율. 통과 기준: 5% 이하. 기간: 릴리스 뒤 7일. 측정: docs/specs/reply-card-request-check/check.sql. 못 닿으면: v6 지시문 실험을 다시 연다.\ncheck.sql은 기본 브랜치에 있고, 세션에 그 쿼리를 실행할 데이터베이스 도구가 있다. 쿼리를 실행하면 misfires=41, total=702, passed=false 한 행이 돌아온다고 하자.",
+      "prompt": "/triage-issues linear:DLY-120\n\n오늘은 2026-11-18이다. DLY-120은 기한이 2026-11-18인 확인 이슈다. 본문에 <!-- triage-issues:check:start --> 구역이 있고 다음 내용이 있다.\nSpec-Folder: docs/specs/reply-card-request-check/\nMerged: https://github.com/acme/app/pull/546 at 2026-11-11T08:01:00Z\nMerge-Commit: b8ead2f\nDue: 2026-11-18\n지표: 답장 카드 요청 오인율. 통과 기준: 5% 이하. 기간: 릴리스 뒤 7일. 측정: docs/specs/reply-card-request-check/check.sql. 못 닿으면: v6 지시문 실험을 다시 연다.\ncheck.sql은 기본 브랜치에 있고, 세션에 그 쿼리를 실행할 데이터베이스 도구가 있다. 쿼리를 실행하면 misfires=41, total=702, passed=false 한 행이 돌아온다고 하자.",
       "expected_output": "The run treats DLY-120 as a check issue, runs check.sql as written, records misfires=41, total=702, passed=false verbatim in a comment, sets needs-decision with choices drawn from the section, writes Triage 요약, raises no PR, and reports the result.",
       "files": [],
       "expectations": [
@@ -118,6 +118,17 @@
       "expectations": [
         "It returns a one-line report saying nothing needs a person.",
         "It sends no notification and does not treat the missing Notifications item as an error."
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "/triage-issues linear:DLY-122\n\n오늘은 2026-11-25이다. DLY-122는 기한이 오늘인 확인 이슈다. check 구역에 Spec-Folder: docs/specs/streak-reminder/, Merge-Commit: 3f9a2c1, 측정: docs/specs/streak-reminder/check.sql이 적혀 있다. 그 사이 컨텍스트 정리로 docs/specs/streak-reminder/ 폴더가 기본 브랜치에서 지워졌다. 커밋 3f9a2c1에는 check.sql이 있고, 세션에 쿼리를 실행할 데이터베이스 도구가 있다. 실행하면 opted_in=120, reminded=97, passed=true가 돌아온다고 하자.",
+      "expected_output": "The run reads check.sql from the Merge-Commit revision because the folder was retired, runs it as written, records the returned values and passed=true with the revision used, and leaves a needs-decision request rather than needs-info.",
+      "files": [],
+      "expectations": [
+        "It reads check.sql from commit 3f9a2c1 instead of treating the missing folder as a missing measurement.",
+        "It records opted_in=120, reminded=97, and passed=true as returned, and names the revision the result came from.",
+        "It sets needs-decision, not needs-info."
       ]
     }
   ]
