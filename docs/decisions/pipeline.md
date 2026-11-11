@@ -319,7 +319,12 @@
   runtime-verification skill carry this routing; `project-knowledge` owns the
   criteria and format. A recorded
   follow-up is a valid `shape-idea` input or a direct fix seed for a later
-  session.
+  session. `project-knowledge` routes each item by who moves next: a defect an
+  agent can reproduce and fix against settled behavior goes to
+  `docs/follow-ups/`, while an item that needs a person's decision or must
+  wait for time becomes a tracker issue when an `## Issue tracker` section
+  exists, dated through the convention's `Due date` method, and falls back to
+  a follow-up file with a reported reason when it does not.
 - `setup-issue-tracker` keeps the always-loaded tracker section focused on
   purpose, explicit user authority to resume active work, and PR-linked closure.
   It routes issue work to `docs/issue-tracker.md`, which holds repository-specific

@@ -29,7 +29,9 @@
   not resolve: a temporary workaround whose root cause stays open, or an
   out-of-scope defect observed with evidence. One file per item, written at the
   moment of discovery, deleted when the work ships or the item is promoted into
-  a spec folder.
+  a spec folder. Only items an agent can fix alone against settled behavior
+  stay files when an issue tracker convention exists; an item that needs a
+  person's decision or a wait becomes a tracker issue instead.
 - Root `DESIGN.md` is the permanent, current entry point for design work, not a
   design authority. Decision contracts stay the source of every UI rule. It
   carries values (semantic color tokens for each shipped theme, text roles,
@@ -140,7 +142,11 @@ without turning it into feature scope or implementation prediction.
 - A hosted issue tracker as the follow-up carrier — it survives worktree
   deletion but adds a remote dependency to a record the repository can hold
   itself; reconsider if follow-ups routinely need assignment or cross-repository
-  visibility. Spec folders are the exception: the [pipeline](pipeline.md)
+  visibility. Items that need a person's decision or a wait are the first
+  exception: in files, nothing brought them back, as when a dearly spec
+  deferred a reasoning-quality measurement with no date or owner and it was
+  lost, so with a tracker convention they become issues a person sees. Spec
+  folders are the second exception: the [pipeline](pipeline.md)
   contract lets an opt-in tracker hold the claim and blocking edges for a
   `docs/specs/<slug>/` folder, because a claim must be visible across
   branches and a file in the folder is not. The folder remains the contract
