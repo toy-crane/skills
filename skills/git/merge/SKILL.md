@@ -36,10 +36,11 @@ observed.
 When the repository's `AGENTS.md` or `CLAUDE.md` carries an `## Issue tracker`
 section, read its linked detailed convention when present; legacy inline
 conventions also work, without a separate setup skill installation. Without
-the section, skip every issue step in this skill. For a configured tracker,
-read the `Spec-Folder: docs/specs/<slug>/` trailers from the branch's commits
-before merging, while the branch still exists and before a squash can drop
-them, and keep those folders for the steps below.
+the section, skip every issue step in this skill except reporting a
+post-release check it could not open. Read the
+`Spec-Folder: docs/specs/<slug>/` trailers from the branch's commits before
+merging, while the branch still exists and before a squash can drop them, and
+keep those folders for the tracker and post-release check steps below.
 
 ## Create or update the PR with `pr`
 
@@ -159,11 +160,37 @@ issue's closure only when that PR's diff
 and verification establish actual implementation delivery. A linked spec PR or
 trailer alone is insufficient. For a merged spec-only PR, retry the recorded
 mark-ready operation when the issue still carries its
-review or active signal and no newer implementation has started. Report
-missing evidence or a failed retry. This catch-up works after the original
-branch and trailers disappear in a squash merge.
+review or active signal and no newer implementation has started. For a delivered
+folder with a post-release check and no check issue, retry its creation with
+the due date counted from the original merge timestamp. Report missing
+evidence or a failed retry. This catch-up works after the original branch and
+trailers disappear in a squash merge.
+
+## Open a post-release check
+
+After a PR that actually delivered implementation, by the same evidence used
+for closing above, look at each implemented folder's `spec.md` on the merged
+base, whether or not a tracker is configured. When it has a `## Post-release check` section whose content is not
+`None.`, and the tracker convention has a `Check issue` item, open one check
+issue for that folder through that item. A spec-only merge, a direct fix with
+no spec folder, a missing section, or `None.` opens nothing.
+
+First look for an existing check issue for the folder through the item's
+lookup, which matches the `Spec-Folder: docs/specs/<slug>/` line in the check
+section, in any state; when one exists, create nothing and report it. The due
+date is the remote's merge timestamp plus the period the section states,
+taken as a calendar date in the time zone the `Due date` item names, or UTC
+when it names none, and written in that item's form. The body is the item's bounded
+check section: the `Spec-Folder:` line, the merged PR, the due date, and the
+section's content copied as written. Do not run the measurement or judge the
+target here; the check is read when it comes due. When the repository has no
+tracker convention, the convention has no `Check issue` item, its tool is
+unavailable, or the section states no period, create nothing and report the
+check that was not opened and which of these stopped it. Verify the created
+issue's state and due date, and report its link.
 
 Finish with the merged pull request URL, merge strategy, verified remote state,
-cleanup result, and the tracker issues created, updated, or closed. Keep a
+cleanup result, the tracker issues created, updated, or closed, and each
+post-release check issue opened, found, or skipped with its reason. Keep a
 cleanup or tracker failure visible without misreporting the already verified
 merge.

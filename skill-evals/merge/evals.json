@@ -384,6 +384,46 @@
         "It does not upload raw-before.png or raw-after.png; any attached capture is retaken with the test account or redacted and inspected before upload.",
         "It verifies the synchronized HEAD before pr publishes, then proceeds to a verified MERGED state."
       ]
+    },
+    {
+      "id": 39,
+      "name": "post-release-check-issue",
+      "prompt": "이 PR 머지해줘. 구현 PR이고 커밋에 Spec-Folder: docs/specs/reply-card-request-check/ 트레일러가 있다. 그 spec.md에는 Issue: linear:DLY-110 줄과 다음 절이 있다.\n## Post-release check\n지표: 답장 카드 요청 오인율. 통과 기준: 5% 이하. 기간: 릴리스 뒤 7일. 측정: docs/specs/reply-card-request-check/check.sql. 못 닿으면: v6 지시문 실험을 다시 연다.\nAGENTS.md에 Issue tracker 절이 있고 docs/issue-tracker.md에 Due date(Linear 기한 필드)와 Check issue 항목이 있다. 같은 Spec-Folder 줄을 가진 확인 이슈는 아직 없다. GitHub가 보고하는 병합 시각은 2026-11-11T08:01:00Z다. pull, pr, clean-branches는 설치돼 있다.",
+      "expected_output": "After the verified MERGED state, merge closes DLY-110, finds no existing check issue, and opens one check issue through the Check issue item due 2026-11-18 with the bounded check section, without running the measurement.",
+      "files": [],
+      "expectations": [
+        "It opens the check issue only after the remote reports MERGED.",
+        "It looks up an existing check issue by the Spec-Folder line before creating one.",
+        "It sets the due date to 2026-11-18, the merge timestamp plus seven days, through the convention's Due date form.",
+        "The body uses the check section markers with the Spec-Folder line, merged PR, due date, and the spec section copied as written.",
+        "It does not run check.sql or judge the target during merge.",
+        "Its final report names the check issue it opened."
+      ]
+    },
+    {
+      "id": 40,
+      "name": "post-release-check-skips",
+      "prompt": "세 PR을 차례로 머지했다고 하고, 각 PR의 배포 후 확인 이슈 처리만 설명해줘. 모두 Issue tracker 절과 Check issue 항목이 있는 저장소다.\n(a) 구현 PR, spec.md의 ## Post-release check 내용이 None.\n(b) spec-only PR, spec.md에 기간 7일인 Post-release check 절이 있다.\n(c) 구현 PR, 기간 14일인 절이 있지만 같은 Spec-Folder 줄을 가진 닫힌 확인 이슈가 이미 있다(이전 머지가 만들었다).",
+      "expected_output": "No check issue is created for any of the three: (a) because the section is None., (b) because a spec-only merge delivers no implementation, (c) because a check issue for that folder already exists in any state; each is reported with its reason.",
+      "files": [],
+      "expectations": [
+        "It creates no check issue for (a) because the section reads None.",
+        "It creates no check issue for (b) because a spec-only merge did not deliver implementation.",
+        "It creates no check issue for (c) because an existing one for the same Spec-Folder line, even closed, prevents a duplicate.",
+        "It reports each skip with its reason."
+      ]
+    },
+    {
+      "id": 41,
+      "name": "post-release-check-without-tracker",
+      "prompt": "구현 PR을 머지해줘. 커밋에 Spec-Folder: docs/specs/streak-reminder/ 트레일러가 있고 그 spec.md에 기간 7일인 ## Post-release check 절이 있다. AGENTS.md와 CLAUDE.md 어디에도 Issue tracker 절이 없다. pull, pr, clean-branches는 설치돼 있다.",
+      "expected_output": "merge completes the verified merge and cleanup, creates no issue, and reports that the post-release check for streak-reminder was not opened because the repository has no tracker convention.",
+      "files": [],
+      "expectations": [
+        "It completes the merge and cleanup normally.",
+        "It creates no issue anywhere.",
+        "Its final report says the post-release check for docs/specs/streak-reminder/ was not opened because no tracker convention exists."
+      ]
     }
   ]
 }
