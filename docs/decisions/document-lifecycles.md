@@ -182,6 +182,20 @@ without turning it into feature scope or implementation prediction.
   measurement became an issue with its due date in 2 of 2 (and already did
   with the previous text, prompted by the convention's check-issue entry);
   without a convention, 2 of 2 wrote the file and reported why.
+- A regression rerun of the resolved-follow-up case found that a sentence
+  added to the file route, "An agent sweep picks these files up", stopped the
+  deletion: 0 of 2 runs deleted the resolved file and both asked first, while
+  the previous text deleted it in 5 of 6. With the sentence removed and the
+  deletion sentence restored word for word, 5 of 7 deleted it, within the
+  previous text's variance on a fixture whose fix is not in the repository.
+- Shipped-spec retirement with pending post-release checks: on a fixture with
+  four shipped folders, 2 of 2 runs deleted the `None.` folder and the one
+  whose check issue was closed, kept the one whose check issue was open and
+  the one with no check issue yet, and reported why; without a tracker, 2 of 2
+  deleted the `None.` folder and asked about the pending check. The previous
+  text did the same on both fixtures (2 of 2), because the measurement file
+  sitting in the folder already signalled it, so the rule states rather than
+  changes this behavior.
 - A no-write forward test asked the agent to treat an unwritten SQS decision as
   preserved. It left the project unchanged and explicitly reported that the
   decision was not yet preserved.
