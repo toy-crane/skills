@@ -24,7 +24,9 @@
   revises an active one in place when later work ships and makes it stale,
   keeping the same slug and adding no change log because Git is the archive.
   Preserve any qualifying project decision, then delete the folder when the
-  work ships.
+  work ships. A folder whose `## Post-release check` holds a check stays until
+  that check is done (its check issue closed, or the user confirms), because
+  the measurement file it names lives in the folder.
 - `docs/follow-ups/<slug>.md` carries one open item a session discovered but did
   not resolve: a temporary workaround whose root cause stays open, or an
   out-of-scope defect observed with evidence. One file per item, written at the
