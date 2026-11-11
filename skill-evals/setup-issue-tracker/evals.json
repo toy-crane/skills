@@ -29,6 +29,31 @@
         "It tells the user to rename `Source-Issue:` to `Issue:` in active spec folders and leaves existing title-key issues for the user to tidy.",
         "It does not create a second instruction file or create any issues."
       ]
+    },
+    {
+      "id": 3,
+      "prompt": "/setup-issue-tracker Linear 팀 DLY로 설정해줘. Linear MCP가 연결돼 있고 AGENTS.md가 있어. 일반 이슈 triage도 켤 거야.",
+      "expected_output": "The convention drafted for docs/issue-tracker.md includes the Due date, Check issue, and Notifications items under those exact names, the not-yet-judged query returns due dates and leaves out issues whose date is ahead, and setup asks once, optionally, about notifications.",
+      "files": [],
+      "expectations": [
+        "It records a `Due date` item using Linear's native due-date field.",
+        "It records a `Check issue` item with a title form, an initial state the not-yet-judged query returns, an assignee rule, and a body bounded by `<!-- triage-issues:check:start -->` and `<!-- triage-issues:check:end -->` with a `Spec-Folder:` line, due date, merged PR, and the spec section copied as written.",
+        "The Check issue item includes a lookup that finds an existing check issue for one spec folder in any state by its Spec-Folder line.",
+        "It asks once whether the user wants notifications, as an optional step, and records `Notifications: None` when they decline.",
+        "The not-yet-judged query returns each issue's due date, leaves out issues whose date is still ahead, and orders due issues before undated ones."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/setup-issue-tracker 기존 GitHub Issues 규약을 다시 점검해줘. 지금 docs/issue-tracker.md에는 Due date, Check issue, Notifications 항목이 없어. 알림은 필요 없어.",
+      "expected_output": "Setup preserves the existing convention, offers to add Due date and Check issue, and writes Notifications: None without further notification questions.",
+      "files": [],
+      "expectations": [
+        "It preserves the existing tracker, tool, states, and operations.",
+        "It proposes a `Due date` item using a `Due: <YYYY-MM-DD>` body line because GitHub Issues has no due-date field.",
+        "It proposes a `Check issue` item with the bounded check section and a duplicate lookup by Spec-Folder line.",
+        "It writes `Notifications: None` and asks no further questions about notifications."
+      ]
     }
   ]
 }
