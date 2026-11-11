@@ -145,12 +145,14 @@ A check issue asks whether a released change met its target. Its body carries a
 section bounded by `<!-- triage-issues:check:start -->` and
 `<!-- triage-issues:check:end -->`, written through the convention's `Check
 issue` item. It holds a `Spec-Folder: docs/specs/<slug>/` line, the merged PR,
-the due date, and the spec's `## Post-release check` content: the metric, the
+a `Merge-Commit:` line, the due date, and the spec's `## Post-release check` content: the metric, the
 pass criterion, the period, the measurement's file path in the spec folder,
 and what to do when the criterion is not met.
 
-Run the measurement exactly as the section names it, reading the file from the
-fetched default branch, with the tool the project provides for it. Record the
+Run the measurement exactly as the section names it, with the tool the
+project provides for it. Read the file from the fetched default branch; when
+the spec folder has since been retired, read it from the `Merge-Commit:`
+revision, and say which revision the comment's result came from. Record the
 result in a comment: the command or query run, when, and the values it
 returned, copied as returned. When the measurement returns a pass or fail
 value, report that value. Do not compute ratios, aggregate rows, or compare

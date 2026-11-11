@@ -79,7 +79,8 @@ Settle these items:
   duplicate lookup when the tracker has labels, and its body. The body is a
   bounded section between `<!-- triage-issues:check:start -->` and
   `<!-- triage-issues:check:end -->` titled `## Post-release check`, holding a
-  `Spec-Folder: docs/specs/<slug>/` line, the merged PR, the due date, and
+  `Spec-Folder: docs/specs/<slug>/` line, the merged PR, a `Merge-Commit:`
+  line with the merge commit on the base, the due date, and
   the spec's `## Post-release check` content copied as written. Record the
   lookup that finds an existing check issue for one spec folder, open or
   closed, by that line, so a retry never creates a second one. The initial

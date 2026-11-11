@@ -92,6 +92,7 @@ when none is named.
 
 Spec-Folder: docs/specs/<slug>/
 Merged: <merged PR URL> at <merge timestamp>
+Merge-Commit: <merge commit SHA on the base>
 Due: <YYYY-MM-DD>
 
 <the spec's `## Post-release check` content, copied as written>

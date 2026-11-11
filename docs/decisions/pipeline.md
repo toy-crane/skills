@@ -400,7 +400,9 @@
   The issue body carries a section bounded by
   `<!-- triage-issues:check:start -->` and `<!-- triage-issues:check:end -->`
   with a `Spec-Folder:` line, which is how triage recognizes it and how
-  `merge` finds a duplicate. When it comes due, triage runs the measurement
+  `merge` finds a duplicate, and a `Merge-Commit:` line, from which triage
+  reads the measurement file when the spec folder was retired before the
+  check came due. When it comes due, triage runs the measurement
   the section names, copies the returned values and any verdict the
   measurement itself returns, and leaves the choice under `needs-decision`;
   the model computes no ratio and makes no comparison against the criterion.
