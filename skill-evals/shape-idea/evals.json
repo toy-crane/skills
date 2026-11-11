@@ -340,6 +340,34 @@
         "spec.md has a `## Setup before implementation` section whose content is `None.`.",
         "It does not invent accounts, keys, or console settings for a local-only change."
       ]
+    },
+    {
+      "id": 26,
+      "prompt": "/shape-idea 사진 앨범 앱에서 업로드한 사진에 AI가 짧은 설명을 자동으로 붙이게 하려고 해. 정한 건 이래: 업로드 직후 설명을 생성해 사진 아래 회색 글씨로 보여주고, 사용자가 탭하면 고치거나 지울 수 있어. 성공 여부는 배포하고 2주 동안 사용자가 설명을 고치거나 지운 비율이 30% 아래인지로 판단하기로 했어. 이벤트 로그는 analytics/events.jsonl 에 caption_edited, caption_deleted, caption_shown 으로 쌓여. 30%를 넘으면 설명 프롬프트를 다시 손보는 작업을 시작해. 더 비싼 모델로 바꿀지는 그 결과를 보고 정하자. 질문 없이 spec으로 마무리해줘.",
+      "expected_output": "spec.md carries a `## Post-release check` section with the metric, the pass criterion, a period of 14 days after release, a measurement file path inside the spec folder that prints pass or fail itself, and the prompt rework as the miss action. The model-upgrade question is either folded into that miss action or kept as a deferred point naming the check result as what reopens it.",
+      "files": [],
+      "expectations": [
+        "spec.md has a section headed exactly `## Post-release check`.",
+        "The section names the metric (edited or deleted captions over shown captions), the pass criterion (below 30%), and a period of 14 days after release.",
+        "The measurement is a file path under `docs/specs/<slug>/`, and the section says it reads the event log and reports pass or fail itself rather than leaving the comparison to a reader.",
+        "The miss action says to start reworking the caption prompt.",
+        "The deferred model-upgrade decision names what brings it back (the check result), either inside the miss action or under the deferred point; it is not left without a trigger.",
+        "It creates no issue and writes no product source."
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "/shape-idea 앨범 공유 링크에 만료 기간을 붙이려고 해. 링크를 만들 때 7일, 30일, 만료 없음 중에서 고르고 기본값은 30일이야. 만료된 링크를 열면 '이 링크는 만료되었어요' 화면을 보여줘. 비밀번호 보호도 붙일지는 아직 못 정했어. 보안팀 의견을 들어 봐야 하는데 언제 들을 수 있을지 몰라. 질문 없이 spec으로 마무리해줘.",
+      "expected_output": "spec.md defers password protection with an issue as what brings it back, writes no `Issue:` line because the user gave no ID, writes `None.` under `## Post-release check`, and the close-out lists password protection under issues to file.",
+      "files": [
+        "fixtures/tracker-local/"
+      ],
+      "expectations": [
+        "The deferred password-protection point names an issue (or a date or condition) as what brings it back rather than standing alone.",
+        "No `Issue:` line or issue ID is invented in spec.md, and no issue is created (no `.tracker/` file and no tracker command run).",
+        "spec.md has `## Post-release check` reading `None.`.",
+        "The close-out lists password protection as an issue to file, with a title and what should bring it back."
+      ]
     }
   ]
 }
