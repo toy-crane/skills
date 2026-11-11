@@ -1,6 +1,6 @@
 ---
 name: update-project-skills
-description: Update every skill installed in the current Git project to its latest published version through skills.sh, from toy-crane/skills and every other source, then reconcile the Toycrane set by installing newly published skills that fit the project's stack, retiring unpublished ones, and materializing their companion custom agents for Claude Code and Codex. Use when the user asks to update, upgrade, refresh, or sync the skills or custom agents installed in a project. Third-party skills are refreshed in place only; project-local skills and agents stay untouched.
+description: Update every skill installed in the current Git project to its latest published version through skills.sh, from toy-crane/skills and every other source, then reconcile the Toycrane set by installing newly published skills that fit the project's stack, retiring unpublished ones, materializing their companion custom agents for Claude Code and Codex, and updating installed Toycrane Claude Code mods while offering new ones. Use when the user asks to update, upgrade, refresh, or sync the skills or custom agents installed in a project. Third-party skills are refreshed in place only; project-local skills and agents stay untouched.
 ---
 
 # Update Project Skills
@@ -120,6 +120,45 @@ from identical contents or an existing manifest declaration. Collision checks
 use the name declared inside every native agent definition, not only its
 filename. Adoption removes alternate-path native definitions of the approved
 identity before writing its canonical Claude Code and Codex pair.
+
+## Reconcile Toycrane mods
+
+A mod is a Claude Code plugin from the `toycrane` marketplace other than
+`toycrane-skills`. It hooks tool calls or the interface, so installing one
+stays the user's choice. Skip this section when the `claude` CLI is not on
+`PATH`.
+
+1. Refresh the marketplace, adding it first when it is missing, then read the
+   published mods and the installed ones:
+
+   ```bash
+   claude plugin marketplace update toycrane \
+     || claude plugin marketplace add toy-crane/skills
+   claude plugin list --available --json
+   ```
+
+   A mod counts as installed for this project when its `<name>@toycrane`
+   entry has `user` scope, or `project` or `local` scope with a
+   `projectPath` equal to the project root.
+2. Update each installed mod at the scope its entry records, since older
+   Claude Code versions default an update to `user` scope:
+
+   ```bash
+   claude plugin update <mod-name>@toycrane --scope <entry-scope> -y
+   ```
+
+3. List each published mod that is not installed with its marketplace
+   description, and ask which to install. Install only the names the user
+   picks, at `local` scope so the choice stays with this checkout and is not
+   committed for teammates:
+
+   ```bash
+   claude plugin install <mod-name>@toycrane --scope local -y
+   ```
+
+   Never uninstall a mod, even one no longer published; report it instead.
+
+Mod changes take effect in a new Claude Code session.
 
 ## Verify the result
 
