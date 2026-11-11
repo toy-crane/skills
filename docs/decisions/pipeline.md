@@ -84,7 +84,8 @@
   workflow, technical layers, including a server, API, or data layer only the
   rest of the change uses, and session size never divide a folder. Work done
   only outside the repository never becomes a folder: preparation goes to
-  `Setup before implementation`, and actions after release stay in the spec.
+  `Setup before implementation`, and actions after release stay in the spec's
+  `Post-release check`.
   Dependent folders carry `Blocked by: docs/specs/<other>/` lines.
 - `implement` receives one selected `docs/specs/<slug>/` folder as a single
   handoff bundle anchored by `spec.md`. Before implementation it loads the spec,
