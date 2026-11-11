@@ -56,7 +56,10 @@ package manager through `devEngines`.
      one.
    - Keep it where it is for now: name the other skills in the update call
      (`update <name> [<name> ...] -p -y`) and leave this one out. Say that it
-     stays stale until the user chooses.
+     stays stale until the user chooses. Offer this only for third-party
+     skills. A Toycrane-managed skill needs its `.agents/skills` copy for the
+     companion synchronizer and the final verification, so for those the
+     choice is the first or the third.
    - Accept the move, then have the user decide whether to hide it from Codex
      again. The CLI has no Claude-only placement for an existing lock entry, so
      this means removing the skill and reinstalling it with `--agent
