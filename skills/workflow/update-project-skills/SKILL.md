@@ -40,7 +40,30 @@ package manager through `devEngines`.
    Read the project's `skills-lock.json`. The upstream list is the current
    published Toycrane set; ignore the source repository's own development-only
    dependencies under `.agents/skills`.
-3. Update every locked skill in place, from every source, in one project-scoped
+3. Find the skills the update will move. The CLI (1.8 and later) reinstalls any
+   locked skill whose canonical copy `.agents/skills/<name>` is missing, as a
+   copy there plus a relative link at `.claude/skills/<name>`, replacing a real
+   folder that was installed only for Claude Code. Content stays identical.
+   List every lock entry whose `.agents/skills/<name>` does not exist and whose
+   `.claude/skills/<name>` is a real folder. Before updating, tell the user
+   which names will move, and if any, carry them into the final report. Such a
+   skill may have been kept Claude-only on purpose, and after the move Codex
+   and other universal clients see it too. Never decide that alone. Offer
+   these choices and recommend the first:
+
+   - Accept the move. Nothing is lost, Claude Code still resolves the skill
+     through the link, and the skill now follows the same layout as every other
+     one.
+   - Keep it where it is for now: name the other skills in the update call
+     (`update <name> [<name> ...] -p -y`) and leave this one out. Say that it
+     stays stale until the user chooses.
+   - Accept the move, then have the user decide whether to hide it from Codex
+     again. The CLI has no Claude-only placement for an existing lock entry, so
+     this means removing the skill and reinstalling it with `--agent
+     claude-code`, which is a separate request.
+
+   Wait for the answer before running the update when any skill will move.
+4. Update every locked skill in place, from every source, in one project-scoped
    call:
 
    ```bash
@@ -50,7 +73,12 @@ package manager through `devEngines`.
    The CLI refreshes each lock entry that records a `skillPath`, one clone per
    source, and reinstalls it for the current client plus the universal
    `.agents` copy; existing `.claude/skills` links keep resolving because they
-   are relative. Carry three parts of its output into the final report: the
+   are relative. The first run from a CLI that writes lock version 2 also
+   upgrades `skills-lock.json` from version 1 and rewrites every
+   `computedHash`, since the hash now covers the files installed into
+   `.agents/skills/<name>`. Expect that whole-lock diff and report it as a
+   format change, not as skill changes. Carry three parts of its output into
+   the final report: the
    per-skill results, the entries it cannot update in place because they were
    installed before `skillPath` tracking (with the reinstall hint it prints),
    and the skills it reports as deleted upstream. Leave those last two groups
@@ -181,8 +209,10 @@ Mod changes take effect in a new Claude Code session.
   check after the companion check. Confirm it lists every current managed
   Toycrane skill in `shared_skills` and every companion in `shared_agents`.
 - Inspect the complete Git diff. Report, per skill, whether it changed and how
-  much (`git diff --stat` is enough), followed by the entries the update
-  skipped and the upstream deletions it warned about. Then follow the
+  much (`git diff --stat` is enough), followed by the skills moved into
+  `.agents/skills` with the user's choice about each, the lock version and hash
+  rewrite when it happened, the entries the update skipped and the upstream
+  deletions it warned about. Then follow the
   repository's commit policy.
 - If the current Claude Code or Codex session does not expose a newly installed
   custom agent, finish the update and report that a new session is needed

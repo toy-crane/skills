@@ -59,6 +59,19 @@
         "It treats toycrane-skills as the skill plugin, not a mod, and does not offer it as one.",
         "It uninstalls no mod and reports that mod changes take effect in a new Claude Code session."
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "Use $update-project-skills in this project. skills-lock.json is version 1 and manages commit from toy-crane/skills plus draft-post and pado-cli from toy-crane/pado. commit has its canonical copy in .agents/skills with a .claude/skills link, but draft-post and pado-cli exist only as real folders under .claude/skills, and I may have kept them Claude-only on purpose. The installed CLI is skills 1.8.x.",
+      "expected_output": "The response finds before updating that draft-post and pado-cli have no .agents/skills copy and would be moved there with a relative link left in .claude/skills, tells the user, and offers accepting the move (recommended), leaving them out of the update by naming the other skills, or reinstalling them Claude-only later, then waits for the answer instead of choosing alone. After the update it expects the lock to become version 2 with every computedHash rewritten and reports that as a format change, and the final report lists the moved skills and the user's choice.",
+      "files": [],
+      "expectations": [
+        "Before running skills update, it names draft-post and pado-cli as the skills the update will move from .claude/skills into .agents/skills, and says content stays identical.",
+        "It gives the choices of accepting the move, naming only the other skills in the update call, or reinstalling the skill Claude-only afterwards, recommends accepting the move, and waits for the user's answer instead of deciding alone.",
+        "It does not run the project-wide skills update while the user's answer about the moving skills is pending.",
+        "It tells the user the lock will change from version 1 to 2 with every computedHash rewritten, and reports that as a format change rather than as skill content changes.",
+        "The final report lists the moved skills with the user's choice, and the companion check is still run through sync_companion_agents.py, which accepts both lock versions."
+      ]
     }
   ]
 }
