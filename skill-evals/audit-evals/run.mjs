@@ -79,7 +79,9 @@ if (opts.suite === 'evals') {
   fixtureRoot = join(here, opts.suite, 'fixtures');
   // Fixture histories are built from the committed trial records, and the expected lists are
   // computed from the same records by an independent reference.
-  if (!existsSync(fixtureRoot)) spawnSync('python3', ['-I', join(here, opts.suite, 'build_fixtures.py')], { stdio: 'inherit' });
+  // Rebuilt on every start, so an edit to fixtures.json or source/ never meets stale histories.
+  const built = spawnSync('python3', ['-I', join(here, opts.suite, 'build_fixtures.py')], { encoding: 'utf8' });
+  if (built.status !== 0) fail(`build_fixtures.py failed: ${built.stderr.trim()}`);
   cases = readFileSync(join(here, opts.suite, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
   if (opts.split !== 'all') cases = cases.filter((c) => c.split === opts.split);
 }

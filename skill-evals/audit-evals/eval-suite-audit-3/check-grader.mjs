@@ -13,7 +13,7 @@ const script = join(here, '../../../skills/workflow/audit-evals/scripts/audit_ev
 const cases = readFileSync(join(here, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 const history = (id) => JSON.parse(readFileSync(join(here, 'fixtures', id, 'evals/regression/cell-history.json'), 'utf8'));
 const turnsSaying = (text) => [{ role: 'assistant', content: text }];
-const state = (h, report) => ({ history: h, historyChanged: false, report, reportPath: report ? 'evals/regression/audit-report.md' : null });
+const state = (h, report) => ({ history: h, historyChanged: false, report, reportPath: report ? 'evals/audit-report.md' : null });
 
 // A report written straight from the expected lists, one cell per line.
 function referenceReport(e) {
@@ -38,7 +38,7 @@ for (const [i, c] of cases.entries()) {
   const ws = mkdtempSync(join(tmpdir(), 'audit-grader-'));
   cpSync(join(here, 'fixtures', c.id), ws, { recursive: true });
   const run = spawnSync('python3', ['-I', script, 'report', join(ws, 'evals/regression/cell-history.json')], { encoding: 'utf8' });
-  const report = readFileSync(join(ws, 'evals/regression/audit-report.md'), 'utf8');
+  const report = readFileSync(join(ws, 'evals/audit-report.md'), 'utf8');
   const parsed = parseReport(report, h);
   const scored = scoreRun(c, state(h, report), turnsSaying(run.stdout));
   tally.script += scored.grade.pass;
