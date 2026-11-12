@@ -3,7 +3,8 @@
 //   --suite eval-suite-audit-3  the regression suite graduated from criterion 3 of docs/specs/eval-suite-audit:
 //                               the four lists must equal the reference lists; graded by
 //                               regression/eval-suite-audit-3/grade.mjs, no judge. regression/log.md
-//                               records its level and regression/cell-history.json its cells.
+//                               records its level and regression/cell-history.json its cells, which
+//                               each run of the suite updates through history.mjs.
 //   --suite evals               evals.json's cases (criterion 4), each expectation ruled on by judge.mjs.
 // Each run installs the skills a case names into a disposable git workspace outside any .claude/
 // folder, runs `claude -p` there, and grades the end state and transcript.
@@ -18,6 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { collectEndState, scoreRun } from './regression/eval-suite-audit-3/grade.mjs';
 import { collectChanges, judgeRun, scoreJudged } from './judge.mjs';
+import { loadHistory, planTiers, recordRow, saveHistory } from './history.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../..');
@@ -35,6 +37,7 @@ const usage = `usage: run.mjs --variant <label> --access api|subscription --suit
   --model <id>            agent model (default: claude-opus-5-5)
   --judge-model <id>      judge model for --suite evals (default: claude-sonnet-5-5)
   --flow <dir>            flow folder (default: .claude/hillclimb/${SKILL}/<suite>)
+  --history <path>        cell history a regression run updates (default: regression/cell-history.json)
   --timeout-s <n>         wall-clock ceiling per run (default: 900)
   --max-budget-usd <n>    per-run budget passed to claude (default: 3)
   --dry-run               print the resolved scope and stop`;
@@ -54,6 +57,7 @@ const { values: opts } = parseArgs({
     model: { type: 'string', default: 'claude-opus-5-5' },
     'judge-model': { type: 'string', default: 'claude-sonnet-5-5' },
     flow: { type: 'string' },
+    history: { type: 'string' },
     'timeout-s': { type: 'string', default: '900' },
     'max-budget-usd': { type: 'string', default: '3' },
     'dry-run': { type: 'boolean', default: false },
@@ -87,6 +91,15 @@ if (opts.suite === 'evals') {
   if (built.status !== 0) fail(`build_fixtures.py failed: ${built.stderr.trim()}`);
   cases = readFileSync(join(suiteDir, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
   if (opts.split !== 'all') cases = cases.filter((c) => c.split === opts.split);
+}
+// A regression run reads its tiers from the cell history and adds each row it scores to it.
+let history = null;
+let tiers = null;
+const historyPath = resolve(opts.history ?? join(here, 'regression', 'cell-history.json'));
+if (opts.suite !== 'evals') {
+  history = loadHistory(historyPath);
+  tiers = planTiers(history, opts.suite, opts.model);
+  cases = cases.filter((c) => tiers.runsCase(c.id));
 }
 if (opts.cases) {
   const wanted = opts.cases.split(',').map((c) => c.trim());
@@ -155,6 +168,7 @@ for (let rep = 0; rep < reps; rep += 1) for (const c of cases) if (!done.has(`${
 
 console.log(`variant ${opts.variant}: ${SKILL} from ${skillSource} (sha ${skillSha})`);
 console.log(`access ${opts.access}, model ${opts.model}${opts.suite === 'evals' ? `, judge ${opts['judge-model']}` : ''}; suite ${opts.suite}: ${cases.length} cases × ${reps} reps; ${done.size} done, ${todo.length} to run`);
+if (tiers) console.log(`regression tiers: upper${tiers.lowerRuns ? ' and lower (model differs from the lower tier\'s last)' : ' only'}; history ${historyPath}`);
 const priced = readRows(resultsFile).filter((r) => typeof r.meta?.cost_usd === 'number');
 if (priced.length) {
   const mean = priced.reduce((n, r) => n + r.meta.cost_usd + (r.meta.judge_cost_usd ?? 0), 0) / priced.length;
@@ -316,11 +330,17 @@ async function runCase({ c, rep }) {
     scored = scoreRun(c, endState, turns);
     judgeMeta = { report_path: endState.reportPath };
   }
-  appendFileSync(resultsFile, `${JSON.stringify({
+  const row = {
     prompt_id: c.id, rep, prompt: c.prompt, tags: c.tags, grade: scored.grade, status: 'ok', stop_reason: t.info.resultSubtype,
     model: t.info.model, usage: t.info.usage, turns: t.info.turns, latency_s: latency,
     meta: { cost_usd: t.info.costUsd, problems: scored.problems, ...judgeMeta },
-  })}\n`);
+  };
+  appendFileSync(resultsFile, `${JSON.stringify(row)}\n`);
+  // Only a row scored now reaches the history; rows already in results.jsonl were counted when scored.
+  if (history) {
+    recordRow(history, opts.suite, row, { model: opts.model, lowerRuns: tiers.lowerRuns });
+    saveHistory(historyPath, history);
+  }
   console.log(`${id}: ${JSON.stringify(scored.grade)} ${latency.toFixed(0)}s${scored.problems.length ? ` — ${scored.problems[0].slice(0, 160)}` : ''}`);
 }
 
