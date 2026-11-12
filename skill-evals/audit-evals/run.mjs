@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // Runner for audit-evals' evals in the llm-evals layout. This folder is the skill's eval root.
-//   --suite eval-suite-audit-3  criterion 3 of docs/specs/eval-suite-audit: the four lists must equal
-//                               the reference lists; graded by eval-suite-audit-3/grade.mjs, no judge.
+//   --suite eval-suite-audit-3  the regression suite graduated from criterion 3 of docs/specs/eval-suite-audit:
+//                               the four lists must equal the reference lists; graded by
+//                               regression/eval-suite-audit-3/grade.mjs, no judge. regression/log.md
+//                               records its level and regression/cell-history.json its cells.
 //   --suite evals               evals.json's cases (criterion 4), each expectation ruled on by judge.mjs.
 // Each run installs the skills a case names into a disposable git workspace outside any .claude/
 // folder, runs `claude -p` there, and grades the end state and transcript.
@@ -14,7 +16,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { collectEndState, scoreRun } from './eval-suite-audit-3/grade.mjs';
+import { collectEndState, scoreRun } from './regression/eval-suite-audit-3/grade.mjs';
 import { collectChanges, judgeRun, scoreJudged } from './judge.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -76,13 +78,14 @@ if (opts.suite === 'evals') {
     id: `evals-${e.id}`, tags: ['evals'], prompt: e.prompt, expectations: e.expectations, fixture: e.fixture, skills: e.skills,
   }));
 } else {
-  fixtureRoot = join(here, opts.suite, 'fixtures');
+  const suiteDir = join(here, 'regression', opts.suite);
+  fixtureRoot = join(suiteDir, 'fixtures');
   // Fixture histories are built from the committed trial records, and the expected lists are
   // computed from the same records by an independent reference.
   // Rebuilt on every start, so an edit to fixtures.json or source/ never meets stale histories.
-  const built = spawnSync('python3', ['-I', join(here, opts.suite, 'build_fixtures.py')], { encoding: 'utf8' });
+  const built = spawnSync('python3', ['-I', join(suiteDir, 'build_fixtures.py')], { encoding: 'utf8' });
   if (built.status !== 0) fail(`build_fixtures.py failed: ${built.stderr.trim()}`);
-  cases = readFileSync(join(here, opts.suite, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  cases = readFileSync(join(suiteDir, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
   if (opts.split !== 'all') cases = cases.filter((c) => c.split === opts.split);
 }
 if (opts.cases) {

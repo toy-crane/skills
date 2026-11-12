@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { expectedLists, parseReport, scoreRun } from './grade.mjs';
 
 const here = new URL('.', import.meta.url).pathname;
-const script = join(here, '../../../skills/workflow/audit-evals/scripts/audit_evals.py');
+const script = join(here, '../../../../skills/workflow/audit-evals/scripts/audit_evals.py');
 const cases = readFileSync(join(here, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 const history = (id) => JSON.parse(readFileSync(join(here, 'fixtures', id, 'evals/regression/cell-history.json'), 'utf8'));
 const turnsSaying = (text) => [{ role: 'assistant', content: text }];
