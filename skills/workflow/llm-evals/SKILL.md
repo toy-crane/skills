@@ -239,8 +239,11 @@ remove one of its cases only when a decision to change that behavior exists, or
 when the feature it covers is gone; a failing score is never that reason, and
 neither is passing. A cell whose most recent 10 trials all passed may be
 demoted to the lower tier, never deleted: answer a request to delete one by
-offering demotion, which `audit-evals` proposes from the cell history and
-applies only after the user approves it.
+offering demotion instead and deleting nothing. Tell the user that demotion is
+proposed from the cell history by the `audit-evals` skill, which moves only the
+cells they approve, and that it installs with
+`npx skills@latest add toy-crane/skills --skill audit-evals` when it is not
+installed; this skill does not run it.
 
 Every suite run, at a gate or for `implement`, runs the upper tier. It runs the
 lower tier too only when this run's model differs from the model the lower tier
