@@ -1,7 +1,7 @@
 // Keeps regression/cell-history.json (version 2) for audit-evals' regression runs, the way
 // llm-evals asks: every newly scored row adds a trial to each of its case's cells whose tier ran,
 // and appends its result to the cell's recent window, which keeps the last 10.
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, renameSync, writeFileSync } from 'node:fs';
 
 export const WINDOW = 10;
 
@@ -11,8 +11,10 @@ export function loadHistory(path) {
   return h;
 }
 
+// Written beside the file and renamed over it, so a run stopped mid-write never leaves it truncated.
 export function saveHistory(path, h) {
-  writeFileSync(path, `${JSON.stringify(h, null, 1)}\n`);
+  writeFileSync(`${path}.tmp`, `${JSON.stringify(h, null, 1)}\n`);
+  renameSync(`${path}.tmp`, path);
 }
 
 // The upper tier always runs; the lower tier only when this run's model differs from the model it
@@ -26,10 +28,10 @@ export function planTiers(h, suite, model) {
   return { lowerRuns, runsCase };
 }
 
-// Adds one scored row. Call it once per row, only for rows this run scored.
-export function recordRow(h, suite, row, { model, lowerRuns }) {
+// Adds one scored row. Call it once per row, only for rows this run scored. It records no model:
+// finishRun does that once the run's work is complete.
+export function recordRow(h, suite, row, { lowerRuns }) {
   const body = h.suites[suite];
-  let lowerRecorded = false;
   for (const [check, c] of Object.entries(body.cells[row.prompt_id] ?? {})) {
     if (c.tier === 'lower' && !lowerRuns) continue;
     const g = row.grade?.[check];
@@ -38,8 +40,19 @@ export function recordRow(h, suite, row, { model, lowerRuns }) {
     c.trials += 1;
     c.passes += passed ? 1 : 0;
     c.recent = `${c.recent}${passed ? 'p' : 'f'}`.slice(-WINDOW);
-    lowerRecorded ||= c.tier === 'lower';
   }
+}
+
+// Records the run's model only when every case the run owes, over every repetition, has a scored
+// row in this variant (`scored` holds "case#rep"). A stopped run, a --cases subset, or an infra
+// error leaves the models as they were, so the next invocation still owes the unfinished cases.
+export function finishRun(h, suite, { model, lowerRuns, scored }) {
+  const body = h.suites[suite];
+  // The same cases planTiers had the run take, under the tier plan the run used.
+  const owed = Object.keys(body.cells).filter((id) => Object.values(body.cells[id]).some((c) => c.tier === 'upper' || lowerRuns));
+  const complete = owed.every((id) => Array.from({ length: body.reps }, (_, rep) => scored.has(`${id}#${rep}`)).every(Boolean));
+  if (!complete) return false;
   body.last_run_model = model;
-  if (lowerRecorded) body.lower_tier_model = model;
+  if (lowerRuns) body.lower_tier_model = model;
+  return true;
 }

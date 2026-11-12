@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { collectEndState, scoreRun } from './regression/eval-suite-audit-3/grade.mjs';
 import { collectChanges, judgeRun, scoreJudged } from './judge.mjs';
-import { loadHistory, planTiers, recordRow, saveHistory } from './history.mjs';
+import { finishRun, loadHistory, planTiers, recordRow, saveHistory } from './history.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../..');
@@ -32,7 +32,7 @@ const usage = `usage: run.mjs --variant <label> --access api|subscription --suit
   --skill-file <path>     take SKILL.md from this file (default: the working tree's folder)
   --cases a,b             run only these case ids
   --split train|test|all  run only one split of eval-suite-audit-3 (default: all)
-  --reps <n>              runs per case (default: 2)
+  --reps <n>              runs per case (default: 2; a regression suite runs its own reps)
   --workers <n>           runs in parallel (default: 4)
   --model <id>            agent model (default: claude-opus-5-5)
   --judge-model <id>      judge model for --suite evals (default: claude-sonnet-5-5)
@@ -52,7 +52,7 @@ const { values: opts } = parseArgs({
     'skill-file': { type: 'string' },
     cases: { type: 'string' },
     split: { type: 'string', default: 'all' },
-    reps: { type: 'string', default: '2' },
+    reps: { type: 'string' },
     workers: { type: 'string', default: '4' },
     model: { type: 'string', default: 'claude-opus-5-5' },
     'judge-model': { type: 'string', default: 'claude-sonnet-5-5' },
@@ -100,13 +100,16 @@ if (opts.suite !== 'evals') {
   history = loadHistory(historyPath);
   tiers = planTiers(history, opts.suite, opts.model);
   cases = cases.filter((c) => tiers.runsCase(c.id));
+  // A regression suite is scored over the repetitions its level was reached at.
+  const own = history.suites[opts.suite].reps;
+  if (opts.reps !== undefined && Number(opts.reps) !== own) fail(`${opts.suite} runs at ${own} reps, as recorded in its cell history; drop --reps or pass ${own}`);
 }
+const reps = history ? history.suites[opts.suite].reps : Number(opts.reps ?? 2);
 if (opts.cases) {
   const wanted = opts.cases.split(',').map((c) => c.trim());
   for (const id of wanted) if (!cases.some((c) => c.id === id)) fail(`unknown case in ${opts.suite}: ${id}`);
   cases = cases.filter((c) => wanted.includes(c.id));
 }
-const reps = Number(opts.reps);
 const workers = Number(opts.workers);
 const timeoutMs = Number(opts['timeout-s']) * 1000;
 
@@ -189,7 +192,18 @@ function report() {
   }
   console.log(`errors: ${readRows(errorsFile).length}`);
 }
-if (opts['dry-run'] || todo.length === 0) { report(); process.exit(0); }
+// Records the run's model once every case it owes is scored in this variant, including rows an
+// earlier, stopped invocation of the same variant scored.
+function finishHistory() {
+  if (!history) return;
+  const scored = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`));
+  const complete = finishRun(history, opts.suite, { model: opts.model, lowerRuns: tiers.lowerRuns, scored });
+  if (complete) saveHistory(historyPath, history);
+  console.log(complete ? `cell history: run complete on ${opts.model}, models recorded`
+    : 'cell history: run incomplete, models left as they were; rerun the same variant to finish it');
+}
+if (opts['dry-run']) { report(); process.exit(0); }
+if (todo.length === 0) { finishHistory(); report(); process.exit(0); }
 
 mkdirSync(join(setDir, 'traces'), { recursive: true });
 if (!existsSync(summaryFile)) {
@@ -338,7 +352,7 @@ async function runCase({ c, rep }) {
   appendFileSync(resultsFile, `${JSON.stringify(row)}\n`);
   // Only a row scored now reaches the history; rows already in results.jsonl were counted when scored.
   if (history) {
-    recordRow(history, opts.suite, row, { model: opts.model, lowerRuns: tiers.lowerRuns });
+    recordRow(history, opts.suite, row, { lowerRuns: tiers.lowerRuns });
     saveHistory(historyPath, history);
   }
   console.log(`${id}: ${JSON.stringify(scored.grade)} ${latency.toFixed(0)}s${scored.problems.length ? ` — ${scored.problems[0].slice(0, 160)}` : ''}`);
@@ -358,4 +372,5 @@ await Promise.all(Array.from({ length: Math.min(workers, todo.length) }, async (
   }
 }));
 console.log(`results: ${resultsFile}`);
+finishHistory();
 report();
