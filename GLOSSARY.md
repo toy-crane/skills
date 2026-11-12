@@ -77,3 +77,15 @@ _Avoid_: Smoke eval, regression tests
 **Graduation**:
 Moving a finished capability eval's repeatedly passing cases into the regression suite and deleting the climb's variants, traces, and split, so the question changes from whether the behavior can be reached to whether it still holds.
 _Avoid_: Promotion, archiving
+
+**Cell**:
+One case judged by one check of the grader: the smallest unit of an eval that passes or fails. A grader that gives a single verdict has one cell per case. Whether an eval is needed is judged per cell, because a case can carry checks that never fail beside checks that do.
+_Avoid_: Assertion, data point
+
+**Cell history**:
+The committed record, kept beside the regression suite's `log.md`, of how many trials each cell ran and how many it passed, with its result at the baseline of the climb that graduated it. It is what tells a cell never seen failing from one that guards something.
+_Avoid_: Results, ledger, run log
+
+**Demotion**:
+Moving a regression cell whose history shows no failure from the tier that runs whenever the suite runs to the tier that runs only when the model changes. The cell is kept, and a failure there moves it back up. Distinct from removing a case, which still needs a decision to change the behavior or the feature being gone.
+_Avoid_: Pruning, retiring, archiving
