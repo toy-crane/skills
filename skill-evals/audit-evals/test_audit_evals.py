@@ -83,7 +83,8 @@ def run(*args):
 class AuditTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.path = Path(self.tmp.name) / "cell-history.json"
+        (Path(self.tmp.name) / "regression").mkdir()
+        self.path = Path(self.tmp.name) / "regression" / "cell-history.json"
         self.path.write_text(json.dumps(HISTORY))
 
     def tearDown(self):
@@ -126,10 +127,12 @@ class AuditTest(unittest.TestCase):
     def test_judged_checks_that_never_failed_can_be_verified(self):
         self.assertEqual(self.report()["verification_candidates"], ["s2/j1"])
 
-    def test_full_report_goes_to_a_file_beside_the_history(self):
+    def test_full_report_goes_to_the_eval_root(self):
         out = run("report", str(self.path))
         self.assertEqual(out.returncode, 0, out.stderr)
-        report = (self.path.parent / "audit-report.md").read_text()
+        # The report sits at the eval root, outside the committed regression/ folder.
+        self.assertFalse((self.path.parent / "audit-report.md").exists())
+        report = (self.path.parent.parent / "audit-report.md").read_text()
         for text in ("s1/*/k1", "s1/c1/*", "s1/~/k4", "s1/k2 = s1/k3", "s1/c2/k2 6/10", "s1/c3/k2 0/10",
                      "Never failed (10)", "Insufficient history (2)", "Flipping (2)", "Always failing (2)"):
             self.assertIn(text, report)
@@ -150,6 +153,20 @@ class AuditTest(unittest.TestCase):
         out = run("report", str(self.path))
         self.assertEqual(out.returncode, 2)
         self.assertIn("k4", out.stderr)
+
+    def test_history_of_the_wrong_shape_is_rejected_by_name(self):
+        for broken in ([], {"version": 1, "suites": []}, {"version": 1, "suites": {"s1": []}},
+                       {"version": 1, "suites": {"s1": {"reps": 2, "checks": {"k1": "code"}, "cells": {}}}},
+                       {"version": 1, "suites": {"s1": {"reps": 2, "checks": {"k1": {"grader": "code"}}, "cells": {"c1": None}}}}):
+            self.path.write_text(json.dumps(broken))
+            out = run("report", str(self.path))
+            self.assertEqual(out.returncode, 2, f"{broken}: {out.stderr}")
+            self.assertIn("error:", out.stderr)
+
+    def test_a_bar_below_one_trial_is_refused(self):
+        out = run("report", str(self.path), "--min-trials", "0")
+        self.assertEqual(out.returncode, 2)
+        self.assertNotIn("s2/d2/j2", out.stdout)
 
     def test_apply_demotes_only_the_approved_unit(self):
         out = run("apply", str(self.path), "s1/c1/*")

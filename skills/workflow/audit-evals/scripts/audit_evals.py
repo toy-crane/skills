@@ -39,11 +39,13 @@ def load(path):
         data = json.loads(path.read_text())
     except json.JSONDecodeError as error:
         raise Invalid(f"{path}: not JSON ({error})")
-    if data.get("version") != 1 or not isinstance(data.get("suites"), dict):
+    if not isinstance(data, dict) or data.get("version") != 1 or not isinstance(data.get("suites"), dict):
         raise Invalid(f"{path}: expected version 1 with a suites object")
     for suite, body in data["suites"].items():
         if "/" in suite:
             raise Invalid(f"suite name {suite!r} contains '/'")
+        if not isinstance(body, dict):
+            raise Invalid(f"{suite}: must be an object")
         reps = body.get("reps")
         if not isinstance(reps, int) or reps < 1:
             raise Invalid(f"{suite}: reps must be a positive integer")
@@ -52,16 +54,16 @@ def load(path):
         if not isinstance(checks, dict) or not isinstance(cells, dict):
             raise Invalid(f"{suite}: needs checks and cells objects")
         for check, meta in checks.items():
-            if "/" in check or meta.get("grader") not in ("code", "judge"):
+            if "/" in check or not isinstance(meta, dict) or meta.get("grader") not in ("code", "judge"):
                 raise Invalid(f"{suite}/{check}: grader must be code or judge")
         for case, row in cells.items():
-            if "/" in case:
-                raise Invalid(f"case name {case!r} in {suite} contains '/'")
+            if "/" in case or not isinstance(row, dict):
+                raise Invalid(f"{suite}/{case}: case names hold no '/' and map checks to cells")
             for check, c in row.items():
                 where = f"{suite}/{case}/{check}"
                 if check not in checks:
                     raise Invalid(f"{where}: check {check} is missing from {suite}.checks")
-                if c.get("tier") not in ("upper", "lower"):
+                if not isinstance(c, dict) or c.get("tier") not in ("upper", "lower"):
                     raise Invalid(f"{where}: tier must be upper or lower")
                 t, p = c.get("trials"), c.get("passes")
                 if not (isinstance(t, int) and isinstance(p, int) and 0 <= p <= t):
@@ -292,12 +294,15 @@ def main(argv=None):
     rep.add_argument("history", type=Path)
     rep.add_argument("--min-trials", type=int, default=DEFAULT_MIN_TRIALS)
     rep.add_argument("--json", action="store_true", help="print every list as JSON and write no file")
-    rep.add_argument("--out", type=Path, help="where to write the full report (default: audit-report.md beside the history)")
+    rep.add_argument("--out", type=Path, help="where to write the full report (default: audit-report.md at the eval root, the history's grandparent)")
     app = sub.add_parser("apply")
     app.add_argument("history", type=Path)
     app.add_argument("units", nargs="+")
     app.add_argument("--min-trials", type=int, default=DEFAULT_MIN_TRIALS)
     args = parser.parse_args(argv)
+    if args.min_trials < 1:
+        print("error: --min-trials must be at least 1, so a cell with no trials never counts as never failed", file=sys.stderr)
+        return 2
 
     try:
         data = load(args.history)
@@ -309,7 +314,8 @@ def main(argv=None):
             if args.json:
                 print(json.dumps(result, indent=2))
                 return 0
-            out = args.out or args.history.parent / "audit-report.md"
+            # The eval root, outside regression/, whose files are all committed.
+            out = args.out or args.history.parent.parent / "audit-report.md"
             out.write_text(markdown(data, result, args.history) + "\n")
             print(summary(data, result, args.history, out))
             return 0

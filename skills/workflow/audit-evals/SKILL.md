@@ -42,10 +42,11 @@ on the history file:
 python3 -I <this skill's base directory>/scripts/audit_evals.py report <eval root>/regression/cell-history.json
 ```
 
-It writes the full report to `audit-report.md` beside the history and prints
-a summary: the count of every list, the combined saving of all proposals, and
-the largest proposals. The report file is the audit's output, not part of the
-suite, so it stays uncommitted and the next audit replaces it. A cell counts as
+It writes the full report to `audit-report.md` at the eval root, outside
+`regression/`, and prints a summary: the count of every list, the combined
+saving of all proposals, and the largest proposals. The report file is the
+audit's output, not part of the suite, so it stays uncommitted and the next
+audit replaces it. A cell counts as
 never failed after 10 trials without a failure; pass `--min-trials <n>` only
 when the user asks for another bar. Exit code 3 means there is no history at
 that path, and exit code 2 names what in the file is malformed; report either
