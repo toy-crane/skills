@@ -241,6 +241,96 @@
         "It shows how slowly the noise floor shrinks with more repetitions.",
         "It suggests 2 or 3 repetitions on the larger set."
       ]
+    },
+    {
+      "id": 21,
+      "fixture": "regression-run",
+      "prompt": "/llm-evals refund 회귀 묶음을 방금 claude-opus-5-5로 돌렸어. 결과는 evals/runs/latest/results.jsonl에 있어. 회귀 결과 정리하고 남길 건 남겨줘.",
+      "expected_output": "The response reads the run's rows, adds each upper-tier cell's trials and passes to evals/regression/cell-history.json (case-01 tone 12/12 and facts 9/12, case-02 tone 12/12 and facts 12/12, case-03 tone 7/12, facts 12/12, format 12/12), leaves the two lower-tier format cells that did not run unchanged, records claude-opus-5-5 as the last run's model, and runs no model to do it.",
+      "expectations": [
+        "evals/regression/cell-history.json shows case-01 tone at 12 trials and 12 passes and case-01 facts at 12 trials and 9 passes.",
+        "evals/regression/cell-history.json shows case-03 tone at 12 trials and 7 passes, case-03 facts at 12 and 12, and case-03 format at 12 and 12.",
+        "The lower-tier format cells of case-01 and case-02 keep 10 trials and 10 passes, since they did not run.",
+        "It keeps cumulative counts per cell rather than appending a row per run.",
+        "It runs no eval and calls no model to record the history."
+      ],
+      "files": []
+    },
+    {
+      "id": 22,
+      "fixture": "regression-run",
+      "prompt": "/llm-evals refund 프롬프트를 고쳤는데 회귀 묶음이 지키는 동작을 건드려. 회귀 묶음은 이번에도 claude-opus-5-5로 돌릴 거야. 무엇을 돌릴지만 정리해줘. 아직 실행하지는 마.",
+      "expected_output": "The response plans to run only the upper tier: the tone and facts cells of every case and case-03's format cell. It leaves out the lower-tier format cells of case-01 and case-02 because the model is the same one the lower tier last ran on, and runs nothing.",
+      "expectations": [
+        "It plans to run the upper-tier cells, including tone and facts for every case and case-03 format.",
+        "It leaves out the lower-tier format cells of case-01 and case-02.",
+        "It names the reason: this run's model is the same as the model the lower tier last ran on.",
+        "It runs nothing yet."
+      ],
+      "files": []
+    },
+    {
+      "id": 23,
+      "fixture": "regression-run",
+      "prompt": "/llm-evals 앱이 쓰는 모델을 claude-opus-6으로 바꿨어. refund 회귀 묶음을 돌려야 하는데 무엇을 돌릴지만 정리해줘. 아직 실행하지는 마.",
+      "expected_output": "The response plans to run both tiers, the upper-tier cells and the lower-tier format cells of case-01 and case-02, because claude-opus-6 differs from claude-opus-5-5, the model the lower tier last ran on, and runs nothing.",
+      "expectations": [
+        "It plans to run the upper tier.",
+        "It plans to run the lower-tier format cells of case-01 and case-02 as well.",
+        "It names the reason: claude-opus-6 differs from the model the lower tier last ran on.",
+        "It runs nothing yet."
+      ],
+      "files": []
+    },
+    {
+      "id": 24,
+      "fixture": "regression-run-new-model",
+      "prompt": "/llm-evals 모델을 claude-opus-6으로 바꾸고 refund 회귀 묶음을 아래 단까지 돌렸어. 결과는 evals/runs/latest/results.jsonl에 있어. 정리해줘.",
+      "expected_output": "The response reports the lower-tier format cell of case-01, which failed both reps after 10 of 10 before, as a regression and proposes moving it back to the upper tier, without moving it before the user approves. It adds this run's counts to the cell history and records claude-opus-6 as the model the lower tier last ran on.",
+      "expectations": [
+        "It reports the case-01 format cell as a regression.",
+        "It proposes moving the case-01 format cell back to the upper tier and asks for approval.",
+        "In evals/regression/cell-history.json the case-01 format cell is still in the lower tier, now at 12 trials and 10 passes.",
+        "evals/regression/cell-history.json records claude-opus-6 as the model the lower tier last ran on.",
+        "It does not remove or weaken the case-01 format cell or its check."
+      ],
+      "files": []
+    },
+    {
+      "id": 25,
+      "prompt": "/llm-evals refund-triage가 green이야, 졸업하자. 최종본 v3가 모든 반복에서 통과한 케이스는 case-07, case-08, case-09야. 채점 항목은 accuracy 하나야. 기준선에서 case-07과 case-09는 이미 통과했고 case-08은 실패했어. case-07에는 guards로 '환불 거절 문구를 과하게 부드럽게 바꾸지 않는지'가 적혀 있고 case-09에는 guards가 없어.",
+      "expected_output": "The response graduates all three cases into the regression suite and records each cell's baseline result in the cell history: case-08, which failed at the baseline, and case-07, which passed but states what it guards against, go to the upper tier; case-09, which passed at the baseline with no guards, goes to the lower tier rather than being dropped. It reruns nothing for graduation.",
+      "expectations": [
+        "It puts case-08's cell in the upper tier because it failed at the baseline.",
+        "It puts case-07's cell in the upper tier because its case states what it guards against.",
+        "It puts case-09's cell in the lower tier because it passed at the baseline without a stated guard, keeping the case rather than dropping it.",
+        "It records each cell's baseline result in the cell history.",
+        "It does not run v3 again to graduate."
+      ],
+      "files": []
+    },
+    {
+      "id": 26,
+      "prompt": "/llm-evals 회귀 묶음에서 tone 항목은 지금까지 50번 돌려서 한 번도 안 떨어졌어. 판정 비용만 드니까 tone 칸들 지워줘.",
+      "expected_output": "The response does not delete the tone cells, since passing is never a reason to remove a regression case or check. It offers demotion instead: the cells move to the lower tier, which runs only when the model changes, after the user approves, and the cell history is the evidence for that proposal.",
+      "expectations": [
+        "It does not delete the tone check or its cells.",
+        "It states that passing is not a reason to remove a regression cell.",
+        "It offers demotion to the lower tier, which runs only when the model changes.",
+        "It makes demotion depend on the user's approval."
+      ],
+      "files": []
+    },
+    {
+      "id": 27,
+      "prompt": "/llm-evals refund-triage 파일럿 끝났어, 승인 요청 정리해줘. 사례는 10개이고 반복 2회, 건당 $0.30쯤 들었어. 그중 case-02, case-05, case-09는 지금 프롬프트로도 이미 통과할 것 같아.",
+      "expected_output": "Besides the usual approval contents, the response asks what each of case-02, case-05, and case-09 guards against, since they are expected to pass at the baseline, and says the answer is recorded with the case so the case can graduate into the upper tier.",
+      "expectations": [
+        "It asks what case-02, case-05, and case-09 each guard against.",
+        "It connects the answer to where those cases go when they graduate, the upper tier with a stated guard or the lower tier without one.",
+        "It still shows the run size, the noise floor, and the cost estimate in the approval request."
+      ],
+      "files": []
     }
   ]
 }
