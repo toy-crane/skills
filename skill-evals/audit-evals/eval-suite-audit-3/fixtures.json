@@ -1,0 +1,16 @@
+{
+  "note": "Each fixture is a project whose evals/regression/cell-history.json is built from source/ by build_fixtures.py. A suite takes the source's graduated cells, optionally only cases in [from, to], and counts judged trials from the listed runs only. lower_checks start in the lower tier. judge_call 'shared' scores every judged check in one call per (case, rep); 'own' gives each its own call.",
+  "fixtures": [
+    {"id": "t1-a-head", "split": "train", "suites": [{"name": "suite-a", "source": "a", "runs": ["run-01", "run-02", "run-03", "run-04"], "cases": ["case-001", "case-060"], "judge_call": "shared"}]},
+    {"id": "t2-b-early", "split": "train", "suites": [{"name": "suite-b", "source": "b", "runs": ["run-01", "run-02", "run-03", "run-04", "run-05", "run-06", "run-07"], "judge_call": "own"}]},
+    {"id": "t3-a-short", "split": "train", "suites": [{"name": "suite-a", "source": "a", "runs": ["run-01", "run-02", "run-03"], "judge_call": "shared"}]},
+    {"id": "h1-a-tail", "split": "test", "suites": [{"name": "suite-a", "source": "a", "runs": ["run-01", "run-02", "run-03", "run-04"], "cases": ["case-061", "case-175"], "judge_call": "shared"}]},
+    {"id": "h2-a-all", "split": "test", "suites": [{"name": "suite-a", "source": "a", "runs": ["run-01", "run-02", "run-03", "run-04"], "judge_call": "shared"}]},
+    {"id": "h3-b-all", "split": "test", "suites": [{"name": "suite-b", "source": "b", "runs": ["run-01", "run-02", "run-03", "run-04", "run-05", "run-06", "run-07", "run-08", "run-09", "run-10", "run-11"], "judge_call": "own"}]},
+    {"id": "h4-b-regression", "split": "test", "suites": [{"name": "suite-b", "source": "b", "runs": ["run-07", "run-08", "run-09", "run-10", "run-11"], "judge_call": "own"}]},
+    {"id": "h5-b-lower", "split": "test", "suites": [{"name": "suite-b", "source": "b", "runs": ["run-01", "run-02", "run-03", "run-04", "run-05", "run-06", "run-07", "run-08", "run-09", "run-10", "run-11"], "judge_call": "shared", "lower_checks": ["check-03", "check-10", "check-41"]}]},
+    {"id": "h6-two-suites", "split": "test", "suites": [
+      {"name": "suite-a", "source": "a", "runs": ["run-02", "run-03", "run-04"], "cases": ["case-001", "case-040"], "judge_call": "shared"},
+      {"name": "suite-b", "source": "b", "runs": ["run-03", "run-04", "run-05", "run-06", "run-07", "run-08", "run-09", "run-10", "run-11"], "judge_call": "own"}]}
+  ]
+}

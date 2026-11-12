@@ -1,0 +1,192 @@
+{
+ "version": 1,
+ "suites": {
+  "refund": {
+   "reps": 2,
+   "last_run_model": "claude-opus-5-5",
+   "lower_tier_model": null,
+   "checks": {
+    "facts": {
+     "grader": "judge",
+     "judge_call": "rubric"
+    },
+    "format": {
+     "grader": "code"
+    },
+    "refusal": {
+     "grader": "judge",
+     "judge_call": "rubric"
+    },
+    "safety": {
+     "grader": "judge"
+    },
+    "tone": {
+     "grader": "judge",
+     "judge_call": "rubric"
+    }
+   },
+   "cells": {
+    "case-01": {
+     "tone": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 12,
+      "passes": 10
+     },
+     "facts": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 12,
+      "passes": 10
+     },
+     "format": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "refusal": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "safety": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     }
+    },
+    "case-02": {
+     "tone": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "facts": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "format": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "refusal": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "safety": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     }
+    },
+    "case-03": {
+     "tone": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 12,
+      "passes": 12
+     },
+     "facts": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 12,
+      "passes": 12
+     },
+     "format": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "refusal": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 12,
+      "passes": 7
+     },
+     "safety": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     }
+    },
+    "case-04": {
+     "tone": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 12,
+      "passes": 0
+     },
+     "facts": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 12,
+      "passes": 0
+     },
+     "format": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "refusal": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 12,
+      "passes": 12
+     },
+     "safety": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     }
+    },
+    "case-05": {
+     "tone": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "facts": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "format": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "refusal": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     },
+     "safety": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 12,
+      "passes": 12
+     }
+    }
+   }
+  }
+ }
+}
