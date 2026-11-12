@@ -234,6 +234,18 @@ def compact(data, cids):
     return lines
 
 
+def cells_text(data, p):
+    """How many cells a proposal moves; a suite/~/check unit also names the upper cells it leaves out."""
+    suite, case, check = p["unit"].split("/")
+    if case != "~":
+        return f"{p['cells']} upper cells"
+    body = data["suites"][suite]
+    out = sorted(f"{suite}/{cs}/{check}" for cs, row in body["cells"].items()
+                 if check in row and row[check]["tier"] == "upper" and not is_candidate(row[check]))
+    named = ", ".join(out[:5]) + (f" and {len(out) - 5} more" if len(out) > 5 else "")
+    return f"{p['cells']} of {p['cells'] + len(out)} upper cells, leaving out {named}"
+
+
 def markdown(data, result, path):
     split = lambda ids: [tuple(i.split("/")) for i in ids]
     out = [f"# Cell history audit: {path}", "",
@@ -263,7 +275,7 @@ def markdown(data, result, path):
     section(f"Flipping ({len(result['flipping'])})", shown(result["flipping"]))
     section(f"Always failing ({len(result['always_failing'])})", shown(result["always_failing"]))
     section(f"Demotion proposals ({len(result['proposals'])})",
-            [f"{p['unit']}: {p['cells']} upper cells, total failures {p['total_failures']};"
+            [f"{p['unit']}: {cells_text(data, p)}; total failures {p['total_failures']};"
              f" saves {p['runs_saved']} runs and {p['judge_calls_saved']} judge calls per suite run"
              for p in result["proposals"]])
     section(f"Judged checks that never failed in their whole history ({len(result['verification_candidates'])})",
@@ -286,7 +298,7 @@ def summary(data, result, path, out):
     ]
     if ranked:
         lines.append("Largest savings:")
-        lines += [f"- {p['unit']}: {p['cells']} cells (total failures {p['total_failures']}),"
+        lines += [f"- {p['unit']}: {cells_text(data, p)} (total failures {p['total_failures']}),"
                   f" {p['runs_saved']} runs and {p['judge_calls_saved']} judge calls" for p in ranked[:10]]
     lines.append(f"Judged checks that never failed in their whole history: {len(result['verification_candidates'])}")
     return "\n".join(lines)

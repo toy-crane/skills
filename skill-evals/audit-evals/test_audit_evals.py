@@ -165,6 +165,12 @@ class AuditTest(unittest.TestCase):
                      "always failing 2", "5 demotion proposals", "4 runs and 10 judge calls", "audit-report.md"):
             self.assertIn(text, out.stdout)
 
+    def test_a_partial_check_unit_names_the_cells_it_leaves_out(self):
+        out = run("report", str(self.path))
+        report = (self.path.parent.parent / "audit-report.md").read_text()
+        self.assertIn("s1/~/k4: 2 of 3 upper cells, leaving out s1/c3/k4", report)
+        self.assertIn("s1/~/k4: 2 of 3 upper cells, leaving out s1/c3/k4", out.stdout)
+
     def test_missing_history_cannot_be_judged(self):
         out = run("report", str(Path(self.tmp.name) / "absent.json"))
         self.assertEqual(out.returncode, 3)
