@@ -86,6 +86,14 @@
   was rejected as long and unfamiliar, and `prompt-evals` as too narrow, since
   the behavior under test may be a tool-using agent rather than one prompt.
   Claude Code 2.1.319 and the installed Codex carry nothing under the name.
+- `audit-evals` names the deliberate pass over a regression suite's cell
+  history in verb-object form, because users invoke it directly. "Audit" says
+  it reads and reports before anything changes, and the plural object covers
+  every suite under an eval root. It stays separate from `llm-evals`, whose
+  discipline noun names building and climbing an eval ([testing](testing.md)).
+  `prune-evals` was rejected because demotion keeps every cell, and pruning
+  reads as deletion. Claude Code 2.1.321 and the installed Codex carry nothing
+  under the name.
 
 ## Boundaries
 
