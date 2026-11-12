@@ -22,7 +22,8 @@ def suite_history(s):
     for c in src["cells"]:
         if not c["graduated"] or not (lo <= c["case"] <= hi):
             continue
-        letters = "".join(c["results"].get(r, "") for r in s["runs"])
+        # Judged results in trial order: runs in the order listed, reps within a run.
+        letters = "".join(c["results"].get(r, "") for r in s["runs"]).replace("-", "")
         if c["grader"] == "judge":
             checks[c["check"]] = {"grader": "judge", "judge_call": "rubric" if s["judge_call"] == "shared" else c["check"]}
         else:
@@ -32,6 +33,7 @@ def suite_history(s):
             "baseline": None,
             "trials": letters.count("p") + letters.count("f"),
             "passes": letters.count("p"),
+            "recent": letters[-10:],
         }
     return {"reps": 2, "last_run_model": "model-x", "lower_tier_model": "model-x" if lower else None,
             "checks": dict(sorted(checks.items())), "cells": cells}
@@ -39,7 +41,7 @@ def suite_history(s):
 
 def write_history(path, history):
     # One case per line keeps the file readable and its diffs small.
-    lines = ['{"version": 1, "suites": {']
+    lines = ['{"version": 2, "suites": {']
     for i, (name, body) in enumerate(history.items()):
         head = {k: body[k] for k in ("reps", "last_run_model", "lower_tier_model", "checks")}
         lines.append(f'  {json.dumps(name)}: {json.dumps(head)[:-1]}, "cells": {{')

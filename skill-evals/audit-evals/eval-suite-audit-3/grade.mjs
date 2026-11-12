@@ -1,5 +1,5 @@
 // Grader for spec eval-suite-audit criterion 3: the four lists audit-evals reports
-// (never failed, identical histories, flipping, always failing) must equal the
+// (recent 10 all passed, identical histories, flipping, always failing) must equal the
 // reference lists in expected/, computed by reference.mjs from the trial records.
 // Programmatic only; no judge model. Run it through ../run.mjs.
 import { spawnSync } from 'node:child_process';
@@ -7,12 +7,12 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
 const here = new URL('.', import.meta.url).pathname;
-export const LISTS = ['never_failed', 'identical_checks', 'flipping', 'always_failing'];
+export const LISTS = ['recent_all_passed', 'identical_checks', 'flipping', 'always_failing'];
 const HISTORY = 'evals/regression/cell-history.json';
 const TITLES = {
-  'never failed': 'never_failed',
+  'recent 10 all passed': 'recent_all_passed',
   'insufficient history': 'insufficient_history',
-  'identical histories': 'identical_checks',
+  'identical recent histories': 'identical_checks',
   flipping: 'flipping',
   'always failing': 'always_failing',
 };

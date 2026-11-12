@@ -9,13 +9,14 @@
         "llm-evals"
       ],
       "prompt": "/audit-evals 회귀 묶음 한 번 돌리는 데 판정이 너무 많이 나가. 이제 안 돌려도 되는 칸이 있는지 점검해줘.",
-      "expected_output": "The response runs the bundled counting script on evals/regression/cell-history.json and reports the four lists with their counts: 20 never-failed cells, 2 groups of identical checks (tone = facts, format = safety), 3 flipping cells, and 2 always-failing cells. It proposes demotions by whole check or whole case, each with the runs and judge calls one suite run saves, and waits for approval without changing the cell history.",
+      "expected_output": "The response runs the bundled counting script on evals/regression/cell-history.json and reports the four lists with their counts: 22 cells whose most recent 10 trials all passed, among them case-01's tone and facts, which failed twice before their recent 10 and are shown with 2 total failures each; 1 group of identical checks (tone = facts); 1 flipping cell; and 2 always-failing cells. Format and safety, which never failed, are not reported as identical. It proposes demotions by whole check or whole case, each with the runs and judge calls one suite run saves, and waits for approval without changing the cell history.",
       "expectations": [
-        "It reports 20 never-failed cells, 3 flipping cells, and 2 always-failing cells.",
-        "It reports refund/tone and refund/facts as checks with identical histories and calls them merge candidates without merging them.",
+        "It reports 22 cells whose most recent 10 trials all passed, 1 flipping cell, and 2 always-failing cells.",
+        "It counts case-01's tone and facts cells among the demotion candidates even though they failed before their most recent 10 trials, and shows their earlier failures (2 each, or 4 for case-01 as a whole).",
+        "It reports refund/tone and refund/facts as checks with identical recent histories and calls them merge candidates without merging them, and does not report format and safety, which never failed, as identical.",
         "It proposes demotions grouped by whole check or whole case, such as refund/case-02/* or refund/*/safety, rather than only cell by cell.",
         "Each demotion proposal it shows states how many runs and judge calls one suite run saves.",
-        "It reports the flipping cells as candidates to return to known failures and the always-failing cells as candidates for a broken task or grader, changing neither.",
+        "It reports the flipping cell as a candidate to return to known failures and the always-failing cells as candidates for a broken task or grader, changing neither.",
         "It asks the user which demotions to approve and leaves evals/regression/cell-history.json unchanged.",
         "It runs no eval and calls no model to produce the report."
       ]
@@ -28,11 +29,11 @@
         "llm-evals"
       ],
       "prompt": "/audit-evals evals/ 회귀 묶음 점검해줘. case-06이랑 case-07은 이번 주에 졸업한 거야.",
-      "expected_output": "The response reports the ten cells of case-06 and case-07 under insufficient history, separately from the never-failed cells, and proposes no demotion that covers them.",
+      "expected_output": "The response reports the ten cells of case-06 and case-07, which have no failure but fewer than 10 recorded trials, under insufficient history, separately from the demotion candidates, and proposes no demotion that covers them.",
       "expectations": [
-        "It lists the cells of case-06 and case-07 as insufficient history, separately from the never-failed cells.",
+        "It lists the cells of case-06 and case-07 as insufficient history, separately from the demotion candidates.",
         "No demotion it proposes includes a cell of case-06 or case-07.",
-        "It names the bar of 10 trials, or how many more trials those cells need, as the reason.",
+        "It names the bar of 10 recent trials, or how many more trials those cells need, as the reason.",
         "It leaves evals/regression/cell-history.json unchanged."
       ]
     },
@@ -48,7 +49,7 @@
       "expectations": [
         "In evals/regression/cell-history.json every refund format cell and every refund case-02 cell is in the lower tier.",
         "Every other cell, such as refund/case-05/* and refund/*/safety, stays in the upper tier.",
-        "No cell, case, or check is removed and no trial or pass count changes.",
+        "No cell, case, or check is removed and no trial count, pass count, or recent result changes.",
         "It reports which cells moved to the lower tier."
       ]
     },
@@ -63,7 +64,7 @@
       "expected_output": "The response finds no evals/regression/cell-history.json, reports that cells cannot be judged until regression runs have recorded a cell history, and stops without building one from the old results folder or creating any file.",
       "expectations": [
         "It reports that there is no cell history and that cells cannot be judged until regression runs record one.",
-        "It does not build a cell history or a never-failed list from evals/.results or any other old results.",
+        "It does not build a cell history or a list of demotion candidates from evals/.results or any other old results.",
         "It creates no cell-history.json and proposes no demotion.",
         "It runs no eval."
       ]

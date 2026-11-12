@@ -9,37 +9,38 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const MIN_TRIALS = 10;
+const WINDOW = 10;
 const spec = JSON.parse(readFileSync(join(here, 'fixtures.json'), 'utf8'));
 const source = (n) => JSON.parse(readFileSync(join(here, 'source', `${n}.json`), 'utf8'));
 const sources = { a: source('a'), b: source('b') };
 
+// Every rule reads a cell's most recent WINDOW judged trials, in run order and
+// rep order within a run; '-' (not judged) is not a trial.
 function expectedFor(fixture) {
-  const lists = { never_failed: [], insufficient_history: [], identical_checks: [], flipping: [], always_failing: [] };
+  const lists = { recent_all_passed: [], insufficient_history: [], identical_checks: [], flipping: [], always_failing: [] };
   for (const s of fixture.suites) {
     const [from, to] = s.cases ?? ['case-000', 'case-999'];
     const perCheck = new Map();
     for (const cell of sources[s.source].cells) {
       if (!cell.graduated || cell.case < from || cell.case > to) continue;
-      let pass = 0;
-      let fail = 0;
+      const trials = [];
       for (const run of s.runs) {
-        for (const r of cell.results[run] ?? '') {
-          if (r === 'p') pass += 1;
-          else if (r === 'f') fail += 1;
-        }
+        for (const r of cell.results[run] ?? '') if (r === 'p' || r === 'f') trials.push(r);
       }
+      const recent = trials.slice(Math.max(0, trials.length - WINDOW));
+      const fails = recent.filter((r) => r === 'f').length;
       const id = `${s.name}/${cell.case}/${cell.check}`;
-      if (fail === 0 && pass >= MIN_TRIALS) lists.never_failed.push(id);
-      else if (fail === 0) lists.insufficient_history.push(id);
-      else if (pass === 0) lists.always_failing.push(id);
+      // A cell with no failure needs a full window to be a candidate; a failure needs no full window.
+      if (fails === 0) (recent.length === WINDOW ? lists.recent_all_passed : lists.insufficient_history).push(id);
+      else if (fails === recent.length) lists.always_failing.push(id);
       else lists.flipping.push(id);
       if (!perCheck.has(cell.check)) perCheck.set(cell.check, []);
-      perCheck.get(cell.check).push([cell.case, pass + fail, pass]);
+      perCheck.get(cell.check).push([cell.case, recent.join('')]);
     }
+    // Checks with the same recent results case by case, among checks that failed in them.
     const groups = new Map();
     for (const [check, rows] of perCheck) {
-      if (rows.every(([, trials]) => trials === 0)) continue;
+      if (!rows.some(([, recent]) => recent.includes('f'))) continue;
       const key = JSON.stringify(rows.sort((x, y) => (x[0] < y[0] ? -1 : 1)));
       groups.set(key, [...(groups.get(key) ?? []), `${s.name}/${check}`]);
     }
@@ -56,5 +57,5 @@ mkdirSync(join(here, 'expected'), { recursive: true });
 for (const f of spec.fixtures) {
   const lists = expectedFor(f);
   writeFileSync(join(here, 'expected', `${f.id}.json`), `${JSON.stringify(lists)}\n`);
-  console.log(`${f.id}: never ${lists.never_failed.length}, short ${lists.insufficient_history.length}, identical ${lists.identical_checks.map((g) => g.length).join('+') || 0}, flipping ${lists.flipping.length}, failing ${lists.always_failing.length}`);
+  console.log(`${f.id}: candidates ${lists.recent_all_passed.length}, short ${lists.insufficient_history.length}, identical ${lists.identical_checks.map((g) => g.length).join('+') || 0}, flipping ${lists.flipping.length}, failing ${lists.always_failing.length}`);
 }

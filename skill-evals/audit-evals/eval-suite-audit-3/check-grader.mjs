@@ -19,14 +19,14 @@ const state = (h, report) => ({ history: h, historyChanged: false, report, repor
 function referenceReport(e) {
   const section = (title, items) => [`## ${title} (${items.length})`, ...(items.length ? items.map((i) => `- ${i}`) : ['- none']), ''];
   return [
-    ...section('Never failed', e.never_failed),
+    ...section('Recent 10 all passed', e.recent_all_passed),
     ...section('Insufficient history', e.insufficient_history),
-    ...section('Identical histories', e.identical_checks.map((g) => g.join(' = '))),
+    ...section('Identical recent histories', e.identical_checks.map((g) => g.join(' = '))),
     ...section('Flipping', e.flipping.map((i) => `${i} 1/2`)),
     ...section('Always failing', e.always_failing.map((i) => `${i} 0/2`)),
   ].join('\n');
 }
-const referenceReply = (e) => `never failed ${e.never_failed.length}, identical ${e.identical_checks.length}, flipping ${e.flipping.length}, always failing ${e.always_failing.length}`;
+const referenceReply = (e) => `recent 10 all passed ${e.recent_all_passed.length}, identical ${e.identical_checks.length}, flipping ${e.flipping.length}, always failing ${e.always_failing.length}`;
 
 const tally = { reference: 0, script: 0, empty: 0, constant: 0, wrong_suite: 0 };
 for (const [i, c] of cases.entries()) {
@@ -45,7 +45,7 @@ for (const [i, c] of cases.entries()) {
   if (!scored.grade.pass) console.log(`${c.id} script: ${scored.problems.join('; ')} ${Object.keys(parsed)}`);
 
   tally.empty += scoreRun(c, state(h, null), turnsSaying('')).grade.pass;
-  const blank = { never_failed: [], insufficient_history: [], identical_checks: [], flipping: [], always_failing: [] };
+  const blank = { recent_all_passed: [], insufficient_history: [], identical_checks: [], flipping: [], always_failing: [] };
   tally.constant += scoreRun(c, state(h, referenceReport(blank)), turnsSaying('0')).grade.pass;
   const other = cases[(i + 1) % cases.length].id;
   const eo = expectedLists(other);
