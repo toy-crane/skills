@@ -42,22 +42,29 @@ on the history file:
 python3 -I <this skill's base directory>/scripts/audit_evals.py report <eval root>/regression/cell-history.json
 ```
 
-A cell counts as never failed after 10 trials without a failure; pass
-`--min-trials <n>` only when the user asks for another bar. Exit code 3 means
-there is no history at that path, and exit code 2 names what in the file is
-malformed; report either as it is.
+It writes the full report to `audit-report.md` beside the history and prints
+a summary: the count of every list, the combined saving of all proposals, and
+the largest proposals. The report file is the audit's output, not part of the
+suite, so it stays uncommitted and the next audit replaces it. A cell counts as
+never failed after 10 trials without a failure; pass `--min-trials <n>` only
+when the user asks for another bar. Exit code 3 means there is no history at
+that path, and exit code 2 names what in the file is malformed; report either
+as it is.
 
 ## Report and propose
 
-Show the script's report as printed, in its notation: `suite/case/check` is
-one cell, `suite/*/check` every cell of a check, and `suite/case/*` every cell
-of a case. Then say what each section asks of the user:
+Give the user the printed summary with its numbers unchanged, the path of the
+full report, and the lists from the report that bear on what they asked. Use
+the script's notation: `suite/case/check` is one cell, `suite/*/check` every
+cell of a check, `suite/case/*` every cell of a case, and `suite/~/check` the
+cells of a check that never failed. Then say what each section asks of the
+user:
 
 - **Never failed**: the demotion candidates. Each proposal names its unit and
   the runs and judge calls one suite run stops making. Proposals come by whole
   check or whole case where possible, since those are the units that stop a run
-  or a judge call. A saving of 0 means the unit shares its run or judge call
-  with cells that stay up.
+  or a judge call, and the rest by check. A saving of 0 means the unit shares
+  its run or judge call with cells that stay up.
 - **Insufficient history**: cells with no failure yet but fewer trials than the
   bar. They are not proposed.
 - **Identical histories**: checks that passed and failed on exactly the same

@@ -119,17 +119,23 @@ class AuditTest(unittest.TestCase):
             {"unit": "s1/*/k1", "cells": 3, "runs_saved": 0, "judge_calls_saved": 0},
             {"unit": "s2/*/j1", "cells": 2, "runs_saved": 2, "judge_calls_saved": 4},
             {"unit": "s1/c1/*", "cells": 4, "runs_saved": 2, "judge_calls_saved": 4},
-            {"unit": "s1/c2/k4", "cells": 1, "runs_saved": 0, "judge_calls_saved": 2},
+            # The rest of a check's never-failed cells go as one unit per check.
+            {"unit": "s1/~/k4", "cells": 2, "runs_saved": 0, "judge_calls_saved": 4},
         ])
 
     def test_judged_checks_that_never_failed_can_be_verified(self):
         self.assertEqual(self.report()["verification_candidates"], ["s2/j1"])
 
-    def test_markdown_report_names_units_and_counts(self):
+    def test_full_report_goes_to_a_file_beside_the_history(self):
         out = run("report", str(self.path))
         self.assertEqual(out.returncode, 0, out.stderr)
-        for text in ("s1/*/k1", "s1/c1/*", "s1/c2/k4", "s1/k2 = s1/k3", "s1/c2/k2 6/10", "s1/c3/k2 0/10",
+        report = (self.path.parent / "audit-report.md").read_text()
+        for text in ("s1/*/k1", "s1/c1/*", "s1/~/k4", "s1/k2 = s1/k3", "s1/c2/k2 6/10", "s1/c3/k2 0/10",
                      "Never failed (10)", "Insufficient history (2)", "Flipping (2)", "Always failing (2)"):
+            self.assertIn(text, report)
+        # The printed summary carries every count and the combined saving of all proposals.
+        for text in ("never failed 10", "insufficient history 2", "identical histories 1", "flipping 2",
+                     "always failing 2", "4 demotion proposals", "4 runs and 10 judge calls", "audit-report.md"):
             self.assertIn(text, out.stdout)
 
     def test_missing_history_cannot_be_judged(self):
@@ -158,6 +164,12 @@ class AuditTest(unittest.TestCase):
         # The lower tier last ran on the model that produced the demoted cells' trials.
         self.assertEqual(s1["lower_tier_model"], "m-a")
         self.assertEqual(s1["cells"]["c1"]["k1"]["trials"], 10)
+
+    def test_apply_never_failed_part_of_a_check(self):
+        out = run("apply", str(self.path), "s1/~/k4")
+        self.assertEqual(out.returncode, 0, out.stderr)
+        cells = json.loads(self.path.read_text())["suites"]["s1"]["cells"]
+        self.assertEqual([cells[c]["k4"]["tier"] for c in ("c1", "c2", "c3")], ["lower", "lower", "upper"])
 
     def test_apply_refuses_a_unit_holding_a_cell_that_is_not_eligible(self):
         before = self.path.read_text()

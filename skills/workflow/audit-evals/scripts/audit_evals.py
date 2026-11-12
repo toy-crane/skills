@@ -4,8 +4,9 @@
   audit_evals.py report <cell-history.json> [--min-trials 10] [--json]
   audit_evals.py apply  <cell-history.json> <unit> [<unit> ...]
 
-A unit is `suite/case/check`, `suite/*/check` (a whole check), or
-`suite/case/*` (a whole case). Exit codes: 0 done, 2 invalid input or a
+A unit is `suite/case/check`, `suite/*/check` (a whole check),
+`suite/case/*` (a whole case), or `suite/~/check` (the cells of a check that
+never failed over the bar). Exit codes: 0 done, 2 invalid input or a
 refused unit, 3 no cell history at the path.
 
 The history file, version 1:
@@ -152,8 +153,8 @@ def analyze(data, min_trials):
             cells = upper_cells(suite, case=case)
             if cells and cells <= eligible and cells - covered:
                 propose(f"{suite}/{case}/*", cells)
-    for cid in sorted(eligible - covered):
-        propose("/".join(cid), {cid})
+    for suite, check in sorted({(cid[0], cid[2]) for cid in eligible - covered}):
+        propose(f"{suite}/~/{check}", {cid for cid in eligible if cid[0] == suite and cid[2] == check})
 
     verification = []
     for suite in sorted(data["suites"]):
@@ -229,12 +230,34 @@ def markdown(data, result, path):
     return "\n".join(out)
 
 
-def parse_unit(data, unit):
+def summary(data, result, path, out):
+    eligible = {tuple(i.split("/")) for i in result["never_failed"] if cell_of(data, tuple(i.split("/")))["tier"] == "upper"}
+    runs, calls = savings(data, eligible)
+    ranked = sorted(result["proposals"], key=lambda p: (-p["runs_saved"], -p["judge_calls_saved"], -p["cells"], p["unit"]))
+    lines = [
+        f"Cell history audit of {path} ({result['cells']} cells, bar {result['min_trials']} trials).",
+        f"Full report: {out}",
+        f"never failed {len(result['never_failed'])} · insufficient history {len(result['insufficient_history'])} · "
+        f"identical histories {len(result['identical_checks'])} · flipping {len(result['flipping'])} · "
+        f"always failing {len(result['always_failing'])}",
+        f"{len(result['proposals'])} demotion proposals; all of them together save {runs} runs and {calls} judge calls per suite run.",
+    ]
+    if ranked:
+        lines.append("Largest savings:")
+        lines += [f"- {p['unit']}: {p['cells']} cells, {p['runs_saved']} runs and {p['judge_calls_saved']} judge calls" for p in ranked[:10]]
+    lines.append(f"Judged checks that never failed: {len(result['verification_candidates'])}")
+    return "\n".join(lines)
+
+
+def parse_unit(data, unit, min_trials):
     parts = unit.split("/")
     if len(parts) != 3 or parts[0] not in data["suites"]:
-        raise Invalid(f"{unit}: not suite/case/check, suite/*/check, or suite/case/*")
+        raise Invalid(f"{unit}: not suite/case/check, suite/*/check, suite/case/*, or suite/~/check")
     suite, case, check = parts
     body = data["suites"][suite]
+    if case == "~" and check in body["checks"]:
+        return {(suite, cs, check) for cs, row in body["cells"].items() if check in row
+                and row[check]["tier"] == "upper" and row[check]["passes"] == row[check]["trials"] >= min_trials}
     if case != "*" and case not in body["cells"]:
         raise Invalid(f"{unit}: no case {case} in {suite}")
     if check != "*" and check not in body["checks"]:
@@ -246,7 +269,7 @@ def parse_unit(data, unit):
 def apply(data, units, min_trials):
     moves = set()
     for unit in units:
-        cells = {c for c in parse_unit(data, unit) if cell_of(data, c)["tier"] == "upper"}
+        cells = {c for c in parse_unit(data, unit, min_trials) if cell_of(data, c)["tier"] == "upper"}
         if not cells:
             raise Invalid(f"{unit}: holds no upper-tier cell")
         blocked = sorted("/".join(c) for c in cells
@@ -268,7 +291,8 @@ def main(argv=None):
     rep = sub.add_parser("report")
     rep.add_argument("history", type=Path)
     rep.add_argument("--min-trials", type=int, default=DEFAULT_MIN_TRIALS)
-    rep.add_argument("--json", action="store_true")
+    rep.add_argument("--json", action="store_true", help="print every list as JSON and write no file")
+    rep.add_argument("--out", type=Path, help="where to write the full report (default: audit-report.md beside the history)")
     app = sub.add_parser("apply")
     app.add_argument("history", type=Path)
     app.add_argument("units", nargs="+")
@@ -282,7 +306,12 @@ def main(argv=None):
             return 3
         if args.command == "report":
             result = analyze(data, args.min_trials)
-            print(json.dumps(result, indent=2) if args.json else markdown(data, result, args.history))
+            if args.json:
+                print(json.dumps(result, indent=2))
+                return 0
+            out = args.out or args.history.parent / "audit-report.md"
+            out.write_text(markdown(data, result, args.history) + "\n")
+            print(summary(data, result, args.history, out))
             return 0
         moved = apply(data, args.units, args.min_trials)
         args.history.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
