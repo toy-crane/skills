@@ -78,13 +78,17 @@
   behavior exists, or when the feature it covers is gone. A failing score is
   never a reason to remove one.
 - Every regression run records, per cell, how many trials ran and how many
-  passed, together with the cell's result at the baseline of the climb that
-  graduated it. This cell history is one committed file beside `log.md`. It
-  grows only from runs that happen anyway, so keeping it costs no model call.
+  passed, the results of its most recent trials in order, and the cell's
+  result at the baseline of the climb that graduated it. This cell history is
+  one committed file beside `log.md`. Its size does not grow with the number
+  of runs, and it grows only from runs that happen anyway, so keeping it costs
+  no model call.
 - The regression suite has two tiers. The upper tier runs whenever the suite
   runs. The lower tier runs only when the model the product or skill runs on
-  changes. A cell whose history shows no failure over enough trials is demoted
-  to the lower tier; it is never deleted for passing. A demoted cell that
+  changes. A cell whose most recent trials all passed, over enough trials, is
+  demoted to the lower tier; it is never deleted for passing. An older failure
+  does not keep a cell in the upper tier for good, and each proposal shows the
+  cell's total failures so a cell that once caught a real break can be kept. A demoted cell that
   fails outside the noise floor moves back up and is reported as a regression.
   Demotion and promotion are proposed with their evidence and applied only
   after the user approves them.
@@ -321,6 +325,10 @@ which is the half of the behavior code checks cannot reach.
 - Deleting a never-failed cell after approval — it makes the suite lightest,
   but removing cases one by one tilts the suite toward what the system already
   does well, and a deleted cell cannot report the day a new model breaks it.
+- Keeping only cumulative counts in the cell history — smaller, but one
+  failure then marks a cell for good, so the upper tier only grows back: in
+  `dearly`, 103 of 175 cases had failed at least once, capping demotion at 72
+  cases and shrinking that cap with every later failure.
 - Keeping the audit inside `llm-evals` — the audit reads history without
   running anything and is used at a different moment than a climb, so it would
   grow a skill that is already long for a step most climbs never need.

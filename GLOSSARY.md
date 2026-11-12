@@ -83,9 +83,9 @@ One case judged by one check of the grader: the smallest unit of an eval that pa
 _Avoid_: Assertion, data point
 
 **Cell history**:
-The committed record, kept beside the regression suite's `log.md`, of how many trials each cell ran and how many it passed, with its result at the baseline of the climb that graduated it. It is what tells a cell never seen failing from one that guards something.
+The committed record, kept beside the regression suite's `log.md`, of how many trials each cell ran and how many it passed, the results of its most recent trials in order, and its result at the baseline of the climb that graduated it. It is what tells a cell never seen failing from one that guards something.
 _Avoid_: Results, ledger, run log
 
 **Demotion**:
-Moving a regression cell whose history shows no failure from the tier that runs whenever the suite runs to the tier that runs only when the model changes. The cell is kept, and a failure there moves it back up. Distinct from removing a case, which still needs a decision to change the behavior or the feature being gone.
+Moving a regression cell whose most recent trials all passed from the tier that runs whenever the suite runs to the tier that runs only when the model changes. The cell is kept, and a failure there moves it back up. Distinct from removing a case, which still needs a decision to change the behavior or the feature being gone.
 _Avoid_: Pruning, retiring, archiving
