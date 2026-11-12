@@ -77,10 +77,34 @@
 - A regression case is changed or removed only when a decision to change that
   behavior exists, or when the feature it covers is gone. A failing score is
   never a reason to remove one.
+- Every regression run records, per cell, how many trials ran and how many
+  passed, the results of its most recent trials in order, and the cell's
+  result at the baseline of the climb that graduated it. This cell history is
+  one committed file beside `log.md`. Its size does not grow with the number
+  of runs, and it grows only from runs that happen anyway, so keeping it costs
+  no model call.
+- The regression suite has two tiers. The upper tier runs whenever the suite
+  runs. The lower tier runs only when the model the product or skill runs on
+  changes. A cell whose most recent trials all passed, over enough trials, is
+  demoted to the lower tier; it is never deleted for passing. An older failure
+  does not keep a cell in the upper tier for good, and each proposal shows the
+  cell's total failures so a cell that once caught a real break can be kept. A demoted cell that
+  fails outside the noise floor moves back up and is reported as a regression.
+  Demotion and promotion are proposed with their evidence and applied only
+  after the user approves them.
+- A cell that already passed at the baseline graduates into the upper tier
+  only when its case states what it guards against, such as a behavior the
+  change could push too far. Without that reason it graduates into the lower
+  tier.
+- Reading the cell history to find cells whose recent trials all passed,
+  checks whose history is identical, graduated cells that flip, and cells
+  that always fail is a separate skill from `llm-evals`. It reads only; it
+  changes the suite through the user's approval and runs a model only for a
+  verification the user approved the spend for.
 - The project chooses where its eval root lives; the layout under that root is
   fixed. The root holds the runner that calls the product's entry point, one
-  folder per capability eval, and `regression/`, which holds `log.md` and one
-  folder per graduated criterion carrying that criterion's cases and grader. A
+  folder per capability eval, and `regression/`, which holds `log.md`, the
+  cell history, and one folder per graduated criterion carrying that criterion's cases and grader. A
   capability eval's folder is named for the spec folder whose criterion it
   proves, and for the criterion too when that spec has more than one, so two
   criteria handed over separately never share a folder; it holds its cases, its
@@ -195,9 +219,11 @@ which is the half of the behavior code checks cannot reach.
   harness check would be cheaper than the misses.
 - LLM-output criteria turn out to be rare and small enough that a separate
   `llm-evals` skill costs more to maintain than an eval branch inside `tdd`.
-- Running the regression suite costs enough that a climb's gates or an
-  `implement` run skip it; its size, its grader mix, or how often it runs then
-  needs a limit.
+- Demotion does not cut the cost of a regression run enough that climbs'
+  gates and `implement` runs stop skipping it; the grader mix or how often the
+  upper tier runs then needs a limit.
+- A demoted cell's behavior breaks between model changes and nothing reports
+  it; the lower tier then needs a schedule of its own.
 - Gates turn out to be rare enough that a held-out failure leaves too many
   rounds to unwind, or train and held-out scores track each other closely
   enough that the separation buys nothing.
@@ -240,6 +266,25 @@ which is the half of the behavior code checks cannot reach.
   skill folder too, but its `.skill` packager drops that folder before
   shipping.
 
+- On 2026-11-12, recorded runs in two of the user's projects, read per cell.
+  `dearly` `regression/chat` (175 cases, 54 checks, 5 runs): of 2,837
+  (case, check) pairs, 2,636 always passed, 187 flipped, and 14 always failed;
+  20 of the 54 checks never failed in 2,100 rows; 103 of 175 graduated cases
+  flipped, and 11 cases that graduated at 2/2 scored 0/2 the next day. A run
+  made 358–716 judge calls and a subscription limit stopped gates twice.
+  `claude-code-playbook` `regression/lesson-authoring` (341 cells, 11 runs): 6
+  checks never failed in 111 trials, 5 of them with identical histories; 76 of
+  278 graduated cells failed later; a full run cost $72–83 in drafting. In
+  both, per-cell results were ignored by Git and only the aggregate was
+  committed, so the seed run's per-cell results were already gone.
+- The same day's reading of published guidance: Anthropic's "Demystifying
+  evals for AI agents" says an eval at 100% tracks regressions but gives no
+  signal for improvement; Hamel Husain's evals FAQ says a saturated eval gives
+  no new information and should be retired or run less often, expensive
+  judges first. No source found gives a routine for deleting application eval
+  cases, and one warns that pruning case by case biases the suite toward
+  current strengths.
+
 ## Still-rejected alternatives
 
 - Keep the one-test-at-a-time cycle and only relax enforcement, as Matt
@@ -274,9 +319,19 @@ which is the half of the behavior code checks cannot reach.
 - Rerunning the final variant to graduate or to score a gate it was already
   scored on — the same variant on the same cases adds no information, and on a
   5-case set at 2 reps it doubled a climb from 20 runs to 40.
-- A size cap on the regression suite, or dropping the oldest cases — cost
-  control was deferred rather than designed, and an age-based rule removes
-  cases no decision retired.
+- A size cap on the regression suite, or dropping the oldest cases — an
+  age-based rule removes cases no decision retired; cost is controlled by
+  demoting never-failed cells instead.
+- Deleting a never-failed cell after approval — it makes the suite lightest,
+  but removing cases one by one tilts the suite toward what the system already
+  does well, and a deleted cell cannot report the day a new model breaks it.
+- Keeping only cumulative counts in the cell history — smaller, but one
+  failure then marks a cell for good, so the upper tier only grows back: in
+  `dearly`, 103 of 175 cases had failed at least once, capping demotion at 72
+  cases and shrinking that cap with every later failure.
+- Keeping the audit inside `llm-evals` — the audit reads history without
+  running anything and is used at a different moment than a climb, so it would
+  grow a skill that is already long for a step most climbs never need.
 - One fixed path for every project's eval root — projects keep evals beside the
   code they test, such as `apps/api/eval/` or `skill-evals/<name>/`, so a
   fixed root is broken on arrival; the layout under the chosen root is fixed

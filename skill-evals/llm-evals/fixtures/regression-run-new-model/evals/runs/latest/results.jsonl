@@ -1,0 +1,6 @@
+{"prompt_id": "case-01", "rep": 0, "tags": ["regression"], "grade": {"tone": 1, "facts": 1, "format": 0}, "status": "ok", "model": "claude-opus-6"}
+{"prompt_id": "case-01", "rep": 1, "tags": ["regression"], "grade": {"tone": 1, "facts": 1, "format": 0}, "status": "ok", "model": "claude-opus-6"}
+{"prompt_id": "case-02", "rep": 0, "tags": ["regression"], "grade": {"tone": 1, "facts": 1, "format": 1}, "status": "ok", "model": "claude-opus-6"}
+{"prompt_id": "case-02", "rep": 1, "tags": ["regression"], "grade": {"tone": 1, "facts": 1, "format": 1}, "status": "ok", "model": "claude-opus-6"}
+{"prompt_id": "case-03", "rep": 0, "tags": ["regression"], "grade": {"tone": 1, "facts": 1, "format": 1}, "status": "ok", "model": "claude-opus-6"}
+{"prompt_id": "case-03", "rep": 1, "tags": ["regression"], "grade": {"tone": 1, "facts": 1, "format": 1}, "status": "ok", "model": "claude-opus-6"}

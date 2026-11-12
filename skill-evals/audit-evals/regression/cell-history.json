@@ -1,0 +1,362 @@
+{
+ "version": 2,
+ "suites": {
+  "eval-suite-audit-3": {
+   "reps": 3,
+   "last_run_model": "claude-opus-5-5",
+   "lower_tier_model": "claude-opus-5-5",
+   "checks": {
+    "pass": {
+     "grader": "code"
+    },
+    "lists_exact": {
+     "grader": "code"
+    },
+    "insufficient_exact": {
+     "grader": "code"
+    },
+    "history_unchanged": {
+     "grader": "code"
+    },
+    "counts_reported": {
+     "grader": "code"
+    }
+   },
+   "cells": {
+    "h1-a-tail": {
+     "pass": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "lists_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "insufficient_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "history_unchanged": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "counts_reported": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     }
+    },
+    "h2-a-all": {
+     "pass": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "lists_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "insufficient_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "history_unchanged": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "counts_reported": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     }
+    },
+    "h3-b-all": {
+     "pass": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "lists_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "insufficient_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "history_unchanged": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "counts_reported": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     }
+    },
+    "h4-b-regression": {
+     "pass": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "lists_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "insufficient_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "history_unchanged": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "counts_reported": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     }
+    },
+    "h5-b-lower": {
+     "pass": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "lists_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "insufficient_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "history_unchanged": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "counts_reported": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     }
+    },
+    "h6-two-suites": {
+     "pass": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "lists_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "insufficient_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "history_unchanged": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "counts_reported": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     }
+    },
+    "t1-a-head": {
+     "pass": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "lists_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "insufficient_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "history_unchanged": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "counts_reported": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     }
+    },
+    "t2-b-early": {
+     "pass": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "lists_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "insufficient_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "history_unchanged": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "counts_reported": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     }
+    },
+    "t3-a-short": {
+     "pass": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "lists_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "insufficient_exact": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "history_unchanged": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     },
+     "counts_reported": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
+     }
+    }
+   }
+  }
+ }
+}

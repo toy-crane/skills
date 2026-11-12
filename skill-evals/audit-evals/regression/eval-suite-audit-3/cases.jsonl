@@ -1,0 +1,9 @@
+{"id": "t1-a-head", "split": "train", "tags": ["train", "a"], "fixture": "t1-a-head", "skills": ["audit-evals", "llm-evals"], "prompt": "/audit-evals 회귀 묶음이 돌 때마다 비싸. 이제 안 돌려도 되는 칸이 있는지 봐줘."}
+{"id": "t2-b-early", "split": "train", "tags": ["train", "b"], "fixture": "t2-b-early", "skills": ["audit-evals", "llm-evals"], "prompt": "/audit-evals evals/ 회귀 묶음 점검해줘."}
+{"id": "t3-a-short", "split": "train", "tags": ["train", "a"], "fixture": "t3-a-short", "skills": ["audit-evals", "llm-evals"], "prompt": "/audit-evals 우리 회귀 묶음에서 일 안 하는 칸이 뭔지 알려줘."}
+{"id": "h1-a-tail", "split": "test", "tags": ["test", "a"], "fixture": "h1-a-tail", "skills": ["audit-evals", "llm-evals"], "prompt": "/audit-evals 회귀 묶음이 돌 때마다 비싸. 이제 안 돌려도 되는 칸이 있는지 봐줘."}
+{"id": "h2-a-all", "split": "test", "tags": ["test", "a"], "fixture": "h2-a-all", "skills": ["audit-evals", "llm-evals"], "prompt": "/audit-evals evals/ 회귀 묶음 점검해줘."}
+{"id": "h3-b-all", "split": "test", "tags": ["test", "b"], "fixture": "h3-b-all", "skills": ["audit-evals", "llm-evals"], "prompt": "/audit-evals 우리 회귀 묶음에서 일 안 하는 칸이 뭔지 알려줘."}
+{"id": "h4-b-regression", "split": "test", "tags": ["test", "b"], "fixture": "h4-b-regression", "skills": ["audit-evals", "llm-evals"], "prompt": "/audit-evals 회귀 묶음이 돌 때마다 비싸. 이제 안 돌려도 되는 칸이 있는지 봐줘."}
+{"id": "h5-b-lower", "split": "test", "tags": ["test", "b"], "fixture": "h5-b-lower", "skills": ["audit-evals", "llm-evals"], "prompt": "/audit-evals evals/ 회귀 묶음 점검해줘."}
+{"id": "h6-two-suites", "split": "test", "tags": ["test", "a"], "fixture": "h6-two-suites", "skills": ["audit-evals", "llm-evals"], "prompt": "/audit-evals 우리 회귀 묶음에서 일 안 하는 칸이 뭔지 알려줘."}

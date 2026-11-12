@@ -1,0 +1,3 @@
+{"id": "case-01", "prompt": "주문 3일 만에 환불 요청", "expected": "refund"}
+{"id": "case-02", "prompt": "사용한 상품 환불 요청", "expected": "deny"}
+{"id": "case-03", "prompt": "배송 지연 환불 요청", "expected": "refund", "guards": "환불 거절 문구를 과하게 부드럽게 바꾸지 않는지"}
