@@ -1,0 +1,23 @@
+{
+ "goal": "refund-triage labels refund requests correctly",
+ "metrics": [
+  {
+   "id": "accuracy",
+   "kind": "float",
+   "label": "Label matches"
+  }
+ ],
+ "train": [
+  "case-05",
+  "case-06",
+  "case-07",
+  "case-08",
+  "case-09"
+ ],
+ "test": [],
+ "split": "none (5 cases, scored as a whole, directional)",
+ "access": "api",
+ "model": "claude-opus-5-5",
+ "reps": 2,
+ "approved_spend_usd": 5
+}

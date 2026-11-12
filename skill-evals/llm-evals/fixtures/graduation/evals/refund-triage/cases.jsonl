@@ -1,0 +1,5 @@
+{"id": "case-05", "prompt": "포장 훼손 환불 요청", "expected": "refund"}
+{"id": "case-06", "prompt": "구독 해지 후 환불 요청", "expected": "deny"}
+{"id": "case-07", "prompt": "사용한 상품 환불 요청", "expected": "deny", "guards": "환불 거절 문구를 과하게 부드럽게 바꾸지 않는지"}
+{"id": "case-08", "prompt": "오배송 환불 요청", "expected": "refund"}
+{"id": "case-09", "prompt": "주문 3일 만에 환불 요청", "expected": "refund"}

@@ -299,6 +299,7 @@
     },
     {
       "id": 25,
+      "fixture": "graduation",
       "prompt": "/llm-evals refund-triage가 green이야, 졸업하자. 최종본 v3가 모든 반복에서 통과한 케이스는 case-07, case-08, case-09야. 채점 항목은 accuracy 하나야. 기준선에서 case-07과 case-09는 이미 통과했고 case-08은 실패했어. case-07에는 guards로 '환불 거절 문구를 과하게 부드럽게 바꾸지 않는지'가 적혀 있고 case-09에는 guards가 없어.",
       "expected_output": "The response graduates all three cases into the regression suite and records each cell's baseline result in the cell history: case-08, which failed at the baseline, and case-07, which passed but states what it guards against, go to the upper tier; case-09, which passed at the baseline with no guards, goes to the lower tier rather than being dropped. It reruns nothing for graduation.",
       "expectations": [
