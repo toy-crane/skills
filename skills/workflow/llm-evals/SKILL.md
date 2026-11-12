@@ -200,7 +200,8 @@ what the grader reads as well, since the rest of the folder is about to go —
 the frozen baseline outputs a pairwise judge compares against, its fixtures,
 and the expected answers it scores from. Add each graduating cell — one case
 judged by one check — to the cell history with its trials and passes from those
-rows and its result at this climb's baseline. A cell that failed at the
+rows, their results in order as its recent results, and its result at this
+climb's baseline. A cell that failed at the
 baseline goes to the upper tier. A cell that already passed at the baseline
 goes to the upper tier only when its case's `guards` states what it guards
 against, and to the lower tier otherwise; a suite with no `lower_tier_model`
@@ -236,9 +237,9 @@ A regression suite is scored against the level its cases reached, over the same
 repetitions, so a drop outside the noise floor means something broke. Change or
 remove one of its cases only when a decision to change that behavior exists, or
 when the feature it covers is gone; a failing score is never that reason, and
-neither is passing. A cell that always passes is demoted to the lower tier,
-never deleted: answer a request to delete one by offering demotion, which
-`audit-evals` proposes from the cell history.
+neither is passing. A cell whose most recent 10 trials all passed may be
+demoted to the lower tier, never deleted: answer a request to delete one by
+offering demotion, which `audit-evals` proposes from the cell history.
 
 Every suite run, at a gate or for `implement`, runs the upper tier. It runs the
 lower tier too only when this run's model differs from the model the lower tier
@@ -246,22 +247,25 @@ last ran on. A lower-tier cell that fails outside the noise floor is a
 regression: report it as one and propose moving it back to the upper tier,
 which happens once the user approves.
 
-After each suite run, add every cell's trials and passes to the cell history,
-then set the suite's `last_run_model`, and its `lower_tier_model` when the
-lower tier ran. The history grows only from runs that happen anyway; never run
+After each suite run, add every cell's trials and passes to the cell history
+and append each new result to the end of its `recent` results, dropping the
+oldest so it keeps the last 10; then set the suite's `last_run_model`, and its
+`lower_tier_model` when the lower tier ran. The history grows only from runs that happen anyway; never run
 the suite to fill it. A suite that predates the history starts it on its next
 run, every cell in the upper tier with an unknown baseline. Keep the run's
 answers and judge reasoning only until the next suite run replaces them,
 uncommitted: they are for reading the failure just seen, and the counts already
 live in the history.
 
-The cell history is `regression/cell-history.json`, cumulative counts per cell
-rather than a row per run, so it barely grows:
+The cell history is `regression/cell-history.json`: per cell, cumulative counts
+and its most recent 10 results, oldest first (`p` pass, `f` fail), rather than
+a row per run, so its size does not grow with the number of runs. A cell's
+`recent` holds as many results as its trials, up to 10:
 
 ```json
-{"version": 1, "suites": {"<criterion folder>": {
+{"version": 2, "suites": {"<criterion folder>": {
   "reps": 2, "last_run_model": "<model>", "lower_tier_model": "<model or null>",
   "checks": {"<check>": {"grader": "code or judge", "judge_call": "<id shared by checks judged in one call>"}},
   "cells": {"<case>": {"<check>": {"tier": "upper or lower", "baseline": "pass, fail, or null",
-    "trials": 10, "passes": 10}}}}}}
+    "trials": 14, "passes": 13, "recent": "pppppppppp"}}}}}}
 ```

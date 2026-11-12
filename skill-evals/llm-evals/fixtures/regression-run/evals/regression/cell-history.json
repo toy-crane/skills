@@ -1,5 +1,5 @@
 {
- "version": 1,
+ "version": 2,
  "suites": {
   "refund": {
    "reps": 2,
@@ -24,19 +24,22 @@
       "tier": "upper",
       "baseline": "fail",
       "trials": 10,
-      "passes": 8
+      "passes": 8,
+      "recent": "pppfpppfpp"
      },
      "format": {
       "tier": "lower",
       "baseline": "pass",
       "trials": 10,
-      "passes": 10
+      "passes": 10,
+      "recent": "pppppppppp"
      },
      "tone": {
       "tier": "upper",
       "baseline": "fail",
       "trials": 10,
-      "passes": 10
+      "passes": 10,
+      "recent": "pppppppppp"
      }
     },
     "case-02": {
@@ -44,19 +47,22 @@
       "tier": "upper",
       "baseline": "fail",
       "trials": 10,
-      "passes": 10
+      "passes": 10,
+      "recent": "pppppppppp"
      },
      "format": {
       "tier": "lower",
       "baseline": "pass",
       "trials": 10,
-      "passes": 10
+      "passes": 10,
+      "recent": "pppppppppp"
      },
      "tone": {
       "tier": "upper",
       "baseline": "pass",
       "trials": 10,
-      "passes": 10
+      "passes": 10,
+      "recent": "pppppppppp"
      }
     },
     "case-03": {
@@ -64,19 +70,22 @@
       "tier": "upper",
       "baseline": "pass",
       "trials": 10,
-      "passes": 10
+      "passes": 10,
+      "recent": "pppppppppp"
      },
      "format": {
       "tier": "upper",
       "baseline": "fail",
       "trials": 10,
-      "passes": 10
+      "passes": 10,
+      "recent": "pppppppppp"
      },
      "tone": {
       "tier": "upper",
       "baseline": "fail",
       "trials": 10,
-      "passes": 6
+      "passes": 6,
+      "recent": "ppffpfpfpp"
      }
     }
    }
