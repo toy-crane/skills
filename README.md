@@ -292,12 +292,13 @@ new session or a closing-message handoff is not required for correctness.
   claude-api's `build-eval` and `hillclimb` guides
   ([anthropics/skills](https://github.com/anthropics/skills), Apache-2.0).
 - **[audit-evals](./skills/workflow/audit-evals/SKILL.md)**: Read a regression
-  suite's committed cell history and report cells that never failed, checks
-  with identical histories, cells that flip after graduating, and cells that
-  always fail. A bundled script does every count, so the same history always
-  gives the same report. It proposes demoting never-failed cells, by whole
-  check or case with the runs and judge calls saved, to the tier that runs
-  only when the model changes, and applies only the demotions the user
+  suite's committed cell history and report cells whose most recent 10 trials
+  all passed, checks with identical recent histories, cells that flip after
+  graduating, and cells that always fail. A bundled script does every count,
+  so the same history always gives the same report. It proposes demoting the
+  cells that recently always passed, by whole check or case with the runs and
+  judge calls saved and each cell's total failures shown, to the tier that
+  runs only when the model changes, and applies only the demotions the user
   approves. Nothing is deleted.
 
 ## Git delivery

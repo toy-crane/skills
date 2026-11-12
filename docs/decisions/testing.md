@@ -96,11 +96,11 @@
   only when its case states what it guards against, such as a behavior the
   change could push too far. Without that reason it graduates into the lower
   tier.
-- Reading the cell history to find never-failed cells, checks whose history is
-  identical, graduated cells that flip, and cells that always fail is a
-  separate skill from `llm-evals`. It reads only; it changes the suite through
-  the user's approval and runs a model only for a verification the user
-  approved the spend for.
+- Reading the cell history to find cells whose recent trials all passed,
+  checks whose history is identical, graduated cells that flip, and cells
+  that always fail is a separate skill from `llm-evals`. It reads only; it
+  changes the suite through the user's approval and runs a model only for a
+  verification the user approved the spend for.
 - The project chooses where its eval root lives; the layout under that root is
   fixed. The root holds the runner that calls the product's entry point, one
   folder per capability eval, and `regression/`, which holds `log.md`, the

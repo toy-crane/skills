@@ -1,22 +1,32 @@
 #!/usr/bin/env python3
 """Count a regression suite's cell history and apply approved demotions.
 
-  audit_evals.py report <cell-history.json> [--min-trials 10] [--json]
+  audit_evals.py report <cell-history.json> [--json] [--out <file>]
   audit_evals.py apply  <cell-history.json> <unit> [<unit> ...]
 
+Every rule reads a cell's most recent 10 trials. A cell whose recent 10 all
+passed is a demotion candidate, even when it failed before them; one with no
+failure but fewer than 10 recorded trials is insufficient history; recent
+results that mix passes and failures are flipping, and ones that are all
+failures are always failing.
+
 A unit is `suite/case/check`, `suite/*/check` (a whole check),
-`suite/case/*` (a whole case), or `suite/~/check` (the cells of a check that
-never failed over the bar). Exit codes: 0 done, 2 invalid input or a
-refused unit, 3 no cell history at the path.
+`suite/case/*` (a whole case), or `suite/~/check` (the candidate cells of a
+check). Exit codes: 0 done, 2 invalid input or a refused unit, 3 no cell
+history at the path.
 
-The history file, version 1:
+The history file, version 2:
 
-  {"version": 1, "suites": {"<suite>": {
+  {"version": 2, "suites": {"<suite>": {
      "reps": 2, "last_run_model": "<model>", "lower_tier_model": "<model>" | null,
      "checks": {"<check>": {"grader": "code" | "judge", "judge_call": "<id>"}},
      "cells": {"<case>": {"<check>": {"tier": "upper" | "lower",
-        "baseline": "pass" | "fail" | null, "trials": 10, "passes": 10}}}}}}
+        "baseline": "pass" | "fail" | null, "trials": 14, "passes": 13,
+        "recent": "pppppppppp"}}}}}}
 
+`trials` and `passes` are cumulative. `recent` holds the results of the cell's
+most recent trials, oldest first, `p` pass and `f` fail: each new trial is
+appended and the oldest dropped once it holds 10, so it holds min(trials, 10).
 `judge_call` names the judge call a check is scored in; checks sharing one id
 are scored together. Without it a judged check has its own call.
 """
@@ -25,7 +35,7 @@ import json
 import sys
 from pathlib import Path
 
-DEFAULT_MIN_TRIALS = 10
+WINDOW = 10
 
 
 class Invalid(Exception):
@@ -39,8 +49,8 @@ def load(path):
         data = json.loads(path.read_text())
     except json.JSONDecodeError as error:
         raise Invalid(f"{path}: not JSON ({error})")
-    if not isinstance(data, dict) or data.get("version") != 1 or not isinstance(data.get("suites"), dict):
-        raise Invalid(f"{path}: expected version 1 with a suites object")
+    if not isinstance(data, dict) or data.get("version") != 2 or not isinstance(data.get("suites"), dict):
+        raise Invalid(f"{path}: expected version 2 with a suites object")
     for suite, body in data["suites"].items():
         if "/" in suite:
             raise Invalid(f"suite name {suite!r} contains '/'")
@@ -68,6 +78,11 @@ def load(path):
                 t, p = c.get("trials"), c.get("passes")
                 if not (isinstance(t, int) and isinstance(p, int) and 0 <= p <= t):
                     raise Invalid(f"{where}: needs integer trials >= passes >= 0")
+                r = c.get("recent")
+                if not (isinstance(r, str) and set(r) <= {"p", "f"} and len(r) == min(t, WINDOW)
+                        and r.count("p") <= p and r.count("f") <= t - p):
+                    raise Invalid(f"{where}: recent must be the last min(trials, {WINDOW}) results as p and f,"
+                                  " within the cell's passes and failures")
     return data
 
 
@@ -107,14 +122,25 @@ def savings(data, chosen):
     return runs, calls
 
 
-def analyze(data, min_trials):
-    never, short, flipping, failing = [], [], [], []
+def is_candidate(c):
+    return c["recent"] == "p" * WINDOW
+
+
+def failures(c):
+    return c["trials"] - c["passes"]
+
+
+def analyze(data):
+    candidates, short, flipping, failing = [], [], [], []
     for suite, case, check, c in all_cells(data):
         cid = (suite, case, check)
-        t, p = c["trials"], c["passes"]
-        if p == t:
-            (never if t >= min_trials else short).append(cid)
-        elif p == 0:
+        r = c["recent"]
+        if is_candidate(c):
+            candidates.append(cid)
+        elif "f" not in r:
+            # No failure yet, but fewer than 10 trials to show it.
+            short.append(cid)
+        elif "p" not in r:
             failing.append(cid)
         else:
             flipping.append(cid)
@@ -124,15 +150,14 @@ def analyze(data, min_trials):
         body = data["suites"][suite]
         signatures = {}
         for check in sorted(body["checks"]):
-            sig = tuple(sorted((case, row[check]["trials"], row[check]["passes"])
-                               for case, row in body["cells"].items() if check in row))
-            if sig and any(t for _, t, _ in sig):
+            # The recent results case by case; checks that never failed in it are not compared.
+            sig = tuple(sorted((case, row[check]["recent"]) for case, row in body["cells"].items() if check in row))
+            if any("f" in r for _, r in sig):
                 signatures.setdefault(sig, []).append(f"{suite}/{check}")
         identical += [group for group in signatures.values() if len(group) > 1]
     identical.sort()
 
-    never_set = set(never)
-    eligible = {cid for cid in never if cell_of(data, cid)["tier"] == "upper"}
+    eligible = {cid for cid in candidates if cell_of(data, cid)["tier"] == "upper"}
     proposals, covered = [], set()
 
     def upper_cells(suite, case=None, check=None):
@@ -142,7 +167,8 @@ def analyze(data, min_trials):
 
     def propose(unit, cells):
         runs, calls = savings(data, cells)
-        proposals.append({"unit": unit, "cells": len(cells), "runs_saved": runs, "judge_calls_saved": calls})
+        proposals.append({"unit": unit, "cells": len(cells), "runs_saved": runs, "judge_calls_saved": calls,
+                          "total_failures": sum(failures(cell_of(data, c)) for c in cells)})
         covered.update(cells)
 
     for suite in sorted(data["suites"]):
@@ -164,15 +190,17 @@ def analyze(data, min_trials):
         for check in sorted(body["checks"]):
             if body["checks"][check]["grader"] != "judge":
                 continue
-            cells = {(suite, cs, check) for cs, row in body["cells"].items() if check in row}
-            if cells and cells <= never_set:
+            # No failure in the whole history, over at least a full window in every cell.
+            cells = [row[check] for row in body["cells"].values() if check in row]
+            if cells and all(failures(c) == 0 and c["trials"] >= WINDOW for c in cells):
                 verification.append(f"{suite}/{check}")
 
     ids = lambda cells: ["/".join(c) for c in cells]
     return {
-        "min_trials": min_trials,
+        "window": WINDOW,
         "cells": sum(1 for _ in all_cells(data)),
-        "never_failed": ids(never),
+        "recent_all_passed": ids(candidates),
+        "total_failures": {"/".join(c): failures(cell_of(data, c)) for c in candidates if failures(cell_of(data, c))},
         "insufficient_history": ids(short),
         "identical_checks": identical,
         "flipping": ids(flipping),
@@ -209,49 +237,62 @@ def compact(data, cids):
 def markdown(data, result, path):
     split = lambda ids: [tuple(i.split("/")) for i in ids]
     out = [f"# Cell history audit: {path}", "",
-           f"{result['cells']} cells; a cell needs {result['min_trials']} trials without a failure to count as never failed.", ""]
+           f"{result['cells']} cells, each judged by its most recent {WINDOW} trials, shown oldest first"
+           " (p pass, f fail). A cell whose recent 10 all passed is a demotion candidate even when it failed before.", ""]
 
     def section(title, lines):
         out.append(f"## {title}")
         out.extend(f"- {line}" for line in lines) if lines else out.append("- none")
         out.append("")
 
-    def counted(ids):
-        return [f"{i} {cell_of(data, tuple(i.split('/')))['passes']}/{cell_of(data, tuple(i.split('/')))['trials']}"
-                f" (baseline {cell_of(data, tuple(i.split('/'))).get('baseline') or 'unknown'})" for i in ids]
+    def shown(ids):
+        lines = []
+        for i in ids:
+            c = cell_of(data, tuple(i.split("/")))
+            lines.append(f"{i} {c['recent'] or '(no trials)'} ({c['passes']}/{c['trials']} in total,"
+                         f" baseline {c.get('baseline') or 'unknown'})")
+        return lines
 
-    section(f"Never failed ({len(result['never_failed'])})", compact(data, split(result["never_failed"])))
-    section(f"Insufficient history ({len(result['insufficient_history'])})", counted(result["insufficient_history"]))
-    section(f"Identical histories ({len(result['identical_checks'])})", [" = ".join(g) for g in result["identical_checks"]])
-    section(f"Flipping ({len(result['flipping'])})", counted(result["flipping"]))
-    section(f"Always failing ({len(result['always_failing'])})", counted(result["always_failing"]))
+    n = len(result["recent_all_passed"])
+    section(f"Recent {WINDOW} all passed ({n})", compact(data, split(result["recent_all_passed"])))
+    earlier = result["total_failures"]
+    section(f"Candidates that failed before their recent {WINDOW} ({len(earlier)})",
+            [f"{i}: {k} failure{'s' if k != 1 else ''} in total" for i, k in earlier.items()])
+    section(f"Insufficient history ({len(result['insufficient_history'])})", shown(result["insufficient_history"]))
+    section(f"Identical recent histories ({len(result['identical_checks'])})", [" = ".join(g) for g in result["identical_checks"]])
+    section(f"Flipping ({len(result['flipping'])})", shown(result["flipping"]))
+    section(f"Always failing ({len(result['always_failing'])})", shown(result["always_failing"]))
     section(f"Demotion proposals ({len(result['proposals'])})",
-            [f"{p['unit']}: {p['cells']} upper cells; saves {p['runs_saved']} runs and {p['judge_calls_saved']} judge calls per suite run"
+            [f"{p['unit']}: {p['cells']} upper cells, total failures {p['total_failures']};"
+             f" saves {p['runs_saved']} runs and {p['judge_calls_saved']} judge calls per suite run"
              for p in result["proposals"]])
-    section(f"Judged checks that never failed ({len(result['verification_candidates'])})", result["verification_candidates"])
+    section(f"Judged checks that never failed in their whole history ({len(result['verification_candidates'])})",
+            result["verification_candidates"])
     return "\n".join(out)
 
 
 def summary(data, result, path, out):
-    eligible = {tuple(i.split("/")) for i in result["never_failed"] if cell_of(data, tuple(i.split("/")))["tier"] == "upper"}
+    eligible = {tuple(i.split("/")) for i in result["recent_all_passed"] if cell_of(data, tuple(i.split("/")))["tier"] == "upper"}
     runs, calls = savings(data, eligible)
     ranked = sorted(result["proposals"], key=lambda p: (-p["runs_saved"], -p["judge_calls_saved"], -p["cells"], p["unit"]))
     lines = [
-        f"Cell history audit of {path} ({result['cells']} cells, bar {result['min_trials']} trials).",
+        f"Cell history audit of {path} ({result['cells']} cells, judged by their recent {WINDOW} trials).",
         f"Full report: {out}",
-        f"never failed {len(result['never_failed'])} · insufficient history {len(result['insufficient_history'])} · "
+        f"recent {WINDOW} all passed {len(result['recent_all_passed'])}"
+        f" (of them {len(result['total_failures'])} failed before) · insufficient history {len(result['insufficient_history'])} · "
         f"identical histories {len(result['identical_checks'])} · flipping {len(result['flipping'])} · "
         f"always failing {len(result['always_failing'])}",
         f"{len(result['proposals'])} demotion proposals; all of them together save {runs} runs and {calls} judge calls per suite run.",
     ]
     if ranked:
         lines.append("Largest savings:")
-        lines += [f"- {p['unit']}: {p['cells']} cells, {p['runs_saved']} runs and {p['judge_calls_saved']} judge calls" for p in ranked[:10]]
-    lines.append(f"Judged checks that never failed: {len(result['verification_candidates'])}")
+        lines += [f"- {p['unit']}: {p['cells']} cells (total failures {p['total_failures']}),"
+                  f" {p['runs_saved']} runs and {p['judge_calls_saved']} judge calls" for p in ranked[:10]]
+    lines.append(f"Judged checks that never failed in their whole history: {len(result['verification_candidates'])}")
     return "\n".join(lines)
 
 
-def parse_unit(data, unit, min_trials):
+def parse_unit(data, unit):
     parts = unit.split("/")
     if len(parts) != 3 or parts[0] not in data["suites"]:
         raise Invalid(f"{unit}: not suite/case/check, suite/*/check, suite/case/*, or suite/~/check")
@@ -259,7 +300,7 @@ def parse_unit(data, unit, min_trials):
     body = data["suites"][suite]
     if case == "~" and check in body["checks"]:
         return {(suite, cs, check) for cs, row in body["cells"].items() if check in row
-                and row[check]["tier"] == "upper" and row[check]["passes"] == row[check]["trials"] >= min_trials}
+                and row[check]["tier"] == "upper" and is_candidate(row[check])}
     if case != "*" and case not in body["cells"]:
         raise Invalid(f"{unit}: no case {case} in {suite}")
     if check != "*" and check not in body["checks"]:
@@ -268,16 +309,15 @@ def parse_unit(data, unit, min_trials):
             if (case == "*" or cs == case) and (check == "*" or k == check)}
 
 
-def apply(data, units, min_trials):
+def apply(data, units):
     moves = set()
     for unit in units:
-        cells = {c for c in parse_unit(data, unit, min_trials) if cell_of(data, c)["tier"] == "upper"}
+        cells = {c for c in parse_unit(data, unit) if cell_of(data, c)["tier"] == "upper"}
         if not cells:
             raise Invalid(f"{unit}: holds no upper-tier cell")
-        blocked = sorted("/".join(c) for c in cells
-                         if not (cell_of(data, c)["passes"] == cell_of(data, c)["trials"] >= min_trials))
+        blocked = sorted("/".join(c) for c in cells if not is_candidate(cell_of(data, c)))
         if blocked:
-            raise Invalid(f"{unit}: not every upper cell is never failed over {min_trials} trials: {', '.join(blocked)}")
+            raise Invalid(f"{unit}: not every upper cell passed its recent {WINDOW} trials: {', '.join(blocked)}")
         moves |= cells
     for suite, case, check in sorted(moves):
         body = data["suites"][suite]
@@ -292,17 +332,12 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="command", required=True)
     rep = sub.add_parser("report")
     rep.add_argument("history", type=Path)
-    rep.add_argument("--min-trials", type=int, default=DEFAULT_MIN_TRIALS)
     rep.add_argument("--json", action="store_true", help="print every list as JSON and write no file")
     rep.add_argument("--out", type=Path, help="where to write the full report (default: audit-report.md at the eval root, the history's grandparent)")
     app = sub.add_parser("apply")
     app.add_argument("history", type=Path)
     app.add_argument("units", nargs="+")
-    app.add_argument("--min-trials", type=int, default=DEFAULT_MIN_TRIALS)
     args = parser.parse_args(argv)
-    if args.min_trials < 1:
-        print("error: --min-trials must be at least 1, so a cell with no trials never counts as never failed", file=sys.stderr)
-        return 2
 
     try:
         data = load(args.history)
@@ -310,7 +345,7 @@ def main(argv=None):
             print(f"No cell history at {args.history}. Nothing can be judged until regression runs record one.")
             return 3
         if args.command == "report":
-            result = analyze(data, args.min_trials)
+            result = analyze(data)
             if args.json:
                 print(json.dumps(result, indent=2))
                 return 0
@@ -319,7 +354,7 @@ def main(argv=None):
             out.write_text(markdown(data, result, args.history) + "\n")
             print(summary(data, result, args.history, out))
             return 0
-        moved = apply(data, args.units, args.min_trials)
+        moved = apply(data, args.units)
         args.history.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
         print(f"Moved {len(moved)} cells to the lower tier:")
         print("\n".join(f"- {c}" for c in moved))

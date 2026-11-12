@@ -1,6 +1,6 @@
 ---
 name: audit-evals
-description: Audit a project's LLM eval regression suite from its committed cell history, report cells that never failed, checks with identical histories, cells that flip after graduating, and cells that always fail, then propose demoting never-failed cells to the lower tier and apply only the demotions the user approves. Use when the user asks which eval cells still earn their run, why a regression run costs so much, or to slim, prune, or demote a regression suite.
+description: Audit a project's LLM eval regression suite from its committed cell history, report cells whose most recent 10 trials all passed, checks with identical recent histories, cells that flip after graduating, and cells that always fail, then propose demoting the recently always-passing cells to the lower tier and apply only the demotions the user approves. Use when the user asks which eval cells still earn their run, why a regression run costs so much, or to slim, prune, or demote a regression suite.
 ---
 
 # Audit evals
@@ -46,11 +46,10 @@ It writes the full report to `audit-report.md` at the eval root, outside
 `regression/`, and prints a summary: the count of every list, the combined
 saving of all proposals, and the largest proposals. The report file is the
 audit's output, not part of the suite, so it stays uncommitted and the next
-audit replaces it. A cell counts as
-never failed after 10 trials without a failure; pass `--min-trials <n>` only
-when the user asks for another bar. Exit code 3 means there is no history at
-that path, and exit code 2 names what in the file is malformed; report either
-as it is.
+audit replaces it. Every list reads each cell's most recent 10 trials, which
+the history keeps beside its cumulative counts. Exit code 3 means there is no
+history at that path, and exit code 2 names what in the file is malformed;
+report either as it is.
 
 ## Report and propose
 
@@ -58,29 +57,36 @@ Give the user the printed summary with its numbers unchanged, the path of the
 full report, and the lists from the report that bear on what they asked. Use
 the script's notation: `suite/case/check` is one cell, `suite/*/check` every
 cell of a check, `suite/case/*` every cell of a case, and `suite/~/check` the
-cells of a check that never failed. Then say what each section asks of the
-user:
+candidate cells of a check. Then say what each section asks of the user:
 
-- **Never failed**: the demotion candidates. Each proposal names its unit and
-  the runs and judge calls one suite run stops making. Proposals come by whole
-  check or whole case where possible, since those are the units that stop a run
-  or a judge call, and the rest by check. A saving of 0 means the unit shares
-  its run or judge call with cells that stay up.
-- **Insufficient history**: cells with no failure yet but fewer trials than the
-  bar. They are not proposed.
-- **Identical histories**: checks that passed and failed on exactly the same
-  cases. Report them as candidates to merge; whoever owns the grader decides
+- **Recent 10 all passed**: the demotion candidates, cells whose most recent 10
+  trials all passed. An older failure does not keep a cell out, so each
+  proposal shows its cells' total failures, and the report lists every
+  candidate that failed before its recent 10 with its count. Point those out:
+  a cell that once caught a real break may be worth keeping up. Each proposal
+  names its unit and the runs and judge calls one suite run stops making.
+  Proposals come by whole check or whole case where possible, since those are
+  the units that stop a run or a judge call, and the rest by check. A saving of
+  0 means the unit shares its run or judge call with cells that stay up.
+- **Insufficient history**: cells with no failure yet but fewer than 10
+  recorded trials. They are not proposed.
+- **Identical recent histories**: checks whose recent results match case by
+  case and hold at least one failure; checks that never failed are not
+  compared. Report them as candidates to merge; whoever owns the grader decides
   which to keep, and this skill merges nothing.
-- **Flipping**: graduated cells that both pass and fail. Report them as
-  candidates to return to known failures, since the case did not hold.
-- **Always failing**: report them as candidates for a broken task or grader.
+- **Flipping**: graduated cells whose recent results mix passes and failures.
+  Report them as candidates to return to known failures, since the case did not
+  hold.
+- **Always failing**: cells whose recent results are all failures. Report them
+  as candidates for a broken task or grader.
 
 Flipping and always-failing cells stay as they are; the report is their only
 outcome here.
 
-A never-failed cell is either robust behavior or a grader too lax to catch a
-break, and the history cannot tell them apart. For each check under "Judged
-checks that never failed", you may propose a verification: run the suite's
+A cell that keeps passing is either robust behavior or a grader too lax to
+catch a break, and the history cannot tell them apart. For each check under
+"Judged checks that never failed in their whole history", you may propose a
+verification: run the suite's
 cases for that check on a variant with the instruction the check guards
 removed, and see whether the check then fails. It calls a model, so it is
 proposed with its purpose only. When the user wants it, hand `llm-evals` the
@@ -98,8 +104,8 @@ Apply exactly the approved units, all in one call:
 python3 -I <this skill's base directory>/scripts/audit_evals.py apply <eval root>/regression/cell-history.json <unit> [<unit> ...]
 ```
 
-The script moves only upper-tier cells that never failed over the bar, and
-refuses the whole call when a unit holds any other cell. Report the cells it
+The script moves only upper-tier cells whose most recent 10 trials all passed,
+and refuses the whole call when a unit holds any other cell. Report the cells it
 moved and the units left as they were. The cell history is committed with the
 rest of `regression/`.
 
