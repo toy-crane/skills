@@ -315,11 +315,9 @@ async function runCase({ c, rep }) {
   if (strayMcp.length) return errorRow('harness', `MCP servers beyond the stand-ins: ${strayMcp.map((s) => s.name).join(', ')}`, t.info);
   const downMcp = t.info.mcpServers.filter((s) => s.status !== 'connected');
   if (downMcp.length) return errorRow('harness', `stand-in MCP servers not connected: ${downMcp.map((s) => `${s.name} ${s.status}`).join(', ')}`, t.info);
-  // A denied call to the skill's own helpers is the harness's fault, not the behavior's.
-  const deniedHelpers = t.info.permissionDenials.filter((d) => /claim\.sh|body-sections\.py/.test(JSON.stringify(d.tool_input ?? {})));
-  if (deniedHelpers.length) return errorRow('harness', `skill helpers denied: ${deniedHelpers.map((d) => JSON.stringify(d.tool_input).slice(0, 200)).join(' | ')}`, t.info);
   // A call aimed at a real GitHub, Linear, or Slack endpoint, or at the real gh binary, voids the trial.
-  const reached = readFileSync(rawFile, 'utf8').match(/api\.github\.com|api\.linear\.app|slack\.com\/api|hooks\.slack\.com|\/(?:opt\/homebrew|usr\/local|usr)\/bin\/gh\b/);
+  // Only what the agent sent is read: a tool result that merely prints such a path is not a call.
+  const reached = toTurns(rawFile, '').filter((x) => x.role === 'tool_call').map((x) => x.content).join('\n').match(/api\.github\.com|api\.linear\.app|slack\.com\/api|hooks\.slack\.com|\/(?:opt\/homebrew|usr\/local|usr)\/bin\/gh\b/);
   if (reached) return errorRow('harness', `the agent reached for a real service: ${reached[0]}`, t.info);
   const deniedWrites = t.info.permissionDenials.filter((d) => /^(Write|Edit|MultiEdit)$/.test(d.tool_name));
   if (deniedWrites.length) return errorRow('harness', `file writes denied: ${deniedWrites.map((d) => d.tool_input?.file_path).join(', ')}`, t.info);
