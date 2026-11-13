@@ -245,19 +245,34 @@ function runClaude(workspace, prompt, rawFile) {
     '--allowedTools', 'Read', 'Edit', 'Write', 'Glob', 'Grep', 'Skill',
     'Bash(ls:*)', 'Bash(cat:*)', 'Bash(git:*)', 'Bash(find:*)', 'Bash(grep:*)', 'Bash(node:*)', 'Bash(npm:*)', 'Bash(rm:*)'];
   return new Promise((settle) => {
-    const child = spawn('claude', args, { cwd: workspace, env: childEnv, stdio: ['ignore', 'pipe', 'pipe'] });
+    // Its own process group, so a timeout also ends whatever the agent started.
+    const child = spawn('claude', args, { cwd: workspace, env: childEnv, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
     const out = [];
     const err = [];
     child.stdout.on('data', (chunk) => out.push(chunk));
     child.stderr.on('data', (chunk) => err.push(chunk));
+    const killGroup = (signal) => { try { process.kill(-child.pid, signal); } catch { /* already gone */ } };
     let timedOut = false;
-    const timer = setTimeout(() => { timedOut = true; child.kill('SIGTERM'); setTimeout(() => child.kill('SIGKILL'), 10_000).unref(); }, timeoutMs);
-    child.on('close', (code) => {
+    let settled = false;
+    let grace;
+    const finish = (code) => {
+      if (settled) return;
+      settled = true;
       clearTimeout(timer);
+      clearTimeout(grace);
       const raw = Buffer.concat(out).toString('utf8');
       writeFileSync(rawFile, raw);
       settle({ code, timedOut, info: readStream(raw), stderr: Buffer.concat(err).toString('utf8') });
-    });
+    };
+    // At the deadline ask the group to stop, then kill it and settle even if a
+    // descendant still holds the pipes open.
+    const timer = setTimeout(() => {
+      timedOut = true;
+      killGroup('SIGTERM');
+      grace = setTimeout(() => { killGroup('SIGKILL'); finish(null); }, 2_000);
+    }, timeoutMs);
+    child.on('close', finish);
+    child.on('error', () => finish(null));
   });
 }
 
