@@ -100,6 +100,13 @@ wait; that pass finds nothing to do. When a pass has nothing to do, start the
 next wait without a message or comment: no progress reports, no "still
 waiting".
 
+## When no person is present
+
+When the invoking skill says no person is present, ask the user anything
+through the harness's question tool, not as chat text. When no answer comes,
+end as needs a person with that question, and never merge. Without that
+signal, everything here applies as written.
+
 ## Finish
 
 End with the state, ready or needs a person, and the pull request URL; what

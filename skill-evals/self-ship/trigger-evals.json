@@ -1,0 +1,42 @@
+[
+  {
+    "query": "docs/specs/csv-export/ 끝까지 해 줘.",
+    "should_trigger": false
+  },
+  {
+    "query": "이 spec 머지까지 알아서 해.",
+    "should_trigger": false
+  },
+  {
+    "query": "docs/specs/checkout/ 구현하고 PR 올려서 머지까지 끝내 줘.",
+    "should_trigger": false
+  },
+  {
+    "query": "finish docs/specs/order-search/ end to end, merge it when it's green",
+    "should_trigger": false
+  },
+  {
+    "query": "자리 비울 테니 docs/specs/csv-export/ 끝까지 처리해 둬.",
+    "should_trigger": false
+  },
+  {
+    "query": "PR #41 머지까지 알아서 해 줘.",
+    "should_trigger": false
+  },
+  {
+    "query": "take this spec all the way to main: docs/specs/password-reset/",
+    "should_trigger": false
+  },
+  {
+    "query": "docs/specs/csv-export/ 구현해 줘.",
+    "should_trigger": false
+  },
+  {
+    "query": "spec 폴더 없이 그냥 로그인 버튼 고쳐서 머지까지 해.",
+    "should_trigger": false
+  },
+  {
+    "query": "이 PR CI 통과시켜서 머지 가능 상태로 만들어 줘.",
+    "should_trigger": false
+  }
+]

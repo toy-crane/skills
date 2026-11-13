@@ -64,9 +64,9 @@
      "e4": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "e5": {
       "tier": "lower",
@@ -138,9 +138,9 @@
      "e3": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "e4": {
       "tier": "lower",
@@ -154,9 +154,9 @@
      "e0": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "e1": {
       "tier": "lower",
@@ -175,16 +175,16 @@
      "e3": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "e4": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "e5": {
       "tier": "lower",
@@ -226,9 +226,9 @@
      "e4": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 3,
+      "recent": "ppfp"
      },
      "e5": {
       "tier": "lower",
@@ -242,9 +242,9 @@
      "e0": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "e1": {
       "tier": "lower",
@@ -279,9 +279,9 @@
      "e1": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "e2": {
       "tier": "lower",
@@ -323,9 +323,9 @@
      "e2": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "e3": {
       "tier": "lower",
@@ -374,9 +374,9 @@
      "e4": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "e5": {
       "tier": "lower",
