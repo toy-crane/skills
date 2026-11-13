@@ -27,60 +27,60 @@
           "end-state": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-0": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-1": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-2": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           }
         },
         "blocked-user-settings": {
           "end-state": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-0": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-1": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-2": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           }
         },
         "dropped-http-timeout": {
@@ -94,9 +94,9 @@
           "expectation-0": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-1": {
             "tier": "lower",
@@ -193,120 +193,120 @@
           "end-state": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-0": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-1": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-2": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           }
         },
         "late-base-tax-helper": {
           "end-state": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-0": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-1": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-2": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           }
         },
         "no-overlap-currency": {
           "end-state": {
             "tier": "upper",
             "baseline": "pass",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-0": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-1": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-2": {
             "tier": "upper",
             "baseline": "pass",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           }
         },
         "no-overlap-greeting": {
           "end-state": {
             "tier": "upper",
             "baseline": "pass",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-0": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 3,
+            "recent": "ppfp"
           },
           "expectation-1": {
             "tier": "upper",
             "baseline": "fail",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           },
           "expectation-2": {
             "tier": "upper",
             "baseline": "pass",
-            "trials": 2,
-            "passes": 2,
-            "recent": "pp"
+            "trials": 4,
+            "passes": 4,
+            "recent": "pppp"
           }
         },
         "semantic-page-size": {
