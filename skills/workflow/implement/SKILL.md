@@ -282,6 +282,24 @@ unconfirmed finding, in the handoff; and a material consequence the spec leaves
 open, such as a security trade-off or a pathological-input failure, as a
 decision the user owns.
 
+Size each repair to the case you reproduced. When several repairs would fix
+it, choose one that deletes code or narrows a condition before one that adds
+code, and add a new lock, cache, helper, or option only when nothing smaller
+fixes that case. Leave the rest of what the finding points at unrepaired:
+other paths it might reach, rare inputs, small performance differences, extra
+compatibility, and tests or defensive code the spec's intent does not call
+for. Record them by the rules above, or name the spec constraint that already
+rules them out.
+
+When you disagree with a finding, say so in the handoff with the evidence that
+settles it: the file and line, a test, or the output of running the case.
+Accept a finding on that evidence or a reproduction, not to close the review.
+
+Once the repairs pass their affected verification, read the whole diff against
+the spec's intent again. Remove code that no acceptance criterion or named
+reason requires, whether a repair added it or it was already there, and rerun
+the verification that removal affects. This reading adds no review pass.
+
 ## Verify the final product after review and repairs
 
 After the whole-diff review is complete and triaged and any must-fix repairs
