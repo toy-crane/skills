@@ -139,6 +139,12 @@
   point is an agent run with the skill installed in a disposable workspace,
   graded on the end state it leaves. The baseline is the previous skill text,
   or no skill for a new one.
+- A regression suite for an existing skill whose text is not changing uses no
+  skill as its baseline. The climb's final variant is the current text, and
+  green means it beats the no-skill run outside the noise floor, so each
+  graduating cell shows a mistake the skill actually prevents. The same tier
+  rules apply: a cell the no-skill run already passes goes to the upper tier
+  only when its case states what it guards against.
 - The `tdd` forward comparison is `tdd`'s eval, run through `llm-evals` rather
   than as a standalone script. Its two tasks, hidden criteria tests, seeded
   mutants, and scoring signals stay; with two tasks it is scored whole and
@@ -219,6 +225,13 @@ leaves one regression suite per project and deletes the climb. Keeping the
 grader intact across graduation costs model calls on every regression run, but
 dropping the rubric would stop guarding the regressions only a judge can see,
 which is the half of the behavior code checks cannot reach.
+
+An unchanged skill has no previous text, so a previous-text baseline equals
+the final variant and leaves no climb to graduate from. No skill reuses the
+baseline already set for a new skill and needs no hand-made input. A
+deliberately weakened copy of the skill was rejected: it could aim at single
+clauses, but whoever writes the weakened copy also chooses how hard the
+baseline is, which is a new rule and room to tune the result.
 
 A trial cut off by an error says nothing about the behavior. Graded, it
 becomes a fail the behavior never earned: the score drops, and the cell
