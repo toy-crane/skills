@@ -125,7 +125,12 @@ const skillSha = opts['no-skill'] ? 'none' : createHash('sha256').update(skillTe
 
 const childEnv = { ...process.env };
 if (opts.access === 'api') {
-  if (!childEnv.ANTHROPIC_API_KEY) { console.error('API access needs ANTHROPIC_API_KEY in the environment.'); process.exit(3); }
+  // Like merge's runner, read the key from the untracked .env.local when the environment has none.
+  if (!childEnv.ANTHROPIC_API_KEY && existsSync(join(repoRoot, '.env.local'))) {
+    const m = readFileSync(join(repoRoot, '.env.local'), 'utf8').match(/^\s*ANTHROPIC_API_KEY\s*=\s*['"]?([^'"\n]+)/m);
+    if (m) childEnv.ANTHROPIC_API_KEY = m[1];
+  }
+  if (!childEnv.ANTHROPIC_API_KEY) { console.error('API access needs ANTHROPIC_API_KEY in the environment or .env.local.'); process.exit(3); }
 } else {
   delete childEnv.ANTHROPIC_API_KEY;
   delete childEnv.ANTHROPIC_AUTH_TOKEN;
