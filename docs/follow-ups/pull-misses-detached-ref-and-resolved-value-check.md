@@ -15,9 +15,9 @@ first: "The agent made no branch or tag before running `git rebase origin/main`"
 For the second, the report named the base and incoming commit but did not re-read
 `src/http.js` after resolving it. The no-skill baseline failed
 `timeout-rename-conflict`'s same check on both repetitions. Both scenarios remain
-in `skill-evals/pull/regression/skill-regression-pull/fixtures.mjs`, and their
-cases and expectations are in that folder's history at the commit that added the
-runner.
+in `skill-evals/pull/regression/skill-regression-pull/fixtures.mjs`; their cases
+and expectations are in `skill-evals/pull/skill-regression-pull/cases.jsonl` at
+commit `a16f98b`, before graduation moved the folder.
 
 **Suspected cause**: Suspected: `pull`'s text says "keep the original work
 recoverable" only for an ambiguous conflict, and says nothing about a detached
