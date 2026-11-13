@@ -197,7 +197,14 @@ if (!existsSync(stateFile)) {
 function prepareWorkspace(c, id) {
   // Outside any .claude/ folder: headless Claude Code denies writes under one.
   const ws = realpathSync(mkdtempSync(join(tmpdir(), `clean-branches-${opts.variant}-${id}-`)));
-  const built = scenarios[c.scenario](ws);
+  let built;
+  try {
+    built = scenarios[c.scenario](ws);
+  } catch (error) {
+    // A build that fails after starting a simulated process must not leave it running.
+    stopProcesses(ws);
+    throw error;
+  }
   const cwd = join(ws, built.cwd);
   if (skillText !== null) {
     const target = join(cwd, '.claude/skills/clean-branches');

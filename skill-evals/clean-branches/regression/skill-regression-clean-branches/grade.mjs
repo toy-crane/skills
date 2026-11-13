@@ -48,7 +48,7 @@ export function collectEndState(ws, check) {
     }
     if (c.kind === 'alive') {
       const p = pids.find((x) => x.name === c.name);
-      facts.push([`the ${c.name} process still runs`, Boolean(p) && alive(p.pid)]);
+      facts.push([`the ${c.name} process still runs`, Boolean(p) && alive(ws, p.pid)]);
     }
   }
   facts.push(['origin\'s branches are unchanged', originRefs(ws) === readFileSync(join(ws, 'origin-refs.txt'), 'utf8')]);

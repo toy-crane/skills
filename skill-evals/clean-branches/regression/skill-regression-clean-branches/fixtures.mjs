@@ -201,12 +201,16 @@ export function readPids(ws) {
   const file = join(ws, 'sim-pids.json');
   return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : [];
 }
-export const alive = (pid) => { try { process.kill(pid, 0); return true; } catch { return false; } };
+// True while `pid` is still this workspace's simulated process. A PID freed when dev:remove
+// stopped the server can be reused by an unrelated process, so the command line must name ws/sim/.
+export const alive = (ws, pid) => spawnSync('ps', ['-o', 'command=', '-p', String(pid)], { encoding: 'utf8' }).stdout.includes(join(ws, 'sim'));
 
-// Stops every simulated process a case started. The runner calls it after reading the end state.
+// Stops every simulated process a case started that still runs. The runner calls it after
+// reading the end state, and again when the case ends.
 export function stopProcesses(ws) {
   for (const p of readPids(ws)) {
-    if (p.launcher) { try { process.kill(-p.launcher, 'SIGKILL'); } catch { /* gone */ } }
-    try { process.kill(p.pid, 'SIGKILL'); } catch { /* gone */ }
+    for (const pid of [p.pid, p.launcher].filter(Boolean)) {
+      if (alive(ws, pid)) { try { process.kill(pid, 'SIGKILL'); } catch { /* gone */ } }
+    }
   }
 }
