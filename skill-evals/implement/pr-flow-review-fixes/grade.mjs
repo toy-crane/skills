@@ -8,16 +8,26 @@ import { join } from 'node:path';
 // stalls or times out the agent runs still in flight beside it.
 function runAsync(command, args, { cwd, env, timeout }) {
   return new Promise((settle) => {
-    const child = spawn(command, args, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] });
+    // Its own process group, so a timeout also ends the test processes npm started.
+    const child = spawn(command, args, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
     const out = [];
     const err = [];
     child.stdout.on('data', (chunk) => out.push(chunk));
     child.stderr.on('data', (chunk) => err.push(chunk));
-    const timer = setTimeout(() => child.kill('SIGKILL'), timeout);
-    child.on('close', (status) => {
+    let settled = false;
+    const finish = (status) => {
+      if (settled) return;
+      settled = true;
       clearTimeout(timer);
       settle({ status, stdout: Buffer.concat(out).toString('utf8'), stderr: Buffer.concat(err).toString('utf8') });
-    });
+    };
+    // Settle at the deadline even if a stray descendant still holds the pipes open.
+    const timer = setTimeout(() => {
+      try { process.kill(-child.pid, 'SIGKILL'); } catch { /* already gone */ }
+      finish(null);
+    }, timeout);
+    child.on('close', finish);
+    child.on('error', () => finish(null));
   });
 }
 
