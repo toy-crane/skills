@@ -314,7 +314,7 @@ async function runCase({ c, rep }) {
     const endState = collectEndState(place.ws, place.check);
     stopProcesses(place.ws);
     const denied = t.info.permissionDenials.map((d) => `${d.tool_name} ${JSON.stringify(d.tool_input).slice(0, 200)}`);
-    const judged = judgeRun(c, turns, endState, { env: baseEnv, model: opts['judge-model'], denied });
+    const judged = await judgeRun(c, turns, endState, { env: baseEnv, model: opts['judge-model'], denied });
     if (judged.error) return errorRow('judge', judged.error, t.info);
     const { grade, problems } = scoreRun(judged, endState);
     appendFileSync(resultsFile, `${JSON.stringify({
