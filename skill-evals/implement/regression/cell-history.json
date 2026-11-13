@@ -1,0 +1,433 @@
+{
+ "version": 2,
+ "suites": {
+  "pr-flow-review-fixes": {
+   "reps": 2,
+   "last_run_model": "claude-sonnet-5-5",
+   "lower_tier_model": "claude-sonnet-5-5",
+   "checks": {
+    "expectation-0": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "expectation-1": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "expectation-2": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "expectation-3": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "expectation-4": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "tests_pass": {
+     "grader": "code"
+    }
+   },
+   "cells": {
+    "search-onechar-helper": {
+     "expectation-0": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-3": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-4": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "tests_pass": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "search-regex-escape": {
+     "expectation-0": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-3": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-4": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "tests_pass": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "tag-first-helper": {
+     "expectation-0": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-3": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-4": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "tests_pass": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "search-onechar-rare": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-3": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-4": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "tests_pass": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "tag-leftover": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-3": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-4": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "tests_pass": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "due-leftover": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-3": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-4": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "tests_pass": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "search-wrong-finding": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-3": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-4": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "tests_pass": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "due-wrong-finding": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-3": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-4": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "tests_pass": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "save-double-guard": {
+     "expectation-0": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-3": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-4": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "tests_pass": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    }
+   }
+  }
+ }
+}
