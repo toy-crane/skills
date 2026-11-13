@@ -238,7 +238,7 @@ function readStream(raw) {
       info.apiKeySource = event.apiKeySource;
     }
     if (event.type === 'result') {
-      info.resultSubtype = event.subtype;
+      info.resultSubtype = event.subtype; info.isError = event.is_error === true; info.apiErrorStatus = event.api_error_status ?? null; info.resultText = typeof event.result === 'string' ? event.result : '';
       info.costUsd = event.total_cost_usd ?? null;
       info.usage = event.usage ?? null;
       info.turns = event.num_turns ?? null;
@@ -322,6 +322,9 @@ async function runCase({ c, rep }) {
   const rawFile = join(runDir, 'turn1.jsonl');
   const t = await runClaude(workspace, c.prompt, rawFile);
   if (t.timedOut) return errorRow('timeout', 'turn 1', t.info);
+  // Claude Code ends a turn stopped by an API error, such as a usage limit, with subtype success and is_error.
+  // That trial never finished answering, so it is not a result: keep it out of grading for a rerun to fill.
+  if (t.info.isError) return errorRow('api-error', `status ${t.info.apiErrorStatus}: ${t.info.resultText.slice(0, 300)}`, t.info);
   if (t.info.resultSubtype !== 'success') return errorRow('harness', `result ${t.info.resultSubtype}: ${t.stderr.slice(0, 300)}`, t.info);
   if (!t.info.model?.startsWith(opts.model)) return errorRow('served-model-mismatch', `asked ${opts.model}, served ${t.info.model}`, t.info);
   const expectedKey = opts.access === 'api' ? 'ANTHROPIC_API_KEY' : 'none';
