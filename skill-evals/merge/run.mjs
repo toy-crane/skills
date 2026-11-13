@@ -20,7 +20,7 @@ const repoRoot = resolve(here, '../..');
 const skillDir = (name) => realpathSync(join(repoRoot, '.claude/skills', name));
 const skillPath = relative(repoRoot, join(skillDir('merge'), 'SKILL.md'));
 // merge invokes these; the agent gets the working tree's copies.
-const companions = ['pull', 'pr', 'push', 'commit', 'clean-branches'];
+const companions = ['pull', 'pr', 'babysit-pr', 'push', 'commit', 'clean-branches'];
 const usage = `usage: run.mjs --variant <label> --access api|subscription [options]
   --skill-ref <git-ref>   take merge's SKILL.md from this ref (required for baseline)
   --skill-file <path>     take SKILL.md from this file (default: the working tree's)
