@@ -14,6 +14,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { collectChanges, judgeRun, scoreJudged } from './judge.mjs';
+import { finishRun, loadHistory, planTiers, recordRow, saveHistory } from '../audit-evals/history.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../..');
@@ -23,12 +24,15 @@ const skillDir = (name) => realpathSync(join(repoRoot, '.claude/skills', name));
 const usage = `usage: run.mjs --variant <label> --access api|subscription [options]
   --skill-ref <git-ref>   take ${SKILL}'s folder from this ref
   --skill-file <path>     take SKILL.md from this file (default: the working tree's folder)
+  --suite <folder>        run the graduated regression suite regression/<folder>/ instead of evals.json,
+                          at its recorded reps, and add each scored row to its cell history
+  --history <path>        cell history a regression run updates (default: regression/cell-history.json)
   --cases a,b             run only these case ids
-  --reps <n>              runs per case (default: 2)
+  --reps <n>              runs per case (default: 2; a regression suite runs at its recorded reps)
   --workers <n>           runs in parallel (default: 4)
   --model <id>            agent model (default: claude-opus-5-5)
   --judge-model <id>      judge model (default: claude-sonnet-5-5)
-  --flow <dir>            flow folder (default: .claude/hillclimb/${SKILL}/evals)
+  --flow <dir>            flow folder (default: .claude/hillclimb/${SKILL}/<suite or evals>)
   --timeout-s <n>         wall-clock ceiling per run (default: 900)
   --max-budget-usd <n>    per-run budget passed to claude (default: 3)
   --dry-run               print the resolved scope and stop`;
@@ -39,8 +43,10 @@ const { values: opts } = parseArgs({
     access: { type: 'string' },
     'skill-ref': { type: 'string' },
     'skill-file': { type: 'string' },
+    suite: { type: 'string' },
+    history: { type: 'string' },
     cases: { type: 'string' },
-    reps: { type: 'string', default: '2' },
+    reps: { type: 'string' },
     workers: { type: 'string', default: '4' },
     model: { type: 'string', default: 'claude-opus-5-5' },
     'judge-model': { type: 'string', default: 'claude-sonnet-5-5' },
@@ -58,20 +64,40 @@ function fail(message) {
 if (opts.help) { console.log(usage); process.exit(0); }
 if (!/^[\w.-]+$/.test(opts.variant ?? '')) fail('--variant needs a label such as baseline or v1');
 if (!['api', 'subscription'].includes(opts.access)) fail('--access must be api or subscription');
-opts.suite = 'evals';
+opts.suite ??= 'evals';
+if (!/^[\w.-]+$/.test(opts.suite)) fail('--suite needs a folder name under regression/');
 if (opts.model === opts['judge-model']) fail('the judge must be a different model from the agent under test');
 
 const fixtureRoot = join(here, 'fixtures');
-let cases = JSON.parse(readFileSync(join(here, 'evals.json'), 'utf8')).evals.map((e) => ({
-  // Cases 1-20 predate spec eval-suite-audit; their share of met expectations must not drop below baseline.
-  id: `evals-${e.id}`, tags: [e.id <= 20 ? 'existing' : 'new'], prompt: e.prompt, expectations: e.expectations, fixture: e.fixture ?? null, skills: [SKILL],
-}));
+let cases;
+let history = null;
+let tiers = null;
+const historyPath = resolve(opts.history ?? join(here, 'regression', 'cell-history.json'));
+if (opts.suite === 'evals') {
+  cases = JSON.parse(readFileSync(join(here, 'evals.json'), 'utf8')).evals.map((e) => ({
+    // Cases 1-20 predate spec eval-suite-audit; their share of met expectations must not drop below baseline.
+    id: `evals-${e.id}`, tags: [e.id <= 20 ? 'existing' : 'new'], prompt: e.prompt, expectations: e.expectations, fixture: e.fixture ?? null, skills: [SKILL],
+  }));
+} else {
+  const suiteFile = join(here, 'regression', opts.suite, 'cases.jsonl');
+  if (!existsSync(suiteFile)) fail(`no regression suite ${opts.suite}: ${suiteFile} is missing`);
+  cases = readFileSync(suiteFile, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).map((e) => ({
+    id: `${SKILL}-${e.id}`, tags: ['regression'], prompt: e.prompt, expectations: e.expectations, fixture: e.fixture ?? null, skills: [SKILL],
+  }));
+  // A regression run reads its tiers from the cell history and runs at the reps its level was reached at.
+  history = loadHistory(historyPath);
+  if (!history.suites[opts.suite]) fail(`no suite ${opts.suite} in ${historyPath}`);
+  const own = history.suites[opts.suite].reps;
+  if (opts.reps !== undefined && Number(opts.reps) !== own) fail(`${opts.suite} runs at ${own} reps, as recorded in its cell history; drop --reps or pass ${own}`);
+  tiers = planTiers(history, opts.suite, opts.model);
+  cases = cases.filter((c) => tiers.runsCase(c.id));
+}
 if (opts.cases) {
   const wanted = opts.cases.split(',').map((c) => c.trim());
-  for (const id of wanted) if (!cases.some((c) => c.id === id)) fail(`unknown case in evals.json: ${id}`);
+  for (const id of wanted) if (!cases.some((c) => c.id === id)) fail(`unknown case in ${opts.suite}: ${id}`);
   cases = cases.filter((c) => wanted.includes(c.id));
 }
-const reps = Number(opts.reps);
+const reps = history ? history.suites[opts.suite].reps : Number(opts.reps ?? 2);
 const workers = Number(opts.workers);
 const timeoutMs = Number(opts['timeout-s']) * 1000;
 
@@ -129,7 +155,7 @@ const todo = [];
 for (let rep = 0; rep < reps; rep += 1) for (const c of cases) if (!done.has(`${c.id}#${rep}`)) todo.push({ c, rep });
 
 console.log(`variant ${opts.variant}: ${SKILL} from ${skillSource} (sha ${skillSha})`);
-console.log(`access ${opts.access}, model ${opts.model}, judge ${opts['judge-model']}; evals.json: ${cases.length} cases × ${reps} reps; ${done.size} done, ${todo.length} to run`);
+console.log(`access ${opts.access}, model ${opts.model}, judge ${opts['judge-model']}; ${opts.suite === 'evals' ? 'evals.json' : `suite ${opts.suite}`}: ${cases.length} cases × ${reps} reps; ${done.size} done, ${todo.length} to run`);
 const priced = readRows(resultsFile).filter((r) => typeof r.meta?.cost_usd === 'number');
 if (priced.length) {
   const mean = priced.reduce((n, r) => n + r.meta.cost_usd + (r.meta.judge_cost_usd ?? 0), 0) / priced.length;
@@ -160,7 +186,9 @@ if (!existsSync(summaryFile)) {
 if (!existsSync(stateFile)) {
   const metrics = [{ id: 'pass', kind: 'float', label: 'Every expectation met' }, { id: 'expectations_met', kind: 'float', label: 'Share of expectations met' }];
   writeFileSync(stateFile, `${JSON.stringify({
-    goal: `${SKILL} meets every expectation of evals.json, and the cases that existed before a change stay at or above their baseline`,
+    goal: opts.suite === 'evals'
+      ? `${SKILL} meets every expectation of evals.json, and the cases that existed before a change stay at or above their baseline`
+      : `${SKILL} holds regression suite ${opts.suite} at the level its cases graduated at`,
     cases: cases.map((c) => c.id), access: opts.access, model: opts.model, judge_model: opts['judge-model'], metrics,
     perf_fields: [{ id: 'turns', label: 'Turns' }, { id: 'latency_s', label: 'Latency', unit: 's' }],
   }, null, 2)}\n`);
@@ -280,6 +308,8 @@ async function runCase({ c, rep }) {
   const judged = judgeRun(c, turns, changes, { env: childEnv, model: opts['judge-model'], about: 'the llm-evals skill, which builds, climbs, graduates, and runs LLM evals and their regression suite' });
   if (judged.error) return errorRow('judge', judged.error, t.info);
   const scored = scoreJudged(judged);
+  // One cell per expectation, so the regression suite's history can count each.
+  judged.verdicts.forEach((v, i) => { scored.grade[`e${i}`] = v.met ? 1 : 0; });
   const judgeMeta = { changed: changes.changed, verdicts: judged.verdicts, judge_model: judged.model, judge_usage: judged.usage, judge_cost_usd: judged.cost };
   appendFileSync(resultsFile, `${JSON.stringify({
     prompt_id: c.id, rep, prompt: c.prompt, tags: c.tags, grade: scored.grade, status: 'ok', stop_reason: t.info.resultSubtype,
@@ -304,3 +334,11 @@ await Promise.all(Array.from({ length: Math.min(workers, todo.length) }, async (
 }));
 console.log(`results: ${resultsFile}`);
 report();
+if (history) {
+  // Count only rows this invocation scored, then record the models once every owed run has a row.
+  for (const row of readRows(resultsFile)) if (!done.has(`${row.prompt_id}#${row.rep}`)) recordRow(history, opts.suite, row, { lowerRuns: tiers.lowerRuns });
+  const scoredNow = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`));
+  const complete = finishRun(history, opts.suite, { model: opts.model, lowerRuns: tiers.lowerRuns, scored: scoredNow });
+  saveHistory(historyPath, history);
+  console.log(`cell history ${complete ? 'updated; run complete, models recorded' : 'updated; run incomplete, models unchanged'}`);
+}
