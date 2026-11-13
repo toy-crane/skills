@@ -17,8 +17,10 @@ const FAKE_CLAUDE = `#!/usr/bin/env node
 const fs = require('node:fs');
 const args = process.argv.slice(2);
 const log = process.env.FAKE_CLAUDE_LOG;
+const sleep = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 if (args.includes('--json-schema')) {
   fs.appendFileSync(log, 'judge\\n');
+  sleep(Number(process.env.FAKE_JUDGE_MS || 0));
   const expectations = Array.from({ length: 10 }, (_, index) => ({ index, met: true, evidence: 'fake' }));
   process.stdout.write(JSON.stringify({ type: 'result', subtype: 'success', is_error: false, structured_output: { expectations }, usage: {}, modelUsage: { fake: {} }, total_cost_usd: 0 }));
   process.exit(0);
@@ -26,7 +28,8 @@ if (args.includes('--json-schema')) {
 const counter = process.env.FAKE_CLAUDE_COUNTER;
 const n = (fs.existsSync(counter) ? Number(fs.readFileSync(counter, 'utf8')) : 0) + 1;
 fs.writeFileSync(counter, String(n));
-const failing = n === 1;
+const failing = n === 1 && !process.env.FAKE_NO_ERROR;
+sleep(Number((process.env.FAKE_AGENT_MS || '0').split(',')[n - 1] || 0));
 fs.appendFileSync(log, failing ? 'agent-error\\n' : 'agent-ok\\n');
 const model = args[args.indexOf('--model') + 1];
 const emit = (e) => process.stdout.write(JSON.stringify(e) + '\\n');
@@ -80,5 +83,25 @@ test('an API-error trial is not graded and stays out of the cell history, a reru
 
   assert.deepEqual(run(), [], 'scored (variant, case, rep) rows are never rerun');
   assert.equal(cell().trials, before.trials + 2);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('an agent that answers while another trial is being judged is not recorded as a timeout', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'push-runner-'));
+  const evalRoot = copyEvalRoot(dir);
+  const bin = path.join(dir, 'bin');
+  fs.mkdirSync(bin);
+  fs.writeFileSync(path.join(bin, 'claude'), FAKE_CLAUDE, { mode: 0o755 });
+  const flow = path.join(dir, 'flow');
+  // The first agent answers at once and its judge takes 1.5s; the second answers at 0.5s, inside its 1s ceiling.
+  const env = {
+    ...process.env, PATH: `${bin}:${process.env.PATH}`, FAKE_CLAUDE_LOG: path.join(dir, 'calls.log'), FAKE_CLAUDE_COUNTER: path.join(dir, 'n'),
+    FAKE_NO_ERROR: '1', FAKE_AGENT_MS: '0,500,0,0', FAKE_JUDGE_MS: '1500',
+  };
+  const r = spawnSync('node', [path.join(evalRoot, 'run.mjs'), '--variant', 'v1', '--access', 'subscription', '--flow', flow,
+    '--cases', 'first-push-search,first-push-settings', '--workers', '2', '--timeout-s', '1'], { encoding: 'utf8', env });
+  assert.equal(r.status, 0, `${r.stdout}\n${r.stderr}`);
+  assert.deepEqual(rows(path.join(flow, 'v1', 'errors.jsonl')).map((e) => `${e.prompt_id}#${e.rep} ${e.class}`), []);
+  assert.equal(rows(path.join(flow, 'v1', 'results.jsonl')).length, 4);
   fs.rmSync(dir, { recursive: true, force: true });
 });
