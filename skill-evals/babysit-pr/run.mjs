@@ -19,10 +19,13 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { judgeRun, scoreJudged } from '../llm-evals/judge.mjs';
+import { finishRun, loadHistory, planTiers, recordRow, saveHistory } from '../audit-evals/history.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../..');
 const usage = `usage: run.mjs --skill <name> --variant <label> --access api|subscription [options]
+  --suite <folder>        run the graduated regression suite skill-evals/<skill>/regression/<folder>/
+                          instead of evals.json, at its recorded reps, and update its cell history
   --skill-ref <git-ref>   take every published skill from this ref (default: the working tree)
   --no-skill              install no skill at all (the baseline for a new skill)
   --cases 1,2             run only these case ids
@@ -40,6 +43,7 @@ const usage = `usage: run.mjs --skill <name> --variant <label> --access api|subs
 const { values: opts } = parseArgs({
   options: {
     skill: { type: 'string' },
+    suite: { type: 'string' },
     variant: { type: 'string' },
     access: { type: 'string' },
     'skill-ref': { type: 'string' },
@@ -70,7 +74,13 @@ if (!['api', 'subscription'].includes(opts.access)) fail('--access must be api o
 if (opts.model === opts['judge-model']) fail('the judge must be a different model from the agent under test');
 
 const evalRoot = join(repoRoot, 'skill-evals', SKILL);
-let cases = JSON.parse(readFileSync(join(evalRoot, 'evals.json'), 'utf8')).evals.map((e) => ({
+const historyPath = join(evalRoot, 'regression', 'cell-history.json');
+const history = opts.suite ? loadHistory(historyPath) : null;
+if (opts.suite && !history.suites[opts.suite]) fail(`no suite ${opts.suite} in ${historyPath}`);
+const caseSource = opts.suite
+  ? readFileSync(join(evalRoot, 'regression', opts.suite, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l))
+  : JSON.parse(readFileSync(join(evalRoot, 'evals.json'), 'utf8')).evals;
+let cases = caseSource.map((e) => ({
   id: `${SKILL}-${e.id}`, tags: [e.split ?? (e.new ? 'new' : 'existing')], prompt: e.prompt, expectations: e.expectations,
   fixture: e.fixture ?? e.files?.[0]?.match(/^fixtures\/([^/]+)\//)?.[1] ?? null,
 }));
@@ -80,7 +90,10 @@ if (opts.cases) {
   cases = cases.filter((c) => wanted.includes(c.id));
 }
 if (opts.split) cases = cases.filter((c) => c.tags[0] === opts.split);
-const reps = Number(opts.reps);
+// A regression run takes its tiers from the cell history and runs at the reps its level was reached at.
+const tiers = history ? planTiers(history, opts.suite, opts.model) : null;
+if (tiers) cases = cases.filter((c) => tiers.runsCase(c.id));
+const reps = history ? history.suites[opts.suite].reps : Number(opts.reps);
 const workers = Number(opts.workers);
 const timeoutMs = Number(opts['timeout-s']) * 1000;
 
@@ -324,6 +337,8 @@ async function runCase({ c, rep }) {
   const judged = judgeRun(c, turns, changes, { env: childEnv, model: opts['judge-model'], about });
   if (judged.error) return errorRow('judge', judged.error, t.info);
   const scored = scoreJudged(judged);
+  // One cell per expectation, so the regression suite's history can count each.
+  judged.verdicts.forEach((v, i) => { scored.grade[`e${i}`] = v.met ? 1 : 0; });
   appendFileSync(resultsFile, `${JSON.stringify({
     prompt_id: c.id, rep, prompt: c.prompt, tags: c.tags, grade: scored.grade, status: 'ok', stop_reason: t.info.resultSubtype,
     model: t.info.model, usage: t.info.usage, turns: t.info.turns, latency_s: latency,
@@ -347,3 +362,11 @@ await Promise.all(Array.from({ length: Math.min(workers, todo.length) }, async (
 }));
 console.log(`results: ${resultsFile}`);
 report();
+if (history) {
+  // Count only rows this invocation scored, then record the models once every owed run has a row.
+  for (const row of readRows(resultsFile)) if (!done.has(`${row.prompt_id}#${row.rep}`)) recordRow(history, opts.suite, row, { lowerRuns: tiers.lowerRuns });
+  const scoredNow = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`));
+  const complete = finishRun(history, opts.suite, { model: opts.model, lowerRuns: tiers.lowerRuns, scored: scoredNow });
+  saveHistory(historyPath, history);
+  console.log(`cell history ${complete ? 'updated; run complete, models recorded' : 'updated; run incomplete, models unchanged'}`);
+}
