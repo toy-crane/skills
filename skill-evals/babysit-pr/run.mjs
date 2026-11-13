@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Runner for the PR-flow skills' evals.json: babysit-pr, and the implement,
-// merge, and pr cases its spec (docs/specs/pr-flow-babysit/) must not regress.
+// Runner for the PR-flow skills' evals.json: babysit-pr and self-ship, and the
+// implement, merge, and pr cases their specs (docs/specs/pr-flow-babysit/,
+// docs/specs/pr-flow-self-ship/) must not regress.
 // Each case runs `claude -p` in a disposable git workspace outside any .claude/
 // folder. A case whose fixture holds a case.json gets a replayed GitHub: a
 // local bare remote behind https://github.com/<repo>.git and replay/gh on PATH,
@@ -81,7 +82,9 @@ const caseSource = opts.suite
   ? readFileSync(join(evalRoot, 'regression', opts.suite, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l))
   : JSON.parse(readFileSync(join(evalRoot, 'evals.json'), 'utf8')).evals;
 let cases = caseSource.map((e) => ({
-  id: `${SKILL}-${e.id}`, tags: [e.split ?? (e.new ? 'new' : 'existing')], prompt: e.prompt, expectations: e.expectations,
+  id: `${SKILL}-${e.id}`, tags: [e.split ?? (e.new ? 'new' : 'existing')],
+  // A new skill's baseline takes the same request in words, since its command does not exist without the skill.
+  prompt: opts['no-skill'] && e.baseline_prompt ? e.baseline_prompt : e.prompt, expectations: e.expectations,
   fixture: e.fixture ?? e.files?.[0]?.match(/^fixtures\/([^/]+)\//)?.[1] ?? null,
 }));
 if (opts.cases) {
@@ -181,7 +184,7 @@ if (!existsSync(summaryFile)) {
 if (!existsSync(stateFile)) {
   const metrics = [{ id: 'pass', kind: 'float', label: 'Every expectation met' }, { id: 'expectations_met', kind: 'float', label: 'Share of expectations met' }];
   writeFileSync(stateFile, `${JSON.stringify({
-    goal: `${SKILL} meets docs/specs/pr-flow-babysit/ criterion 6`, access: opts.access, model: opts.model, judge_model: opts['judge-model'], metrics,
+    goal: `${SKILL} meets its PR-flow spec's eval criterion`, access: opts.access, model: opts.model, judge_model: opts['judge-model'], metrics,
   }, null, 2)}\n`);
 }
 
@@ -197,15 +200,19 @@ function prepareWorkspace(c, id) {
     const repoDir = resolve(fixtureDir, kase.repo_fixture ?? '../repo');
     // main holds the repository without the PR's change; the PR branch adds it.
     sh(ws, 'git', 'init', '-q', '-b', kase.pr?.base ?? 'main');
-    cpSync(repoDir, ws, { recursive: true, filter: (src) => !/\/(src|test|docs)(\/|$)/.test(src.slice(repoDir.length)) });
+    // base_has_all: main already holds the whole repository and any overlay, and the work branch starts empty.
+    cpSync(repoDir, ws, { recursive: true, filter: (src) => kase.base_has_all || !/\/(src|test|docs)(\/|$)/.test(src.slice(repoDir.length)) });
+    if (kase.base_has_all && kase.overlay) cpSync(join(repoDir, '../overlays', kase.overlay), ws, { recursive: true });
     sh(ws, 'git', 'add', '-A');
-    sh(ws, 'git', '-c', 'user.name=toy-crane', '-c', 'user.email=toy-crane@example.com', 'commit', '-q', '-m', 'chore: start prototype-compare');
+    sh(ws, 'git', '-c', 'user.name=toy-crane', '-c', 'user.email=toy-crane@example.com', 'commit', '-q', '-m', `chore: start ${(kase.repo ?? 'toy-crane/prototype-compare').split('/')[1]}`);
     if (kase.pr) {
       sh(ws, 'git', 'checkout', '-q', '-b', kase.pr.head);
-      cpSync(repoDir, ws, { recursive: true });
-      if (kase.overlay) cpSync(join(repoDir, '../overlays', kase.overlay), ws, { recursive: true });
-      sh(ws, 'git', 'add', '-A');
-      sh(ws, 'git', '-c', 'user.name=toy-crane', '-c', 'user.email=toy-crane@example.com', 'commit', '-q', '-m', kase.pr.commit ?? kase.pr.title);
+      if (!kase.base_has_all) {
+        cpSync(repoDir, ws, { recursive: true });
+        if (kase.overlay) cpSync(join(repoDir, '../overlays', kase.overlay), ws, { recursive: true });
+        sh(ws, 'git', 'add', '-A');
+        sh(ws, 'git', '-c', 'user.name=toy-crane', '-c', 'user.email=toy-crane@example.com', 'commit', '-q', '-m', kase.pr.commit ?? kase.pr.title);
+      }
     }
     if (kase.remote !== false) {
       const bare = mkdtempSync(join(tmpdir(), `${SKILL}-remote-`));

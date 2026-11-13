@@ -1,0 +1,61 @@
+{
+ "repo": "toy-crane/orders",
+ "repo_fixture": "../repo",
+ "base_has_all": true,
+ "viewer": "toy-crane",
+ "pr": {
+  "number": 41,
+  "title": "feat(orders): download the order list as CSV",
+  "body": "",
+  "base": "main",
+  "head": "feat/csv-export",
+  "author": "toy-crane"
+ },
+ "advance": "create",
+ "stages": {
+  "before": null,
+  "after": {
+   "head": "$HEAD",
+   "mergeable": "MERGEABLE",
+   "checks": [
+    {
+     "name": "test",
+     "workflow": "ci",
+     "required": true,
+     "runId": 301,
+     "conclusion": "SUCCESS",
+     "log": "> node --test test/*.test.js\nℹ pass 4\nℹ fail 0"
+    },
+    {
+     "name": "codex-review-gate",
+     "workflow": "codex-review-gate",
+     "required": true,
+     "runId": 302,
+     "conclusion": "SUCCESS",
+     "log": "Codex reviewed $HEAD: no findings."
+    }
+   ],
+   "reviews": [
+    {
+     "id": "PRR_1",
+     "author": "chatgpt-codex-connector",
+     "state": "COMMENTED",
+     "commit": "$HEAD",
+     "at": "2026-11-13T10:20:00Z",
+     "body": "Codex Review: Didn't find any major issues. 👍\n\n**Reviewed commit:** `$HEAD`"
+    }
+   ],
+   "threads": [],
+   "comments": [
+    {
+     "id": "IC_summary",
+     "dbId": 5001,
+     "author": "chatgpt-codex-connector",
+     "at": "2026-11-13T10:20:00Z",
+     "body": "<!-- codex-pull-request-review-summary -->\n## Codex Review Summary\n| 📝 **Code Review** | ✅ **Completed** | `$HEAD` | PR opened |"
+    }
+   ]
+  }
+ },
+ "overlay": "stale-meaning"
+}
