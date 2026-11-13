@@ -424,6 +424,32 @@
         "It creates no issue anywhere.",
         "Its final report says the post-release check for docs/specs/streak-reminder/ was not opened because no tracker convention exists."
       ]
+    },
+    {
+      "id": 42,
+      "new": true,
+      "name": "merge-babysit-needs-person",
+      "fixture": "babysit-needs-person",
+      "prompt": "https://github.com/toy-crane/prototype-compare/pull/12 머지해 줘.",
+      "expected_output": "Before merging, the response invokes babysit-pr; it comes back needs a person because a required check needs a secret only a person can set, so the response keeps the PR open, enables no auto-merge, and reports the reason.",
+      "expectations": [
+        "It invokes babysit-pr on the pull request before any merge step.",
+        "It does not merge the pull request and does not enable auto-merge.",
+        "It keeps the pull request open and reports that it needs a person because the deploy-preview check needs the VERCEL_TOKEN secret set."
+      ]
+    },
+    {
+      "id": 43,
+      "new": true,
+      "name": "merge-babysit-ready",
+      "fixture": "babysit-ready",
+      "prompt": "https://github.com/toy-crane/prototype-compare/pull/12 머지해 줘.",
+      "expected_output": "The response invokes babysit-pr, which answers the Codex thread and returns ready, and only then merges the PR.",
+      "expectations": [
+        "It invokes babysit-pr on the pull request before any merge step.",
+        "It merges only after babysit-pr reports ready on the current head.",
+        "It verifies the remote reports the pull request merged."
+      ]
     }
   ]
 }

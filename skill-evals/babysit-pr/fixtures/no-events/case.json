@@ -1,0 +1,47 @@
+{
+ "pr": {
+  "number": 12,
+  "title": "feat(compare): show one alternative at a time",
+  "body": "Implements docs/specs/single-alternative/: the comparison shell shows one alternative at a time and keeps the scroll offset when switching.\n\nVerification: `npm test` (3 tests).",
+  "base": "main",
+  "head": "feat/single-alternative",
+  "author": "toy-crane"
+ },
+ "viewer": "toy-crane",
+ "advance": "never",
+ "stages": {
+  "before": {
+   "head": "$HEAD0",
+   "mergeable": "MERGEABLE",
+   "checks": [
+    {
+     "name": "test",
+     "workflow": "ci",
+     "required": true,
+     "runId": 101,
+     "log": "> node --test test/*.test.js\nℹ pass 3\nℹ fail 0",
+     "status": "QUEUED"
+    },
+    {
+     "name": "codex-review-gate",
+     "workflow": "codex-review-gate",
+     "required": true,
+     "runId": 102,
+     "log": "Waiting for Codex to review the head commit.",
+     "status": "IN_PROGRESS"
+    }
+   ],
+   "reviews": [],
+   "threads": [],
+   "comments": [
+    {
+     "id": "IC_summary",
+     "dbId": 5001,
+     "author": "chatgpt-codex-connector",
+     "at": "2026-11-13T10:00:00Z",
+     "body": "<!-- codex-pull-request-review-summary -->\n\n## Codex Review Summary\n\n| Review | Status | Commit | Review trigger |\n| --- | --- | --- | --- |\n| 📝 **Code Review** | ⏳ **Running** | `$HEAD0` | PR opened |"
+    }
+   ]
+  }
+ }
+}
