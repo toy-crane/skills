@@ -1,0 +1,177 @@
+#!/usr/bin/env node
+// A stand-in for the GitHub CLI that replays one pull request's history.
+// The workspace's .replay/case.json holds the PR and its stages; reads serve
+// the current stage, and every write (comment, reply, resolve, rerun, review,
+// merge, edit) is appended to .replay/actions.jsonl for the grader. The stage
+// moves from "before" to "after" once the case's advance condition holds:
+//   push   the remote PR branch moved past the original head
+//   reply  any write was recorded
+//   rerun  a check rerun was recorded
+//   never  the PR never changes
+import { execFileSync, spawnSync } from 'node:child_process';
+import { appendFileSync, existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+const root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
+const dir = join(root, '.replay');
+const kase = JSON.parse(readFileSync(join(dir, 'case.json'), 'utf8'));
+const args = process.argv.slice(2);
+const pr = kase.pr;
+const repo = kase.repo ?? 'toy-crane/prototype-compare';
+const url = `https://github.com/${repo}/pull/${pr.number}`;
+const head0 = readFileSync(join(dir, 'head0'), 'utf8').trim();
+const git = (...a) => spawnSync('git', ['-C', root, ...a], { encoding: 'utf8' }).stdout.trim();
+
+function actions() {
+  const f = join(dir, 'actions.jsonl');
+  return existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : [];
+}
+function record(kind, extra = {}) {
+  appendFileSync(join(dir, 'actions.jsonl'), `${JSON.stringify({ kind, argv: args, ...extra, at: new Date().toISOString() })}\n`);
+}
+function stageName() {
+  const pushed = git('ls-remote', 'origin', `refs/heads/${pr.head}`).split(/\s/)[0];
+  const moved = pushed && pushed !== head0;
+  const done = actions();
+  const hit = {
+    push: moved,
+    reply: done.length > 0,
+    create: done.some((a) => a.kind === 'pr-create'),
+    rerun: done.some((a) => a.kind === 'rerun'),
+    never: false,
+  }[kase.advance ?? 'never'];
+  return hit && kase.stages.after ? 'after' : 'before';
+}
+const sub = (v) => JSON.parse(JSON.stringify(v).replaceAll('$HEAD0', head0).replaceAll('$HEAD', git('ls-remote', 'origin', `refs/heads/${pr.head}`).split(/\s/)[0] || head0));
+const merged = actions().some((a) => a.kind === 'pr-merge');
+// A null stage means the branch has no pull request yet.
+const rawStage = kase.stages[stageName()];
+if (rawStage === null) {
+  const [b0, b1] = args;
+  if (b0 === 'pr' && b1 === 'create') {
+    record('pr-create', { title: ['--title', '-t'].map((f) => (args.includes(f) ? args[args.indexOf(f) + 1] : undefined)).find(Boolean), draft: args.includes('--draft') || args.includes('-d') });
+    console.log(url);
+    process.exit(0);
+  }
+  if (b0 === 'pr' && b1 === 'list') { console.log('[]'); process.exit(0); }
+  if (b0 === 'pr' && ['view', 'checks'].includes(b1)) { console.error(`no pull requests found for branch "${pr.head}"`); process.exit(1); }
+  if (b0 === 'auth') { console.log('github.com\n  ✓ Logged in to github.com account toy-crane'); process.exit(0); }
+}
+const stage = sub(rawStage ?? kase.stages.after);
+const login = kase.viewer ?? 'toy-crane';
+const required = stage.checks.filter((c) => c.required).map((c) => c.name);
+
+const checkRun = (c) => ({
+  __typename: 'CheckRun', name: c.name, status: c.status ?? 'COMPLETED', conclusion: c.status && c.status !== 'COMPLETED' ? null : c.conclusion,
+  workflowName: c.workflow ?? c.name, detailsUrl: `https://github.com/${repo}/actions/runs/${c.runId ?? 1}/job/${c.runId ?? 1}`,
+  databaseId: c.runId ?? 1, isRequired: !!c.required,
+});
+const commentNode = (c) => ({ id: c.id, databaseId: c.dbId ?? 0, body: c.body, author: { login: c.author }, createdAt: c.at, updatedAt: c.at, url: `${url}#${c.id}`, commit: c.commit ? { oid: c.commit } : undefined });
+const mergeState = () => {
+  if (stage.mergeable === 'CONFLICTING') return 'DIRTY';
+  const bad = stage.checks.some((c) => c.required && (c.status && c.status !== 'COMPLETED' || c.conclusion !== 'SUCCESS'));
+  const open = stage.threads.some((t) => !t.resolved);
+  return bad || open ? 'BLOCKED' : 'CLEAN';
+};
+const prObject = () => ({
+  number: pr.number, title: createdTitle() ?? pr.title, body: pr.body, url, state: merged ? 'MERGED' : 'OPEN', isDraft: false, mergedAt: merged ? '2026-11-13T11:00:00Z' : null,
+  headRefName: pr.head, baseRefName: pr.base, headRefOid: stage.head, author: { login: pr.author ?? login },
+  mergeable: stage.mergeable ?? 'MERGEABLE', mergeStateStatus: mergeState(), reviewDecision: '',
+  statusCheckRollup: stage.checks.map(checkRun),
+  reviews: stage.reviews.map((r) => ({ id: r.id, author: { login: r.author }, state: r.state, body: r.body, submittedAt: r.at, commit: { oid: r.commit } })),
+  latestReviews: stage.reviews.map((r) => ({ author: { login: r.author }, state: r.state, commit: { oid: r.commit } })),
+  comments: stage.comments.map(commentNode),
+  commits: [{ oid: stage.head }],
+});
+function createdTitle() { return actions().find((a) => a.kind === 'pr-create')?.title; }
+const graphqlPr = () => ({
+  ...prObject(),
+  commits: { nodes: [{ commit: { oid: stage.head, statusCheckRollup: { state: mergeState() === 'CLEAN' ? 'SUCCESS' : 'PENDING', contexts: { nodes: stage.checks.map(checkRun) } } } }] },
+  reviews: { nodes: stage.reviews.map((r) => ({ id: r.id, state: r.state, body: r.body, author: { login: r.author }, submittedAt: r.at, commit: { oid: r.commit } })) },
+  reviewThreads: {
+    nodes: stage.threads.map((t) => ({
+      id: t.id, isResolved: !!t.resolved, isOutdated: !!t.outdated, path: t.path, line: t.line, originalLine: t.line,
+      comments: { totalCount: t.comments.length, nodes: t.comments.map(commentNode) },
+    })),
+  },
+  comments: { nodes: stage.comments.map(commentNode) },
+});
+const restReviewComments = () => stage.threads.flatMap((t) => t.comments.map((c, i) => ({
+  id: c.dbId, node_id: c.id, body: c.body, path: t.path, line: t.line, user: { login: c.author }, created_at: c.at,
+  commit_id: c.commit ?? stage.head, in_reply_to_id: i ? t.comments[0].dbId : undefined, pull_request_review_id: 1,
+})));
+
+function emit(value, jqExpr) {
+  const text = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+  if (!jqExpr) return process.stdout.write(text.endsWith('\n') ? text : `${text}\n`);
+  const r = spawnSync('jq', ['-r', jqExpr], { input: text, encoding: 'utf8' });
+  process.stdout.write(r.stdout);
+  if (r.status) { process.stderr.write(r.stderr); process.exit(r.status); }
+}
+const flag = (name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : undefined; };
+const jq = flag('--jq') ?? flag('-q');
+const pick = (obj, fields) => (fields ? Object.fromEntries(fields.split(',').map((f) => [f, obj[f]])) : obj);
+
+const [a0, a1] = args;
+if (a0 === 'auth') { console.log(`github.com\n  ✓ Logged in to github.com account ${login}`); process.exit(0); }
+if (a0 === 'repo' && a1 === 'view') { emit(pick({ nameWithOwner: repo, url: `https://github.com/${repo}`, defaultBranchRef: { name: pr.base } }, flag('--json')), jq); process.exit(0); }
+if (a0 === 'pr' && a1 === 'view') { emit(pick(prObject(), flag('--json')), jq); process.exit(0); }
+if (a0 === 'pr' && a1 === 'list') { emit([pick(prObject(), flag('--json'))], jq); process.exit(0); }
+if (a0 === 'pr' && a1 === 'diff') { console.log(git('diff', `origin/${pr.base}...HEAD`)); process.exit(0); }
+if (a0 === 'pr' && a1 === 'checks') {
+  let rows = stage.checks;
+  if (args.includes('--required')) rows = rows.filter((c) => c.required);
+  const bucket = (c) => (c.status && c.status !== 'COMPLETED' ? 'pending' : c.conclusion === 'SUCCESS' ? 'pass' : c.conclusion === 'SKIPPED' ? 'skipping' : 'fail');
+  const link = (c) => `https://github.com/${repo}/actions/runs/${c.runId ?? 1}/job/${c.runId ?? 1}`;
+  if (flag('--json')) emit(rows.map((c) => pick({ name: c.name, state: (c.status && c.status !== 'COMPLETED') ? c.status : c.conclusion, bucket: bucket(c), link: link(c), workflow: c.workflow ?? c.name, description: '' }, flag('--json'))), jq);
+  else console.log(rows.map((c) => `${c.name}\t${bucket(c)}\t1m\t${link(c)}`).join('\n'));
+  process.exit(rows.some((c) => bucket(c) === 'fail') ? 1 : rows.some((c) => bucket(c) === 'pending') ? 8 : 0);
+}
+if (a0 === 'pr' && a1 === 'create') { record('pr-create', { title: flag('--title') ?? flag('-t'), draft: args.includes('--draft') || args.includes('-d') }); console.log(url); process.exit(0); }
+if (a0 === 'pr') { record(`pr-${a1}`, { body: flag('--body') ?? flag('-b'), auto: args.includes('--auto') }); console.log(url); process.exit(0); }
+if (a0 === 'run' && a1 === 'view') {
+  const id = String(args[2]);
+  const c = stage.checks.find((x) => String(x.runId) === id || String(x.runId) === flag('--job')) ?? stage.checks.find((x) => x.log);
+  if (args.includes('--log') || args.includes('--log-failed')) console.log(c?.log ?? '');
+  else emit(pick({ databaseId: c?.runId, name: c?.name, conclusion: c?.conclusion, status: (c?.status ?? 'COMPLETED').toLowerCase(), jobs: [{ name: c?.name, conclusion: c?.conclusion, databaseId: c?.runId }] }, flag('--json')), jq);
+  process.exit(0);
+}
+if (a0 === 'run' && a1 === 'rerun') { record('rerun'); console.log('✓ Requested rerun'); process.exit(0); }
+if (a0 === 'run' && a1 === 'list') { emit(stage.checks.map((c) => pick({ databaseId: c.runId, name: c.name, workflowName: c.workflow ?? c.name, headSha: stage.head, status: (c.status ?? 'COMPLETED').toLowerCase(), conclusion: (c.conclusion ?? '').toLowerCase() }, flag('--json'))), jq); process.exit(0); }
+if (a0 === 'api') {
+  const path = args.slice(1).find((x) => !x.startsWith('-') && !args[args.indexOf(x) - 1]?.match(/^-(f|F|X|H|q|-jq|-method|-field|-raw-field|-header|-input)$/));
+  const method = (flag('-X') ?? flag('--method') ?? (args.some((x) => /^(-f|-F|--field|--raw-field|--input)$/.test(x)) && path !== 'graphql' ? 'POST' : 'GET')).toUpperCase();
+  if (path === 'graphql') {
+    const query = args.map((x, i) => (/^(-f|-F|--raw-field|--field)$/.test(args[i - 1] ?? '') && x.startsWith('query=') ? x.slice(6) : '')).join('');
+    if (/^\s*mutation/.test(query) || /\bmutation\b/.test(query)) {
+      const kind = /resolveReviewThread/.test(query) ? 'resolve-thread' : /addPullRequestReviewThreadReply|addPullRequestReviewComment/.test(query) ? 'reply' : /addComment/.test(query) ? 'comment' : 'mutation';
+      record(kind, { query, fields: args });
+      emit({ data: { resolveReviewThread: { thread: { id: 'x', isResolved: true } }, addPullRequestReviewThreadReply: { comment: { id: 'new', url } }, addComment: { commentEdge: { node: { id: 'new', url } } } } }, jq);
+      process.exit(0);
+    }
+    emit({ data: { viewer: { login }, repository: { pullRequest: graphqlPr(), defaultBranchRef: { name: pr.base } } } }, jq);
+    process.exit(0);
+  }
+  if (method !== 'GET') {
+    const kind = /\/rerun|rerun-failed-jobs/.test(path) ? 'rerun' : /pulls\/\d+\/comments\/\d+\/replies|pulls\/\d+\/comments/.test(path) ? 'reply' : /issues\/\d+\/comments/.test(path) ? 'comment' : /merge/.test(path) ? 'pr-merge' : 'api-write';
+    record(kind, { path, method, fields: args });
+    emit({ id: 999, html_url: url }, jq);
+    process.exit(0);
+  }
+  const p = path.replace(/^\//, '');
+  let out = {};
+  if (p === 'user') out = { login };
+  else if (/pulls\/\d+\/comments$/.test(p)) out = restReviewComments();
+  else if (/pulls\/\d+\/reviews$/.test(p)) out = stage.reviews.map((r) => ({ id: 1, node_id: r.id, user: { login: r.author }, state: r.state, body: r.body, commit_id: r.commit, submitted_at: r.at }));
+  else if (/issues\/\d+\/comments$/.test(p)) out = stage.comments.map((c) => ({ id: c.dbId, node_id: c.id, user: { login: c.author }, body: c.body, created_at: c.at }));
+  else if (/pulls\/\d+$/.test(p)) out = { number: pr.number, title: pr.title, body: pr.body, state: 'open', html_url: url, head: { ref: pr.head, sha: stage.head }, base: { ref: pr.base }, mergeable: stage.mergeable !== 'CONFLICTING', mergeable_state: mergeState().toLowerCase() };
+  else if (/branches\/[^/]+\/protection$/.test(p)) out = { required_status_checks: { strict: false, contexts: required, checks: required.map((context) => ({ context })) }, required_conversation_resolution: { enabled: true }, required_pull_request_reviews: { required_approving_review_count: 0 } };
+  else if (/rules\/branches\//.test(p)) out = [{ type: 'pull_request', parameters: { required_approving_review_count: 0, required_review_thread_resolution: true } }, { type: 'required_status_checks', parameters: { required_status_checks: required.map((context) => ({ context })) } }];
+  else if (/commits\/[^/]+\/check-runs$/.test(p)) out = { total_count: stage.checks.length, check_runs: stage.checks.map((c) => ({ id: c.runId, name: c.name, status: (c.status ?? 'COMPLETED').toLowerCase(), conclusion: c.conclusion ? c.conclusion.toLowerCase() : null, head_sha: stage.head })) };
+  else if (/actions\/jobs\/\d+\/logs$/.test(p)) out = stage.checks.find((c) => p.includes(String(c.runId)))?.log ?? '';
+  else if (/^repos\/[^/]+\/[^/]+$/.test(p)) out = { full_name: repo, default_branch: pr.base, allow_auto_merge: true };
+  emit(out, jq);
+  process.exit(0);
+}
+record('other');
+process.exit(0);

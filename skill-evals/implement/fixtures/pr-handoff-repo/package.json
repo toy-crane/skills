@@ -1,0 +1,9 @@
+{
+  "name": "orders",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  }
+}
