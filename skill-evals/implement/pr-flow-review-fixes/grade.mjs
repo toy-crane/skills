@@ -123,11 +123,14 @@ export function scoreRun(testCase, judged, endState) {
   const testsPass = endState.tests ? endState.tests.passed : true;
   const problems = judged.verdicts.filter((v) => !v.met).map((v) => `${v.text} — ${v.evidence}`);
   if (!testsPass) problems.push('the test suite fails after the run');
+  // One field per expectation, so the regression suite's cell history can keep a cell per check.
+  const perExpectation = Object.fromEntries(judged.verdicts.map((v, i) => [`expectation-${i}`, v.met ? 1 : 0]));
   return {
     grade: {
       pass: met === judged.verdicts.length && testsPass ? 1 : 0,
       expectation_rate: met / judged.verdicts.length,
       tests_pass: testsPass ? 1 : 0,
+      ...perExpectation,
     },
     problems,
   };
