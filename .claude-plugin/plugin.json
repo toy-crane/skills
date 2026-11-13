@@ -1,6 +1,6 @@
 {
   "name": "toycrane-skills",
-  "version": "0.84.0",
+  "version": "0.84.1",
   "description": "Skills for product definition, shaping, implementation, runtime verification, project skill updates with cross-client agent synchronization, review, session log review, project knowledge, test-first development, LLM evals and their regression-suite audit, safe Git delivery, and pull request babysitting through CI and review bots, and unattended spec-to-merge runs.",
   "author": {
     "name": "toy-crane",
