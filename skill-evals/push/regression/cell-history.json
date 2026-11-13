@@ -1,0 +1,509 @@
+{
+ "version": 2,
+ "suites": {
+  "skill-regression-push": {
+   "reps": 2,
+   "last_run_model": "claude-sonnet-5-5",
+   "lower_tier_model": "claude-sonnet-5-5",
+   "checks": {
+    "expectation-0": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "expectation-1": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "expectation-2": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "end-state": {
+     "grader": "code"
+    }
+   },
+   "cells": {
+    "first-push-search": {
+     "expectation-0": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "first-push-settings": {
+     "expectation-0": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "dirty-ui-wip": {
+     "expectation-0": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "dirty-staged-config": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "dirty-unstated": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "remote-ahead-search": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "remote-ahead-conflict": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "remote-ahead-bot": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "rewritten-rebase-export": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "rewritten-amend": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "rewritten-rebase-stats": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "stale-lease-export": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "stale-lease-checkout": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "stale-lease-bot": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "detached-payment": {
+     "expectation-0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "detached-search-debounce": {
+     "expectation-0": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-1": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "expectation-2": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "end-state": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    }
+   }
+  }
+ }
+}

@@ -37,8 +37,19 @@ else emit({ type: 'result', subtype: 'success', is_error: false, result: 'done',
 
 const rows = (file) => (fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []);
 
-test('an API-error trial is not graded, a rerun fills only it, and a third run reruns nothing', () => {
+// The runner works on a copy of the eval root, so the committed cell history is never touched.
+function copyEvalRoot(dir) {
+  const root = path.join(dir, 'repo');
+  fs.cpSync(here, path.join(root, 'skill-evals/push'), { recursive: true });
+  fs.cpSync(path.join(here, '../audit-evals/history.mjs'), path.join(root, 'skill-evals/audit-evals/history.mjs'));
+  fs.mkdirSync(path.join(root, '.claude/skills'), { recursive: true });
+  fs.symlinkSync(fs.realpathSync(path.join(here, '../../.claude/skills/push')), path.join(root, '.claude/skills/push'));
+  return path.join(root, 'skill-evals/push');
+}
+
+test('an API-error trial is not graded and stays out of the cell history, a rerun fills only it, and a third run reruns nothing', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'push-runner-'));
+  const evalRoot = copyEvalRoot(dir);
   const bin = path.join(dir, 'bin');
   fs.mkdirSync(bin);
   fs.writeFileSync(path.join(bin, 'claude'), FAKE_CLAUDE, { mode: 0o755 });
@@ -47,21 +58,27 @@ test('an API-error trial is not graded, a rerun fills only it, and a third run r
   const env = { ...process.env, PATH: `${bin}:${process.env.PATH}`, FAKE_CLAUDE_LOG: log, FAKE_CLAUDE_COUNTER: path.join(dir, 'n') };
   const run = () => {
     fs.writeFileSync(log, '');
-    const r = spawnSync('node', [path.join(here, 'run.mjs'), '--variant', 'v1', '--access', 'subscription', '--flow', flow,
-      '--cases', 'first-push-search', '--reps', '2', '--workers', '1'], { encoding: 'utf8', env });
+    const r = spawnSync('node', [path.join(evalRoot, 'run.mjs'), '--variant', 'v1', '--access', 'subscription', '--flow', flow,
+      '--cases', 'first-push-search', '--workers', '1'], { encoding: 'utf8', env });
     assert.equal(r.status, 0, `${r.stdout}\n${r.stderr}`);
     return fs.readFileSync(log, 'utf8').split('\n').filter(Boolean);
   };
+  const historyPath = path.join(evalRoot, 'regression/cell-history.json');
+  const cell = () => JSON.parse(fs.readFileSync(historyPath, 'utf8')).suites['skill-regression-push'].cells['first-push-search']['end-state'];
+  const before = cell();
   const results = path.join(flow, 'v1', 'results.jsonl');
   const errors = path.join(flow, 'v1', 'errors.jsonl');
 
   assert.deepEqual(run(), ['agent-error', 'agent-ok', 'judge']);
   assert.deepEqual(rows(results).map((r) => r.rep), [1], 'only the answered rep is scored');
   assert.deepEqual(rows(errors).map((e) => [e.rep, e.class]), [[0, 'api-error']]);
+  assert.equal(cell().trials, before.trials + 1, 'the unanswered trial does not enter the cell history');
 
   assert.deepEqual(run(), ['agent-ok', 'judge'], 'the rerun runs only the unanswered rep');
   assert.deepEqual(rows(results).map((r) => r.rep).sort(), [0, 1]);
+  assert.equal(cell().trials, before.trials + 2);
 
   assert.deepEqual(run(), [], 'scored (variant, case, rep) rows are never rerun');
+  assert.equal(cell().trials, before.trials + 2);
   fs.rmSync(dir, { recursive: true, force: true });
 });
