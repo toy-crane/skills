@@ -128,7 +128,7 @@ if (opts.access === 'api') {
   // Like merge's runner, read the key from the untracked .env.local when the environment has none.
   if (!childEnv.ANTHROPIC_API_KEY && existsSync(join(repoRoot, '.env.local'))) {
     const m = readFileSync(join(repoRoot, '.env.local'), 'utf8').match(/^\s*ANTHROPIC_API_KEY\s*=\s*['"]?([^'"\n]+)/m);
-    if (m) childEnv.ANTHROPIC_API_KEY = m[1];
+    if (m) childEnv.ANTHROPIC_API_KEY = m[1].trim();
   }
   if (!childEnv.ANTHROPIC_API_KEY) { console.error('API access needs ANTHROPIC_API_KEY in the environment or .env.local.'); process.exit(3); }
 } else {
@@ -209,7 +209,7 @@ function prepareWorkspace(c, id) {
     cpSync(repoDir, ws, { recursive: true, filter: (src) => kase.base_has_all || !/\/(src|test|docs)(\/|$)/.test(src.slice(repoDir.length)) });
     if (kase.base_has_all && kase.overlay) cpSync(join(repoDir, '../overlays', kase.overlay), ws, { recursive: true });
     sh(ws, 'git', 'add', '-A');
-    sh(ws, 'git', '-c', 'user.name=toy-crane', '-c', 'user.email=toy-crane@example.com', 'commit', '-q', '-m', `chore: start ${(kase.repo ?? 'toy-crane/prototype-compare').split('/')[1]}`);
+    sh(ws, 'git', '-c', 'user.name=toy-crane', '-c', 'user.email=toy-crane@example.com', 'commit', '-q', '-m', 'chore: start prototype-compare');
     if (kase.pr) {
       sh(ws, 'git', 'checkout', '-q', '-b', kase.pr.head);
       if (!kase.base_has_all) {

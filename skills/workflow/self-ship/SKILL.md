@@ -60,7 +60,8 @@ every question to the user in one go:
    yourself; name every item still left for a person, with its done condition.
 3. When the repository's `AGENTS.md` or `CLAUDE.md` carries an
    `## Issue tracker` section, claim this folder's issue as that convention
-   says.
+   says. Tell `implement` that this run holds the claim; this invocation is
+   the user's explicit request to resume that issue.
 
 Start implementing only once these are settled. An unanswered question here
 ends the run before any source change.
@@ -71,7 +72,9 @@ Invoke `implement` with the folder and the signal **no person is present**.
 It hands back either a blocker, or a ready-for-review pull request with the
 end state of `babysit-pr`: ready, or needs a person. On ready, invoke `merge`
 on that pull request with the same signal. It hands back the verified merge
-and the cleanup result, or the reason it left the pull request open.
+and the cleanup result, or the reason it left the pull request open. On a
+blocker, needs a person, or a pull request `merge` left open, ask as below and
+do not merge.
 
 When the spec and reality part ways during the run, make the correction that
 keeps the approved meaning, record it as a decision taken for the user, and

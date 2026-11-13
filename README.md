@@ -84,7 +84,7 @@ agents in Claude Code and Codex.
 
 ## The pipeline
 
-Eight skills cover product definition through implementation.
+Nine skills cover product definition through implementation.
 
 ```mermaid
 flowchart LR
