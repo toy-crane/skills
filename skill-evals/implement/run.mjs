@@ -66,9 +66,18 @@ const SKILLS = ['implement', 'tdd', 'llm-evals', 'babysit-specs', 'project-knowl
 let cases;
 let suiteDir;
 if (opts.suite === 'evals') {
-  // The skill's existing behavior cases, with their expectations unchanged.
+  // The skill's existing behavior cases, with their expectations unchanged. A case with a
+  // named fixture needs a replayed GitHub and a local remote, which only the PR-flow runner
+  // builds, so it runs there: node skill-evals/babysit-pr/run.mjs --skill implement.
   suiteDir = here;
-  cases = JSON.parse(readFileSync(join(here, 'evals.json'), 'utf8')).evals.map((e) => ({
+  const all = JSON.parse(readFileSync(join(here, 'evals.json'), 'utf8')).evals;
+  const elsewhere = all.filter((e) => e.fixture).map((e) => `evals-${e.id}`);
+  if (elsewhere.length) {
+    const asked = opts.cases?.split(',').map((c) => c.trim()).filter((id) => elsewhere.includes(id)) ?? [];
+    if (asked.length) fail(`${asked.join(', ')} need a named fixture; run them with node skill-evals/babysit-pr/run.mjs --skill implement`);
+    console.log(`skipping ${elsewhere.join(', ')}: named fixtures run with skill-evals/babysit-pr/run.mjs --skill implement`);
+  }
+  cases = all.filter((e) => !e.fixture).map((e) => ({
     id: `evals-${e.id}`, kind: 'regression', tags: ['evals'], prompt: e.prompt, expectations: e.expectations, files: e.files, skills: SKILLS,
   }));
 } else {
