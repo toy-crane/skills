@@ -314,7 +314,7 @@ async function runCase({ c, rep }) {
   const turns = toTurns(rawFile, place.prompt);
   writeFileSync(join(variantDir, 'traces', `${id}.json`), `${JSON.stringify(turns, null, 2)}\n`);
   const endState = collectEndState(place.ws, c, place.scenario, { script: dispatcher });
-  const judged = judgeRun(c, turns, endState, { env: baseEnv, model: opts['judge-model'] });
+  const judged = await judgeRun(c, turns, endState, { env: baseEnv, model: opts['judge-model'] });
   if (judged.error) return errorRow('judge', judged.error, t.info);
   const { grade, problems } = scoreRun(judged, endState);
   appendFileSync(resultsFile, `${JSON.stringify({
