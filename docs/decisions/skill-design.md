@@ -73,6 +73,13 @@
   removes it only when nothing works inside; it never signals a process.
   [worktree-cleanup](worktree-cleanup.md) owns that procedure. Host-specific
   worktree UI commands remain outside the published contract.
+- `babysit-pr` owns answering a pull request's CI and review bots; `implement`
+  and `merge` invoke it before handing off or merging. A review thread the
+  agent fixed, or declined with written evidence, is resolved by the agent
+  after its reply posts. Conversation resolution exists to stop findings from
+  merging unanswered, as on PR #106, not to require a person's click; the
+  reply stays on the thread for later review. Comments posted on the user's
+  behalf carry an agent-authored note and no model name.
 - Pull request bases come from the user's request or the remote's advertised
   default branch. Git delivery skills do not assume that `main` exists when the
   repository uses `master`, `trunk`, or another default.

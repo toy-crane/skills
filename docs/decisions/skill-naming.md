@@ -94,6 +94,19 @@
   `prune-evals` was rejected because demotion keeps every cell, and pruning
   reads as deletion. Claude Code 2.1.321 and the installed Codex carry nothing
   under the name.
+- `babysit-pr` names watching one pull request through CI and review bots,
+  in the same "babysit-something" form as `babysit-specs`: a recurring watch
+  that also fixes, not a one-time look. The object is singular because each run
+  owns one pull request, which also keeps it apart from the `babysit-prs`
+  placeholder in Claude Code's `/loop` description. `watch-pr` was rejected
+  because it reads as watching without fixing.
+- `self-ship` names carrying one spec folder to a merge with no person present,
+  echoing self-driving: the name says the work is handed over, and "ship"
+  covers what follows a merge in a repository whose CI/CD deploys from the
+  default branch. The skill itself stops at the merge. `ship-spec` fit the
+  verb-object grammar but hid the autonomy; `autoship` read as mechanical;
+  `self-land`, `self-drive`, and `self-merge` were weighed; `full-send` was
+  rejected as slang borrowed from its source.
 
 ## Boundaries
 

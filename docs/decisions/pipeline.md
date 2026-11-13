@@ -283,6 +283,28 @@
   server, verifies the changed routes and essential states, and shares a
   reachable address while keeping the current checkout's server available until
   review finishes or later delivery cleanup.
+- A completed `implement` run opens a ready-for-review pull request through
+  `pr` and hands it to `babysit-pr`, which answers CI and review bots until the
+  pull request is ready to merge or needs a person. The local server address is
+  shared after `babysit-pr` finishes, beside the PR link and its state, so the
+  user reviews the final code once and decides the merge in the same look; the
+  wait with nothing to look at is the accepted cost. An incomplete or blocked
+  run opens no pull request. The user can ask for no pull request, and a
+  repository without a GitHub remote skips the step. `implement` never merges.
+- `self-ship` carries one spec folder from implementation through merge with no
+  person present. Its authority comes only from the user invoking it, so model
+  invocation is disabled in both Claude Code and Codex; no other skill invokes
+  it, and no separate rule tells scheduled runs apart. It requires a spec
+  folder, because the spec is the gate a person settles before unattended work.
+  It asks at the start, while the user is still present: `babysit-specs` on the
+  folder, setup items left for a person, and the tracker claim. Later it
+  continues through a correction that preserves the approved meaning and stops
+  to ask about one that changes it. It asks through the harness's question
+  tool; with no tool or no answer it leaves the pull request open and unmerged
+  and puts the question first in its final message. It takes one folder per
+  run, since folders split for a separate review or an outside wait must not be
+  chained past that reason. It never runs a release; deployment after the merge
+  belongs to the repository's CI/CD.
 - Context or harness interruption resumes from the spec folder, Git history, current diff, and test results. Preserve completed outcomes and
   request user confirmation before absorbing dirty state of uncertain
   ownership.
