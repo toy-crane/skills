@@ -127,3 +127,16 @@ test("checks that share a name are tracked separately", () => {
   assert.equal(r.code, 0);
   assert.equal(r.json.changes[0].to, "FAILURE");
 });
+
+test("a rerun that fails again still wakes the wait once it completes", () => {
+  const { env, write } = setup();
+  const ci = (id, status, conclusion) => [{ __typename: "CheckRun", id, name: "ci", status, conclusion }];
+  write(pr({ checks: ci("CR_1", "COMPLETED", "FAILURE") }));
+  run(env, "mark", "7");
+  write(pr({ checks: ci("CR_2", "IN_PROGRESS", null) }));
+  assert.equal(run(env, "wait", "7", "--interval", "0.1", "--max-minutes", "0.005").code, 11);
+  write(pr({ checks: ci("CR_2", "COMPLETED", "FAILURE") }));
+  const r = run(env, "wait", "7", "--interval", "0.1", "--max-minutes", "0.01");
+  assert.equal(r.code, 0);
+  assert.equal(r.json.changes[0].kind, "check");
+});

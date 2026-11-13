@@ -30,7 +30,7 @@ const QUERY = `query($owner:String!,$name:String!,$number:Int!){
       state headRefOid mergeable
       commits(last:1){nodes{commit{statusCheckRollup{contexts(first:100){nodes{
         __typename
-        ... on CheckRun{name status conclusion}
+        ... on CheckRun{id name status conclusion}
         ... on StatusContext{context state}
       }}}}}}
       reviews(last:100){nodes{id state author{login}}}
@@ -103,7 +103,11 @@ function snapshot(ref) {
     // Two workflows may run checks with the same name; keep each one.
     let key = c.__typename === "CheckRun" ? c.name : c.context;
     for (let n = 2; key in checks; n += 1) key = `${c.__typename === "CheckRun" ? c.name : c.context} #${n}`;
-    checks[key] = c.__typename === "CheckRun" ? (c.status === "COMPLETED" ? c.conclusion : "PENDING") : c.state;
+    // A rerun is a new check run with its own id, so a rerun that ends as the
+    // last one did still differs from the recorded state.
+    if (c.__typename !== "CheckRun") checks[key] = c.state;
+    else if (c.status !== "COMPLETED") checks[key] = "PENDING";
+    else checks[key] = c.id ? `${c.conclusion}@${c.id}` : c.conclusion;
   }
   const threads = {};
   for (const t of p.reviewThreads.nodes) threads[t.id] = `${t.isResolved ? "resolved" : "open"}:${t.comments.totalCount}`;
