@@ -1,4 +1,4 @@
-// Grader for resolve-follow-ups' cases. Run it through ../run.mjs (or ../../run.mjs once graduated).
+// Grader for resolve-follow-ups' cases. Run it through ../../run.mjs.
 // Each row is graded per check: every judged expectation is one check, and the end state the
 // run left in origin.git, the checkout, and the stand-in GitHub is one more ("end-state").
 import { spawnSync } from 'node:child_process';
