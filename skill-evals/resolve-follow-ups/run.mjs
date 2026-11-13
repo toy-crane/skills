@@ -88,7 +88,8 @@ if (opts.cases) {
 let history = null;
 let tiers = null;
 const historyPath = join(here, 'regression', 'cell-history.json');
-const regressionSuite = suiteDir === join(here, 'regression', opts.suite);
+// A no-skill run is a comparison, not a trial of the skill, so it leaves the cell history alone.
+const regressionSuite = suiteDir === join(here, 'regression', opts.suite) && !opts['no-skill'];
 if (regressionSuite) {
   history = loadHistory(historyPath);
   tiers = planTiers(history, opts.suite, opts.model);
