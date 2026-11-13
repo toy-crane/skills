@@ -311,11 +311,15 @@ async function runCase({ c, rep }) {
   // One cell per expectation, so the regression suite's history can count each.
   judged.verdicts.forEach((v, i) => { scored.grade[`e${i}`] = v.met ? 1 : 0; });
   const judgeMeta = { changed: changes.changed, verdicts: judged.verdicts, judge_model: judged.model, judge_usage: judged.usage, judge_cost_usd: judged.cost };
-  appendFileSync(resultsFile, `${JSON.stringify({
+  const row = {
     prompt_id: c.id, rep, prompt: c.prompt, tags: c.tags, grade: scored.grade, status: 'ok', stop_reason: t.info.resultSubtype,
     model: t.info.model, usage: t.info.usage, turns: t.info.turns, latency_s: latency,
     meta: { cost_usd: t.info.costUsd, problems: scored.problems, ...judgeMeta },
-  })}\n`);
+  };
+  appendFileSync(resultsFile, `${JSON.stringify(row)}\n`);
+  // The row enters the cell history in the same synchronous step that writes it, so a run stopped
+  // later never leaves a scored row the history missed; a resumed run skips it as done.
+  if (history) { recordRow(history, opts.suite, row, { lowerRuns: tiers.lowerRuns }); saveHistory(historyPath, history); }
   console.log(`${id}: ${JSON.stringify(scored.grade)} ${latency.toFixed(0)}s${scored.problems.length ? ` — ${scored.problems[0].slice(0, 160)}` : ''}`);
 }
 
@@ -335,8 +339,7 @@ await Promise.all(Array.from({ length: Math.min(workers, todo.length) }, async (
 console.log(`results: ${resultsFile}`);
 report();
 if (history) {
-  // Count only rows this invocation scored, then record the models once every owed run has a row.
-  for (const row of readRows(resultsFile)) if (!done.has(`${row.prompt_id}#${row.rep}`)) recordRow(history, opts.suite, row, { lowerRuns: tiers.lowerRuns });
+  // Each row was counted as it was written; record the models once every owed run has a row.
   const scoredNow = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`));
   const complete = finishRun(history, opts.suite, { model: opts.model, lowerRuns: tiers.lowerRuns, scored: scoredNow });
   saveHistory(historyPath, history);

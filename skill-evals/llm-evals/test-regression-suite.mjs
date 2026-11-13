@@ -25,6 +25,11 @@ if (args.includes('--json-schema')) {
   process.exit(0);
 }
 fs.appendFileSync(process.env.FAKE_CLAUDE_LOG, 'agent\\n');
+const counter = process.env.FAKE_CLAUDE_COUNTER;
+const n = (fs.existsSync(counter) ? Number(fs.readFileSync(counter, 'utf8')) : 0) + 1;
+fs.writeFileSync(counter, String(n));
+// Stops the runner outright, as a crash or a closed terminal would, before this trial answers.
+if (Number(process.env.FAKE_CLAUDE_KILL_AT || 0) === n) process.kill(process.ppid, 'SIGKILL');
 const model = args[args.indexOf('--model') + 1];
 const emit = (e) => process.stdout.write(JSON.stringify(e) + '\\n');
 emit({ type: 'system', subtype: 'init', model, apiKeySource: 'none', session_id: 's' });
@@ -40,6 +45,7 @@ function setup() {
   const history = path.join(dir, 'cell-history.json');
   fs.copyFileSync(committedHistory, history);
   const log = path.join(dir, 'calls.log');
+  let killAt = '';
   const run = (...extra) => {
     fs.writeFileSync(log, '');
     const result = spawnSync(process.execPath, [
@@ -48,11 +54,11 @@ function setup() {
     ], {
       encoding: 'utf8',
       timeout: 300_000,
-      env: { ...process.env, PATH: `${path.join(dir, 'bin')}${path.delimiter}${process.env.PATH}`, ANTHROPIC_API_KEY: '', FAKE_CLAUDE_LOG: log },
+      env: { ...process.env, PATH: `${path.join(dir, 'bin')}${path.delimiter}${process.env.PATH}`, ANTHROPIC_API_KEY: '', FAKE_CLAUDE_LOG: log, FAKE_CLAUDE_COUNTER: path.join(dir, 'counter'), FAKE_CLAUDE_KILL_AT: killAt },
     });
     return { result, calls: fs.readFileSync(log, 'utf8').split('\n').filter(Boolean) };
   };
-  return { dir, history, run };
+  return { dir, history, run, killAt: (n) => { killAt = String(n); } };
 }
 
 const readJson = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -97,4 +103,22 @@ test('a regression run under a new model runs the lower tier too and records tha
   assert.ok(lower.length > 0, 'the suite has lower-tier cells');
   for (const [id, check, cell] of lower) assert.equal(after.cells[id][check].trials, cell.trials + before.reps, `${id} ${check} ran`);
   assert.deepEqual([after.last_run_model, after.lower_tier_model], ['claude-opus-6', 'claude-opus-6']);
+});
+
+test('a run stopped after scoring some trials still counts them in the cell history when resumed', () => {
+  const before = readJson(committedHistory).suites[SUITE];
+  const { history, run, killAt } = setup();
+  killAt(2);
+  const stopped = run('--workers', '1');
+  assert.notEqual(stopped.result.status, 0, 'the first invocation was stopped');
+  killAt(0);
+  const resumed = run('--workers', '1');
+  assert.equal(resumed.result.status, 0, `${resumed.result.stdout}\n${resumed.result.stderr}`);
+  const after = readJson(history).suites[SUITE];
+  for (const [id, cells] of Object.entries(before.cells)) {
+    for (const [check, cell] of Object.entries(cells)) {
+      if (cell.tier !== 'upper') continue;
+      assert.equal(after.cells[id][check].trials, cell.trials + before.reps, `${id} ${check} counts every trial once`);
+    }
+  }
 });
