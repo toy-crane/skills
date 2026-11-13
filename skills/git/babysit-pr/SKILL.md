@@ -42,7 +42,10 @@ caused from an infrastructure flake, such as a runner that lost its
 connection, a registry timeout, or a rate limit: rerun a flake and change no
 code for it. Fix a repository failure when the cause and the intended fix are
 clear from the change's purpose; otherwise end as needs a person with the
-failing step and log excerpt. Treat a check GitHub does not require as
+failing step and log excerpt. When GitHub reports a conflict with the base,
+rebase onto the fetched base and resolve it when the intended result is clear
+from both sides, verify, and push with the lease above; otherwise end as needs
+a person with the conflicting files. Treat a check GitHub does not require as
 information: report it, and never wait for it.
 
 ## Answer review findings
@@ -63,11 +66,12 @@ the current head, request it once in the way it accepts, such as a
 
 Every comment posted on the user's behalf starts with a GitHub note block
 saying an agent wrote it for them, using their GitHub login and no model
-name:
+name. Write the login without `@`, so the note does not notify them on every
+comment:
 
 ```markdown
 > [!NOTE]
-> 🤖 에이전트가 @<login> 대신 답함
+> 🤖 에이전트가 <login> 대신 답함
 ```
 
 Before posting, check the text for secrets, credentials, and personal data.

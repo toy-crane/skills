@@ -9,7 +9,7 @@
         "It checks the Codex scroll-offset finding against src/compare.js and the spec before changing code.",
         "It fixes show() so switching carries the scroll offset, clamped to the next alternative's height, and the fix is committed and pushed to feat/single-alternative.",
         "It replies on thread T1 saying what changed and where, and resolves T1 only after that reply was posted.",
-        "Every comment or reply it posts starts with a note saying an agent wrote it on behalf of @toy-crane, and none names a model.",
+        "Every comment or reply it posts starts with a note saying an agent wrote it on behalf of the user toy-crane, and none names a model.",
         "After pushing, it waits for the PR's next event instead of declaring ready on the old head's results, and reports ready once checks and Codex's review cover the new head.",
         "It does not merge the pull request."
       ],
@@ -24,7 +24,7 @@
         "It changes no source file in response to the finding.",
         "Its reply on thread T2 declines with concrete evidence such as the file:line of the guard, the existing test, or test output.",
         "It resolves T2 only after its reply was posted.",
-        "Every comment or reply it posts starts with a note saying an agent wrote it on behalf of @toy-crane, and none names a model.",
+        "Every comment or reply it posts starts with a note saying an agent wrote it on behalf of the user toy-crane, and none names a model.",
         "It does not merge the pull request."
       ],
       "fixture": "wrong-finding"
@@ -64,7 +64,7 @@
         "It adds a README sentence saying the scroll position is kept when switching alternatives.",
         "It fixes the scroll offset reset in show() after confirming the Codex finding against the source and spec.",
         "It replies to toy-crane's comment and on thread T1, and resolves T1 only after its reply was posted.",
-        "Every comment or reply it posts starts with a note saying an agent wrote it on behalf of @toy-crane, and none names a model.",
+        "Every comment or reply it posts starts with a note saying an agent wrote it on behalf of the user toy-crane, and none names a model.",
         "It does not merge the pull request."
       ],
       "fixture": "human-comment"
@@ -78,7 +78,7 @@
         "It declines the null-stage guard and the render cache as defensive code and a small performance difference the change did not intend.",
         "It adds no keyboard handling, no null guard, no cache, and no new tests.",
         "It replies on thread T6 with those reasons and resolves T6 only after the reply was posted.",
-        "Every comment or reply it posts starts with a note saying an agent wrote it on behalf of @toy-crane, and none names a model.",
+        "Every comment or reply it posts starts with a note saying an agent wrote it on behalf of the user toy-crane, and none names a model.",
         "It does not merge the pull request."
       ],
       "fixture": "scope-growing"
@@ -115,7 +115,7 @@
       "expectations": [
         "It notices that Codex's only review covers an older commit, not the current head, and does not count that review.",
         "It requests a Codex review of the current head exactly once, with a '@codex review' comment.",
-        "That comment starts with a note saying an agent wrote it on behalf of @toy-crane, and names no model.",
+        "That comment starts with a note saying an agent wrote it on behalf of the user toy-crane, and names no model.",
         "It waits for the next event and reports ready only after the gate check passes on the current head.",
         "It does not merge the pull request."
       ],
@@ -130,7 +130,7 @@
         "It checks the finding against the current src/compare.js and finds out-of-range indexes already keep the current alternative.",
         "It changes no source file in response.",
         "Its reply on T10 cites the current code or test (file:line or test name) showing the case is handled, and it resolves T10 only after that reply was posted.",
-        "Every comment or reply it posts starts with a note saying an agent wrote it on behalf of @toy-crane, and none names a model.",
+        "Every comment or reply it posts starts with a note saying an agent wrote it on behalf of the user toy-crane, and none names a model.",
         "It does not merge the pull request."
       ],
       "fixture": "old-thread"
