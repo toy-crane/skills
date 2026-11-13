@@ -198,10 +198,14 @@ user authorization without asking again, and requests only missing authority.
 An explicit policy denial requires a permitted safer path or the needed
 authority before retrying. If review cannot finish, overall completion stays
 pending while verified outcomes, the blocker, and the next action are provided.
-When the repository exposes the result through a
-user-reviewable local server, `implement` verifies the changed surface and
-shares an address while leaving that server available until the user finishes
-review or later delivery cleanup. `implement` maps every acceptance criterion
+A completed run opens a ready-for-review pull request through `pr` and hands
+it to `babysit-pr`, which answers CI and review bots until the pull request is
+ready to merge or needs a person; `implement` never merges. An incomplete or
+blocked run opens no pull request, and the user can ask for none. When the
+repository exposes the result through a user-reviewable local server,
+`implement` verifies the changed surface and shares an address, after
+`babysit-pr` finishes and beside the PR link and its state, while leaving that
+server available until the user finishes review or later delivery cleanup. `implement` maps every acceptance criterion
 to automated tests, evals, runtime evidence, or a combination, hands the
 criteria to prove by tests to `tdd`, which selects the public seams, and hands
 criteria about LLM output that varies run to run to `llm-evals`. For an affected product
@@ -271,9 +275,11 @@ new session or a closing-message handoff is not required for correctness.
   outcome, reconcile verified behavior with the product contract, reopen
   invalidated work, and return to shaping when a product decision must change.
   Then finish with full verification and one completed, triaged automated
-  review, unless explicitly waived by the user. Recover review execution
-  failures and reuse granted authority; blocked review leaves completion pending
-  while the verified result and runnable product address remain available.
+  review, unless explicitly waived by the user, then open a ready PR through
+  `pr` and bring it to ready through `babysit-pr` without merging. Recover
+  review execution failures and reuse granted authority; blocked review leaves
+  completion pending, with no PR, while the verified result and runnable
+  product address remain available.
 - **[tdd](./skills/workflow/tdd/SKILL.md)**: Write each new behavior's test
   before the behavior and see it fail on an assertion, with several tests
   allowed before one implementation. Acceptance criteria set the floor of what
