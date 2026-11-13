@@ -8,7 +8,8 @@
   "body": "",
   "base": "main",
   "head": "feat/csv-export",
-  "author": "toy-crane"
+  "author": "toy-crane",
+  "commit": "feat(orders): download the order list as CSV\n\nSpec-Folder: docs/specs/csv-export/"
  },
  "advance": "create",
  "stages": {
@@ -55,5 +56,6 @@
     }
    ]
   }
- }
+ },
+ "overlay": "no-link"
 }
