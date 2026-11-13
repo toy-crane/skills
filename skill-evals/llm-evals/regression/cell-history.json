@@ -1,0 +1,131 @@
+{
+ "version": 2,
+ "suites": {
+  "eval-unanswered-trials": {
+   "reps": 2,
+   "last_run_model": "claude-opus-5-5",
+   "lower_tier_model": "claude-opus-5-5",
+   "checks": {
+    "e0": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "e1": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "e2": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "e3": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "e4": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    }
+   },
+   "cells": {
+    "llm-evals-28": {
+     "e0": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
+     },
+     "e1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e3": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
+     },
+     "e4": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 4,
+      "passes": 3,
+      "recent": "ppfp"
+     }
+    },
+    "llm-evals-29": {
+     "e0": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
+     },
+     "e1": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
+     },
+     "e2": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
+     },
+     "e3": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 4,
+      "passes": 3,
+      "recent": "pppf"
+     },
+     "e4": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
+     }
+    },
+    "llm-evals-31": {
+     "e0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e1": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
+     },
+     "e2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    }
+   }
+  }
+ }
+}
