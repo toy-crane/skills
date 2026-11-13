@@ -1,0 +1,1 @@
+{"criterion": "docs/specs/refund-triage/ criterion 3: refund triage accuracy on held-out cases at or above 90%", "metrics": ["accuracy"], "split": "none", "access": "subscription", "reps": 2, "cases": ["case-01", "case-02", "case-03", "case-04", "case-05"]}

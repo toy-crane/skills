@@ -333,6 +333,56 @@
         "It still shows the run size, the noise floor, and the cost estimate in the approval request."
       ],
       "files": []
+    },
+    {
+      "id": 28,
+      "prompt": "/llm-evals implement가 넘긴 기준이야. 결과물은 '환불 문의 분류'이고, 기준 2는 '환불 문의 분류 정확도, held-out 사례에서 90% 이상, 사례 출처는 fixtures/tickets.jsonl'이야. 앱은 src/triage.js의 classifyTicket()이 claude CLI를 `claude -p --output-format json`으로 불러. 모델 접근은 구독으로 이미 정했어. 실행기 설계부터 보여줘. 아직 만들거나 돌리지는 마.",
+      "expected_output": "The runner design keeps an attempt whose entry point reports it ended on an error (the CLI's is_error, an API error status such as a usage or rate limit, a network failure, a timeout) out of grading: it goes to errors.jsonl, counts as neither pass nor fail, and a rerun fills only attempts without a scored row. It decides this from the state the entry point reports, not from the grader reading the output. Trials run concurrently even on the subscription, and the design adds no machinery for waiting out limits.",
+      "expectations": [
+        "The design keeps an attempt that ended on an error reported by the entry point, such as the CLI's is_error or an API error status from a usage or rate limit, out of grading: recorded as an error, counted as neither pass nor fail.",
+        "It decides whether an attempt ended on an error from the state the entry point reports, not by having the grader or the score read the output text.",
+        "A rerun runs only the attempts that have no scored row, so the errored ones are filled.",
+        "It runs trials concurrently on the subscription and does not plan to run them one at a time because of the subscription.",
+        "It adds no machinery to wait out or back off from limits, such as pausing workers until a reset."
+      ],
+      "files": []
+    },
+    {
+      "id": 29,
+      "fixture": "unanswered-trials",
+      "prompt": "/llm-evals refund-triage v1 결과 정리해줘. 결과는 evals/refund-triage/v1/에 있어. 사례 5개에 반복 2회, 목표는 정확도 90%야.",
+      "expected_output": "The response finds that two rows in results.jsonl (case-03 rep 0, case-02 rep 1) are runs that ended on an API error, marked is_error with a 429 and a limit message as their output, and two more trials (case-04 rep 1, case-05 rep 1) sit only in errors.jsonl. It counts none of the four as fails, reports 6 of 6 answered trials passing rather than 6 of 8 or 6 of 10, says four of the ten trials are unanswered so the target cannot be judged yet, and says the two polluted rows must leave results.jsonl so a rerun fills those four trials only.",
+      "expectations": [
+        "It identifies the two results.jsonl rows that ended on an API error (case-03 rep 0 and case-02 rep 1) and does not count them as fails.",
+        "It reports the score over answered trials only, 6 of 6, not 6 of 8 (75%) or 6 of 10.",
+        "It says four of the ten trials are unanswered and the target cannot be judged until they are filled.",
+        "It says the two errored rows must be taken out of results.jsonl so that a rerun runs them, and that the rerun fills only the four unanswered trials.",
+        "It does not propose running trials one at a time or adding waits to avoid the limit."
+      ],
+      "files": [],
+      "guards": "A change that pushes the agent to count rows cut off by a limit as fails, or to read a partly filled run as green."
+    },
+    {
+      "id": 30,
+      "prompt": "/llm-evals src/triage.js의 환불 분류 정확도를 held-out 90% 이상으로 증명해줘. 사례는 fixtures/tickets.jsonl. ANTHROPIC_API_KEY는 .env.local에 있고 Claude Code도 로그인돼 있어. 구독으로 하면 eval이 더 느려져?",
+      "expected_output": "Before building anything the response asks once whether to reach the model through the API key or the subscription and recommends the key because it runs the app's real path with its parameters and bills exactly. It answers the speed question: trials run concurrently either way, so the subscription is not slower for running one at a time; a limit can cut trials short, and those are rerun rather than scored. It never cites parallelism as an advantage only the key has.",
+      "expectations": [
+        "It asks how to reach the model before building, recommending the API key for running the real path and exact billing.",
+        "It says trials run concurrently on the subscription too, so the subscription does not make the eval slower by running trials one at a time.",
+        "It does not present running cases in parallel as an advantage only the API key has."
+      ],
+      "files": []
+    },
+    {
+      "id": 31,
+      "prompt": "/llm-evals refund-triage 능력 평가를 구독으로 돌릴 거야. 사용량 한도 아끼게 시행을 하나씩 순서대로 돌리자. 아직 실행하지는 말고 계획만 알려줘.",
+      "expected_output": "The response explains that each trial draws the same usage whether trials run together or one at a time, so running them in order saves no usage and only takes longer, and keeps or recommends concurrent runs. It says a trial cut off by a limit is not scored and the next run fills it, so hitting a limit does not spoil the result.",
+      "expectations": [
+        "It explains that running trials one at a time draws the same usage as running them concurrently, so it saves no usage and only takes longer.",
+        "It does not plan a serial run as a way to save usage.",
+        "It says a trial cut off by a usage limit is not scored as a fail and a later run fills it."
+      ],
+      "files": []
     }
   ]
 }

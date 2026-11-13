@@ -44,7 +44,8 @@ a secret: an API key in the environment or in the env file the product reads,
 and a logged-in `claude` or `codex` CLI.
 
 - With a key: ask whether to use the API key, recommended because it runs the
-  real path, bills exactly, and runs cases in parallel, or the subscription.
+  real path and bills exactly, or the subscription. Trials run concurrently
+  on either, so the choice does not make the eval faster or slower.
   For an app feature, say that the subscription leaves out the app's
   parameters and tool wiring.
 - Without a key: do not stop, and do not pick for the user. Ask whether to run
@@ -94,10 +95,20 @@ tools read. Each variant holds `results.jsonl`, one row per (case, rep) with
 `prompt_id`, `rep`, `tags`, `grade` as `{metric: number}`, `status`, `model`
 read from the response, and `usage`, keeping each check's verdict so its cells
 can be counted; `traces/<id>_rep<k>.json` with the whole
-exchange; and `errors.jsonl` for attempts that failed before a scorable output. An infra
-failure is recorded with its class there, never scored as zero. Give each case
-a wall-clock ceiling, back off with jitter on rate limits, and fail an attempt
-whose served model differs from the requested one.
+exchange; and `errors.jsonl` for attempts that failed before a scorable output. A trial the
+model never finished answering is not a result. One that ended on an API
+error, such as a usage or rate limit, a network failure, or a timeout, is
+recorded with its class in `errors.jsonl`, never graded, and counted as
+neither a pass nor a fail. Decide this from the state the entry point reports,
+such as Claude Code's `is_error` on a result whose subtype still reads
+`success`, never from the grader's reading of the output. A row such a trial
+already left in `results.jsonl` moves to `errors.jsonl`, so scores and the cell
+history count only answered trials and the next run fills it. Run trials
+concurrently whatever the access: each one draws the same cost or usage, so
+running them one at a time only takes longer. Add nothing to wait out limits;
+a limit only leaves trials for the next run to fill. Give each case a
+wall-clock ceiling, and fail an attempt whose served model differs from the
+requested one.
 
 **Skills and agents.** The entry point is an agent run with the skill or agent
 installed in a disposable workspace. Grade the end state it leaves: hidden
