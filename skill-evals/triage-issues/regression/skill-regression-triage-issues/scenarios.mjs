@@ -2,7 +2,8 @@
 // through the gh stand-in, or Linear through the MCP stand-in), its issues, and what the grader
 // checks in the end state. Issue text placeholders: {due:<days from today>}, {today}, {merge},
 // and {triage:<summary>} for an AI-managed Triage 요약 section. `age` is days since creation.
-// The situations vary evals.json cases 1, 3, 5, 6, 7, 8, 9, 10, and 11; see README.md.
+// The situations vary evals.json cases 1, 3, 5, 6, 7, 8, 9, 10, and 11; check-not-due-linear comes from a
+// real Robo run. Cases that did not graduate live in known-failures.jsonl and share these scenarios.
 
 const decisionAsked = {
   author: 'Robo',
@@ -43,6 +44,7 @@ export const scenarios = {
       { n: 33, title: '목록 정렬을 최신순으로', age: 2, body: '답장 목록이 인기순으로 나와요. 기본을 최신순으로 해 주세요.' },
       noisyIssue(35),
     ],
+    commits: [{ message: 'feat(list): default reply list sort to newest (#28)', files: { 'app/settings.js': "export const labels = { notificationsOff: '알림 끄기', sortDefault: 'newest' };\n" } }],
     prs: [{ number: 28, title: 'feat(list): default reply list sort to newest', state: 'MERGED', headRefName: 'feat/newest-sort', age: 9, body: 'Default the reply list to newest first; a sort the user picked stays.\n\nIssue: github:#27\nCloses #27', files: ['app/settings.js'] }],
     check: { untouched: ['30'], triaged: ['33', '35'], closed: ['33'], label: { 35: 'needs-decision' } },
   },

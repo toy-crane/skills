@@ -1,5 +1,4 @@
-// Grader for triage-issues' regression cases. Run it through ../run.mjs (or ../../run.mjs once
-// graduated). A row passes only when every judged expectation holds and every check on the end
+// Grader for triage-issues' regression cases. Run it through ../../run.mjs. A row passes only when every judged expectation holds and every check on the end
 // state holds: the stand-in tracker's issues against their initial snapshot, the order of the
 // agent's tracker writes, the refs it pushed to origin.git, the PRs it opened, and its Slack sends.
 import { spawnSync } from 'node:child_process';

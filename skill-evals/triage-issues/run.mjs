@@ -30,6 +30,7 @@ const usage = `usage: run.mjs --variant <label> --access api|subscription [optio
   --skill-file <path>     take SKILL.md from this file (default: the working tree's)
   --suite <name>          a suite under regression/ or a capability eval folder here (default: skill-regression-triage-issues)
   --split train|test|all  which split of a capability eval to run (default: all)
+  --known-failures        run the suite's known-failures.jsonl instead of cases.jsonl; the cell history is left alone
   --cases a,b             run only these case ids
   --reps <n>              runs per case (default: 2; a regression suite runs at its recorded reps)
   --workers <n>           runs in parallel (default: 2)
@@ -51,6 +52,7 @@ const { values: opts } = parseArgs({
     suite: { type: 'string', default: 'skill-regression-triage-issues' },
     split: { type: 'string', default: 'all' },
     cases: { type: 'string' },
+    'known-failures': { type: 'boolean', default: false },
     reps: { type: 'string' },
     workers: { type: 'string', default: '2' },
     model: { type: 'string', default: 'claude-sonnet-5-5' },
@@ -74,9 +76,10 @@ if (!['api', 'subscription'].includes(opts.access)) fail('--access must be api o
 if (opts['no-skill'] && (opts['skill-ref'] || opts['skill-file'])) fail('--no-skill takes no skill text');
 if (opts.model === opts['judge-model']) fail('the judge must be a different model from the agent under test');
 
-const suiteDir = [join(here, opts.suite), join(here, 'regression', opts.suite)].find((d) => existsSync(join(d, 'cases.jsonl')));
+const casesFile = opts['known-failures'] ? 'known-failures.jsonl' : 'cases.jsonl';
+const suiteDir = [join(here, opts.suite), join(here, 'regression', opts.suite)].find((d) => existsSync(join(d, casesFile)));
 if (!suiteDir) fail(`unknown suite: ${opts.suite}`);
-let cases = readFileSync(join(suiteDir, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+let cases = readFileSync(join(suiteDir, casesFile), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 if (opts.split !== 'all') cases = cases.filter((c) => c.split === opts.split);
 if (opts.cases) {
   const wanted = opts.cases.split(',').map((c) => c.trim());
@@ -88,7 +91,8 @@ if (opts.cases) {
 let history = null;
 let tiers = null;
 const historyPath = join(here, 'regression', 'cell-history.json');
-const regressionSuite = suiteDir === join(here, 'regression', opts.suite);
+// Known failures never graduated, so they have no cells to record.
+const regressionSuite = suiteDir === join(here, 'regression', opts.suite) && !opts['known-failures'];
 if (regressionSuite) {
   history = loadHistory(historyPath);
   tiers = planTiers(history, opts.suite, opts.model);
@@ -137,7 +141,7 @@ if (opts.access === 'api') {
   delete baseEnv.ANTHROPIC_AUTH_TOKEN;
 }
 
-const flowDir = resolve(opts.flow ?? join(repoRoot, '.claude/hillclimb/triage-issues', opts.suite));
+const flowDir = resolve(opts.flow ?? join(repoRoot, '.claude/hillclimb/triage-issues', `${opts.suite}${opts['known-failures'] ? '-known-failures' : ''}`));
 const variantDir = join(flowDir, opts.variant);
 const resultsFile = join(variantDir, 'results.jsonl');
 const errorsFile = join(variantDir, 'errors.jsonl');
@@ -183,7 +187,7 @@ if (!existsSync(summaryFile)) {
   writeFileSync(summaryFile, `${JSON.stringify({ description: `triage-issues from ${skillSource}`, target: 'skill', skill_source: skillSource, skill_sha: skillSha, access: opts.access }, null, 2)}\n`);
 }
 if (!existsSync(stateFile)) {
-  const all = readFileSync(join(suiteDir, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const all = readFileSync(join(suiteDir, casesFile), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
   writeFileSync(stateFile, `${JSON.stringify({
     goal: 'docs/specs/skill-regression-triage-issues/ criterion 1: held-out (case × rep × check) rows at 90% or more, above the no-skill baseline outside the noise floor',
     suite: opts.suite,

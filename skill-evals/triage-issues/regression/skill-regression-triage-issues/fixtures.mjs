@@ -142,6 +142,12 @@ function buildRepo(ws, s, work) {
   git(work, ['add', '-A']);
   git(work, ['commit', '-q', '-m', 'chore: reply app']);
   const ctx = {};
+  // Commits already on main, such as a merged PR that an issue duplicates.
+  for (const c of s.commits ?? []) {
+    for (const [file, text] of Object.entries(c.files)) write(join(work, file), text);
+    git(work, ['add', '-A']);
+    git(work, ['commit', '-q', '-m', c.message]);
+  }
   for (const spec of s.specs ?? []) {
     // A merged spec with a post-release check; a retired one is removed again after the merge.
     git(work, ['checkout', '-q', '-b', `feat/${spec.slug}`]);
