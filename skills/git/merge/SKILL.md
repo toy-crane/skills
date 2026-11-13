@@ -42,6 +42,47 @@ post-release check it could not open. Read the
 merging, while the branch still exists and before a squash can drop them, and
 keep those folders for the tracker and post-release check steps below.
 
+## Respect merge order
+
+Before rebasing, read the `Blocked by:` lines in the `spec.md` of each spec
+folder the branch carries, found through its `Spec-Folder` trailers or the
+`docs/specs/<slug>/` folders its diff touches. When a blocking folder's work
+is not on the fetched base yet, for example because the PR that delivers it
+is still open, leave this PR open and report which folder it waits on. Pull
+requests without such a block merge in the order they meet their merge
+conditions: whichever is ready first merges first, and the rest rebase
+afterwards and pass the rebase checks below.
+
+## Check what a rebase carried
+
+Run these checks after every rebase of the PR branch and before publishing
+it: the one `pull` hands back, a rebase repeated to recover a rejected merge,
+and one already sitting unpublished in the checkout.
+
+First compare the PR's commits before and after the rebase, one by one, with
+`git range-diff <old-base>..<old-head> <new-base>..<new-head>`. The old head
+is the remote PR branch just observed, or `ORIG_HEAD` and the reflog when the
+rebase happened earlier. Each rebased commit should carry the same intended
+change. Also read the incoming base commits against the PR's changes, because
+range-diff shows an unchanged patch when the base already holds the same
+change elsewhere. When a change the PR intends is missing, or the rebased
+branch adds again what the base already holds, such as a second copy of an
+entry, function, or fix, correct the branch before publishing. When the
+intended result is unclear, keep the PR open and report the blocker.
+
+Then list the base commits that arrived since the PR branched and find the
+ones that overlap it: they touch a file the PR changes, or change behavior the
+PR calls or relies on, such as a default value, a shared constant, or a
+helper's name or signature. For each overlap, re-verify on the current head
+the behaviors that the PR's spec acceptance criteria or PR body state and the
+overlap could affect, by running or exercising them. Passing tests and CI do
+not settle this when they do not exercise the assumption the overlap changed.
+Correct the PR when its intended behavior is clear; otherwise keep the PR open
+and report the blocker. Without an overlap, the verification below is enough;
+a rebase does not by itself call for repeating every check. An overlap decides
+only how much to re-verify, never whether to rebase: a branch behind its base
+still goes through `pull` and these checks before it merges.
+
 ## Create or update the PR with `pr`
 
 After verifying the synchronized HEAD, invoke the `pr` skill with the
@@ -95,6 +136,16 @@ chosen method after rechecking the current head and base. `gh pr merge --auto`
 can merge an already-mergeable PR immediately;
 it is not a general wait flag. If enabling auto-merge fails, reassess the PR
 and use direct merge only after its verification and requirements pass.
+
+Right before merging, directly or by enabling auto-merge, fetch the base
+again and compare it with the base your last passing verification ran on,
+for example with `git log --name-only <verified-base>..<remote>/<base>`. Run
+this comparison as its own command and read its output before deciding; never
+chain the fetch and the merge in one command, because the merge then runs
+before anyone sees what landed. When a commit that landed touches this PR's
+files, do not merge on that verification: rebase again, run the rebase checks
+above on the new head, and merge only once they and the current head's
+verification pass.
 
 While waiting, recheck the current head, base, relevant CI, and required checks
 and reviews. If the head or base changes, reassess mergeability and repeat
