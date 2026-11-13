@@ -1,11 +1,28 @@
 // Grader for implement's review-fix evals (spec docs/specs/pr-flow-review-fixes/). Run it through ../run.mjs.
 // A run passes when every expectation holds by the judge and the workspace's own test suite passes.
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Runs a command without blocking the runner's event loop, so grading one case never
+// stalls or times out the agent runs still in flight beside it.
+function runAsync(command, args, { cwd, env, timeout }) {
+  return new Promise((settle) => {
+    const child = spawn(command, args, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] });
+    const out = [];
+    const err = [];
+    child.stdout.on('data', (chunk) => out.push(chunk));
+    child.stderr.on('data', (chunk) => err.push(chunk));
+    const timer = setTimeout(() => child.kill('SIGKILL'), timeout);
+    child.on('close', (status) => {
+      clearTimeout(timer);
+      settle({ status, stdout: Buffer.concat(out).toString('utf8'), stderr: Buffer.concat(err).toString('utf8') });
+    });
+  });
+}
+
 // What the run left behind, read without the model under test.
-export function collectEndState(workspace) {
+export async function collectEndState(workspace) {
   const git = (args) => spawnSync('git', ['-C', workspace, '-c', 'core.quotePath=false', ...args], { encoding: 'utf8' }).stdout ?? '';
   // The fixture's last commit is tagged; everything after it, committed or not, is the run's change.
   const hasTag = git(['tag', '--list', 'fixture-head']).trim() === 'fixture-head';
@@ -14,7 +31,7 @@ export function collectEndState(workspace) {
   const changed = hasTag ? git(['diff', '--name-only', 'fixture-head', '--', '.', ':(exclude).claude']).split('\n').filter(Boolean) : [];
   let tests = null;
   if (existsSync(join(workspace, 'package.json'))) {
-    const run = spawnSync('npm', ['test', '--silent'], { cwd: workspace, encoding: 'utf8', timeout: 120_000 });
+    const run = await runAsync('npm', ['test', '--silent'], { cwd: workspace, timeout: 120_000 });
     tests = { passed: run.status === 0, output: `${run.stdout}\n${run.stderr}`.slice(-4000) };
   }
   return { changed, diff, tests };
@@ -53,7 +70,7 @@ function transcriptText(turns) {
 }
 
 // Asks a judge model whether each expectation holds for the run.
-export function judgeRun(testCase, turns, endState, { env, model }) {
+export async function judgeRun(testCase, turns, endState, { env, model }) {
   const { expectations } = testCase;
   const state = endState.tests
     ? `Code change the run left, as a diff against the fixture's last commit:\n${endState.diff.slice(0, 60_000) || '(no change)'}\n\nThe workspace's test suite after the run ${endState.tests.passed ? 'passed' : 'FAILED'}.`
@@ -71,7 +88,7 @@ ${transcriptText(turns).slice(0, 120_000)}
 Return one verdict per expectation index.`;
   const args = ['-p', prompt, '--output-format', 'json', '--json-schema', JSON.stringify(judgeSchema), '--tools', '', '--setting-sources', 'project'];
   if (model) args.push('--model', model);
-  const run = spawnSync('claude', args, { encoding: 'utf8', env, maxBuffer: 64 * 1024 * 1024, timeout: 600_000 });
+  const run = await runAsync('claude', args, { env, timeout: 600_000 });
   if (run.status !== 0) return { error: `judge exit ${run.status}: ${(run.stderr || run.stdout).slice(0, 500)}` };
   let out;
   try { out = JSON.parse(run.stdout); } catch { return { error: `judge output not JSON: ${run.stdout.slice(0, 500)}` }; }

@@ -308,9 +308,9 @@ async function runCase({ c, rep }) {
 
   const turns = toTurns(rawFile, c.prompt);
   writeFileSync(join(setDir, 'traces', `${id}.json`), `${JSON.stringify(turns, null, 2)}\n`);
-  const endState = collectEndState(workspace);
+  const endState = await collectEndState(workspace);
   const skills = invokedSkills(turns);
-  const judged = judgeRun(c, turns, endState, { env: childEnv, model: opts['judge-model'] });
+  const judged = await judgeRun(c, turns, endState, { env: childEnv, model: opts['judge-model'] });
   if (judged.error) return errorRow('judge', judged.error, t.info);
   const { grade, problems } = scoreRun(c, judged, endState);
   appendFileSync(resultsFile, `${JSON.stringify({
