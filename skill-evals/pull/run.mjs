@@ -323,7 +323,6 @@ async function runCase({ c, rep }) {
     recordRow(history, opts.suite, { prompt_id: c.id, grade }, { lowerRuns: tiers.lowerRuns });
     saveHistory(historyPath, history);
   }
-  rmSync(place.ws, { recursive: true, force: true });
   console.log(`${id}: checks ${grade.checks_met.toFixed(2)} pass ${grade.pass} skill=${t.info.skillInvoked} ${latency.toFixed(0)}s $${(t.info.costUsd ?? 0).toFixed(2)}`);
 }
 
