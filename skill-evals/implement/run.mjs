@@ -62,7 +62,7 @@ if (!/^[\w.-]+$/.test(opts.variant ?? '')) fail('--variant needs a label such as
 if (!['api', 'subscription'].includes(opts.access)) fail('--access must be api or subscription');
 if (opts.variant === 'baseline' && !opts['skill-ref'] && !opts['skill-file']) fail('baseline needs --skill-ref or --skill-file');
 if (opts.model === opts['judge-model']) fail('the judge must be a different model from the agent under test');
-const SKILLS = ['implement', 'tdd', 'llm-evals', 'babysit-specs', 'project-knowledge'];
+const SKILLS = ['implement', 'tdd', 'llm-evals', 'babysit-specs', 'project-knowledge', 'pr', 'babysit-pr'];
 let cases;
 let suiteDir;
 if (opts.suite === 'evals') {
