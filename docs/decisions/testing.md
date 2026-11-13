@@ -60,6 +60,16 @@
   and attempts that failed before a scorable output run again. Cost is cut by
   not repeating runs, not by testing on a cheaper model than the one the
   product or skill actually runs on.
+- A trial the model never finished answering is not a result. A trial that
+  ended on an API error, such as a usage or rate limit, a network failure, or
+  a timeout, is never graded. It counts as neither a pass nor a fail, never
+  enters the cell history, and the next run fills it. The runner decides this
+  from what the model's own entry point reports, never from the grader's
+  reading of the output.
+- Trials run concurrently whatever the model access, API key or
+  subscription. Limits are not the eval's concern: the eval does not wait,
+  back off, or plan around them. A limit only ends trials early, and the rule
+  above keeps those trials out of the score.
 - The approval asks for the repetition count as its own choice. It is never
   below 2, because graduation keeps only cases that passed on every
   repetition and one pass cannot tell a stable case from a lucky one. The
@@ -210,6 +220,13 @@ grader intact across graduation costs model calls on every regression run, but
 dropping the rubric would stop guarding the regressions only a judge can see,
 which is the half of the behavior code checks cannot reach.
 
+A trial cut off by an error says nothing about the behavior. Graded, it
+becomes a fail the behavior never earned: the score drops, and the cell
+history keeps a false failure that later reads as a flip or a guard. Trials
+are independent and each one draws the same cost or usage, so concurrency
+changes only wall time. Waiting for limits would add a mechanism to every
+runner for something a rerun already fixes.
+
 ## Reconsider when
 
 - The forward comparison shows the revised `tdd` meets fewer acceptance criteria,
@@ -227,6 +244,8 @@ which is the half of the behavior code checks cannot reach.
 - Gates turn out to be rare enough that a held-out failure leaves too many
   rounds to unwind, or train and held-out scores track each other closely
   enough that the separation buys nothing.
+- Runs stopped by a limit leave so many trials unfilled that rerunning them by
+  hand costs more than waiting inside the runner would.
 
 ## Evidence worth preserving
 
@@ -284,6 +303,15 @@ which is the half of the behavior code checks cannot reach.
   judges first. No source found gives a routine for deleting application eval
   cases, and one warns that pruning case by case biases the suite toward
   current strengths.
+- On 2026-11-13, the output schema in the Claude Code 2.1.323 binary showed
+  that `claude -p --output-format stream-json` ends a turn that stopped on an
+  API error with a `result` whose `subtype` is still `success`, plus
+  `is_error: true` and `api_error_status`. Before the limit it emits
+  `system`/`api_retry` events for its own retries and a `rate_limit_event`
+  whose `status` becomes `rejected`, with `resetsAt` and `rateLimitType`.
+  All six runners under `skill-evals/` checked only `subtype`, so a limited
+  trial reached the judge and was graded a fail. This was read from the
+  schema, not observed on a real limit.
 
 ## Still-rejected alternatives
 
@@ -336,3 +364,10 @@ which is the half of the behavior code checks cannot reach.
   code they test, such as `apps/api/eval/` or `skill-evals/<name>/`, so a
   fixed root is broken on arrival; the layout under the chosen root is fixed
   instead and the agent instructions carry the root.
+- Running trials one at a time on a subscription to spare the usage limit —
+  the same trials draw the same usage either way, so it only makes the run
+  slower.
+- Making each runner wait out a limit, back off, and resume on its own — it
+  adds a mechanism to every runner for what a rerun already fills, and the
+  CLI already retries short limits; revisit under the reconsider condition
+  above.
