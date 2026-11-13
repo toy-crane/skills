@@ -303,29 +303,32 @@ new session or a closing-message handoff is not required for correctness.
 
 ## Git delivery
 
-Five skills cover the repository handoff from a local change to a merged base
-branch, and a sixth clears the branches and worktrees that pile up afterward.
-Invoke them directly with `/commit`, `/pull`, `/push`, `/pr`, `/merge`, or
-`/clean-branches` in Claude Code and `$commit`, `$pull`, `$push`, `$pr`,
-`$merge`, or `$clean-branches` in Codex.
+Six skills cover the repository handoff from a local change to a merged base
+branch, and a seventh clears the branches and worktrees that pile up afterward.
+Invoke them directly with `/commit`, `/pull`, `/push`, `/pr`, `/babysit-pr`,
+`/merge`, or `/clean-branches` in Claude Code and `$commit`, `$pull`, `$push`,
+`$pr`, `$babysit-pr`, `$merge`, or `$clean-branches` in Codex.
 
 When Codex exposes the managed plugin namespace, or a user-level skill with the
 same short name is also installed, use `$toycrane-skills:commit`,
 `$toycrane-skills:pull`, `$toycrane-skills:push`, `$toycrane-skills:pr`,
-`$toycrane-skills:merge`, or `$toycrane-skills:clean-branches` to select this
+`$toycrane-skills:babysit-pr`, `$toycrane-skills:merge`, or
+`$toycrane-skills:clean-branches` to select this
 bundle unambiguously.
 
 ```mermaid
 flowchart LR
     C["commit<br/>record in-scope changes"] --> P["push<br/>publish existing commits"]
     P --> PR["pr<br/>open ready-for-review PR"]
-    PR --> M["merge<br/>verify merge and clean up"]
+    PR --> B["babysit-pr<br/>answer CI and review bots"]
+    B --> M["merge<br/>verify merge and clean up"]
     L["pull<br/>rebase onto remote base"] -. "synchronize when needed" .-> C
     L -. "synchronize when needed" .-> P
 ```
 
 Each skill owns its whole advertised outcome. A skill that invokes another one
-by name requires it: `merge` requires `pull`, `pr`, and `clean-branches`, and
+by name requires it: `merge` requires `pull`, `pr`, `babysit-pr`, and
+`clean-branches`, and
 stops before any work with the install command when one is missing. `push`
 deliberately leaves dirty changes local. `pr` may perform the necessary
 commit, synchronization, and publication, but stops before merge. `merge`
@@ -346,9 +349,15 @@ project's declared cleanup commands and removes it.
   return its URL without merging it. With an issue tracker configured, first
   create the issue for each carried spec folder that has no `Issue:` line and
   commit that line.
+- **[babysit-pr](./skills/git/babysit-pr/SKILL.md)**: Watch one open pull
+  request through CI and review bots until it is ready to merge or needs a
+  person. Fix bot findings confirmed against the source, decline the rest with
+  evidence, answer and resolve each thread with an agent-authored note, rerun
+  infrastructure flakes, and wake only on checks, reviews, comments, pushes,
+  and conflicts. Never merges.
 - **[merge](./skills/git/merge/SKILL.md)**: Carry a change through verified pull
-  request merge, synchronizing through `pull` and creating or updating the PR
-  through `pr`, choose squash or rebase by commit meaning, then hand the
+  request merge, synchronizing through `pull`, creating or updating the PR
+  through `pr`, and bringing it to ready through `babysit-pr`, choose squash or rebase by commit meaning, then hand the
   merged branch to `clean-branches` for cleanup. When a delivered spec asks
   for a post-release check and a tracker is configured, open one check issue
   due after the spec's period.
