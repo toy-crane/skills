@@ -92,6 +92,9 @@ if (regressionSuite) {
   if (opts.reps !== undefined && Number(opts.reps) !== own) fail(`${opts.suite} runs at ${own} reps, as recorded in its cell history; drop --reps or pass ${own}`);
 }
 const reps = history ? history.suites[opts.suite].reps : Number(opts.reps ?? 2);
+// Only the working tree's pull text writes the history; another text, such as one from --skill-ref,
+// runs the same tiers but its rows would read as the suite's own.
+const recording = history && !opts['skill-ref'] && !opts['skill-file'];
 const workers = Number(opts.workers);
 const timeoutMs = Number(opts['timeout-s']) * 1000;
 const { builders, scenarios } = await import(join(suiteDir, 'fixtures.mjs'));
@@ -156,7 +159,7 @@ const todo = [];
 for (let rep = 0; rep < reps; rep += 1) for (const c of cases) if (!done.has(`${c.id}#${rep}`)) todo.push({ c, rep });
 
 console.log(`variant ${opts.variant}: pull SKILL.md from ${skillSource} (sha ${skillSha})`);
-if (tiers) console.log(`regression tiers: upper${tiers.lowerRuns ? ' and lower (model differs from the lower tier\'s last)' : ' only'}; history ${historyPath}`);
+if (tiers) console.log(`regression tiers: upper${tiers.lowerRuns ? ' and lower (model differs from the lower tier\'s last)' : ' only'}; history ${recording ? historyPath : 'not written (pull text is not the working tree\'s)'}`);
 console.log(`access ${opts.access}, model ${opts.model}, judge ${opts['judge-model']}; suite ${opts.suite} (${opts.split}): ${cases.length} cases × ${reps} reps; ${done.size} done, ${todo.length} to run`);
 function report() {
   const wanted = new Set(cases.map((c) => c.id));
@@ -319,7 +322,7 @@ async function runCase({ c, rep }) {
     },
   })}\n`);
   // Only a row scored now reaches the history; rows already in results.jsonl were counted when scored.
-  if (history) {
+  if (recording) {
     recordRow(history, opts.suite, { prompt_id: c.id, grade }, { lowerRuns: tiers.lowerRuns });
     saveHistory(historyPath, history);
   }
@@ -340,7 +343,7 @@ await Promise.all(Array.from({ length: Math.min(workers, todo.length) }, async (
   }
 }));
 console.log(`results: ${resultsFile}`);
-if (history) {
+if (recording) {
   const scored = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`));
   const complete = finishRun(history, opts.suite, { model: opts.model, lowerRuns: tiers.lowerRuns, scored });
   if (complete) saveHistory(historyPath, history);
