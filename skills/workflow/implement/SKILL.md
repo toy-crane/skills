@@ -352,7 +352,9 @@ request or the repository has no GitHub remote, and say which applied.
 After `babysit-pr` finishes, or when no pull request was opened, and when the repository exposes the actual result through a user-reviewable local
 server, run it through the supported development or preview path. Verify the
 changed routes and essential states, share a reachable address, and name what
-to review. When `babysit-pr` pushed fixes, run the revision it left. The final
+to review. When `babysit-pr` pushed fixes, they are executable repairs: repeat
+the final changed-flow and core-loop gate on the revision it left before this
+handoff, without a second review pass. The final
 message puts together the pull request link, the state `babysit-pr` returned
 with what remains for a person, the address, and what to check there, so one
 look at the final code can decide the merge.
