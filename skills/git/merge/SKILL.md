@@ -111,6 +111,14 @@ when the PR delivers implementation. If a linked convention cannot be read,
 report the missing information rather than guessing issue operations or
 claiming that the issue was linked or closed.
 
+## When no person is present
+
+When the invoking skill says no person is present, ask the user anything
+through the harness's question tool, not as chat text. When no answer comes,
+stop without merging, leave the pull request open with no auto-merge armed,
+and report the question. Pass the same signal to `babysit-pr`. Without that
+signal, everything here applies as written.
+
 ## Merge and clean up
 
 Preserve multiple commits with a rebase merge only when they are meaningful,

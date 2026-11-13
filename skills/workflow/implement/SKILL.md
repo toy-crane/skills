@@ -365,6 +365,14 @@ An incomplete or blocked run opens no pull request; report the blocker as
 above. Skip both steps, and hand off as below, when the user asked for no pull
 request or the repository has no GitHub remote, and say which applied.
 
+## When no person is present
+
+When the invoking skill says no person is present, skip the local server
+handoff below and put the screen and behavior evidence in the pull request
+body instead. Ask the user anything through the harness's question tool, not
+as chat text, and pass the same signal to `babysit-pr`. Without that signal,
+everything here applies as written.
+
 ## Hand off the runnable product
 
 After `babysit-pr` finishes, or when no pull request was opened, and when the repository exposes the actual result through a user-reviewable local

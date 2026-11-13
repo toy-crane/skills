@@ -280,6 +280,15 @@ new session or a closing-message handoff is not required for correctness.
   review execution failures and reuse granted authority; blocked review leaves
   completion pending, with no PR, while the verified result and runnable
   product address remain available.
+- **[self-ship](./skills/workflow/self-ship/SKILL.md)**: Carry one spec folder
+  through `implement`, its pull request, CI and review bots, `merge`, and
+  cleanup with no person present. Runs only when you invoke it by name
+  (`/self-ship docs/specs/checkout/` or `$self-ship docs/specs/checkout/`);
+  the invocation is its authority to merge. It asks everything a person must
+  answer at the start: the spec's staleness through `babysit-specs`, setup
+  items left for you, and the tracker claim. Later it asks only through the
+  question tool, and with no answer it leaves the pull request open and
+  unmerged. One folder per run, and no release or deployment.
 - **[tdd](./skills/workflow/tdd/SKILL.md)**: Write each new behavior's test
   before the behavior and see it fail on an assertion, with several tests
   allowed before one implementation. Acceptance criteria set the floor of what
