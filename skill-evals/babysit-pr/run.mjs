@@ -254,9 +254,8 @@ function readStream(raw) {
 function runClaude(ws, prompt, rawFile) {
   const args = ['-p', prompt, '--setting-sources', 'project', '--output-format', 'stream-json', '--verbose',
     '--max-budget-usd', opts['max-budget-usd'], '--permission-mode', 'acceptEdits', '--model', opts.model,
-    '--allowedTools', 'Read', 'Edit', 'Write', 'Glob', 'Grep', 'Skill',
-    'Bash(ls:*)', 'Bash(cat:*)', 'Bash(git:*)', 'Bash(gh:*)', 'Bash(find:*)', 'Bash(grep:*)', 'Bash(head:*)', 'Bash(tail:*)',
-    'Bash(wc:*)', 'Bash(sed:*)', 'Bash(jq:*)', 'Bash(python3:*)', 'Bash(node:*)', 'Bash(npm:*)', 'Bash(npx:*)', 'Bash(mktemp:*)'];
+    // The workspace is disposable, gh is the replay, and origin is a local bare remote, so any shell command may run.
+    '--allowedTools', 'Read', 'Edit', 'Write', 'Glob', 'Grep', 'Skill', 'Bash'];
   const env = { ...childEnv, PATH: `${join(ws, 'bin')}:${childEnv.PATH}` };
   return new Promise((settle) => {
     const child = spawn('claude', args, { cwd: ws, env, stdio: ['ignore', 'pipe', 'pipe'] });
