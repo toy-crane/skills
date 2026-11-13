@@ -61,6 +61,11 @@
   pull requests through `pr` the same way. `merge` treats `pr`'s finish as an
   intermediate step and continues to verification and merge, then hands the
   merged branch to `clean-branches`, which owns the removal helper.
+- `merge` owns merge order itself, with no separate coordinator: work that
+  depends on other work is already tied by `Blocked by:` during shaping, so
+  only unrelated pull requests remain, and the first ready one may go first.
+  After a rebase it re-verifies only behavior that incoming base commits
+  overlap, not every check on every rebase.
 - A bundled deterministic script also earns its place when a measurement must
   be comparable across runs. `review-sessions` ships its session extraction
   and aggregation so a later pass counts the same sessions, exclusions, and

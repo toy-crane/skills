@@ -246,6 +246,10 @@
   follow-up, an already-disposed trade-off is noted as disposed, and a material
   consequence the spec leaves open is named in the handoff as a decision the
   user owns.
+- `implement` sizes each repair to the case it reproduced, as judgment rather
+  than a number: a diff line count cannot tell a needed change from an
+  unneeded one. This governs repairs inside the one review pass and adds no
+  further review loop.
 - Completion requires every required handoff source to have been inspected and
   every applicable acceptance and approved-reference criterion to be reconciled with
   the executable revision, alongside passing verification, reverified must-fix
