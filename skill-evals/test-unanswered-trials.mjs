@@ -33,7 +33,8 @@ const emit = (e) => process.stdout.write(JSON.stringify(e) + '\\n');
 emit({ type: 'system', subtype: 'init', model, apiKeySource: 'none', session_id: 's' });
 if (failing) {
   emit({ type: 'rate_limit_event', rate_limit_info: { status: 'rejected', resetsAt: 1900000000, rateLimitType: 'five_hour' }, session_id: 's' });
-  emit({ type: 'result', subtype: 'success', is_error: true, api_error_status: 429, result: "You've hit your limit", num_turns: 1, total_cost_usd: 0, usage: {}, permission_denials: [], session_id: 's' });
+  if (process.env.FAKE_CLAUDE_SUBTYPE) emit({ type: 'result', subtype: process.env.FAKE_CLAUDE_SUBTYPE, is_error: true, num_turns: 1, total_cost_usd: 0, usage: {}, permission_denials: [], errors: ['budget'], session_id: 's' });
+  else emit({ type: 'result', subtype: 'success', is_error: true, api_error_status: 429, result: "You've hit your limit", num_turns: 1, total_cost_usd: 0, usage: {}, permission_denials: [], session_id: 's' });
 } else {
   emit({ type: 'assistant', message: { content: [{ type: 'text', text: 'done' }] }, session_id: 's' });
   emit({ type: 'result', subtype: 'success', is_error: false, result: 'done', num_turns: 1, total_cost_usd: 0, usage: {}, permission_denials: [], session_id: 's' });
@@ -72,7 +73,7 @@ for (const runner of RUNNERS) {
     fs.chmodSync(path.join(bin, 'claude'), 0o755);
     const log = path.join(dir, 'calls.log');
     const flow = path.join(dir, 'flow');
-    const run = (failFirst) => {
+    const run = (failFirst, subtype = '') => {
       fs.writeFileSync(log, '');
       const result = spawnSync(process.execPath, [
         path.join(here, runner.name, 'run.mjs'), '--variant', 'v1', '--access', 'subscription',
@@ -87,6 +88,7 @@ for (const runner of RUNNERS) {
           FAKE_CLAUDE_LOG: log,
           FAKE_CLAUDE_COUNTER: path.join(dir, 'counter'),
           FAKE_CLAUDE_FAIL_FIRST: String(failFirst),
+          FAKE_CLAUDE_SUBTYPE: subtype,
         },
       });
       return { result, calls: fs.readFileSync(log, 'utf8').split('\n').filter(Boolean) };
@@ -105,5 +107,13 @@ for (const runner of RUNNERS) {
     const second = run(0);
     assert.deepEqual(second.calls.filter((c) => c.startsWith('agent')), ['agent-ok'], 'a rerun runs only the unanswered trial');
     assert.deepEqual(rows(resultsFile).map((r) => r.rep).sort(), [0, 1], 'the rerun fills the unanswered trial');
+
+    // A run that stopped on its own limit, such as --max-budget-usd, carries is_error too but stays a harness error.
+    fs.rmSync(flow, { recursive: true, force: true });
+    fs.rmSync(path.join(dir, 'counter'), { force: true });
+    run(1, 'error_max_budget_usd');
+    const budgetErrors = rows(path.join(path.dirname(findFile(flow, 'results.jsonl')), 'errors.jsonl'));
+    assert.deepEqual(budgetErrors.map((r) => [r.rep, r.class]), [[0, 'harness']], 'an error subtype keeps its harness class');
+    assert.match(budgetErrors[0].detail, /error_max_budget_usd/, 'the detail names the subtype');
   });
 }

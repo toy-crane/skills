@@ -278,10 +278,11 @@ async function runCase({ c, rep }) {
   const rawFile = join(runDir, 'turn1.jsonl');
   const t = await runClaude(workspace, c.prompt, rawFile);
   if (t.timedOut) return errorRow('timeout', 'turn 1', t.info);
-  // Claude Code ends a turn stopped by an API error, such as a usage limit, with subtype success and is_error.
+  if (t.info.resultSubtype !== 'success') return errorRow('harness', `result ${t.info.resultSubtype}: ${t.stderr.slice(0, 300)}`, t.info);
+  // Claude Code ends a turn stopped by an API error, such as a usage limit, with subtype success and is_error;
+  // the error subtypes, such as error_max_budget_usd, set is_error too and stay harness errors above.
   // That trial never finished answering, so it is not a result: keep it out of grading for a rerun to fill.
   if (t.info.isError) return errorRow('api-error', `status ${t.info.apiErrorStatus}: ${t.info.resultText.slice(0, 300)}`, t.info);
-  if (t.info.resultSubtype !== 'success') return errorRow('harness', `result ${t.info.resultSubtype}: ${t.stderr.slice(0, 300)}`, t.info);
   if (!t.info.model?.startsWith(opts.model)) return errorRow('served-model-mismatch', `asked ${opts.model}, served ${t.info.model}`, t.info);
   const expectedKey = opts.access === 'api' ? 'ANTHROPIC_API_KEY' : 'none';
   if (t.info.apiKeySource !== expectedKey) return errorRow('access-mismatch', `key source ${t.info.apiKeySource}`, t.info);
