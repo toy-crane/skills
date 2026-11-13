@@ -39,23 +39,23 @@
      "expectation-0": {
       "tier": "upper",
       "baseline": "pass",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "expectation-1": {
       "tier": "upper",
       "baseline": "pass",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      },
      "end-state": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 4,
+      "passes": 4,
+      "recent": "pppp"
      }
     },
     "session-inside-candidate": {
