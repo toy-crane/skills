@@ -13,6 +13,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
+import { finishRun, loadHistory, planTiers, recordRow, saveHistory } from '../audit-evals/history.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../..');
@@ -26,7 +27,7 @@ const usage = `usage: run.mjs --variant <label> --access api|subscription [optio
   --suite <name>|evals    a suite under regression/ (or a capability eval folder here), or evals.json (default: pr-flow-merge-rebase)
   --split train|test|all  which split of a capability eval to run (default: all)
   --cases a,b             run only these case ids
-  --reps <n>              runs per case (default: 2)
+  --reps <n>              runs per case (default: 2; a regression suite runs at its recorded reps)
   --workers <n>           runs in parallel (default: 4)
   --model <id>            agent model (default: claude-sonnet-5-5)
   --judge-model <id>      judge model (default: claude-opus-5-5)
@@ -44,7 +45,7 @@ const { values: opts } = parseArgs({
     suite: { type: 'string', default: 'pr-flow-merge-rebase' },
     split: { type: 'string', default: 'all' },
     cases: { type: 'string' },
-    reps: { type: 'string', default: '2' },
+    reps: { type: 'string' },
     workers: { type: 'string', default: '4' },
     model: { type: 'string', default: 'claude-sonnet-5-5' },
     'judge-model': { type: 'string', default: 'claude-opus-5-5' },
@@ -84,7 +85,20 @@ if (opts.cases) {
   for (const id of wanted) if (!cases.some((c) => c.id === id)) fail(`unknown case in ${opts.suite}: ${id}`);
   cases = cases.filter((c) => wanted.includes(c.id));
 }
-const reps = Number(opts.reps);
+// A regression run reads its tiers from the cell history and adds each row it scores to it:
+// the upper tier always runs, the lower tier only when the model differs from its last run.
+let history = null;
+let tiers = null;
+const historyPath = join(here, 'regression', 'cell-history.json');
+const regressionSuite = opts.suite !== 'evals' && suiteDir === join(here, 'regression', opts.suite);
+if (regressionSuite) {
+  history = loadHistory(historyPath);
+  tiers = planTiers(history, opts.suite, opts.model);
+  cases = cases.filter((c) => tiers.runsCase(c.id));
+  const own = history.suites[opts.suite].reps;
+  if (opts.reps !== undefined && Number(opts.reps) !== own) fail(`${opts.suite} runs at ${own} reps, as recorded in its cell history; drop --reps or pass ${own}`);
+}
+const reps = history ? history.suites[opts.suite].reps : Number(opts.reps ?? 2);
 const workers = Number(opts.workers);
 const timeoutMs = Number(opts['timeout-s']) * 1000;
 const fixturesDir = existsSync(join(suiteDir, 'fixtures.mjs')) ? suiteDir : join(here, 'regression/pr-flow-merge-rebase');
@@ -146,6 +160,7 @@ const todo = [];
 for (let rep = 0; rep < reps; rep += 1) for (const c of cases) if (!done.has(`${c.id}#${rep}`)) todo.push({ c, rep });
 
 console.log(`variant ${opts.variant}: merge SKILL.md from ${skillSource} (sha ${skillSha})`);
+if (tiers) console.log(`regression tiers: upper${tiers.lowerRuns ? ' and lower (model differs from the lower tier\'s last)' : ' only'}; history ${historyPath}`);
 console.log(`access ${opts.access}, model ${opts.model}, judge ${opts['judge-model']}; suite ${opts.suite} (${opts.split}): ${cases.length} cases × ${reps} reps; ${done.size} done, ${todo.length} to run`);
 function report() {
   const wanted = new Set(cases.map((c) => c.id));
@@ -314,6 +329,11 @@ async function runCase({ c, rep }) {
       denied: t.info.permissionDenials.map((d) => `${d.tool_name} ${JSON.stringify(d.tool_input).slice(0, 200)}`),
     },
   })}\n`);
+  // Only a row scored now reaches the history; rows already in results.jsonl were counted when scored.
+  if (history) {
+    recordRow(history, opts.suite, { prompt_id: c.id, grade }, { lowerRuns: tiers.lowerRuns });
+    saveHistory(historyPath, history);
+  }
   console.log(`${id}: ${JSON.stringify(grade)} merged=${endState.merged ?? '-'} pushed=${endState.branchPushed ?? '-'} ${latency.toFixed(0)}s $${(t.info.costUsd ?? 0).toFixed(2)}`);
 }
 
@@ -331,4 +351,11 @@ await Promise.all(Array.from({ length: Math.min(workers, todo.length) }, async (
   }
 }));
 console.log(`results: ${resultsFile}`);
+if (history) {
+  const scored = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`));
+  const complete = finishRun(history, opts.suite, { model: opts.model, lowerRuns: tiers.lowerRuns, scored });
+  if (complete) saveHistory(historyPath, history);
+  console.log(complete ? `cell history: run complete on ${opts.model}, models recorded`
+    : 'cell history: run incomplete, models left as they were; rerun the same variant to finish it');
+}
 report();

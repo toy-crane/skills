@@ -134,8 +134,11 @@ export function scoreRun(judged, endState) {
     ...judged.verdicts.filter((v) => !v.met).map((v) => `${v.text} — ${v.evidence}`),
     ...facts.filter((f) => !f.ok).map((f) => `end state: ${f.text} — failed`),
   ];
+  // One score per cell of the cell history: each judged expectation, and the end-state checks.
+  const cells = Object.fromEntries(judged.verdicts.map((v, i) => [`expectation-${i}`, v.met ? 1 : 0]));
+  cells['end-state'] = facts.every((f) => f.ok) ? 1 : 0;
   return {
-    grade: { pass: allMet ? 1 : 0, expectations_met: met / judged.verdicts.length, end_state_ok: facts.every((f) => f.ok) ? 1 : 0 },
+    grade: { pass: allMet ? 1 : 0, expectations_met: met / judged.verdicts.length, end_state_ok: cells['end-state'], ...cells },
     problems,
   };
 }
