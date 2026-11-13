@@ -256,6 +256,19 @@
         "It embeds the head onboarding video, labeled with its revision, flow, and conditions.",
         "It states that there is no before state rather than inventing a baseline or mock comparison."
       ]
+    },
+    {
+      "id": 23,
+      "new": true,
+      "name": "pr-title-by-effect",
+      "fixture": "pr-title",
+      "prompt": "지금 브랜치 변경으로 PR 올려줘.",
+      "expected_output": "The PR title follows the repository's Conventional Commit style and says what changes for the reviewer: one alternative shown at a time with the scroll position kept, not which file or function changed.",
+      "expectations": [
+        "It opens a ready-for-review pull request for feat/single-alternative.",
+        "The title follows the repository's Conventional Commit convention.",
+        "The title says the effect for users, such as showing one alternative at a time or keeping the scroll position, rather than naming files, functions, or the mechanism changed."
+      ]
     }
   ]
 }

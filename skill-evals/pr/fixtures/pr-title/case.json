@@ -1,0 +1,67 @@
+{
+ "pr": {
+  "number": 12,
+  "title": "(set by the agent)",
+  "body": "Implements docs/specs/single-alternative/: the comparison shell shows one alternative at a time and keeps the scroll offset when switching.\n\nVerification: `npm test` (3 tests).",
+  "base": "main",
+  "head": "feat/single-alternative",
+  "author": "toy-crane",
+  "commit": "feat(compare): add show() with scrollTop carry-over in compare.js"
+ },
+ "viewer": "toy-crane",
+ "advance": "create",
+ "stages": {
+  "before": null,
+  "after": {
+   "head": "$HEAD0",
+   "mergeable": "MERGEABLE",
+   "checks": [
+    {
+     "name": "test",
+     "workflow": "ci",
+     "required": true,
+     "runId": 101,
+     "conclusion": "SUCCESS",
+     "log": "> node --test test/*.test.js\nℹ pass 3\nℹ fail 0"
+    },
+    {
+     "name": "codex-review-gate",
+     "workflow": "codex-review-gate",
+     "required": true,
+     "runId": 102,
+     "conclusion": "SUCCESS",
+     "log": "Codex reviewed $HEAD0: completed."
+    },
+    {
+     "name": "CodeRabbit",
+     "workflow": "coderabbit",
+     "required": false,
+     "runId": 104,
+     "status": "IN_PROGRESS",
+     "log": "Review in progress"
+    }
+   ],
+   "reviews": [
+    {
+     "id": "PRR_1",
+     "author": "chatgpt-codex-connector",
+     "state": "COMMENTED",
+     "commit": "$HEAD0",
+     "at": "2026-11-13T10:05:00Z",
+     "body": "### 💡 Codex Review\n\nHere are some automated review suggestions for this pull request.\n\n**Reviewed commit:** `$HEAD0`"
+    }
+   ],
+   "threads": [],
+   "comments": [
+    {
+     "id": "IC_summary",
+     "dbId": 5001,
+     "author": "chatgpt-codex-connector",
+     "at": "2026-11-13T10:05:00Z",
+     "body": "<!-- codex-pull-request-review-summary -->\n\n## Codex Review Summary\n\n| Review | Status | Commit | Review trigger |\n| --- | --- | --- | --- |\n| 📝 **Code Review** | ✅ **Completed** | `$HEAD0` | PR opened |"
+    }
+   ]
+  }
+ },
+ "repo_fixture": "../../../babysit-pr/fixtures/repo"
+}

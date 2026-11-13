@@ -1,0 +1,392 @@
+{
+ "version": 2,
+ "suites": {
+  "pr-flow-babysit-6": {
+   "reps": 2,
+   "last_run_model": "claude-opus-5-5",
+   "lower_tier_model": "claude-opus-5-5",
+   "checks": {
+    "e0": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "e1": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "e2": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "e3": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "e4": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    },
+    "e5": {
+     "grader": "judge",
+     "judge_call": "expectations"
+    }
+   },
+   "cells": {
+    "babysit-pr-2": {
+     "e0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e3": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e4": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e5": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "babysit-pr-3": {
+     "e0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e3": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e4": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "babysit-pr-4": {
+     "e0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e3": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e4": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "babysit-pr-5": {
+     "e0": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e3": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e4": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e5": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "babysit-pr-6": {
+     "e0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e3": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e4": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e5": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "babysit-pr-7": {
+     "e0": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e3": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "babysit-pr-8": {
+     "e0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e1": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e3": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e4": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "babysit-pr-9": {
+     "e0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e2": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e3": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e4": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "babysit-pr-10": {
+     "e0": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e1": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e2": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e3": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e4": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     },
+     "e5": {
+      "tier": "lower",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    }
+   }
+  }
+ }
+}

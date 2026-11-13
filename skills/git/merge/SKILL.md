@@ -8,10 +8,10 @@ description: Carry the current repository change through a verified GitHub pull 
 Carry the current request's change through a pull request, verified merge, and
 safe local cleanup. Complete the necessary commit, synchronization, publication,
 and PR work, using the `pull` skill for base synchronization, the `pr` skill to
-create or update the pull request, and the `clean-branches` skill for the
-cleanup after the merge.
+create or update the pull request, the `babysit-pr` skill to bring it to
+ready, and the `clean-branches` skill for the cleanup after the merge.
 
-This skill requires `pull`, `pr`, and `clean-branches`. Before doing any work,
+This skill requires `pull`, `pr`, `babysit-pr`, and `clean-branches`. Before doing any work,
 confirm each one is installed. When one is missing, stop and report it with
 its install command, `npx skills@latest add toy-crane/skills --skill <name>`,
 using the project's package manager runner where it pins one.
@@ -93,6 +93,15 @@ it, because it publishes. `pr` finishes by handing back the PR URL; here that
 is an intermediate step, so continue to the merge below instead of stopping to
 report. Invoke it again only when the change itself makes the body outdated,
 not when a rebase merely moves the head.
+
+## Bring the PR to ready with `babysit-pr`
+
+After `pr` hands back the pull request, and before any merge step below,
+invoke `babysit-pr` with it. It answers CI and review bots and hands back
+ready or needs a person. Continue to the merge only on ready, and recheck that
+the head it reported is still the current head; when a later step moves the
+head, invoke it again before merging. On needs a person, keep the
+pull request open, enable no auto-merge, and report the reason it gave.
 
 With a tracker configured, confirm on the remote PR before merging what the
 reconciliation below reads back: each spec folder the PR carries has its one

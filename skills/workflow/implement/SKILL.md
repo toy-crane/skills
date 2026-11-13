@@ -1,12 +1,12 @@
 ---
 name: implement
-description: Implement or resume settled work from one selected spec folder as one handoff bundle. Use when the user provides a `docs/specs/SLUG/` folder and wants its settled spec completed in the current checkout with verification, one completed and triaged automated code review, and a runnable product handoff when the repository exposes one through a local server.
+description: Implement or resume settled work from one selected spec folder as one handoff bundle. Use when the user provides a `docs/specs/SLUG/` folder and wants its settled spec completed in the current checkout with verification, one completed and triaged automated code review, a ready-for-review pull request brought through CI and review bots, and a runnable product handoff when the repository exposes one through a local server.
 ---
 
 # Implement
 
-This skill requires `tdd`, `llm-evals`, `babysit-specs`, and
-`project-knowledge`. Before
+This skill requires `tdd`, `llm-evals`, `babysit-specs`,
+`project-knowledge`, `pr`, and `babysit-pr`. Before
 doing any work, confirm each one is installed. When one is missing, stop and
 report it with its install command,
 `npx skills@latest add toy-crane/skills --skill <name>`, using the project's
@@ -333,12 +333,31 @@ Do not organize this account around files or tests, although report relevant
 verification separately. Do not present a prototype or stale capture as proof
 of the delivered revision, and name anything important that could not be shown.
 
+## Open the pull request and bring it to ready
+
+When the completion conditions above all hold, invoke `pr` to open a
+ready-for-review pull request for this work, handing it the verification
+evidence and the reviewable account above for its body; it hands back the
+pull request URL. Then invoke `babysit-pr` with that pull request; it answers
+CI and review bots and hands back the end state, ready or needs a person, with
+what it fixed, declined, and left. Never open a draft and never merge: merging
+belongs to the user's later request.
+
+An incomplete or blocked run opens no pull request; report the blocker as
+above. Skip both steps, and hand off as below, when the user asked for no pull
+request or the repository has no GitHub remote, and say which applied.
+
 ## Hand off the runnable product
 
-After that report, when the repository exposes the actual result through a
-user-reviewable local server, run it through the supported development or
-preview path. Verify the changed routes and essential states, share a
-reachable address, and name what to review.
+After `babysit-pr` finishes, or when no pull request was opened, and when the repository exposes the actual result through a user-reviewable local
+server, run it through the supported development or preview path. Verify the
+changed routes and essential states, share a reachable address, and name what
+to review. When `babysit-pr` pushed fixes, they are executable repairs: repeat
+the final changed-flow and core-loop gate on the revision it left before this
+handoff, without a second review pass. The final
+message puts together the pull request link, the state `babysit-pr` returned
+with what remains for a person, the address, and what to check there, so one
+look at the final code can decide the merge.
 
 Reuse a healthy server owned by the current checkout or start an isolated one
 while preserving other checkouts and unrelated processes. Keep that server

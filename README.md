@@ -198,10 +198,14 @@ user authorization without asking again, and requests only missing authority.
 An explicit policy denial requires a permitted safer path or the needed
 authority before retrying. If review cannot finish, overall completion stays
 pending while verified outcomes, the blocker, and the next action are provided.
-When the repository exposes the result through a
-user-reviewable local server, `implement` verifies the changed surface and
-shares an address while leaving that server available until the user finishes
-review or later delivery cleanup. `implement` maps every acceptance criterion
+A completed run opens a ready-for-review pull request through `pr` and hands
+it to `babysit-pr`, which answers CI and review bots until the pull request is
+ready to merge or needs a person; `implement` never merges. An incomplete or
+blocked run opens no pull request, and the user can ask for none. When the
+repository exposes the result through a user-reviewable local server,
+`implement` verifies the changed surface and shares an address, after
+`babysit-pr` finishes and beside the PR link and its state, while leaving that
+server available until the user finishes review or later delivery cleanup. `implement` maps every acceptance criterion
 to automated tests, evals, runtime evidence, or a combination, hands the
 criteria to prove by tests to `tdd`, which selects the public seams, and hands
 criteria about LLM output that varies run to run to `llm-evals`. For an affected product
@@ -271,9 +275,11 @@ new session or a closing-message handoff is not required for correctness.
   outcome, reconcile verified behavior with the product contract, reopen
   invalidated work, and return to shaping when a product decision must change.
   Then finish with full verification and one completed, triaged automated
-  review, unless explicitly waived by the user. Recover review execution
-  failures and reuse granted authority; blocked review leaves completion pending
-  while the verified result and runnable product address remain available.
+  review, unless explicitly waived by the user, then open a ready PR through
+  `pr` and bring it to ready through `babysit-pr` without merging. Recover
+  review execution failures and reuse granted authority; blocked review leaves
+  completion pending, with no PR, while the verified result and runnable
+  product address remain available.
 - **[tdd](./skills/workflow/tdd/SKILL.md)**: Write each new behavior's test
   before the behavior and see it fail on an assertion, with several tests
   allowed before one implementation. Acceptance criteria set the floor of what
@@ -303,29 +309,32 @@ new session or a closing-message handoff is not required for correctness.
 
 ## Git delivery
 
-Five skills cover the repository handoff from a local change to a merged base
-branch, and a sixth clears the branches and worktrees that pile up afterward.
-Invoke them directly with `/commit`, `/pull`, `/push`, `/pr`, `/merge`, or
-`/clean-branches` in Claude Code and `$commit`, `$pull`, `$push`, `$pr`,
-`$merge`, or `$clean-branches` in Codex.
+Six skills cover the repository handoff from a local change to a merged base
+branch, and a seventh clears the branches and worktrees that pile up afterward.
+Invoke them directly with `/commit`, `/pull`, `/push`, `/pr`, `/babysit-pr`,
+`/merge`, or `/clean-branches` in Claude Code and `$commit`, `$pull`, `$push`,
+`$pr`, `$babysit-pr`, `$merge`, or `$clean-branches` in Codex.
 
 When Codex exposes the managed plugin namespace, or a user-level skill with the
 same short name is also installed, use `$toycrane-skills:commit`,
 `$toycrane-skills:pull`, `$toycrane-skills:push`, `$toycrane-skills:pr`,
-`$toycrane-skills:merge`, or `$toycrane-skills:clean-branches` to select this
+`$toycrane-skills:babysit-pr`, `$toycrane-skills:merge`, or
+`$toycrane-skills:clean-branches` to select this
 bundle unambiguously.
 
 ```mermaid
 flowchart LR
     C["commit<br/>record in-scope changes"] --> P["push<br/>publish existing commits"]
     P --> PR["pr<br/>open ready-for-review PR"]
-    PR --> M["merge<br/>verify merge and clean up"]
+    PR --> B["babysit-pr<br/>answer CI and review bots"]
+    B --> M["merge<br/>verify merge and clean up"]
     L["pull<br/>rebase onto remote base"] -. "synchronize when needed" .-> C
     L -. "synchronize when needed" .-> P
 ```
 
 Each skill owns its whole advertised outcome. A skill that invokes another one
-by name requires it: `merge` requires `pull`, `pr`, and `clean-branches`, and
+by name requires it: `merge` requires `pull`, `pr`, `babysit-pr`, and
+`clean-branches`, and
 stops before any work with the install command when one is missing. `push`
 deliberately leaves dirty changes local. `pr` may perform the necessary
 commit, synchronization, and publication, but stops before merge. `merge`
@@ -346,9 +355,15 @@ project's declared cleanup commands and removes it.
   return its URL without merging it. With an issue tracker configured, first
   create the issue for each carried spec folder that has no `Issue:` line and
   commit that line.
+- **[babysit-pr](./skills/git/babysit-pr/SKILL.md)**: Watch one open pull
+  request through CI and review bots until it is ready to merge or needs a
+  person. Fix bot findings confirmed against the source, decline the rest with
+  evidence, answer and resolve each thread with an agent-authored note, rerun
+  infrastructure flakes, and wake only on checks, reviews, comments, pushes,
+  and conflicts. Never merges.
 - **[merge](./skills/git/merge/SKILL.md)**: Carry a change through verified pull
-  request merge, synchronizing through `pull` and creating or updating the PR
-  through `pr`, choose squash or rebase by commit meaning, then hand the
+  request merge, synchronizing through `pull`, creating or updating the PR
+  through `pr`, and bringing it to ready through `babysit-pr`, choose squash or rebase by commit meaning, then hand the
   merged branch to `clean-branches` for cleanup. When a delivered spec asks
   for a post-release check and a tracker is configured, open one check issue
   due after the spec's period.

@@ -805,6 +805,60 @@
         "It proceeds with the criteria's own checks.",
         "It does not add a regression suite as part of this run."
       ]
+    },
+    {
+      "id": 66,
+      "new": true,
+      "fixture": "pr-handoff-complete",
+      "prompt": "/implement docs/specs/csv-export/ 마무리해 줘. 수용 기준 1–3은 모두 구현했고 npm test(2건)와 개발 서버에서 /export.csv 다운로드, 목록 페이지의 Export CSV 링크까지 확인했어. 전체 diff 자동 코드 리뷰도 한 번 끝냈고 지적 2건은 분류했어(따옴표 처리 1건은 고치고 재검증, 1건은 범위 밖이라 docs/follow-ups/csv-download-filename.md에 기록). 리뷰 뒤 최종 검증도 통과했어. 커밋은 feat/csv-export 브랜치에 다 돼 있어.",
+      "expected_output": "With every completion condition met, the response opens a ready-for-review PR through pr, hands it to babysit-pr, and only after babysit-pr finishes shares the local server address together with the PR link and its ready state, without merging.",
+      "expectations": [
+        "It opens a pull request for feat/csv-export through the pr skill, ready for review rather than a draft.",
+        "After the pull request exists, it invokes babysit-pr with that pull request.",
+        "It shares the dev server address only after babysit-pr has finished; starting the server earlier for verification is fine.",
+        "Its final message gives the PR link, the state babysit-pr returned (ready), the server address, and what to check there.",
+        "It does not merge the pull request."
+      ]
+    },
+    {
+      "id": 67,
+      "new": true,
+      "fixture": "pr-handoff-incomplete",
+      "prompt": "/implement docs/specs/csv-export/ 오늘은 여기까지만 하자. 수용 기준 1–2는 구현했고 npm test와 개발 서버로 확인했어. 3(목록 페이지의 Export CSV 링크)은 아직 못 만들었어. 더 구현하지 말고 지금 상태로 정리해 줘.",
+      "expected_output": "Criterion 3 is not built, so the run is not complete: the response opens no pull request and does not invoke babysit-pr, reports what remains, and still hands off the running product.",
+      "expectations": [
+        "It keeps completion pending because acceptance criterion 3 is not built.",
+        "It opens no pull request, draft or ready.",
+        "It does not invoke babysit-pr.",
+        "It names what remains to finish: the Export CSV link on the list page.",
+        "It still shares the local server address for the verified part."
+      ]
+    },
+    {
+      "id": 68,
+      "new": true,
+      "fixture": "pr-handoff-complete",
+      "prompt": "/implement docs/specs/csv-export/ 마무리해 줘. 수용 기준 1–3은 모두 구현했고 npm test(2건)와 개발 서버에서 /export.csv 다운로드, 목록 페이지의 Export CSV 링크까지 확인했어. 전체 diff 자동 코드 리뷰도 한 번 끝냈고 지적 2건은 분류했어(따옴표 처리 1건은 고치고 재검증, 1건은 범위 밖이라 docs/follow-ups/csv-download-filename.md에 기록). 리뷰 뒤 최종 검증도 통과했어. 커밋은 feat/csv-export 브랜치에 다 돼 있어. PR은 올리지 마. 내가 직접 올릴게.",
+      "expected_output": "The user asked for no pull request, so the response skips both the PR and babysit-pr steps, says so, and hands off the local server address as before.",
+      "expectations": [
+        "It opens no pull request.",
+        "It does not invoke babysit-pr.",
+        "It says the PR step was skipped because the user asked for no pull request.",
+        "It shares the local server address and what to check there."
+      ]
+    },
+    {
+      "id": 69,
+      "new": true,
+      "fixture": "pr-handoff-no-remote",
+      "prompt": "/implement docs/specs/csv-export/ 마무리해 줘. 수용 기준 1–3은 모두 구현했고 npm test(2건)와 개발 서버에서 /export.csv 다운로드, 목록 페이지의 Export CSV 링크까지 확인했어. 전체 diff 자동 코드 리뷰도 한 번 끝냈고 지적 2건은 분류했어(따옴표 처리 1건은 고치고 재검증, 1건은 범위 밖이라 docs/follow-ups/csv-download-filename.md에 기록). 리뷰 뒤 최종 검증도 통과했어. 커밋은 feat/csv-export 브랜치에 다 돼 있어.",
+      "expected_output": "The repository has no GitHub remote, so the response skips both the PR and babysit-pr steps, says why, and hands off the local server address.",
+      "expectations": [
+        "It finds that the repository has no GitHub remote.",
+        "It opens no pull request and does not invoke babysit-pr.",
+        "It says the PR step was skipped because there is no GitHub remote.",
+        "It shares the local server address and what to check there."
+      ]
     }
   ]
 }
