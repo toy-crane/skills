@@ -100,8 +100,10 @@ function snapshot(ref) {
   const checks = {};
   const contexts = p.commits.nodes[0]?.commit.statusCheckRollup?.contexts.nodes ?? [];
   for (const c of contexts) {
-    if (c.__typename === "CheckRun") checks[c.name] = c.status === "COMPLETED" ? c.conclusion : "PENDING";
-    else checks[c.context] = c.state;
+    // Two workflows may run checks with the same name; keep each one.
+    let key = c.__typename === "CheckRun" ? c.name : c.context;
+    for (let n = 2; key in checks; n += 1) key = `${c.__typename === "CheckRun" ? c.name : c.context} #${n}`;
+    checks[key] = c.__typename === "CheckRun" ? (c.status === "COMPLETED" ? c.conclusion : "PENDING") : c.state;
   }
   const threads = {};
   for (const t of p.reviewThreads.nodes) threads[t.id] = `${t.isResolved ? "resolved" : "open"}:${t.comments.totalCount}`;
@@ -112,9 +114,13 @@ function snapshot(ref) {
   return { state: p.state, head: p.headRefOid, mergeable: p.mergeable, checks, reviews, threads, comments };
 }
 
+// A check that starts or restarts, or mergeability GitHub has not computed
+// yet, is not an event: the result that follows is. Leaving them out of the
+// diff keeps the recorded state, so that result still differs from it.
 function diff(before, after) {
   const changes = [];
   for (const key of ["state", "head", "mergeable"]) {
+    if (key === "mergeable" && after[key] === "UNKNOWN") continue;
     if (before[key] !== after[key]) changes.push({ kind: key, from: before[key], to: after[key] });
   }
   const maps = { checks: "check", reviews: "review", threads: "thread", comments: "comment" };
@@ -122,6 +128,7 @@ function diff(before, after) {
     const a = before[key] ?? {};
     const b = after[key] ?? {};
     for (const id of Object.keys(b)) {
+      if (kind === "check" && ["PENDING", "EXPECTED"].includes(b[id])) continue;
       if (!(id in a)) changes.push({ kind, id, change: "added", to: b[id] });
       else if (a[id] !== b[id]) changes.push({ kind, id, change: "updated", from: a[id], to: b[id] });
     }

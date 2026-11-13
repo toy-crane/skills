@@ -100,3 +100,30 @@ test("only one wait runs per pull request", async () => {
   // The lock is released when the first wait ends.
   assert.equal(run(env, "wait", "7", "--interval", "0.1", "--max-minutes", "0.005").code, 11);
 });
+
+test("a rerun's restart and unknown mergeability do not wake; the rerun's result does", () => {
+  const { env, write } = setup();
+  const ci = (status, conclusion) => [{ __typename: "CheckRun", name: "ci", status, conclusion }];
+  write(pr({ checks: ci("COMPLETED", "FAILURE") }));
+  run(env, "mark", "7");
+  write(pr({ checks: ci("IN_PROGRESS", null), mergeable: "UNKNOWN" }));
+  assert.equal(run(env, "wait", "7", "--interval", "0.1", "--max-minutes", "0.005").code, 11);
+  write(pr({ checks: ci("COMPLETED", "SUCCESS") }));
+  const r = run(env, "wait", "7", "--interval", "0.1");
+  assert.equal(r.code, 0);
+  assert.deepEqual(r.json.changes, [{ kind: "check", id: "ci", change: "updated", from: "FAILURE", to: "SUCCESS" }]);
+});
+
+test("checks that share a name are tracked separately", () => {
+  const { env, write } = setup();
+  const two = (a, b) => [
+    { __typename: "CheckRun", name: "build", status: "COMPLETED", conclusion: a },
+    { __typename: "CheckRun", name: "build", status: "COMPLETED", conclusion: b },
+  ];
+  write(pr({ checks: two("SUCCESS", "SUCCESS") }));
+  run(env, "mark", "7");
+  write(pr({ checks: two("FAILURE", "SUCCESS") }));
+  const r = run(env, "wait", "7", "--interval", "0.1", "--max-minutes", "0.01");
+  assert.equal(r.code, 0);
+  assert.equal(r.json.changes[0].to, "FAILURE");
+});
