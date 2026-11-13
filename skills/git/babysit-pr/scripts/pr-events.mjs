@@ -33,8 +33,8 @@ const QUERY = `query($owner:String!,$name:String!,$number:Int!){
         ... on CheckRun{id name status conclusion}
         ... on StatusContext{context state}
       }}}}}}
-      reviews(last:100){nodes{id state author{login}}}
-      reviewThreads(first:100){nodes{id isResolved comments{totalCount}}}
+      reviews(last:100){nodes{id state updatedAt author{login}}}
+      reviewThreads(first:100){nodes{id isResolved comments(first:50){totalCount nodes{updatedAt}}}}
       comments(last:100){nodes{id updatedAt author{login}}}
     }
   }
@@ -110,9 +110,13 @@ function snapshot(ref) {
     else checks[key] = c.id ? `${c.conclusion}@${c.id}` : c.conclusion;
   }
   const threads = {};
-  for (const t of p.reviewThreads.nodes) threads[t.id] = `${t.isResolved ? "resolved" : "open"}:${t.comments.totalCount}`;
+  // A thread changes when it is resolved, answered, or one of its comments is edited.
+  for (const t of p.reviewThreads.nodes) {
+    const edited = (t.comments.nodes ?? []).map((c) => c.updatedAt).sort().pop() ?? "";
+    threads[t.id] = `${t.isResolved ? "resolved" : "open"}:${t.comments.totalCount}:${edited}`;
+  }
   const reviews = {};
-  for (const r of p.reviews.nodes) reviews[r.id] = `${r.author?.login ?? "ghost"}:${r.state}`;
+  for (const r of p.reviews.nodes) reviews[r.id] = `${r.author?.login ?? "ghost"}:${r.state}:${r.updatedAt ?? ""}`;
   const comments = {};
   for (const c of p.comments.nodes) comments[c.id] = `${c.author?.login ?? "ghost"}:${c.updatedAt}`;
   return { state: p.state, head: p.headRefOid, mergeable: p.mergeable, checks, reviews, threads, comments };

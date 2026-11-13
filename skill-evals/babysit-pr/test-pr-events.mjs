@@ -140,3 +140,21 @@ test("a rerun that fails again still wakes the wait once it completes", () => {
   assert.equal(r.code, 0);
   assert.equal(r.json.changes[0].kind, "check");
 });
+
+test("an edited review or thread comment wakes the wait", () => {
+  const { env, write } = setup();
+  const state = (reviewAt, commentAt) => pr({
+    reviews: [{ id: "R1", state: "CHANGES_REQUESTED", updatedAt: reviewAt, author: { login: "u" } }],
+    threads: [{ id: "T1", isResolved: false, comments: { totalCount: 1, nodes: [{ updatedAt: commentAt }] } }],
+  });
+  write(state("t0", "t0"));
+  run(env, "mark", "7");
+  write(state("t1", "t0"));
+  const review = run(env, "wait", "7", "--interval", "0.1", "--max-minutes", "0.01");
+  assert.equal(review.code, 0);
+  assert.equal(review.json.changes[0].kind, "review");
+  write(state("t1", "t1"));
+  const comment = run(env, "wait", "7", "--interval", "0.1", "--max-minutes", "0.01");
+  assert.equal(comment.code, 0);
+  assert.equal(comment.json.changes[0].kind, "thread");
+});
