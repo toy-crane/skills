@@ -30,7 +30,8 @@ rulesets, not from which checks happen to run. Results and reviews of an
 earlier head do not count. Every unresolved review thread is open work,
 whenever it was posted.
 
-Handle a person's comment or review before any bot's. A person's request for
+A person's comment or review comes first, whenever it was posted: finish it,
+commit, push, and reply, before you open any bot thread. A person's request for
 changes ends the run as needs a person unless the request is clear and in
 scope, in which case answer it like a confirmed finding and leave its
 approval to that person.
