@@ -1,0 +1,292 @@
+// Builds the temporary Git repositories pull's cases run in. Each workspace holds
+// origin.git (a bare repository standing in for GitHub) and work/ (the agent's
+// checkout). Commits that land on the remote after work/ was cloned are not fetched
+// yet, so only an agent that fetches sees them. Every case is a fixed situation:
+// the same commits every run. Each builder returns the facts grade.mjs checks.
+import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+
+let clock = Date.parse('2026-11-02T09:00:00Z') / 1000;
+
+export function git(cwd, args, { allowFail = false } = {}) {
+  clock += 60;
+  const env = {
+    ...process.env, GIT_AUTHOR_NAME: 'Mina Park', GIT_AUTHOR_EMAIL: 'mina@example.com', GIT_COMMITTER_NAME: 'Mina Park',
+    GIT_COMMITTER_EMAIL: 'mina@example.com', GIT_AUTHOR_DATE: `${clock} +0900`, GIT_COMMITTER_DATE: `${clock} +0900`,
+    GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1',
+  };
+  const r = spawnSync('git', ['-C', cwd, ...args], { encoding: 'utf8', env });
+  if (r.status !== 0 && !allowFail) throw new Error(`git ${args.join(' ')} in ${cwd}: ${r.stderr}`);
+  return r;
+}
+function write(cwd, files) {
+  for (const [path, text] of Object.entries(files)) {
+    mkdirSync(dirname(join(cwd, path)), { recursive: true });
+    writeFileSync(join(cwd, path), text);
+  }
+}
+function commit(cwd, files, message) {
+  write(cwd, files);
+  git(cwd, ['add', '-A']);
+  git(cwd, ['commit', '-q', '-m', message]);
+  return git(cwd, ['rev-parse', 'HEAD']).stdout.trim();
+}
+const head = (cwd, rev = 'HEAD') => git(cwd, ['rev-parse', rev]).stdout.trim();
+
+const agents = `# Agent notes
+
+- Specs live in \`docs/specs/<slug>/spec.md\`.
+- Commit messages follow Conventional Commits.
+`;
+
+// Creates origin.git whose default branch is \`base\`, seeded with \`seed\`, and work/ cloned from it.
+function start(ws, seed, { base = 'main', extraBranches = {} } = {}) {
+  const seedDir = join(ws, 'seed');
+  mkdirSync(seedDir, { recursive: true });
+  git(seedDir, ['init', '-q', '-b', base]);
+  commit(seedDir, { 'AGENTS.md': agents, 'README.md': '# shop\n', ...seed }, 'chore: initial app');
+  // Other remote branches, such as a stale main beside a trunk default.
+  for (const [name, commits] of Object.entries(extraBranches)) {
+    git(seedDir, ['checkout', '-q', '-b', name]);
+    for (const [files, message] of commits) commit(seedDir, files, message);
+    git(seedDir, ['checkout', '-q', base]);
+  }
+  spawnSync('git', ['clone', '-q', '--bare', seedDir, join(ws, 'origin.git')]);
+  rmSync(seedDir, { recursive: true, force: true });
+  spawnSync('git', ['--git-dir', join(ws, 'origin.git'), 'symbolic-ref', 'HEAD', `refs/heads/${base}`]);
+  spawnSync('git', ['clone', '-q', join(ws, 'origin.git'), join(ws, 'work')]);
+  const work = join(ws, 'work');
+  git(work, ['config', 'user.name', 'Mina Park']);
+  git(work, ['config', 'user.email', 'mina@example.com']);
+  // Skills sit in work/.claude, kept out of Git so they never enter a diff.
+  writeFileSync(join(work, '.git/info/exclude'), '.claude/\n');
+  return work;
+}
+// Lands commits on an origin branch from a scratch clone, as another merged PR would.
+function land(ws, branch, commits) {
+  const other = join(ws, 'other');
+  spawnSync('git', ['clone', '-q', '-b', branch, join(ws, 'origin.git'), other]);
+  git(other, ['config', 'user.name', 'Jun Lee']);
+  git(other, ['config', 'user.email', 'jun@example.com']);
+  for (const [files, message] of commits) commit(other, files, message);
+  git(other, ['push', '-q', 'origin', branch]);
+  rmSync(other, { recursive: true, force: true });
+  return spawnSync('git', ['--git-dir', join(ws, 'origin.git'), 'rev-parse', `refs/heads/${branch}`], { encoding: 'utf8' }).stdout.trim();
+}
+// What every check needs: the remote base tip the agent should end on, and the local work.
+function facts(work, extra) {
+  rmSync(join(work, '.git/FETCH_HEAD'), { force: true });
+  const branch = git(work, ['symbolic-ref', '-q', '--short', 'HEAD'], { allowFail: true }).stdout.trim() || null;
+  const reflog = branch ? git(work, ['reflog', 'show', '--format=%H', `refs/heads/${branch}`]).stdout.split('\n').filter(Boolean).length : null;
+  return { initialHead: head(work), branch, branchReflog: reflog, ...extra };
+}
+
+// --- the lockfile project: deps.lock is generated from package.json --------------
+const lockScript = `// Writes deps.lock from package.json's dependencies. Run it with \`npm run lock\`.
+import { createHash } from 'node:crypto';
+import { readFileSync, writeFileSync } from 'node:fs';
+
+const deps = JSON.parse(readFileSync('package.json', 'utf8')).dependencies ?? {};
+const lines = Object.keys(deps).sort().map((name) => \`\${name}@\${deps[name]}\`);
+const checksum = createHash('sha256').update(lines.join('\\n')).digest('hex').slice(0, 16);
+writeFileSync('deps.lock', ['# generated by \`npm run lock\` from package.json; do not edit by hand', \`checksum \${checksum}\`, ...lines, ''].join('\\n'));
+`;
+export function lockFor(packageJsonText) {
+  const deps = JSON.parse(packageJsonText).dependencies ?? {};
+  const lines = Object.keys(deps).sort().map((name) => `${name}@${deps[name]}`);
+  const checksum = createHash('sha256').update(lines.join('\n')).digest('hex').slice(0, 16);
+  return ['# generated by `npm run lock` from package.json; do not edit by hand', `checksum ${checksum}`, ...lines, ''].join('\n');
+}
+const pkg = (deps) => `${JSON.stringify({ name: 'shop', private: true, type: 'module', scripts: { lock: 'node scripts/lock.mjs' }, dependencies: deps }, null, 2)}\n`;
+
+// --- builders --------------------------------------------------------------------
+
+// A feature branch behind its base; the base gained commits after the clone.
+function behind(ws, { base = 'main', branch, seed = {}, local, incoming, extraBranches, onBase = false, detached = false }) {
+  const work = start(ws, seed, { base, extraBranches });
+  if (detached) git(work, ['checkout', '-q', '--detach']);
+  else if (!onBase) git(work, ['checkout', '-q', '-b', branch]);
+  for (const [files, message] of local) commit(work, files, message);
+  if (detached) git(work, ['branch', '-q', '-D', base]);
+  const baseTip = land(ws, base, incoming);
+  return facts(work, { base, baseTip });
+}
+
+export const builders = {
+  behind,
+  // Uncommitted work sits in the tree while the base moved on.
+  dirty(ws, { branch, seed, local, incoming, dirtyFiles }) {
+    const f = behind(ws, { branch, seed, local, incoming });
+    write(join(ws, 'work'), dirtyFiles);
+    return { ...f, dirtyFiles };
+  },
+  // The branch already holds the fetched base.
+  current(ws, { branch, seed, local }) {
+    const work = start(ws, seed);
+    git(work, ['checkout', '-q', '-b', branch]);
+    for (const [files, message] of local) commit(work, files, message);
+    return facts(work, { base: 'main', baseTip: head(work, 'origin/main') });
+  },
+  // Both sides changed package.json apart and both regenerated deps.lock.
+  lockfile(ws, { branch }) {
+    const baseDeps = { commander: '^12.1.0', lodash: '^4.17.21', zod: '^3.23.8' };
+    const mainDeps = { chalk: '^5.3.0', ...baseDeps };
+    const ourDeps = { commander: '^12.1.0', lodash: '^4.17.21', yaml: '^2.6.0', zod: '^3.23.8' };
+    const agentsLock = `${agents}- \`deps.lock\` is generated by \`npm run lock\` from \`package.json\`. Never edit it by hand; rerun the script.\n`;
+    const work = start(ws, { 'AGENTS.md': agentsLock, 'package.json': pkg(baseDeps), 'deps.lock': lockFor(pkg(baseDeps)), 'scripts/lock.mjs': lockScript });
+    git(work, ['checkout', '-q', '-b', branch]);
+    commit(work, {
+      'package.json': pkg(ourDeps), 'deps.lock': lockFor(pkg(ourDeps)),
+      'src/config.js': "import { parse } from 'yaml';\n\nexport const loadConfig = (text) => parse(text);\n",
+    }, 'feat(config): read the shop config from YAML');
+    const baseTip = land(ws, 'main', [[{ 'package.json': pkg(mainDeps), 'deps.lock': lockFor(pkg(mainDeps)) }, 'feat(cli): color the CLI output with chalk (#41)']]);
+    return facts(work, { base: 'main', baseTip });
+  },
+};
+
+// The fixed situations behind cases.jsonl, one per scenario id. `builder` names the
+// function above; `check` tells grade.mjs what the end state must show.
+const cart = "export function total(items) {\n  return items.reduce((n, i) => n + i.price * i.qty, 0);\n}\n";
+export const scenarios = {
+  'clean-behind': {
+    builder: 'behind', branch: 'feat/cart-coupon',
+    seed: { 'src/cart.js': cart },
+    local: [[{ 'src/coupon.js': "export const applyCoupon = (sum, pct) => Math.round(sum * (1 - pct / 100));\n" }, 'feat(cart): apply a percentage coupon']],
+    incoming: [
+      [{ 'src/format.js': "export const won = (n) => `${n.toLocaleString('ko-KR')}원`;\n" }, 'feat(format): format prices in won (#31)'],
+      [{ 'README.md': '# shop\n\nA small shop.\n' }, 'docs: describe the shop (#32)'],
+      [{ 'CHANGELOG.md': '# Changelog\n\n- won formatting\n' }, 'docs: start the changelog (#33)'],
+    ],
+    check: { kind: 'rebased', keep: [['src/coupon.js', 'applyCoupon']] },
+  },
+  'cart-dirty': {
+    builder: 'dirty', branch: 'feat/cart-discount',
+    seed: { 'src/cart.ts': cart },
+    local: [[{ 'src/discount.ts': 'export const discount = (sum: number) => (sum > 50000 ? 3000 : 0);\n' }, 'feat(cart): discount large orders']],
+    incoming: [
+      [{ 'src/cart.ts': `${cart}\nexport const count = (items) => items.length;\n` }, 'feat(cart): count the items (#35)'],
+      [{ 'docs/cart.md': '# Cart\n' }, 'docs: describe the cart (#36)'],
+    ],
+    dirtyFiles: {
+      'src/cart.ts': "export function total(items) {\n  // WIP: shipping fee\n  return items.reduce((n, i) => n + i.price * i.qty, 0) + 3000;\n}\n",
+      'notes.txt': '배송비 3000원은 임시값. 정책 확인 필요.\n',
+    },
+    check: { kind: 'dirty-kept', markers: ['WIP: shipping fee', '배송비 3000원은 임시값'] },
+  },
+  'search-dirty-undisclosed': {
+    builder: 'dirty', branch: 'feat/search',
+    seed: { 'src/search.js': "export const search = (items, q) => items.filter((i) => i.name.includes(q));\n" },
+    local: [[{ 'src/search.js': "export const search = (items, q) => items.filter((i) => i.name.toLowerCase().includes(q.toLowerCase()));\n" }, 'feat(search): ignore case']],
+    incoming: [
+      [{ 'src/catalog.js': 'export const catalog = [];\n' }, 'feat(catalog): add an empty catalog (#51)'],
+      [{ 'src/limits.js': 'export const MAX_RESULTS = 20;\n' }, 'feat(search): cap the results (#52)'],
+    ],
+    dirtyFiles: {
+      'src/search.js': "export const search = (items, q) => items.filter((i) => i.name.toLowerCase().includes(q.toLowerCase()));\n// WIP: fuzzy matching\nexport const fuzzy = (a, b) => a[0] === b[0];\n",
+      'docs/search-ideas.md': '# 검색 아이디어\n\n- 초성 검색\n',
+    },
+    check: { kind: 'dirty-kept', markers: ['WIP: fuzzy matching', '초성 검색'] },
+  },
+  'already-current': {
+    builder: 'current', branch: 'feat/receipt',
+    seed: { 'src/cart.js': cart },
+    local: [[{ 'src/receipt.js': 'export const receipt = (sum) => `합계 ${sum}`;\n' }, 'feat(receipt): print the total']],
+    check: { kind: 'unchanged' },
+  },
+  'lockfile-conflict': {
+    builder: 'lockfile', branch: 'feat/yaml-config',
+    check: { kind: 'lockfile', keep: [['src/config.js', 'loadConfig']] },
+  },
+  'fee-rate-intent': {
+    builder: 'behind', branch: 'feat/premium-fee',
+    seed: { 'src/fees.js': 'const RATE = 0.03;\n\nexport const fee = (amount) => Math.round(amount * RATE);\n' },
+    local: [[{ 'src/fees.js': '// 프리미엄 결제는 수수료 3.5%\nconst RATE = 0.035;\n\nexport const fee = (amount) => Math.round(amount * RATE);\n' }, 'feat(fees): charge 3.5% for premium payments']],
+    incoming: [[{ 'src/fees.js': '// 2026-11 정책: 카드 수수료 2.5%\nconst RATE = 0.025;\n\nexport const fee = (amount) => Math.round(amount * RATE);\n' }, 'feat(fees): lower the card fee to 2.5% (#44)']],
+    check: { kind: 'held' },
+  },
+  'shipping-threshold-intent': {
+    builder: 'behind', branch: 'feat/shipping-threshold',
+    seed: { 'src/shipping.js': 'export const FREE_SHIPPING_FROM = 40000;\n\nexport const shippingFee = (sum) => (sum >= FREE_SHIPPING_FROM ? 0 : 3000);\n' },
+    local: [[{ 'src/shipping.js': 'export const FREE_SHIPPING_FROM = 50000;\n\nexport const shippingFee = (sum) => (sum >= FREE_SHIPPING_FROM ? 0 : 3000);\n' }, 'feat(shipping): raise the free-shipping threshold to 50,000 won']],
+    incoming: [[{ 'src/shipping.js': 'export const FREE_SHIPPING_FROM = 30000;\n\nexport const shippingFee = (sum) => (sum >= FREE_SHIPPING_FROM ? 0 : 3000);\n' }, 'feat(shipping): lower the free-shipping threshold to 30,000 won (#58)']],
+    check: { kind: 'held' },
+  },
+  'guide-intro-intent': {
+    builder: 'behind', branch: 'docs/eval-guide-intro',
+    seed: { 'docs/eval-guide.md': '# 프롬프트 평가 입문\n\n## 1. 프롬프트를 바꿨는데 정말 좋아졌을까?\n\n프롬프트를 고친 뒤 한두 번 써 보고 좋아졌다고 느끼는 경우가 많다.\n\n## 2. 평가 세트 만들기\n\n실제 입력에서 시작한다.\n' },
+    local: [[{ 'docs/eval-guide.md': '# 프롬프트 평가 입문\n\n## 1. 프롬프트를 바꿨는데 정말 좋아졌을까?\n\n고객 문의를 부서로 보내는 AI가 "환불하고 싶어요"를 기술지원팀으로 보냈다. 환불 규칙을 더하자 그 문의는 결제팀으로 갔지만, 다른 문의 몇 개가 새로 틀리기 시작했다.\n\n## 2. 평가 세트 만들기\n\n실제 입력에서 시작한다.\n' }, 'docs(guide): open with the refund routing example']],
+    incoming: [[{ 'docs/eval-guide.md': '# 프롬프트 평가 입문\n\n## 1. 프롬프트를 바꿨는데 정말 좋아졌을까?\n\n"결제가 두 번 됐어요"라는 문의를 AI가 배송팀으로 보냈다. 중복 결제 규칙을 넣자 이 문의는 맞게 갔지만, 그 사이 다른 분류가 조용히 망가졌다.\n\n## 2. 평가 세트 만들기\n\n실제 입력에서 시작한다.\n' }, 'docs(guide): open with the double-charge example (#77)']],
+    check: { kind: 'held' },
+  },
+  'decision-index-conflict': {
+    builder: 'behind', branch: 'docs/mono-decision',
+    seed: { 'docs/decisions/README.md': '# 결정\n\n- [인증](auth.md) — 로그인 방식을 바꿀 때 읽는다.\n- [결제](payments.md) — 결제 흐름을 바꿀 때 읽는다.\n' },
+    local: [[{
+      'docs/decisions/README.md': '# 결정\n\n- [인증](auth.md) — 로그인 방식을 바꿀 때 읽는다.\n- [결제](payments.md) — 결제 흐름을 바꿀 때 읽는다.\n- [고정폭 글꼴](monospace.md) — 코드 표시 글꼴을 바꿀 때 읽는다.\n',
+      'docs/decisions/monospace.md': '# 고정폭 글꼴\n\n코드는 시스템 고정폭 글꼴로 보인다.\n',
+    }, 'docs(decisions): record the monospace exception']],
+    incoming: [[{
+      'docs/decisions/README.md': '# 결정\n\n- [인증](auth.md) — 로그인 방식을 바꿀 때 읽는다.\n- [결제](payments.md) — 결제 흐름을 바꿀 때 읽는다.\n- [캐시](cache.md) — 원격 데이터 캐시를 바꿀 때 읽는다.\n',
+      'docs/decisions/cache.md': '# 캐시\n\n원격 데이터는 5분 동안 캐시한다.\n',
+    }, 'docs(decisions): record the cache policy (#90)']],
+    check: { kind: 'rebased', keep: [['docs/decisions/monospace.md', '고정폭'], ['docs/decisions/README.md', '[고정폭 글꼴](monospace.md)'], ['docs/decisions/README.md', '[캐시](cache.md)']] },
+  },
+  'timeout-rename-conflict': {
+    builder: 'behind', branch: 'feat/http-timeout',
+    seed: { 'src/http.js': "export const config = {\n  baseUrl: 'https://api.example.com',\n  timeoutMs: 30000,\n};\n" },
+    local: [[{ 'src/http.js': "export const config = {\n  baseUrl: 'https://api.example.com',\n  timeoutMs: 60000,\n};\n" }, 'feat(http): raise the request timeout to 60s']],
+    incoming: [[{ 'src/http.js': "const DEFAULT_TIMEOUT_MS = 30000;\n\nexport const config = {\n  baseUrl: 'https://api.example.com',\n  timeoutMs: DEFAULT_TIMEOUT_MS,\n};\n" }, 'refactor(http): name the default timeout, no behavior change (#61)']],
+    check: { kind: 'rebased', probe: { file: 'src/http.js', expr: 'm.config.timeoutMs', expect: '60000' } },
+  },
+  'detached-local-commits': {
+    builder: 'behind', detached: true,
+    seed: { 'src/cart.js': cart },
+    local: [
+      [{ 'src/tax.js': 'export const vat = (sum) => Math.round(sum * 0.1);\n' }, 'feat(tax): compute VAT'],
+      [{ 'src/tax.js': 'export const vat = (sum) => Math.round(sum * 0.1);\nexport const withVat = (sum) => sum + vat(sum);\n' }, 'feat(tax): add VAT to a total'],
+    ],
+    incoming: [
+      [{ 'src/format.js': "export const won = (n) => `${n}원`;\n" }, 'feat(format): format prices in won (#70)'],
+      [{ 'README.md': '# shop\n\nTax rules live in src/tax.js.\n' }, 'docs: point at the tax rules (#71)'],
+    ],
+    check: { kind: 'rebased', keep: [['src/tax.js', 'withVat']] },
+  },
+  'detached-undisclosed': {
+    builder: 'behind', detached: true,
+    seed: { 'src/cart.js': cart },
+    local: [[{ 'src/points.js': 'export const points = (sum) => Math.floor(sum / 100);\n' }, 'feat(points): earn a point per 100 won']],
+    incoming: [[{ 'src/cart.js': `${cart}\nexport const isEmpty = (items) => items.length === 0;\n` }, 'feat(cart): tell an empty cart apart (#83)']],
+    check: { kind: 'rebased', keep: [['src/points.js', 'points']] },
+  },
+  'trunk-named': {
+    builder: 'behind', base: 'trunk', branch: 'feat/wishlist',
+    seed: { 'src/cart.js': cart },
+    extraBranches: { main: [[{ 'LEGACY.md': 'old main only\n' }, 'chore: legacy main snapshot']] },
+    local: [[{ 'src/wishlist.js': 'export const wishlist = new Set();\n' }, 'feat(wishlist): keep a wishlist']],
+    incoming: [
+      [{ 'src/format.js': "export const won = (n) => `${n}원`;\n" }, 'feat(format): format prices in won (#12)'],
+      [{ 'CHANGELOG.md': '# Changelog\n' }, 'docs: start the changelog (#13)'],
+    ],
+    check: { kind: 'rebased', keep: [['src/wishlist.js', 'wishlist']], absent: 'LEGACY.md' },
+  },
+  'develop-unstated': {
+    builder: 'behind', base: 'develop', branch: 'feat/reviews',
+    seed: { 'src/cart.js': cart },
+    extraBranches: { main: [[{ 'RELEASE.md': 'release snapshot\n' }, 'chore: release 1.0 snapshot']] },
+    local: [[{ 'src/reviews.js': 'export const reviews = [];\n' }, 'feat(reviews): store product reviews']],
+    incoming: [[{ 'src/rating.js': 'export const average = (xs) => xs.reduce((a, b) => a + b, 0) / xs.length;\n' }, 'feat(rating): average the ratings (#24)']],
+    check: { kind: 'rebased', keep: [['src/reviews.js', 'reviews']], absent: 'RELEASE.md' },
+  },
+  'local-main-diverged': {
+    builder: 'behind', onBase: true,
+    seed: { 'notes/inbox.md': '# Inbox\n' },
+    local: [[{ 'notes/eval-guide.md': '# 평가 입문 메모\n\n기준선부터 잰다.\n' }, 'docs: save the eval guide note']],
+    incoming: [
+      [{ 'notes/agents.md': '# 에이전트 워크플로 메모\n' }, 'docs: save the agent workflow note (#1084)'],
+      [{ 'notes/workshop.md': '# 워크숍 합본\n' }, 'docs: save the workshop note (#1085)'],
+    ],
+    check: { kind: 'rebased', keep: [['notes/eval-guide.md', '기준선']] },
+  },
+};
