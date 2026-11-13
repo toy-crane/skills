@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Runner for merge's evals in the llm-evals layout. This folder is the skill's eval root.
-// --suite pr-flow-merge-rebase runs the capability eval for docs/specs/pr-flow-merge-rebase/:
+// --suite pr-flow-merge-rebase runs the regression suite graduated from docs/specs/pr-flow-merge-rebase/:
 // each case builds a fixed situation in temporary Git repositories (origin.git standing in for
 // GitHub, a stand-in gh CLI) and grades the end state plus a judge's verdicts on its expectations.
 // --suite evals runs evals.json's cases with their expectations unchanged, judged by the same grader.
@@ -23,7 +23,7 @@ const companions = ['pull', 'pr', 'push', 'commit', 'clean-branches'];
 const usage = `usage: run.mjs --variant <label> --access api|subscription [options]
   --skill-ref <git-ref>   take merge's SKILL.md from this ref (required for baseline)
   --skill-file <path>     take SKILL.md from this file (default: the working tree's)
-  --suite <name>|evals    a capability eval folder here, a suite under regression/, or evals.json (default: pr-flow-merge-rebase)
+  --suite <name>|evals    a suite under regression/ (or a capability eval folder here), or evals.json (default: pr-flow-merge-rebase)
   --split train|test|all  which split of a capability eval to run (default: all)
   --cases a,b             run only these case ids
   --reps <n>              runs per case (default: 2)
@@ -87,7 +87,7 @@ if (opts.cases) {
 const reps = Number(opts.reps);
 const workers = Number(opts.workers);
 const timeoutMs = Number(opts['timeout-s']) * 1000;
-const fixturesDir = existsSync(join(suiteDir, 'fixtures.mjs')) ? suiteDir : join(here, 'pr-flow-merge-rebase');
+const fixturesDir = existsSync(join(suiteDir, 'fixtures.mjs')) ? suiteDir : join(here, 'regression/pr-flow-merge-rebase');
 const { builders } = await import(join(fixturesDir, 'fixtures.mjs'));
 const { scenarios } = await import(join(fixturesDir, 'scenarios.mjs'));
 const { collectEndState, judgeRun, scoreRun } = await import(join(fixturesDir, 'grade.mjs'));

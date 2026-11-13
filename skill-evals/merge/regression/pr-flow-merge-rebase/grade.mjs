@@ -1,4 +1,4 @@
-// Grader for merge's rebase-verification cases. Run it through ../run.mjs.
+// Grader for merge's rebase-verification cases. Run it through ../../run.mjs.
 // A row passes only when every judged expectation holds and every check on the
 // end state the run left in origin.git holds.
 import { spawnSync } from 'node:child_process';
