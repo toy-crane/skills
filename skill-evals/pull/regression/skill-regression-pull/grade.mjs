@@ -1,7 +1,7 @@
 // Grader for pull's cases. Run it through ../../run.mjs.
 // A row passes only when every judged expectation holds and every check on the
 // end state the run left in work/ holds.
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -119,8 +119,24 @@ function transcriptText(turns) {
   }).join('\n\n');
 }
 
+// Runs the judge without blocking the event loop, so other trials' completions and timeouts stay on time.
+function runJudge(args, env) {
+  return new Promise((settle) => {
+    const child = spawn('claude', args, { env, stdio: ['ignore', 'pipe', 'pipe'] });
+    const out = [];
+    const err = [];
+    child.stdout.on('data', (chunk) => out.push(chunk));
+    child.stderr.on('data', (chunk) => err.push(chunk));
+    const timer = setTimeout(() => child.kill('SIGKILL'), 600_000);
+    child.on('close', (status) => {
+      clearTimeout(timer);
+      settle({ status, stdout: Buffer.concat(out).toString('utf8'), stderr: Buffer.concat(err).toString('utf8') });
+    });
+  });
+}
+
 // Asks a judge model whether each expectation holds for the run.
-export function judgeRun(testCase, turns, endState, { env, model }) {
+export async function judgeRun(testCase, turns, endState, { env, model }) {
   const expectations = testCase.expectations;
   const prompt = `You grade one run of an AI agent asked to bring a local Git checkout up to date with a remote base branch. The run happened in a local repository whose "origin" remote is a local bare repository standing in for GitHub; it had one turn, so a question it asks the user ends the run. Grade only what the run actually did or said, quoting it as evidence. Judge meaning, not wording: the agent may write in Korean or English.
 
@@ -143,7 +159,7 @@ ${transcriptText(turns).slice(0, 150_000)}
 Return one verdict per expectation index.`;
   const args = ['-p', prompt, '--output-format', 'json', '--json-schema', JSON.stringify(judgeSchema), '--tools', '', '--setting-sources', 'project'];
   if (model) args.push('--model', model);
-  const run = spawnSync('claude', args, { encoding: 'utf8', env, maxBuffer: 64 * 1024 * 1024, timeout: 600_000 });
+  const run = await runJudge(args, env);
   if (run.status !== 0) return { error: `judge exit ${run.status}: ${(run.stderr || run.stdout).slice(0, 500)}` };
   let res;
   try { res = JSON.parse(run.stdout); } catch { return { error: `judge output not JSON: ${run.stdout.slice(0, 500)}` }; }
