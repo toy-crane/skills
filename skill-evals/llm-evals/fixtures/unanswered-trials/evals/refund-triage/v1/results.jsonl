@@ -1,0 +1,8 @@
+{"prompt_id": "case-01", "rep": 0, "tags": ["new"], "grade": {"accuracy": 1}, "status": "ok", "stop_reason": "success", "model": "claude-opus-5-5", "output": "refund"}
+{"prompt_id": "case-02", "rep": 0, "tags": ["new"], "grade": {"accuracy": 1}, "status": "ok", "stop_reason": "success", "model": "claude-opus-5-5", "output": "refund"}
+{"prompt_id": "case-03", "rep": 0, "tags": ["new"], "grade": {"accuracy": 0}, "status": "ok", "stop_reason": "success", "model": "claude-opus-5-5", "meta": {"is_error": true, "api_error_status": 429}, "output": "You've hit your limit · resets 3pm"}
+{"prompt_id": "case-04", "rep": 0, "tags": ["new"], "grade": {"accuracy": 1}, "status": "ok", "stop_reason": "success", "model": "claude-opus-5-5", "output": "refund"}
+{"prompt_id": "case-05", "rep": 0, "tags": ["new"], "grade": {"accuracy": 1}, "status": "ok", "stop_reason": "success", "model": "claude-opus-5-5", "output": "refund"}
+{"prompt_id": "case-01", "rep": 1, "tags": ["new"], "grade": {"accuracy": 1}, "status": "ok", "stop_reason": "success", "model": "claude-opus-5-5", "output": "refund"}
+{"prompt_id": "case-02", "rep": 1, "tags": ["new"], "grade": {"accuracy": 0}, "status": "ok", "stop_reason": "success", "model": "claude-opus-5-5", "meta": {"is_error": true, "api_error_status": 429}, "output": "You've hit your limit · resets 3pm"}
+{"prompt_id": "case-03", "rep": 1, "tags": ["new"], "grade": {"accuracy": 1}, "status": "ok", "stop_reason": "success", "model": "claude-opus-5-5", "output": "refund"}
