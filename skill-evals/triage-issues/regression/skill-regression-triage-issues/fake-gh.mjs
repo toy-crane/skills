@@ -12,7 +12,6 @@ if (!dir) { console.error('fake gh: TRIAGE_FAKE_DIR is not set'); process.exit(1
 const stateFile = join(dir, 'github.json');
 const state = JSON.parse(readFileSync(stateFile, 'utf8'));
 const argv = process.argv.slice(2);
-appendFileSync(join(dir, 'calls.jsonl'), `${JSON.stringify({ at: new Date().toISOString(), via: 'gh', argv })}\n`);
 const save = () => writeFileSync(stateFile, `${JSON.stringify(state, null, 2)}\n`);
 const die = (msg, code = 1) => { console.error(msg); process.exit(code); };
 const now = () => new Date().toISOString().replace(/\.\d+Z$/, 'Z');
@@ -106,6 +105,8 @@ const matches = (i, q) => !q || q.split(/\s+/).filter((w) => w && !w.includes(':
 
 const [group, cmd, ...rest] = argv;
 const p = parse(rest);
+// The log names the issue a subcommand targets as parsed here, wherever its flags sit.
+appendFileSync(join(dir, 'calls.jsonl'), `${JSON.stringify({ at: new Date().toISOString(), via: 'gh', argv, target: group === 'issue' ? p.pos[0] ?? null : null })}\n`);
 
 if (group === 'auth') { console.log('github.com\n  ✓ Logged in to github.com account triage-bot (keyring)'); process.exit(0); }
 if (group === 'repo' && cmd === 'view') {

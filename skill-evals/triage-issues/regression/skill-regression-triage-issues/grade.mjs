@@ -31,7 +31,8 @@ function writesOf(tracker, calls, uuids = {}) {
   const out = [];
   for (const c of calls) {
     if (c.via === 'gh') {
-      const [g, cmd, target] = c.argv;
+      const [g, cmd] = c.argv;
+      const { target } = c;
       if (g === 'issue' && ['comment', 'edit', 'close', 'reopen'].includes(cmd)) out.push({ op: `gh issue ${cmd}`, issue: normKey('github', target) });
       else if (g === 'issue' && cmd === 'create') out.push({ op: 'gh issue create', issue: null });
       else if (g === 'pr' && ['create', 'edit', 'comment', 'close', 'merge'].includes(cmd)) out.push({ op: `gh pr ${cmd}`, issue: null });
