@@ -1,7 +1,7 @@
 // Grader for triage-issues' regression cases. Run it through ../../run.mjs. A row passes only when every judged expectation holds and every check on the end
 // state holds: the stand-in tracker's issues against their initial snapshot, the order of the
 // agent's tracker writes, the refs it pushed to origin.git, the PRs it opened, and its Slack sends.
-import { spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -121,8 +121,24 @@ function transcriptText(turns) {
   }).join('\n\n');
 }
 
+// Runs the judge without blocking the event loop, so other trials' completions and timeouts stay on time.
+function runJudge(args, env) {
+  return new Promise((settle) => {
+    const child = spawn('claude', args, { env, stdio: ['ignore', 'pipe', 'pipe'] });
+    const out = [];
+    const err = [];
+    child.stdout.on('data', (chunk) => out.push(chunk));
+    child.stderr.on('data', (chunk) => err.push(chunk));
+    const timer = setTimeout(() => child.kill('SIGKILL'), 600_000);
+    child.on('close', (status) => {
+      clearTimeout(timer);
+      settle({ status, stdout: Buffer.concat(out).toString('utf8'), stderr: Buffer.concat(err).toString('utf8') });
+    });
+  });
+}
+
 // Asks a judge model whether each expectation holds for the run.
-export function judgeRun(testCase, turns, endState, { env, model }) {
+export async function judgeRun(testCase, turns, endState, { env, model }) {
   const { expectations } = testCase;
   const tracker = endState.tracker === 'github' ? 'GitHub Issues, through a stand-in `gh` CLI' : 'Linear, through a stand-in `linear` MCP server';
   const prompt = `You grade one run of an AI agent asked to triage issues in a project's issue tracker (${tracker}; Slack, when the project sends notifications, is a stand-in \`slack\` MCP server). Grade only what the run actually did or said, quoting it as evidence. Judge meaning, not wording: the agent may write in Korean or English. The agent's final message is its report.
@@ -142,7 +158,7 @@ ${transcriptText(turns).slice(0, 150_000)}
 Return one verdict per expectation index.`;
   const args = ['-p', prompt, '--output-format', 'json', '--json-schema', JSON.stringify(judgeSchema), '--tools', '', '--setting-sources', 'project', '--strict-mcp-config'];
   if (model) args.push('--model', model);
-  const run = spawnSync('claude', args, { encoding: 'utf8', env, maxBuffer: 64 * 1024 * 1024, timeout: 600_000 });
+  const run = await runJudge(args, env);
   if (run.status !== 0) return { error: `judge exit ${run.status}: ${(run.stderr || run.stdout).slice(0, 500)}` };
   let out;
   try { out = JSON.parse(run.stdout); } catch { return { error: `judge output not JSON: ${run.stdout.slice(0, 500)}` }; }
