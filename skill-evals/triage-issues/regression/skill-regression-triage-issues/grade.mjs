@@ -37,7 +37,10 @@ function writesOf(tracker, calls, uuids = {}) {
       else if (g === 'pr' && ['create', 'edit', 'comment', 'close', 'merge'].includes(cmd)) out.push({ op: `gh pr ${cmd}`, issue: null });
       else if (g === 'api') {
         const joined = c.argv.join(' ');
-        const isWrite = /(-X|--method)\s*(POST|PATCH|PUT|DELETE)/i.test(joined) || /\s(-f|-F|--field|--raw-field)\s/.test(` ${joined} `);
+        // An explicit method wins; without one, gh sends field flags as a POST.
+        const explicit = joined.match(/(?:^|\s)(?:-X\s*|--method[=\s]+)([A-Za-z]+)/)?.[1]?.toUpperCase();
+        const method = explicit ?? (/\s(-f|-F|--field|--raw-field)\s/.test(` ${joined} `) ? 'POST' : 'GET');
+        const isWrite = method !== 'GET';
         const m = joined.match(/issues\/(\d+)/);
         if (isWrite) out.push({ op: 'gh api write', issue: m ? m[1] : null });
       }
