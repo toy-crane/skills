@@ -24,8 +24,10 @@ const normKey = (tracker, ref) => (tracker === 'github'
   ? String(ref ?? '').replace(/^github:/, '').replace(/^#/, '').match(/\d+/)?.[0] ?? null
   : String(ref ?? '').replace(/^linear:/i, '').toUpperCase() || null);
 
-// Each tracker write the agent attempted, in order, with the issue it targeted.
-function writesOf(tracker, calls) {
+// Each tracker write the agent attempted, in order, with the issue it targeted. The Linear stand-in
+// accepts an issue's uuid as well as its identifier, so `uuids` maps one to the other.
+function writesOf(tracker, calls, uuids = {}) {
+  const linearKey = (ref) => uuids[ref] ?? normKey('linear', ref);
   const out = [];
   for (const c of calls) {
     if (c.via === 'gh') {
@@ -40,8 +42,8 @@ function writesOf(tracker, calls) {
         if (isWrite) out.push({ op: 'gh api write', issue: m ? m[1] : null });
       }
     } else if (c.via === 'linear') {
-      if (c.tool === 'save_comment') out.push({ op: 'save_comment', issue: normKey('linear', c.args.issueId ?? String(c.args.parentId ?? '').replace(/^cmt-(DLY-\d+)-\d+$/, '$1')) });
-      else if (c.tool === 'save_issue') out.push({ op: c.args.id ? 'save_issue' : 'save_issue create', issue: c.args.id ? normKey('linear', c.args.id) : null });
+      if (c.tool === 'save_comment') out.push({ op: 'save_comment', issue: linearKey(c.args.issueId ?? String(c.args.parentId ?? '').replace(/^cmt-(DLY-\d+)-\d+$/, '$1')) });
+      else if (c.tool === 'save_issue') out.push({ op: c.args.id ? 'save_issue' : 'save_issue create', issue: c.args.id ? linearKey(c.args.id) : null });
     }
   }
   return out;
@@ -54,9 +56,11 @@ export function collectEndState(workspace, testCase) {
   const initial = readJson(join(fake, 'initial.json'));
   const { tracker } = initial;
   const before = issuesOf(tracker, initial.state);
-  const after = issuesOf(tracker, readJson(join(fake, `${tracker}.json`)));
   const calls = readLines(join(fake, 'calls.jsonl')).map((l) => JSON.parse(l));
-  const writes = writesOf(tracker, calls);
+  const finalState = readJson(join(fake, `${tracker}.json`));
+  const uuids = tracker === 'linear' ? Object.fromEntries(finalState.issues.map((i) => [i.uuid, i.identifier])) : {};
+  const writes = writesOf(tracker, calls, uuids);
+  const after = issuesOf(tracker, finalState);
   const pushes = readLines(join(fake, 'pushes.log')).map((l) => l.split(' ')[2]);
   const claimPushes = pushes.filter((r) => r.startsWith('refs/heads/agent-triage/'));
   const otherPushes = pushes.filter((r) => !r.startsWith('refs/heads/agent-triage/'));
