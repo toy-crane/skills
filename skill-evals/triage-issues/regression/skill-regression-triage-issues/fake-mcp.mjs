@@ -56,6 +56,19 @@ function issueView(s, i, { truncate }) {
     ...(i.duplicateOf ? { duplicateOf: i.duplicateOf } : {}),
   };
 }
+// One page after `cursor` (the last item's id from the previous page), `limit` long, as the real server
+// pages: hasNextPage tells whether more remain, and cursor names where the next page starts.
+function paginate(list, a, idOf) {
+  let start = 0;
+  if (a.cursor) {
+    const at = list.findIndex((x) => idOf(x) === a.cursor);
+    if (at < 0) throw new ToolError(`Invalid cursor: ${a.cursor}`);
+    start = at + 1;
+  }
+  const items = list.slice(start, start + Math.max(1, a.limit ?? 50));
+  const hasNextPage = start + items.length < list.length;
+  return { items, more: hasNextPage ? { hasNextPage, cursor: idOf(items.at(-1)) } : { hasNextPage } };
+}
 // A nonempty fields selection returns only those keys, plus id, as the real server does.
 function pick(v, fields, keep = []) {
   if (!Array.isArray(fields) || !fields.length) return v;
@@ -109,11 +122,13 @@ function callLinear(name, a) {
       if (!a.includeArchived) list = list.filter((i) => !['completed', 'canceled'].includes(statusType(s, i.status)) || a.state);
       const key = a.orderBy === 'createdAt' ? 'createdAt' : 'updatedAt';
       list = [...list].sort((x, y) => String(y[key] ?? y.createdAt).localeCompare(String(x[key] ?? x.createdAt)));
-      return { issues: list.slice(0, a.limit ?? 50).map((i) => pick(issueView(s, i, { truncate: true }), a.fields)), hasNextPage: false };
+      const { items, more } = paginate(list, a, (i) => i.uuid);
+      return { issues: items.map((i) => pick(issueView(s, i, { truncate: true }), a.fields)), ...more };
     }
     case 'list_comments': {
       const i = findIssue(s, a.issueId);
-      return { comments: i.comments.map((c) => ({ id: c.id, body: c.body, attachments: [], createdAt: c.createdAt, updatedAt: c.createdAt, parentId: c.parentId ?? null, resolvedAt: null, quotedText: null, author: { id: `user-${c.author}`, name: c.author }, onBehalfOf: null })), hasNextPage: false };
+      const { items, more } = paginate(i.comments, a, (c) => c.id);
+      return { comments: items.map((c) => ({ id: c.id, body: c.body, attachments: [], createdAt: c.createdAt, updatedAt: c.createdAt, parentId: c.parentId ?? null, resolvedAt: null, quotedText: null, author: { id: `user-${c.author}`, name: c.author }, onBehalfOf: null })), ...more };
     }
     case 'save_comment': {
       if (a.id) throw new ToolError('this workspace does not allow editing existing comments');
