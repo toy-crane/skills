@@ -11,6 +11,11 @@
   available one. Fall back to text when the environment cannot render.
 - Keep prose to the minimum needed to orient the visual; do not duplicate the
   drawing in a second long explanation.
+- The first view, meaning the rendered explanation before the user touches any
+  control, must on its own show the whole structure and the direction of
+  progress. Interaction may add detail on top of that view; it is never the
+  only way to see the structure, the order of stages, or which way things
+  flow.
 
 ## Boundaries
 
@@ -20,6 +25,9 @@
   structure exists behind it.
 - The skill names capabilities, not concrete tools, so it degrades across web,
   desktop, mobile, and terminal environments.
+- The first-view rule applies to every rendered form, static or interactive,
+  and to the text fallback. It does not ask for interactivity; whether to add
+  controls stays the renderer's and the subject's call.
 
 ## Why
 
@@ -27,6 +35,14 @@ Models already explain in prose; rendering is the capability this skill adds.
 The explicit renderer lookup prevents capable surfaces from collapsing to ASCII,
 while the one-sentence gate prevents an expensive visual from overwhelming a
 small question.
+
+The first-view rule targets a failure the user saw in interactive renders: a
+single-screen widget where the stages and their direction appear only after
+clicking or dragging. Research on visual explanation converges on the same
+fix: overview first (Shneiderman), time laid out in space as small multiples,
+motion along edges for direction, and learner control only after segmentation
+(Tversky et al. found animation alone rarely beats a static graphic). A rule
+stated as the outcome lets the model pick among those techniques per subject.
 
 ## Reconsider when
 
@@ -45,6 +61,11 @@ small question.
   differ, and artifact craft is not the skill's job.
 - A bare one-line body with no restraint — evals showed it over-rendering a
   glossary definition with multiple unnecessary artifacts.
+- A catalog of techniques (stepper, filmstrip, flow animation, linked
+  highlighting, direct manipulation, progressive disclosure) in the skill body —
+  form-selection instructions already proved mostly inert, so a list is
+  unlikely to change behavior; revisit if an eval shows the first-view rule
+  alone leaves a specific technique unused where it is clearly needed.
 
 ## Evidence worth preserving
 
