@@ -18,16 +18,24 @@
   flow. This is the bar renders are judged by. The skill body does not state
   it while the current text already meets it; when a real explanation fails
   it, add it as one outcome sentence.
-- Visual explanation runs in two layers. A dedicated output style, separate
-  from `natural-korean`, carries a light layer into every response, including
-  explanations the agent starts on its own: structure that fits in the reply
-  itself. Rendering a page or widget stays in `explain-visually` and fires
-  only when the user asks for an explanation.
+- The kind of content being explained, not whether the user asked, picks the
+  form: a fact or definition stays prose; structure or relationships become a
+  static diagram with its labels on the drawing; a multi-step process becomes
+  a stepper the user paces with every stage visible; a mechanism whose result
+  depends on values becomes a manipulable view that asks for a prediction
+  before the user changes anything.
+- A dedicated output style, separate from `natural-korean`, applies that
+  choice to every explanation, including ones the agent starts on its own,
+  and hands processes, mechanisms, and structures too large for the reply to
+  `explain-visually` to render. Without the style, `explain-visually` still
+  fires only when the user asks.
 
 ## Boundaries
 
-- The skill fires when the user asks to have something explained or shown, not
-  merely because the model suspects confusion.
+- The skill fires when the user asks to have something explained or shown, or,
+  under the output style, when the agent explains a process, a mechanism, or a
+  structure too large for the reply; never merely because the model suspects
+  confusion.
 - A simple definition or fact does not earn a rendered artifact even when a
   structure exists behind it.
 - The skill names capabilities, not concrete tools, so it degrades across web,
@@ -51,11 +59,15 @@ motion along edges for direction, and learner control only after segmentation
 (Tversky et al. found animation alone rarely beats a static graphic). A rule
 stated as the outcome lets the model pick among those techniques per subject.
 
-The two layers exist because a skill loads only when a request matches its
+The output style exists because a skill loads only when a request matches its
 description, while most explanations a user needs come unasked: result
 reports, causes of a problem, option comparisons. Only an always-on surface
-reaches those, and only a light layer is cheap enough to run on every
-response. The output style is separate from `natural-korean`, so it works in
+reaches those. The content-kind routing follows education research: words
+with a picture beat words alone, labels beside the picture help (Mayer's
+contiguity, signaling, and segmenting principles), animation beats a static
+picture only modestly while learner-paced control and even minimal
+interactivity help (Höffler & Leutner 2007; Berney & Bétrancourt 2016), and
+simulations work best when the learner predicts first (PhET). The output style is separate from `natural-korean`, so it works in
 any language. The cost is that Claude Code keeps a single `outputStyle`
 setting, so a user picks one of the two styles.
 
@@ -88,9 +100,8 @@ setting, so a user picks one of the two styles.
   unlikely to change behavior; revisit if an eval shows the first-view rule
   alone leaves a specific technique unused where it is clearly needed.
 
-- Firing `explain-visually` itself on every explanation the agent gives — a
-  skill only loads on a matching request, and its render cost is too high for
-  every response.
+- Rendering only when the user asks — it leaves the unasked explanations,
+  where most of the need is, as prose.
 - Widening `natural-korean` to carry the light layer — it would reach only
   Korean users and mix response structure into a style scoped to register.
 - A mod whose hook injects the light layer each session — it would combine
