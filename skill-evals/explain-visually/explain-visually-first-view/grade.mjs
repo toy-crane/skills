@@ -1,4 +1,4 @@
-// Grader for docs/specs/explain-visually-first-view/.
+// Grader for the first-view rule in docs/decisions/explain-visually.md.
 // first-view (judge): the pre-interaction captures alone show every stage the render presents in any
 //   state, and make their order or direction readable. A judge reads the captures (PNG) and each
 //   widget's source, the source only to learn which stages exist behind controls.

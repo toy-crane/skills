@@ -19,8 +19,8 @@ drawing, "Check the available tools and use the best renderer" outweighs the
 one-sentence brake that precedes it. The earlier restraint evals ran without
 such a renderer connected.
 
-**What was tried**: Nothing; it was outside the first-view spec, whose
-acceptance only requires these controls to stay at or above this baseline.
+**What was tried**: Nothing; that eval measured the first-view rule and only
+required these controls not to fall below this baseline.
 
 **Proposed next step**: Run the control split at 3 reps on Sonnet 5.5 and
 Opus 5.5 to size the rate, then climb on the restraint wording with

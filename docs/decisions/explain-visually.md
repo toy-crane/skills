@@ -15,7 +15,9 @@
   control, must on its own show the whole structure and the direction of
   progress. Interaction may add detail on top of that view; it is never the
   only way to see the structure, the order of stages, or which way things
-  flow.
+  flow. This is the bar renders are judged by. The skill body does not state
+  it while the current text already meets it; when a real explanation fails
+  it, add it as one outcome sentence.
 
 ## Boundaries
 
@@ -50,6 +52,9 @@ stated as the outcome lets the model pick among those techniques per subject.
 - Models stop over-rendering one-sentence questions, allowing the remaining
   restraint clause to be removed.
 - A host-independent renderer becomes available in every supported environment.
+- A user reports, or a session shows, a render whose stages or direction appear
+  only after interaction: turn it into a case for the first-view eval and
+  measure the outcome sentence against it.
 
 ## Still-rejected alternatives
 
@@ -73,3 +78,10 @@ stated as the outcome lets the model pick among those techniques per subject.
   over-rendering brake. Renderer-first tests then changed tool use from none to
   consistent rendering where a renderer existed; each brake revision required a
   fresh held-out control to avoid fitting the prompt that exposed it.
+- The first-view eval (`skill-evals/explain-visually/explain-visually-first-view`,
+  stand-in inline renderer, captures before any input) found the current skill
+  already at the bar on 20 multi-stage questions about this repository:
+  held-out 20/20 and train 18/20 on Sonnet 5.5 at 2 reps, 2026-11-18. Sonnet
+  drew all 40 as static diagrams; an Opus 5.5 pilot drew steppers, but with
+  every stage named above the panel. Synthetic questions did not reproduce the
+  hidden-structure failure, so the outcome sentence stayed out of the skill.

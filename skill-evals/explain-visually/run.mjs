@@ -177,7 +177,7 @@ if (!existsSync(summaryFile)) {
 if (!existsSync(stateFile)) {
   const all = readFileSync(join(suiteDir, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
   writeFileSync(stateFile, `${JSON.stringify({
-    goal: 'docs/specs/explain-visually-first-view/: held-out first-view pass rate at 80% or more and above the baseline outside the noise floor; controls at or above their baseline',
+    goal: 'first-view rule in docs/decisions/explain-visually.md: held-out first-view pass rate at 80% or more and above the baseline outside the noise floor; controls at or above their baseline',
     suite: opts.suite,
     train: all.filter((c) => c.split === 'train').map((c) => c.id),
     test: all.filter((c) => c.split === 'test').map((c) => c.id),
