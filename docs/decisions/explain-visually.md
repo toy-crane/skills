@@ -18,6 +18,11 @@
   flow. This is the bar renders are judged by. The skill body does not state
   it while the current text already meets it; when a real explanation fails
   it, add it as one outcome sentence.
+- Visual explanation runs in two layers. A dedicated output style, separate
+  from `natural-korean`, carries a light layer into every response, including
+  explanations the agent starts on its own: structure that fits in the reply
+  itself. Rendering a page or widget stays in `explain-visually` and fires
+  only when the user asks for an explanation.
 
 ## Boundaries
 
@@ -46,7 +51,18 @@ motion along edges for direction, and learner control only after segmentation
 (Tversky et al. found animation alone rarely beats a static graphic). A rule
 stated as the outcome lets the model pick among those techniques per subject.
 
+The two layers exist because a skill loads only when a request matches its
+description, while most explanations a user needs come unasked: result
+reports, causes of a problem, option comparisons. Only an always-on surface
+reaches those, and only a light layer is cheap enough to run on every
+response. The output style is separate from `natural-korean`, so it works in
+any language. The cost is that Claude Code keeps a single `outputStyle`
+setting, so a user picks one of the two styles.
+
 ## Reconsider when
+
+- Claude Code lets more than one output style apply at once, or users
+  repeatedly want `natural-korean` and the light layer together.
 
 - Models reliably discover available renderers without being told.
 - Models stop over-rendering one-sentence questions, allowing the remaining
@@ -71,6 +87,15 @@ stated as the outcome lets the model pick among those techniques per subject.
   form-selection instructions already proved mostly inert, so a list is
   unlikely to change behavior; revisit if an eval shows the first-view rule
   alone leaves a specific technique unused where it is clearly needed.
+
+- Firing `explain-visually` itself on every explanation the agent gives — a
+  skill only loads on a matching request, and its render cost is too high for
+  every response.
+- Widening `natural-korean` to carry the light layer — it would reach only
+  Korean users and mix response structure into a style scoped to register.
+- A mod whose hook injects the light layer each session — it would combine
+  with any style, but a separately installed hooks module is heavy for a
+  presentation rule; revisit if users need both styles at once.
 
 ## Evidence worth preserving
 

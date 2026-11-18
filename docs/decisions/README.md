@@ -18,4 +18,4 @@ of truth. Read only the subjects relevant to the work.
 - [stack-context](stack-context.md) — Read when changing how stack technologies get current agent skills, vendor guidance, or repository instruction routes.
 - [shape-idea](shape-idea.md) — Read when changing shaping questions, drafts, visuals, authority, or write boundaries.
 - [build-prototype](build-prototype.md) — Read when changing the product prototype, temporary situation-specific comparisons, shells, fidelity, or preserved artifact.
-- [explain-visually](explain-visually.md) — Read when changing visual explanation triggering, rendering, restraint, or naming.
+- [explain-visually](explain-visually.md) — Read when changing visual explanation triggering, rendering, restraint, naming, or the always-on explanation output style.
