@@ -3,6 +3,7 @@
 // for the host's CSS variables and SVG helper classes, then shot with headless Chrome at its full height.
 import { spawn } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 export const chrome = process.env.EV_CHROME ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
@@ -21,8 +22,10 @@ ${[['purple', '#EEEDFE', '#534AB7', '#3C3489'], ['teal', '#E1F5EE', '#0F6E56', '
     .map(([c, fill, stroke, text]) => `svg .c-${c}>rect,svg .c-${c}>circle,svg .c-${c}>ellipse,svg rect.c-${c},svg circle.c-${c},svg ellipse.c-${c}{fill:${fill};stroke:${stroke}} svg .c-${c}>text{fill:${text}}`).join('\n')}
 `;
 
-export function wrapWidget(code) {
-  return `<!doctype html><html data-mode="light"><head><meta charset="utf-8">
+// baseDir: the folder relative references resolve against, for a page the run wrote to disk.
+export function wrapWidget(code, baseDir) {
+  const baseTag = baseDir ? `<base href="${pathToFileURL(`${baseDir}/`).href}">` : '';
+  return `<!doctype html><html data-mode="light"><head><meta charset="utf-8">${baseTag}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>${hostCss}</style></head><body><div id="w">${code}</div>
 <script>addEventListener('load',()=>setTimeout(()=>{document.title='H='+Math.ceil(document.getElementById('w').getBoundingClientRect().height+24)},600))</script>
@@ -42,9 +45,10 @@ function runChrome(args, timeoutMs = 60_000) {
 }
 
 // Writes <base>.page.html and <base>.png for one widget file; returns the png path or throws.
-export async function captureWidget(widgetFile, base, profileDir) {
+// A page written into the workspace passes { baseDir } so its relative scripts, styles, and images still load.
+export async function captureWidget(widgetFile, base, profileDir, { baseDir } = {}) {
   const page = `${base}.page.html`;
-  writeFileSync(page, wrapWidget(readFileSync(widgetFile, 'utf8')));
+  writeFileSync(page, wrapWidget(readFileSync(widgetFile, 'utf8'), baseDir));
   const common = [`--user-data-dir=${profileDir}`, '--virtual-time-budget=5000', '--window-size=680,900'];
   const dom = await runChrome([...common, '--dump-dom', `file://${page}`]);
   const m = dom.stdout.match(/<title>H=(\d+)<\/title>/);

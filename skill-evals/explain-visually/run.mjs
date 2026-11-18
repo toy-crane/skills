@@ -340,7 +340,7 @@ async function runCase({ c, rep }) {
   const pages = [];
   for (const f of listFiles(place.work).filter((p) => !place.before.has(p) && /\.(html|svg)$/.test(p))) {
     const base = join(runDir, `page-${f.replace(/[^\w.-]/g, '_')}`);
-    pages.push({ file: f, png: await captureWidget(join(place.work, f), base, profile), source: readFileSync(join(place.work, f), 'utf8') });
+    pages.push({ file: f, png: await captureWidget(join(place.work, f), base, profile, { baseDir: dirname(join(place.work, f)) }), source: readFileSync(join(place.work, f), 'utf8') });
   }
 
   const graded = await gradeRun(c, { reply, widgets, pages }, { env: baseEnv, model: opts['judge-model'] });
