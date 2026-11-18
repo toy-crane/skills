@@ -15,7 +15,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { finishRun, loadHistory, planTiers, recordRow, saveHistory } from '../audit-evals/history.mjs';
-import { captureWidget } from './capture.mjs';
+import { captureWidget, chrome } from './capture.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../..');
@@ -169,6 +169,8 @@ function report() {
   console.log(`errors ${readRows(errorsFile).length}, API-equivalent cost $${cost.toFixed(2)}`);
 }
 if (opts['dry-run'] || todo.length === 0) { report(); process.exit(0); }
+// Every trial is captured in Chrome; stop before paying for any trial when it cannot run.
+if (!existsSync(chrome)) { console.error(`Chrome not found at ${chrome}; set EV_CHROME to a Chrome or Chromium executable.`); process.exit(3); }
 
 mkdirSync(join(variantDir, 'traces'), { recursive: true });
 if (!existsSync(summaryFile)) {

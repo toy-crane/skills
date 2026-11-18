@@ -4,7 +4,7 @@
 import { spawn } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
-const chrome = process.env.EV_CHROME ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+export const chrome = process.env.EV_CHROME ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 const hostCss = `
 :root{--text-primary:#1f1e1d;--text-secondary:#5f5e5a;--text-muted:#888780;--text-accent:#185FA5;--text-danger:#A32D2D;--text-success:#3B6D11;--text-warning:#854F0B;
@@ -30,8 +30,10 @@ export function wrapWidget(code) {
 }
 
 function runChrome(args, timeoutMs = 60_000) {
-  return new Promise((settle) => {
+  return new Promise((settle, reject) => {
     const child = spawn(chrome, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-first-run', '--no-default-browser-check', ...args], { stdio: ['ignore', 'pipe', 'pipe'] });
+    // A missing or unrunnable browser fails this capture, and so this trial, rather than the whole runner.
+    child.on('error', (error) => reject(new Error(`cannot run Chrome at ${chrome}: ${error.message}`)));
     const out = [];
     child.stdout.on('data', (c) => out.push(c));
     const timer = setTimeout(() => child.kill('SIGKILL'), timeoutMs);
