@@ -15,9 +15,10 @@
   control, must on its own show the whole structure and the direction of
   progress. Interaction may add detail on top of that view; it is never the
   only way to see the structure, the order of stages, or which way things
-  flow. This is the bar renders are judged by. The skill body does not state
-  it while the current text already meets it; when a real explanation fails
-  it, add it as one outcome sentence.
+  flow. This is the bar renders are judged by. The skill body and the output
+  style state it as one outcome sentence, naming stages, the branches a stage
+  splits into, and the cases a control can show, since steppers that hid a
+  stage's branches failed it.
 - The kind of content being explained, not whether the user asked, picks the
   form: a fact or definition stays prose; structure or relationships become a
   static diagram with its labels on the drawing; a multi-step process becomes
@@ -121,3 +122,17 @@ setting, so a user picks one of the two styles.
   drew all 40 as static diagrams; an Opus 5.5 pilot drew steppers, but with
   every stage named above the panel. Synthetic questions did not reproduce the
   hidden-structure failure, so the outcome sentence stayed out of the skill.
+- The at-a-glance climb (2026-11-19, Sonnet 5.5, held-out, suites in
+  `skill-evals/explain-visually/regression/`) took form routing from 19/40 to
+  40/40, the one-sentence brake from 12/20 to 20/20 with the style on and off,
+  and predict-first from 0/20 to 20/20. Three changes carried it: deciding the
+  content kind before reading sources, because renderer tools listed only as
+  deferred read as "nothing can draw"; widening "mechanism" to results that
+  change with a state or condition, since rules mapping cases to outcomes
+  otherwise became tables; and keeping both the result and the rule that
+  decides it out of the reply. Once processes became steppers, the first-view
+  score fell to 15/20 with the style on, because steppers hid the branches
+  inside a step; naming each branch in the always-visible step row brought it
+  back to 18/20 (style off 19/20, baseline 20/20, inside the ±22 noise floor).
+  The remaining first-view miss is a predict-first view that hides the whole
+  structure behind its quiz.
