@@ -88,11 +88,12 @@ let tiers = null;
 const historyPath = join(here, 'regression', 'cell-history.json');
 const regressionSuite = suiteDir === join(here, 'regression', opts.suite);
 // A graduated suite records how it runs: the output style it selects and whether it asks through /explain-visually.
-if (regressionSuite && existsSync(join(suiteDir, 'run.json'))) {
-  const how = JSON.parse(readFileSync(join(suiteDir, 'run.json'), 'utf8'));
-  if (how.style && !opts.style) opts.style = join(repoRoot, how.style);
-  if (how.slash) opts.slash = true;
-}
+// A run whose style or way of asking differs from run.json measures another condition and records nothing.
+const how = regressionSuite && existsSync(join(suiteDir, 'run.json')) ? JSON.parse(readFileSync(join(suiteDir, 'run.json'), 'utf8')) : {};
+const suiteStyle = how.style ? join(repoRoot, how.style) : undefined;
+const overridden = (opts.style !== undefined && resolve(opts.style) !== suiteStyle) || (opts.slash && !how.slash);
+if (suiteStyle && !opts.style) opts.style = suiteStyle;
+if (how.slash) opts.slash = true;
 if (regressionSuite) {
   history = loadHistory(historyPath);
   tiers = planTiers(history, opts.suite, opts.model);
@@ -101,7 +102,7 @@ if (regressionSuite) {
   if (opts.reps !== undefined && Number(opts.reps) !== own) fail(`${opts.suite} runs at ${own} reps, as recorded in its cell history; drop --reps or pass ${own}`);
 }
 const reps = history ? history.suites[opts.suite].reps : Number(opts.reps ?? 2);
-const recording = history && !opts['skill-ref'] && !opts['skill-file'];
+const recording = history && !opts['skill-ref'] && !opts['skill-file'] && !overridden;
 const workers = Number(opts.workers);
 const timeoutMs = Number(opts['timeout-s']) * 1000;
 const { gradeRun, goal: suiteGoal, metrics: suiteMetrics } = await import(join(suiteDir, 'grade.mjs'));
