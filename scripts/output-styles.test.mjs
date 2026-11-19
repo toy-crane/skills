@@ -1,5 +1,5 @@
 // Run with: node --test scripts/output-styles.test.mjs
-// Guards docs/specs/at-a-glance-korean-register/ criteria 4 and 5:
+// Guards docs/specs/at-a-glance-korean-register/ criteria 3 and 4:
 // at-a-glance carries natural-korean's register rules verbatim, and scopes
 // them to Korean replies only.
 import { test } from "node:test";

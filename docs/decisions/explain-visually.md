@@ -34,6 +34,9 @@
   register rules, carried as a copied section. `natural-korean` stays the
   canonical source of that text and stays selectable on its own; the copy
   must match it.
+- The reply's first sentence is the answer itself, in any language. No label
+  or phrase announcing it comes first, such as "한 줄로:", "핵심:",
+  "TL;DR:", or "결론부터 말씀드리면".
 
 ## Boundaries
 
@@ -79,7 +82,11 @@ Korean replies under `at-a-glance` read as translated (user report,
 2026-11-19), so the style carries the Korean register rules as a section
 that applies only to Korean replies. Other languages are unaffected, and
 copying the text keeps both styles usable on their own at the cost of two
-places to edit.
+places to edit. The awkwardness the user actually pointed at was a
+lead-in label, "**한 줄로:**", which the model wrote while following "put the
+answer on the first line". Graded against natural-korean's whole rubric, long
+explanations failed even with natural-korean alone (train 2/20, Sonnet 5.5,
+2026-11-19), so the measured bar is the lead-in, not the whole register.
 
 ## Reconsider when
 
