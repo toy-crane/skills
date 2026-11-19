@@ -1,0 +1,893 @@
+{
+ "version": 2,
+ "suites": {
+  "at-a-glance-routing": {
+   "reps": 2,
+   "last_run_model": "claude-sonnet-5-5",
+   "lower_tier_model": "claude-sonnet-5-5",
+   "checks": {
+    "form": {
+     "grader": "judge"
+    }
+   },
+   "cells": {
+    "fact-draft-pr": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "fact-internal-skill": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "fact-plugin-version": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "fact-skill-count": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "fact-style-path": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "struct-skill-groups": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "struct-git-skills": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "struct-implement-deps": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "struct-workflows": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "struct-docs-layout": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "proc-commit": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "proc-define-product": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "proc-review-sessions": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "proc-expo-smoke": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "proc-setup-tracker": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "mech-pull-divergence": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "mech-version-bump": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "mech-clean-branches": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "mech-merge-state": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "mech-babysit-failures": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "fact-variant": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "fact-license": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "struct-symlinks": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "struct-decisions": {
+     "form": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "proc-build-prototype": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "proc-audit-evals": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "proc-record-decision": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "mech-error-trials": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "mech-required-skill": {
+     "form": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    }
+   }
+  },
+  "at-a-glance-brake-on": {
+   "reps": 2,
+   "last_run_model": "claude-sonnet-5-5",
+   "lower_tier_model": "claude-sonnet-5-5",
+   "checks": {
+    "restrained": {
+     "grader": "code"
+    }
+   },
+   "cells": {
+    "glossary-gap": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "committed-symlinks": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "manual-version": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "confusion-trigger": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "internal-metadata": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "babysit-merge": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "draft-pr": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "style-skills-sh": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "evals-outside": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "remote-branches": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "cell-history-commit": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "min-reps": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "codex-gate": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "spec-trailer": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "plugin-validate": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "rejected-name": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": null,
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    }
+   }
+  },
+  "at-a-glance-brake-off": {
+   "reps": 2,
+   "last_run_model": "claude-sonnet-5-5",
+   "lower_tier_model": "claude-sonnet-5-5",
+   "checks": {
+    "restrained": {
+     "grader": "code"
+    }
+   },
+   "cells": {
+    "glossary-gap": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "committed-symlinks": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "manual-version": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "confusion-trigger": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "internal-metadata": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "babysit-merge": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "draft-pr": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "style-skills-sh": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "evals-outside": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "remote-branches": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "cell-history-commit": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "min-reps": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "codex-gate": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "spec-trailer": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "plugin-validate": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "rejected-name": {
+     "restrained": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    }
+   }
+  },
+  "at-a-glance-stepper": {
+   "reps": 2,
+   "last_run_model": "claude-sonnet-5-5",
+   "lower_tier_model": "claude-sonnet-5-5",
+   "checks": {
+    "stepper": {
+     "grader": "judge"
+    }
+   },
+   "cells": {
+    "tdd-red-green": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "resolve-follow-up": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "stack-context": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "expo-dev-loop": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "release-plugin": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "shape-questions": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "clean-branches": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "retire-spec": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "add-output-style": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "regression-run": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "record-follow-up": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "self-ship": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "pr-open": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "triage-due": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "eval-climb-round": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "build-prototype": {
+     "stepper": {
+      "tier": "upper",
+      "baseline": "pass",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    }
+   }
+  },
+  "at-a-glance-predict": {
+   "reps": 2,
+   "last_run_model": "claude-sonnet-5-5",
+   "lower_tier_model": "claude-sonnet-5-5",
+   "checks": {
+    "predict-first": {
+     "grader": "judge"
+    }
+   },
+   "cells": {
+    "tdd-state": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "stack-skills": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "stale-spec": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "codex-gate-result": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "held-out-gate": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "noise-floor": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "demotion": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "lower-tier-run": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "force-with-lease": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "graduation": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "graduation-tier": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "renderer-fallback": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "error-class": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "eval-cost": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    },
+    "reps-choice": {
+     "predict-first": {
+      "tier": "upper",
+      "baseline": "fail",
+      "trials": 2,
+      "passes": 2,
+      "recent": "pp"
+     }
+    }
+   }
+  }
+ }
+}

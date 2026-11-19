@@ -23,7 +23,7 @@ const skillPath = relative(repoRoot, join(realpathSync(join(repoRoot, '.claude/s
 const usage = `usage: run.mjs --variant <label> --access api|subscription [options]
   --skill-ref <git-ref>   take explain-visually's SKILL.md from this ref
   --skill-file <path>     take SKILL.md from this file (default: the working tree's)
-  --style <path>          select this output style file in the workspace (default: none)
+  --style <path>          select this output style file in the workspace (default: none, or the suite's run.json)
   --slash                 prefix each prompt with /explain-visually unless it already starts with it
   --repo-ref <git-ref>    the repository snapshot the agent explains (default: 4ac28d2)
   --suite <name>          a capability eval folder here or a suite under regression/ (default: explain-visually-first-view)
@@ -87,6 +87,12 @@ let history = null;
 let tiers = null;
 const historyPath = join(here, 'regression', 'cell-history.json');
 const regressionSuite = suiteDir === join(here, 'regression', opts.suite);
+// A graduated suite records how it runs: the output style it selects and whether it asks through /explain-visually.
+if (regressionSuite && existsSync(join(suiteDir, 'run.json'))) {
+  const how = JSON.parse(readFileSync(join(suiteDir, 'run.json'), 'utf8'));
+  if (how.style && !opts.style) opts.style = join(repoRoot, how.style);
+  if (how.slash) opts.slash = true;
+}
 if (regressionSuite) {
   history = loadHistory(historyPath);
   tiers = planTiers(history, opts.suite, opts.model);
