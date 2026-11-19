@@ -45,7 +45,9 @@ decides it, and nothing else.
 
 ## In the reply
 
-- Put the answer or conclusion on the first line.
+- Make the first sentence the answer or conclusion itself. Put no label or
+  announcing phrase before it or before any summary, such as "TL;DR:",
+  "In one line:", or "Key point:", whether inline, in bold, or as a heading.
 - Use real file paths, values, and examples instead of abstract words.
 - Inside the reply, structure means a table or an arrow flow. Do not use
   mermaid; terminals do not draw it.
