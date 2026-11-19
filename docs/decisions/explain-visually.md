@@ -24,7 +24,7 @@
   a stepper the user paces with every stage visible; a mechanism whose result
   depends on values becomes a manipulable view that asks for a prediction
   before the user changes anything.
-- A dedicated output style, separate from `natural-korean`, applies that
+- The `at-a-glance` output style, separate from `natural-korean`, applies that
   choice to every explanation, including ones the agent starts on its own,
   and hands processes, mechanisms, and structures too large for the reply to
   `explain-visually` to render. Without the style, `explain-visually` still
