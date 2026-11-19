@@ -30,6 +30,13 @@
   and hands processes, mechanisms, and structures too large for the reply to
   `explain-visually` to render. Without the style, `explain-visually` still
   fires only when the user asks.
+- When it replies in Korean, `at-a-glance` applies `natural-korean`'s
+  register rules, carried as a copied section. `natural-korean` stays the
+  canonical source of that text and stays selectable on its own; the copy
+  must match it.
+- The reply's first sentence is the answer itself, in any language. No label
+  or phrase announcing it comes first, such as "한 줄로:", "핵심:",
+  "TL;DR:", or "결론부터 말씀드리면".
 
 ## Boundaries
 
@@ -69,13 +76,22 @@ contiguity, signaling, and segmenting principles), animation beats a static
 picture only modestly while learner-paced control and even minimal
 interactivity help (Höffler & Leutner 2007; Berney & Bétrancourt 2016), and
 simulations work best when the learner predicts first (PhET). The output style is separate from `natural-korean`, so it works in
-any language. The cost is that Claude Code keeps a single `outputStyle`
-setting, so a user picks one of the two styles.
+any language. Claude Code keeps a single `outputStyle` setting, so a user
+picks one of the two styles. With only "reply in the user's language",
+Korean replies under `at-a-glance` read as translated (user report,
+2026-11-19), so the style carries the Korean register rules as a section
+that applies only to Korean replies. Other languages are unaffected, and
+copying the text keeps both styles usable on their own at the cost of two
+places to edit. The awkwardness the user actually pointed at was a
+lead-in label, "**한 줄로:**", which the model wrote while following "put the
+answer on the first line". Graded against natural-korean's whole rubric, long
+explanations failed even with natural-korean alone (train 2/20, Sonnet 5.5,
+2026-11-19), so the measured bar is the lead-in, not the whole register.
 
 ## Reconsider when
 
-- Claude Code lets more than one output style apply at once, or users
-  repeatedly want `natural-korean` and the light layer together.
+- Claude Code lets more than one output style apply at once; then drop the
+  copied Korean section and combine the two styles instead.
 
 - Models reliably discover available renderers without being told.
 - Models stop over-rendering one-sentence questions, allowing the remaining
@@ -107,7 +123,12 @@ setting, so a user picks one of the two styles.
   Korean users and mix response structure into a style scoped to register.
 - A mod whose hook injects the light layer each session — it would combine
   with any style, but a separately installed hooks module is heavy for a
-  presentation rule; revisit if users need both styles at once.
+  presentation rule.
+- Only language-neutral writing principles in `at-a-glance` — no
+  duplication, but it drops the Korean anchors (합쇼체, 표기 규칙, examples)
+  that make the register concrete.
+- Merging `natural-korean` into `at-a-glance` — users who want the register
+  without the explanation forms would lose a style to pick.
 
 ## Evidence worth preserving
 
