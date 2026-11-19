@@ -486,6 +486,14 @@ available for an affected product surface.
   translated-sounding Korean. Ships with the Claude Code plugin only —
   skills.sh copies skill folders, not output styles. Select it with
   `/output-style` after installing the plugin.
+- **[at-a-glance](./output-styles/at-a-glance.md)**: A Claude Code response
+  style that shapes every explanation, asked for or not, by the kind of
+  content: a fact stays a sentence, a structure becomes a diagram, a process
+  becomes a stepper the user paces, and a mechanism asks for a prediction
+  before showing the result. Processes, mechanisms, and large structures are
+  rendered through `explain-visually`. Works in any language; Claude Code
+  applies one output style at a time, so it replaces `natural-korean` while
+  selected. Ships with the Claude Code plugin only.
 
 ## Mods
 

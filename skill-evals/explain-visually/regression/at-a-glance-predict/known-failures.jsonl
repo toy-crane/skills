@@ -1,0 +1,1 @@
+{"id": "internal-env", "prompt": "INSTALL_INTERNAL_SKILLS를 설정하느냐에 따라 skills.sh 설치 목록이 어떻게 달라지는지 설명해줘.", "tags": ["mechanism"], "split": "train", "check": "predict-first", "guards": "a mechanism render that shows the result before asking for a prediction", "v8": "ff"}

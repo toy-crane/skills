@@ -2,7 +2,7 @@
 // Runner for explain-visually's evals in the llm-evals layout. This folder is the skill's eval root.
 // Each run copies this repository at a fixed ref (without skill-evals/) into a disposable workspace,
 // installs the explain-visually text under test, and asks headless Claude Code one /explain-visually
-// question. The only MCP server is render-mcp.mjs, a stand-in for the desktop app's inline renderer
+// question, optionally with an output style selected. The only MCP server is render-mcp.mjs, a stand-in for the desktop app's inline renderer
 // (read_me, show_widget), so the agent has the same interactive renderer the user sees. Every widget
 // it shows is captured by capture.mjs before any input, and the suite's grade.mjs scores the run.
 import { spawn, spawnSync } from 'node:child_process';
@@ -23,6 +23,8 @@ const skillPath = relative(repoRoot, join(realpathSync(join(repoRoot, '.claude/s
 const usage = `usage: run.mjs --variant <label> --access api|subscription [options]
   --skill-ref <git-ref>   take explain-visually's SKILL.md from this ref
   --skill-file <path>     take SKILL.md from this file (default: the working tree's)
+  --style <path>          select this output style file in the workspace (default: none, or the suite's run.json)
+  --slash                 prefix each prompt with /explain-visually unless it already starts with it
   --repo-ref <git-ref>    the repository snapshot the agent explains (default: 4ac28d2)
   --suite <name>          a capability eval folder here or a suite under regression/ (default: explain-visually-first-view)
   --split train|test|control|all   which split to run (default: all)
@@ -31,7 +33,7 @@ const usage = `usage: run.mjs --variant <label> --access api|subscription [optio
   --workers <n>           runs in parallel (default: 4)
   --model <id>            agent model (default: claude-sonnet-5-5)
   --judge-model <id>      judge model (default: claude-opus-5-5)
-  --flow <dir>            results folder (default: .claude/hillclimb/explain-visually/<suite>)
+  --flow <dir>            results folder (default: .claude/hillclimb/explain-visually/<suite>/<model>)
   --timeout-s <n>         wall-clock ceiling per run (default: 600)
   --max-budget-usd <n>    per-run budget passed to claude (default: 3)
   --keep-workspaces       keep each run's workspace for inspection
@@ -43,6 +45,8 @@ const { values: opts } = parseArgs({
     access: { type: 'string' },
     'skill-ref': { type: 'string' },
     'skill-file': { type: 'string' },
+    style: { type: 'string' },
+    slash: { type: 'boolean', default: false },
     'repo-ref': { type: 'string', default: '4ac28d2' },
     suite: { type: 'string', default: 'explain-visually-first-view' },
     split: { type: 'string', default: 'all' },
@@ -83,6 +87,13 @@ let history = null;
 let tiers = null;
 const historyPath = join(here, 'regression', 'cell-history.json');
 const regressionSuite = suiteDir === join(here, 'regression', opts.suite);
+// A graduated suite records how it runs: the output style it selects and whether it asks through /explain-visually.
+// A run whose style or way of asking differs from run.json measures another condition and records nothing.
+const how = regressionSuite && existsSync(join(suiteDir, 'run.json')) ? JSON.parse(readFileSync(join(suiteDir, 'run.json'), 'utf8')) : {};
+const suiteStyle = how.style ? join(repoRoot, how.style) : undefined;
+const overridden = (opts.style !== undefined && resolve(opts.style) !== suiteStyle) || (opts.slash && !how.slash);
+if (suiteStyle && !opts.style) opts.style = suiteStyle;
+if (how.slash) opts.slash = true;
 if (regressionSuite) {
   history = loadHistory(historyPath);
   tiers = planTiers(history, opts.suite, opts.model);
@@ -91,10 +102,10 @@ if (regressionSuite) {
   if (opts.reps !== undefined && Number(opts.reps) !== own) fail(`${opts.suite} runs at ${own} reps, as recorded in its cell history; drop --reps or pass ${own}`);
 }
 const reps = history ? history.suites[opts.suite].reps : Number(opts.reps ?? 2);
-const recording = history && !opts['skill-ref'] && !opts['skill-file'];
+const recording = history && !opts['skill-ref'] && !opts['skill-file'] && !overridden;
 const workers = Number(opts.workers);
 const timeoutMs = Number(opts['timeout-s']) * 1000;
-const { gradeRun } = await import(join(suiteDir, 'grade.mjs'));
+const { gradeRun, goal: suiteGoal, metrics: suiteMetrics } = await import(join(suiteDir, 'grade.mjs'));
 
 let skillText;
 let skillSource;
@@ -109,7 +120,13 @@ if (opts['skill-ref']) {
   skillText = readFileSync(file, 'utf8');
   skillSource = `file ${file}`;
 }
-const skillSha = createHash('sha256').update(skillText).digest('hex').slice(0, 12);
+// An output style is selected by the name in its frontmatter, so the workspace file carries that name.
+const styleText = opts.style ? readFileSync(resolve(opts.style), 'utf8') : null;
+const styleName = styleText?.match(/^name:\s*(\S+)/m)?.[1] ?? null;
+if (styleText && !styleName) fail(`--style ${opts.style} has no name in its frontmatter`);
+const askedWith = (prompt) => (opts.slash && !prompt.startsWith('/explain-visually') ? `/explain-visually ${prompt}` : prompt);
+// A variant is one skill text, one style (or none), and one way of asking.
+const skillSha = createHash('sha256').update(skillText).update(`\0style:${styleText ?? ''}\0slash:${opts.slash}`).digest('hex').slice(0, 12);
 const repoSha = spawnSync('git', ['-C', repoRoot, 'rev-parse', '--short', opts['repo-ref']], { encoding: 'utf8' }).stdout.trim();
 if (!repoSha) fail(`unknown --repo-ref ${opts['repo-ref']}`);
 
@@ -128,7 +145,7 @@ if (opts.access === 'api') {
   delete baseEnv.ANTHROPIC_AUTH_TOKEN;
 }
 
-const flowDir = resolve(opts.flow ?? join(repoRoot, '.claude/hillclimb/explain-visually', opts.suite));
+const flowDir = resolve(opts.flow ?? join(repoRoot, '.claude/hillclimb/explain-visually', opts.suite, opts.model));
 const variantDir = join(flowDir, opts.variant);
 const resultsFile = join(variantDir, 'results.jsonl');
 const errorsFile = join(variantDir, 'errors.jsonl');
@@ -150,7 +167,7 @@ const done = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`)
 const todo = [];
 for (let rep = 0; rep < reps; rep += 1) for (const c of cases) if (!done.has(`${c.id}#${rep}`)) todo.push({ c, rep });
 
-console.log(`variant ${opts.variant}: explain-visually from ${skillSource} (sha ${skillSha}); repository at ${repoSha}`);
+console.log(`variant ${opts.variant}: explain-visually from ${skillSource}, style ${opts.style ?? 'none'}${opts.slash ? ', asked with /explain-visually' : ''} (sha ${skillSha}); repository at ${repoSha}`);
 console.log(`access ${opts.access}, model ${opts.model}, judge ${opts['judge-model']}; suite ${opts.suite} (${opts.split}): ${cases.length} cases × ${reps} reps; ${done.size} done, ${todo.length} to run`);
 
 function report() {
@@ -174,18 +191,18 @@ if (!existsSync(chrome)) { console.error(`Chrome not found at ${chrome}; set EV_
 
 mkdirSync(join(variantDir, 'traces'), { recursive: true });
 if (!existsSync(summaryFile)) {
-  writeFileSync(summaryFile, `${JSON.stringify({ description: `explain-visually from ${skillSource}`, target: 'skill', skill_source: skillSource, skill_sha: skillSha, access: opts.access }, null, 2)}\n`);
+  writeFileSync(summaryFile, `${JSON.stringify({ description: `explain-visually from ${skillSource}, style ${opts.style ?? 'none'}`, target: 'skill', skill_source: skillSource, style: opts.style ?? null, slash: opts.slash, skill_sha: skillSha, access: opts.access }, null, 2)}\n`);
 }
 if (!existsSync(stateFile)) {
   const all = readFileSync(join(suiteDir, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
   writeFileSync(stateFile, `${JSON.stringify({
-    goal: 'first-view rule in docs/decisions/explain-visually.md: held-out first-view pass rate at 80% or more and above the baseline outside the noise floor; controls at or above their baseline',
+    goal: suiteGoal ?? 'first-view rule in docs/decisions/explain-visually.md: held-out first-view pass rate at 80% or more and above the baseline outside the noise floor; controls at or above their baseline',
     suite: opts.suite,
     train: all.filter((c) => c.split === 'train').map((c) => c.id),
     test: all.filter((c) => c.split === 'test').map((c) => c.id),
     control: all.filter((c) => c.split === 'control').map((c) => c.id),
     access: opts.access, model: opts.model, judge_model: opts['judge-model'], repo_ref: repoSha,
-    metrics: [
+    metrics: suiteMetrics ?? [
       { id: 'first-view', kind: 'float', label: 'First view shows every stage and the direction (staged cases)' },
       { id: 'rendered', kind: 'float', label: 'Rendered at least once' },
       { id: 'restrained', kind: 'float', label: 'Answered in prose without drawing (restraint controls)' },
@@ -224,6 +241,12 @@ function prepareWorkspace(id) {
   }
   // Each skill's published copy too, so a read through skills/ sees the same text.
   writeFileSync(join(work, skillPath), skillText);
+  if (styleText) {
+    const styleDir = join(work, '.claude/output-styles');
+    mkdirSync(styleDir, { recursive: true });
+    rmSync(join(styleDir, `${styleName}.md`), { force: true });
+    writeFileSync(join(styleDir, `${styleName}.md`), styleText);
+  }
   spawnSync('git', ['init', '-q'], { cwd: work });
   spawnSync('git', ['add', '-A'], { cwd: work });
   spawnSync('git', ['-c', 'user.email=eval@example.com', '-c', 'user.name=eval', 'commit', '-qm', 'snapshot'], { cwd: work });
@@ -234,12 +257,12 @@ function prepareWorkspace(id) {
 }
 
 function readStream(raw) {
-  const info = { model: null, apiKeySource: null, mcpServers: [], resultSubtype: null, costUsd: null, usage: null, turns: null, permissionDenials: [], resultText: '' };
+  const info = { model: null, apiKeySource: null, outputStyle: null, mcpServers: [], resultSubtype: null, costUsd: null, usage: null, turns: null, permissionDenials: [], resultText: '' };
   for (const line of raw.split('\n')) {
     let event;
     try { event = JSON.parse(line); } catch { continue; }
     if (event.type === 'system' && event.subtype === 'init') {
-      info.model = event.model; info.apiKeySource = event.apiKeySource;
+      info.model = event.model; info.apiKeySource = event.apiKeySource; info.outputStyle = event.output_style ?? null;
       info.mcpServers = (event.mcp_servers ?? []).map((s) => ({ name: s.name, status: s.status }));
     }
     if (event.type === 'result') {
@@ -255,7 +278,7 @@ function runClaude({ ws, work }, prompt, rawFile) {
   const args = ['-p', prompt, '--setting-sources', 'project', '--output-format', 'stream-json', '--verbose',
     '--max-budget-usd', opts['max-budget-usd'], '--permission-mode', 'acceptEdits', '--model', opts.model,
     '--mcp-config', join(ws, 'mcp.json'), '--strict-mcp-config',
-    '--settings', JSON.stringify({ sandbox: { enabled: true, autoAllowBashIfSandboxed: true, allowUnsandboxedCommands: false, filesystem: { allowWrite: [work] }, network: { allowedDomains: [], strictAllowlist: true } } }),
+    '--settings', JSON.stringify({ ...(styleName ? { outputStyle: styleName } : {}), sandbox: { enabled: true, autoAllowBashIfSandboxed: true, allowUnsandboxedCommands: false, filesystem: { allowWrite: [work] }, network: { allowedDomains: [], strictAllowlist: true } } }),
     // Only local tools: a headless session otherwise offers Artifact, WebSearch, and other tools that reach outside.
     '--tools', 'Read,Edit,Write,Glob,Grep,Skill,Bash,ToolSearch',
     '--allowedTools', 'Read', 'Edit', 'Write', 'Glob', 'Grep', 'Skill', 'Bash', 'ToolSearch', 'mcp__visualize'];
@@ -311,13 +334,15 @@ async function runCase({ c, rep }) {
   })}\n`);
 
   const rawFile = join(runDir, 'turn1.jsonl');
-  const t = await runClaude(place, c.prompt, rawFile);
+  const prompt = askedWith(c.prompt);
+  const t = await runClaude(place, prompt, rawFile);
   if (t.timedOut) return errorRow('timeout', 'turn 1', t.info);
   if (t.info.resultSubtype !== 'success') return errorRow('harness', `result ${t.info.resultSubtype}: ${t.stderr.slice(0, 300)}`, t.info);
   if (t.info.isError) return errorRow('api-error', `status ${t.info.apiErrorStatus}: ${t.info.resultText.slice(0, 300)}`, t.info);
   if (!t.info.model?.startsWith(opts.model)) return errorRow('served-model-mismatch', `asked ${opts.model}, served ${t.info.model}`, t.info);
   const expectedKey = opts.access === 'api' ? 'ANTHROPIC_API_KEY' : 'none';
   if (t.info.apiKeySource !== expectedKey) return errorRow('access-mismatch', `key source ${t.info.apiKeySource}`, t.info);
+  if (t.info.outputStyle !== (styleName ?? 'default')) return errorRow('harness', `output style ${t.info.outputStyle}, wanted ${styleName ?? 'default'}`, t.info);
   const servers = t.info.mcpServers;
   if (servers.some((s) => s.name !== 'visualize') || !servers.some((s) => s.name === 'visualize' && s.status === 'connected')) {
     return errorRow('harness', `MCP servers: ${servers.map((s) => `${s.name} ${s.status}`).join(', ') || 'none'}`, t.info);
@@ -326,7 +351,7 @@ async function runCase({ c, rep }) {
   if (deniedWrites.length) return errorRow('harness', `file writes denied: ${deniedWrites.map((d) => d.tool_input?.file_path).join(', ')}`, t.info);
   const latency = (Date.now() - started) / 1000;
 
-  const turns = toTurns(rawFile, c.prompt);
+  const turns = toTurns(rawFile, prompt);
   writeFileSync(join(variantDir, 'traces', `${id}.json`), `${JSON.stringify(turns, null, 2)}\n`);
   const reply = turns.filter((x) => x.role === 'assistant').map((x) => x.content).join('\n\n');
 
@@ -343,10 +368,10 @@ async function runCase({ c, rep }) {
     pages.push({ file: f, png: await captureWidget(join(place.work, f), base, profile, { baseDir: dirname(join(place.work, f)) }), source: readFileSync(join(place.work, f), 'utf8') });
   }
 
-  const graded = await gradeRun(c, { reply, widgets, pages }, { env: baseEnv, model: opts['judge-model'] });
+  const graded = await gradeRun({ ...c, prompt }, { reply, widgets, pages }, { env: baseEnv, model: opts['judge-model'] });
   if (graded.error) return errorRow('judge', graded.error, t.info);
   appendFileSync(resultsFile, `${JSON.stringify({
-    prompt_id: c.id, rep, prompt: c.prompt, tags: c.tags, split: c.split, grade: graded.grade, status: 'ok', stop_reason: t.info.resultSubtype,
+    prompt_id: c.id, rep, prompt, tags: c.tags, split: c.split, grade: graded.grade, status: 'ok', stop_reason: t.info.resultSubtype,
     model: t.info.model, usage: t.info.usage, turns: t.info.turns, latency_s: latency,
     meta: {
       cost_usd: t.info.costUsd, widgets: widgets.map((w) => w.file), pages: pages.map((p) => p.file), notes: graded.notes,
