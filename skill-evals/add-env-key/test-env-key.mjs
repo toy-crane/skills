@@ -27,6 +27,12 @@ test("add creates a missing file holding only the empty key line", () => {
   assert.equal(fs.readFileSync(file, "utf8"), "STRIPE_SECRET_KEY=\n");
 });
 
+test("add creates the file inside a folder that does not exist yet", () => {
+  const file = path.join(path.dirname(tmpFile()), "apps/web/.env.local");
+  assert.equal(run("add", file, "STRIPE_SECRET_KEY").code, 0);
+  assert.equal(fs.readFileSync(file, "utf8"), "STRIPE_SECRET_KEY=\n");
+});
+
 test("add appends the key line and leaves every other line in order", () => {
   const file = tmpFile("# local\nPORT=3000\nDB_URL=postgres://x");
   assert.equal(run("add", file, "OPENAI_API_KEY").code, 0);

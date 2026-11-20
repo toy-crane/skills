@@ -4,7 +4,8 @@
 //   node env-key.mjs check <file> <NAME>   print `set` when NAME has a value, `empty` otherwise
 // `add` keeps an existing NAME line as it is and leaves every other line unchanged.
 // `check` prints only `set` or `empty`: never the value, part of it, or its length.
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 
 const [command, file, name] = process.argv.slice(2);
 if (!['add', 'check'].includes(command) || !file || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(name ?? '')) {
@@ -20,6 +21,7 @@ if (command === 'add') {
   if (line === undefined) {
     const eol = text.includes('\r\n') ? '\r\n' : '\n';
     const sep = text === '' || text.endsWith('\n') ? '' : eol;
+    mkdirSync(dirname(file), { recursive: true });
     writeFileSync(file, `${text}${sep}${name}=${eol}`);
   }
   process.exit(0);
