@@ -24,6 +24,12 @@
   `setup-issue-tracker`", or in a boundary sentence, is not a dependency.
 - Skills outside this set, such as `find-skills`, stay optional: a skill uses
   one when it is present and keeps the same outcome itself when it is not.
+- A mod from this repository is optional to a skill in the same way, never
+  required. A mod ships through the plugin channel only
+  ([mod-layout](mod-layout.md)), so a skills.sh user has no install command
+  that would bring it. A skill uses the mod's tool when the session offers it
+  and otherwise reaches the same outcome on its own path, telling the user
+  what that path gives up. `add-env-key` applies this to `secret-env`.
 - `llm-evals` carries the eval discipline it needs in its own text, distilled
   from claude-api's `build-eval` and `hillclimb` guides, plus the red/green
   contract and `implement` hand-back those guides lack. `claude-api` stays an
