@@ -402,12 +402,13 @@ bun run db:remove
 
 ## Supporting workflows
 
-Eleven additional skills can run independently. They handle stack setup, issue
+Twelve additional skills can run independently. They handle stack setup, issue
 tracker coordination for parallel spec work, Expo runtime verification,
 pre-delivery both-platform checks, cross-client skill and agent
 synchronization, incremental project knowledge, verified follow-up resolution,
 visual explanation, final human judgment, periodic context maintenance, and
-periodic review of session logs for work to make deterministic.
+periodic review of session logs for work to make deterministic, and getting
+an issued key into `.env` without the value reaching the model.
 `implement` also uses a matching runtime-verification skill when one is
 available for an affected product surface.
 
@@ -478,6 +479,13 @@ available for an affected product surface.
   deterministic owner and form, and a re-measurement check by date or by the
   skill version each session loaded. It changes nothing; fixes stay with people
   and other skills.
+- **[add-env-key](./skills/workflow/add-env-key/SKILL.md)**: Get a key the
+  user must issue, such as an API key or token, into the project's `.env` file.
+  It opens the vendor's issuance page, then collects the value through the
+  [secret-env](./mods/secret-env/README.md) mod's pane when the session has
+  it, or opens the file in the user's editor with an empty `NAME=` line ready.
+  A bundled script adds that line and answers only `set` or `empty` when
+  checking it, so the value never reaches chat or the model's context.
 
 ## Output styles
 
