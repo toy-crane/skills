@@ -70,6 +70,7 @@ for (const [label, content] of [
   ["a plain value", `OPENAI_API_KEY=${secret}\n`],
   ["a quoted value", `OPENAI_API_KEY="${secret}"\n`],
   ["an export prefix", `export OPENAI_API_KEY=${secret}\n`],
+  ["a quoted value with an escaped quote", `OPENAI_API_KEY="a\\"b"\n`],
 ]) {
   test(`check answers only set for ${label}`, () => {
     const r = run("check", tmpFile(content), "OPENAI_API_KEY");
@@ -83,6 +84,7 @@ for (const [label, content] of [
   ["empty quotes", 'OPENAI_API_KEY=""\n'],
   ["only spaces", "OPENAI_API_KEY=   \n"],
   ["only an inline comment", "OPENAI_API_KEY= # paste here\n"],
+  ["empty quotes before a comment holding the same quote", "OPENAI_API_KEY='' # don't forget it\n"],
   ["no line for the key", "PORT=3000\n"],
   ["a commented-out key", `# OPENAI_API_KEY=${secret}\n`],
 ]) {

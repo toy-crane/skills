@@ -31,7 +31,8 @@ console.log(line !== undefined && hasValue(line.match(keyLine)[1]) ? 'set' : 'em
 
 function hasValue(raw) {
   const v = raw.trim();
-  const quoted = v.match(/^(["'`])(.*)\1/);
+  // Up to the first unescaped closing quote, so a comment after it never counts as the value.
+  const quoted = v.match(/^(["'`])((?:\\.|(?!\1)[^\\])*)\1/);
   if (quoted) return quoted[2].trim() !== '';
   return v.replace(/(^|\s)#.*$/, '').trim() !== '';
 }
