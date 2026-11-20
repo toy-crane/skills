@@ -195,7 +195,8 @@ function prepareWorkspace(c, cond, id) {
   }
   for (const step of [['init', '-q'], ['add', '-A'], ['-c', 'user.name=eval', '-c', 'user.email=eval@example.com', 'commit', '-q', '-m', 'fixture']]) spawnSync('git', ['-C', ws, ...step]);
   const secret = `sk_eval_${randomBytes(12).toString('hex')}`;
-  const env = { ...childEnv, PATH: `${bin}:${childEnv.PATH}`, FAKE_LOG: log, FAKE_SECRET: secret };
+  // $EDITOR and $VISUAL point at the logging stub too, so the user's own editor setting never reaches past it.
+  const env = { ...childEnv, PATH: `${bin}:${childEnv.PATH}`, EDITOR: join(bin, 'code'), VISUAL: join(bin, 'code'), FAKE_LOG: log, FAKE_SECRET: secret };
   let mcpConfig = null;
   if (cond === 'mod') {
     mcpConfig = join(root, 'mcp.json');

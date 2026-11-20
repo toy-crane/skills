@@ -1264,23 +1264,23 @@
      "name_file": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
      },
      "page": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
      },
      "editor": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
      },
      "no_leak": {
       "tier": "lower",
@@ -1292,9 +1292,9 @@
      "not_asked": {
       "tier": "upper",
       "baseline": "fail",
-      "trials": 2,
-      "passes": 2,
-      "recent": "pp"
+      "trials": 3,
+      "passes": 3,
+      "recent": "ppp"
      },
      "confirmed": {
       "tier": "lower",
