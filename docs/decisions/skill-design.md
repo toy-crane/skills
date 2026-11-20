@@ -24,6 +24,12 @@
   `setup-issue-tracker`", or in a boundary sentence, is not a dependency.
 - Skills outside this set, such as `find-skills`, stay optional: a skill uses
   one when it is present and keeps the same outcome itself when it is not.
+- A mod from this repository is optional to a skill in the same way, never
+  required. A mod ships through the plugin channel only
+  ([mod-layout](mod-layout.md)), so a skills.sh user has no install command
+  that would bring it. A skill uses the mod's tool when the session offers it
+  and otherwise reaches the same outcome on its own path, telling the user
+  what that path gives up. `add-env-key` applies this to `secret-env`.
 - `llm-evals` carries the eval discipline it needs in its own text, distilled
   from claude-api's `build-eval` and `hillclimb` guides, plus the red/green
   contract and `implement` hand-back those guides lack. `claude-api` stays an
@@ -119,8 +125,14 @@
 - Instructions may constrain outcomes and safety without prescribing a fixed
   sequence.
 - Use a deterministic bundled script when concurrency or destructive lifecycle
-  operations require atomic ownership and exact target verification, or when
-  a measurement must stay comparable across runs.
+  operations require atomic ownership and exact target verification, when
+  a measurement must stay comparable across runs, or when a step touches a
+  secret value the model must never see. In the last case the script prints
+  only what the model needs to decide, never the value. `add-env-key` checks
+  whether a key has a value with a script that answers only set or empty,
+  because a model reading the line itself can echo the value into its context;
+  it leaves the user's choice about `.gitignore` and the choice of editor to
+  the model.
 - Prefer executable positive direction over lists of forbidden actions.
 - UI metadata must continue to match the skill after a substantial edit.
 - Eval outputs are disposable; stable prompts and assertions may remain so later

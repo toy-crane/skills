@@ -1,0 +1,4 @@
+interface:
+  display_name: "Add Env Key"
+  short_description: "Get an issued key into .env without the value reaching the model"
+  default_prompt: "Use $add-env-key to open the issuance page for the key this work needs and get its value into the project's .env file without it passing through chat."
