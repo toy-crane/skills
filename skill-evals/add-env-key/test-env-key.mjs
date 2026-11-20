@@ -95,6 +95,11 @@ for (const [label, content] of [
   });
 }
 
+test("check reads the last line for a key, as dotenv loaders do", () => {
+  assert.equal(run("check", tmpFile(`OPENAI_API_KEY=${secret}\nOPENAI_API_KEY=\n`), "OPENAI_API_KEY").out, "empty\n");
+  assert.equal(run("check", tmpFile(`OPENAI_API_KEY=\nOPENAI_API_KEY=${secret}\n`), "OPENAI_API_KEY").out, "set\n");
+});
+
 test("check answers empty when the file does not exist", () => {
   assert.equal(run("check", tmpFile(), "OPENAI_API_KEY").out, "empty\n");
 });

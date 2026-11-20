@@ -3,7 +3,8 @@
 //   node env-key.mjs add   <file> <NAME>   ensure a `NAME=` line exists; create the file if missing
 //   node env-key.mjs check <file> <NAME>   print `set` when NAME has a value, `empty` otherwise
 // `add` keeps an existing NAME line as it is and leaves every other line unchanged.
-// `check` prints only `set` or `empty`: never the value, part of it, or its length.
+// `check` reads the last NAME line, as dotenv loaders do, and prints only `set` or `empty`:
+// never the value, part of it, or its length.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 
@@ -15,7 +16,7 @@ if (!['add', 'check'].includes(command) || !file || !/^[A-Za-z_][A-Za-z0-9_]*$/.
 
 const text = existsSync(file) ? readFileSync(file, 'utf8') : '';
 const keyLine = new RegExp(`^\\s*(?:export\\s+)?${name}\\s*=(.*)$`);
-const line = text.split(/\r?\n/).find((l) => keyLine.test(l));
+const line = text.split(/\r?\n/).findLast((l) => keyLine.test(l));
 
 if (command === 'add') {
   if (line === undefined) {
