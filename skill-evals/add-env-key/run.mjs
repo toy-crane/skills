@@ -17,7 +17,7 @@ import {
   appendFileSync, chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { finishRun, loadHistory, planTiers, recordRow, saveHistory } from '../audit-evals/history.mjs';
@@ -191,7 +191,7 @@ function prepareWorkspace(c, cond, id) {
   mkdirSync(join(ws, '.claude'));
   writeFileSync(join(ws, '.claude/settings.json'), `${JSON.stringify({ permissions: { deny: ['Bash(/usr/bin/open:*)', 'Bash(osascript:*)', 'Bash(/usr/local/bin/code:*)'] } }, null, 2)}\n`);
   if (!opts['no-skill']) {
-    cpSync(skillDir, join(ws, '.claude/skills/add-env-key'), { recursive: true, filter: (s) => !s.includes('/agents') });
+    cpSync(skillDir, join(ws, '.claude/skills/add-env-key'), { recursive: true, filter: (s) => !relative(skillDir, s).startsWith('agents') });
   }
   for (const step of [['init', '-q'], ['add', '-A'], ['-c', 'user.name=eval', '-c', 'user.email=eval@example.com', 'commit', '-q', '-m', 'fixture']]) spawnSync('git', ['-C', ws, ...step]);
   const secret = `sk_eval_${randomBytes(12).toString('hex')}`;
