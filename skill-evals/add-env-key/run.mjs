@@ -6,8 +6,11 @@
 // only log their arguments. Without the mod, a second turn plays the user: the
 // harness writes a value into the key line and says it is done.
 // Checks are programmatic except one judge call on how the run talked to the user.
-//   node run.mjs --variant baseline --no-skill --access subscription --model claude-sonnet-5-5
-//   node run.mjs --variant v1 --access subscription --model claude-sonnet-5-5 --split train
+// The graduated suite lives in regression/<suite>/cases.jsonl; regression/cell-history.json
+// names its cells (case@condition × check) and tiers, and every skill run updates it.
+// regression/log.md records how the suite reached its level.
+//   node run.mjs --variant r1 --access subscription
+//   node run.mjs --variant baseline --no-skill --access subscription
 import { spawn, spawnSync } from 'node:child_process';
 import { createHash, randomBytes } from 'node:crypto';
 import {
@@ -17,17 +20,19 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
+import { finishRun, loadHistory, planTiers, recordRow, saveHistory } from '../audit-evals/history.mjs';
 import { judgeRun } from '../llm-evals/judge.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../..');
 const skillDir = join(repoRoot, 'skills/workflow/add-env-key');
 const usage = `usage: run.mjs --variant <label> --access api|subscription [options]
-  --no-skill              install no skill (the baseline for a new skill)
+  --suite <folder>        suite under regression/ (default: add-env-key)
+  --no-skill              install no skill (a baseline; leaves the cell history alone)
   --cases a@mod,b@nomod   run only these case ids, optionally with a condition
   --conditions mod,nomod  conditions to run (default: both)
   --split train|test      run only cases of this split
-  --reps <n>              runs per case and condition (default: 2)
+  --reps <n>              runs per case and condition (default: the suite's recorded reps)
   --workers <n>           runs in parallel (default: 4)
   --model <id>            agent model (default: claude-sonnet-5-5)
   --judge-model <id>      judge model (default: claude-opus-5-5)
@@ -40,11 +45,12 @@ const { values: opts } = parseArgs({
   options: {
     variant: { type: 'string' },
     access: { type: 'string' },
+    suite: { type: 'string', default: 'add-env-key' },
     'no-skill': { type: 'boolean', default: false },
     cases: { type: 'string' },
     conditions: { type: 'string', default: 'mod,nomod' },
     split: { type: 'string' },
-    reps: { type: 'string', default: '2' },
+    reps: { type: 'string' },
     workers: { type: 'string', default: '4' },
     model: { type: 'string', default: 'claude-sonnet-5-5' },
     'judge-model': { type: 'string', default: 'claude-opus-5-5' },
@@ -61,17 +67,24 @@ if (!/^[\w.-]+$/.test(opts.variant ?? '')) fail('--variant needs a label such as
 if (!['api', 'subscription'].includes(opts.access)) fail('--access must be api or subscription');
 if (opts.model === opts['judge-model']) fail('the judge must be a different model from the agent under test');
 
-const evalDir = join(here, 'add-env-key');
-const allCases = readFileSync(join(evalDir, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+const suiteDir = join(here, 'regression', opts.suite);
+if (!existsSync(join(suiteDir, 'cases.jsonl'))) fail(`unknown suite: ${opts.suite}`);
+const historyPath = join(here, 'regression', 'cell-history.json');
+const history = loadHistory(historyPath);
+if (!history.suites[opts.suite]) fail(`no suite ${opts.suite} in ${historyPath}`);
+const tiers = planTiers(history, opts.suite, opts.model);
+const allCases = readFileSync(join(suiteDir, 'cases.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 const conditions = opts.conditions.split(',');
 let items = [];
 for (const c of allCases) for (const cond of conditions) items.push({ c, cond, pid: `${c.id}@${cond}` });
+// Only the graduated cells run, by the tiers the history plans for this model.
+items = items.filter((i) => history.suites[opts.suite].cells[i.pid] && tiers.runsCase(i.pid));
 if (opts.split) items = items.filter((i) => i.c.split === opts.split);
 if (opts.cases) {
   const wanted = opts.cases.split(',');
   items = items.filter((i) => wanted.includes(i.pid) || wanted.includes(i.c.id));
 }
-const reps = Number(opts.reps);
+const reps = Number(opts.reps ?? history.suites[opts.suite].reps);
 const timeoutMs = Number(opts['timeout-s']) * 1000;
 
 const skillText = opts['no-skill'] ? '' : readFileSync(join(skillDir, 'SKILL.md'), 'utf8') + readFileSync(join(skillDir, 'scripts/env-key.mjs'), 'utf8');
@@ -347,4 +360,12 @@ await Promise.all(Array.from({ length: Math.min(Number(opts.workers), todo.lengt
   }
 }));
 console.log(`results: ${resultsFile}`);
+if (!opts['no-skill']) {
+  const before = done;
+  for (const row of readRows(resultsFile)) if (!before.has(`${row.prompt_id}#${row.rep}`)) recordRow(history, opts.suite, row, { lowerRuns: tiers.lowerRuns });
+  const scored = new Set(readRows(resultsFile).map((r) => `${r.prompt_id}#${r.rep}`));
+  const complete = !opts.cases && !opts.split && finishRun(history, opts.suite, { model: opts.model, lowerRuns: tiers.lowerRuns, scored });
+  saveHistory(historyPath, history);
+  console.log(`cell history ${complete ? 'updated; run complete, models recorded' : 'updated; run incomplete, models unchanged'}`);
+}
 report();
