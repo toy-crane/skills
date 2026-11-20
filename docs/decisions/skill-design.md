@@ -125,8 +125,14 @@
 - Instructions may constrain outcomes and safety without prescribing a fixed
   sequence.
 - Use a deterministic bundled script when concurrency or destructive lifecycle
-  operations require atomic ownership and exact target verification, or when
-  a measurement must stay comparable across runs.
+  operations require atomic ownership and exact target verification, when
+  a measurement must stay comparable across runs, or when a step touches a
+  secret value the model must never see. In the last case the script prints
+  only what the model needs to decide, never the value. `add-env-key` checks
+  whether a key has a value with a script that answers only set or empty,
+  because a model reading the line itself can echo the value into its context;
+  it leaves the user's choice about `.gitignore` and the choice of editor to
+  the model.
 - Prefer executable positive direction over lists of forbidden actions.
 - UI metadata must continue to match the skill after a substantial edit.
 - Eval outputs are disposable; stable prompts and assertions may remain so later
