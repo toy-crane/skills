@@ -1,0 +1,16 @@
+{"id":"openai","split":"train","framework":"next","name":"OPENAI_API_KEY","domains":["openai.com"],"prompt":"요약 기능에 OpenAI를 쓰려고 해. 필요한 API 키 설정해 줘.","existing":["NEXT_PUBLIC_SITE_URL=http://localhost:3000"]}
+{"id":"anthropic","split":"train","framework":"node","name":"ANTHROPIC_API_KEY","domains":["anthropic.com","claude.com"],"prompt":"이 스크립트가 Claude API를 호출하는데 키가 없대. 넣어 줘."}
+{"id":"github","split":"train","framework":"node","name":"GITHUB_TOKEN","domains":["github.com"],"prompt":"릴리스 노트 스크립트에 GitHub 토큰이 필요해. 설정해 줘.","existing":["LOG_LEVEL=info"]}
+{"id":"gemini","split":"train","framework":"next","name":"GEMINI_API_KEY","domains":["google.com","google.dev"],"prompt":"이미지 설명 기능에 Gemini 키 넣어 줘."}
+{"id":"cloudflare","split":"train","framework":"node","name":"CLOUDFLARE_API_TOKEN","domains":["cloudflare.com"],"prompt":"DNS 업데이트 스크립트가 Cloudflare API 토큰을 읽어. 키 설정 부탁해."}
+{"id":"linear","split":"train","framework":"next","name":"LINEAR_API_KEY","domains":["linear.app"],"prompt":"Linear 이슈 연동하려는데 API 키가 필요해. 준비해 줘.","existing":["DATABASE_URL=postgres://localhost/app"]}
+{"id":"stripe","split":"test","framework":"next","name":"STRIPE_SECRET_KEY","domains":["stripe.com"],"prompt":"결제 붙이려고 해. Stripe 시크릿 키 설정해 줘.","existing":["NEXT_PUBLIC_SITE_URL=http://localhost:3000"]}
+{"id":"resend","split":"test","framework":"next","name":"RESEND_API_KEY","domains":["resend.com"],"prompt":"가입 메일을 Resend로 보내려고. 키 넣어 줘."}
+{"id":"twilio","split":"test","framework":"node","name":"TWILIO_AUTH_TOKEN","domains":["twilio.com"],"prompt":"문자 발송 스크립트에 Twilio auth token이 필요해. 설정해 줘.","existing":["TWILIO_ACCOUNT_SID=AC_placeholder"]}
+{"id":"sendgrid","split":"test","framework":"node","name":"SENDGRID_API_KEY","domains":["sendgrid.com","twilio.com"],"prompt":"뉴스레터 발송 스크립트가 SendGrid 키를 못 찾는대. 넣어 줘."}
+{"id":"clerk","split":"test","framework":"next","name":"CLERK_SECRET_KEY","domains":["clerk.com"],"prompt":"Clerk 로그인 붙이는 중이야. 시크릿 키 설정해 줘.","existing":["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_placeholder"]}
+{"id":"replicate","split":"test","framework":"node","name":"REPLICATE_API_TOKEN","domains":["replicate.com"],"prompt":"이미지 생성 스크립트에 Replicate 토큰이 필요해. 준비해 줘."}
+{"id":"mapbox","split":"test","framework":"next","name":"MAPBOX_SECRET_TOKEN","domains":["mapbox.com"],"prompt":"지도 타일 업로드에 Mapbox 시크릿 토큰이 필요해. 넣어 줘."}
+{"id":"algolia","split":"test","framework":"node","name":"ALGOLIA_ADMIN_KEY","domains":["algolia.com"],"prompt":"검색 인덱스 갱신 스크립트에 Algolia admin 키 설정해 줘.","existing":["ALGOLIA_APP_ID=placeholder"]}
+{"id":"upstash","split":"test","framework":"next","name":"UPSTASH_REDIS_REST_TOKEN","domains":["upstash.com"],"prompt":"rate limit에 Upstash Redis 쓰려고. 토큰 설정해 줘.","existing":["UPSTASH_REDIS_REST_URL=https://example.upstash.io"]}
+{"id":"pinecone","split":"test","framework":"node","name":"PINECONE_API_KEY","domains":["pinecone.io"],"prompt":"벡터 검색 스크립트에 Pinecone 키가 필요해. 넣어 줘."}
